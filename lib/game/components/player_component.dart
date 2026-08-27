@@ -197,17 +197,17 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
 
   void _renderCapacityBadge(Canvas canvas) {
     final isFullCapacity = isFull;
-    final text = carriedItems.isEmpty
-        ? '🎒 0/$maxCapacity'
-        : '${carriedItems.first.type.emoji} $currentCount/$maxCapacity';
+    final text = isFullCapacity
+        ? 'DOLU ($currentCount/$maxCapacity)'
+        : '$currentCount/$maxCapacity';
 
     final textSpan = TextSpan(
       text: text,
       style: TextStyle(
         color: isFullCapacity ? Colors.white : NeoTheme.inkBlack,
-        fontSize: 10,
+        fontSize: 9,
         fontWeight: FontWeight.w900,
-        fontFamily: 'Roboto',
+        fontFamily: 'sans-serif',
       ),
     );
 

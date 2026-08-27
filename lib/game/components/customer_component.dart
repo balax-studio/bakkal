@@ -219,14 +219,19 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
         shadowOffset: 1.0,
       );
 
-      final iconText = shoppingBasket.first.type.emoji;
-      final span = TextSpan(
-        text: iconText,
-        style: const TextStyle(fontSize: 10),
+      // Draw mini colored product cube inside basket
+      final miniCube = Rect.fromCenter(
+        center: const Offset(18, -8),
+        width: 8,
+        height: 8,
       );
-      final tp = TextPainter(text: span, textDirection: TextDirection.ltr);
-      tp.layout();
-      tp.paint(canvas, Offset(18 - tp.width / 2, -14));
+      NeoTheme.drawNeoRRect(
+        canvas,
+        RRect.fromRectAndRadius(miniCube, const Radius.circular(2)),
+        fillPaint: NeoTheme.fill(shoppingBasket.first.type.color),
+        strokePaint: NeoTheme.stroke(width: 1.0),
+        shadowOffset: 0,
+      );
     }
   }
 }

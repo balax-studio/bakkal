@@ -89,7 +89,7 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
 
     game.world.add(
       FloatingTextComponent(
-        text: 'AÇILDI: $title! 🎉',
+        text: 'ACILDI: $title!',
         position: position - Vector2(0, 40),
         color: NeoTheme.cashGreen,
       ),
@@ -138,6 +138,7 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
         color: NeoTheme.inkBlack,
         fontSize: 9,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tpTitle = TextPainter(text: titleSpan, textDirection: TextDirection.ltr);
@@ -150,6 +151,7 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
         color: NeoTheme.cashDarkGreen,
         fontSize: 13,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tpCost = TextPainter(text: costSpan, textDirection: TextDirection.ltr);

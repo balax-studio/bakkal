@@ -171,11 +171,12 @@ class ProduceFieldComponent extends PositionComponent with HasGameReference<Mini
 
     // 3. Name Tag
     final titleSpan = TextSpan(
-      text: '${productType.emoji} ${productType.displayName}',
+      text: productType.displayName.toUpperCase(),
       style: const TextStyle(
         color: NeoTheme.inkBlack,
-        fontSize: 10,
+        fontSize: 9,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tp = TextPainter(text: titleSpan, textDirection: TextDirection.ltr);

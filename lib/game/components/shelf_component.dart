@@ -111,14 +111,15 @@ class ShelfComponent extends PositionComponent with HasGameReference<MiniMartGam
       );
     }
 
-    // 3. Header Badge (Stock Count: e.g. "🍅 8/12")
-    final badgeText = '${productType.emoji} $currentStock/$maxCapacity';
+    // 3. Header Badge (Stock Count: e.g. "Domates: 8/12")
+    final badgeText = '${productType.displayName}: $currentStock/$maxCapacity';
     final textSpan = TextSpan(
       text: badgeText,
       style: TextStyle(
         color: isFull ? NeoTheme.cashGreen : (currentStock == 0 ? NeoTheme.tomatoRed : NeoTheme.inkBlack),
-        fontSize: 10,
+        fontSize: 9,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tp = TextPainter(text: textSpan, textDirection: TextDirection.ltr);

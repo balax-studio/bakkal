@@ -383,11 +383,11 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 
   void onLevelGoalCompleted() {
-    showLevelCompleteModal.value = true;
+    overlays.add('levelComplete');
   }
 
   void advanceToNextMarket() {
-    showLevelCompleteModal.value = false;
+    overlays.remove('levelComplete');
     playerData.activeMarketIndex = (playerData.activeMarketIndex + 1) % 3;
     marketLevelNotifier.value = playerData.activeMarketIndex;
     saveGame();
@@ -486,13 +486,14 @@ class StoreFloorComponent extends PositionComponent {
       shadowOffset: 0,
     );
 
-    const doorText = '🚪 GİRİŞ / ÇIKIŞ';
+    const doorText = 'GIRIS / CIKIS';
     final span = const TextSpan(
       text: doorText,
       style: TextStyle(
         color: NeoTheme.inkBlack,
         fontSize: 9,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tp = TextPainter(text: span, textDirection: TextDirection.ltr);

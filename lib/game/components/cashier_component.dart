@@ -153,13 +153,14 @@ class CashierComponent extends PositionComponent with HasGameReference<MiniMartG
     }
 
     // 3. Status Tag
-    final statusText = isCashierPresent ? '✅ KASA AÇIK' : '⚠️ KASİYER BEKLENİYOR';
+    final statusText = isCashierPresent ? 'KASA AÇIK' : 'KASİYER BEKLİYOR';
     final span = TextSpan(
       text: statusText,
       style: TextStyle(
         color: isCashierPresent ? NeoTheme.cashDarkGreen : NeoTheme.tomatoRed,
         fontSize: 9,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tp = TextPainter(text: span, textDirection: TextDirection.ltr);

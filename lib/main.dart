@@ -2,7 +2,6 @@ import 'package:flame/game.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'core/theme/neo_theme.dart';
 import 'domain/models/game_models.dart';
@@ -64,10 +63,9 @@ class MiniMartApp extends StatelessWidget {
       title: 'Bakkal: Idle Tycoon',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: true,
         scaffoldBackgroundColor: NeoTheme.bgCanvas,
-        textTheme: GoogleFonts.outfitTextTheme(
-          Theme.of(context).textTheme,
-        ),
+        fontFamily: 'Roboto',
       ),
       home: GameScreen(
         playerData: initialPlayerData,
@@ -77,7 +75,7 @@ class MiniMartApp extends StatelessWidget {
   }
 }
 
-class GameScreen extends StatefulWidget {
+class GameScreen extends StatelessWidget {
   final PlayerData playerData;
   final OfflineEarningsReport offlineReport;
 
@@ -88,104 +86,47 @@ class GameScreen extends StatefulWidget {
   });
 
   @override
-  State<GameScreen> createState() => _GameScreenState();
-}
-
-class _GameScreenState extends State<GameScreen> {
-  late final MiniMartGame _game;
-
-  bool _showOfflineModal = false;
-  bool _showDailyModal = false;
-  bool _showUpgradesModal = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _game = MiniMartGame(playerData: widget.playerData);
-
-    // If returning player has offline earnings, show welcome back modal
-    if (widget.offlineReport.hasEarnings) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() => _showOfflineModal = true);
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _game.saveGame();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // 1. Flame Game Engine Canvas
-          Positioned.fill(
-            child: GameWidget(game: _game),
-          ),
-
-          // 2. Neo-Brutalist HUD Overlay
-          Positioned.fill(
-            child: HUDOverlay(
-              game: _game,
-              onOpenUpgrades: () => setState(() => _showUpgradesModal = true),
-              onOpenDailyStreak: () => setState(() => _showDailyModal = true),
-            ),
-          ),
-
-          // 3. Offline / AFK Earnings Modal
-          if (_showOfflineModal)
-            Positioned.fill(
-              child: Container(
+      backgroundColor: NeoTheme.bgCanvas,
+      body: GameWidget<MiniMartGame>.controlled(
+        gameFactory: () => MiniMartGame(playerData: playerData),
+        overlayBuilderMap: {
+          'hud': (context, game) => HUDOverlay(
+                game: game,
+                onOpenUpgrades: () => game.overlays.add('upgrades'),
+                onOpenDailyStreak: () => game.overlays.add('daily'),
+              ),
+          'offline': (context, game) => Container(
                 color: Colors.black.withValues(alpha: 0.55),
                 child: OfflineEarningsModal(
-                  game: _game,
-                  report: widget.offlineReport,
-                  onClose: () => setState(() => _showOfflineModal = false),
+                  game: game,
+                  report: offlineReport,
+                  onClose: () => game.overlays.remove('offline'),
                 ),
               ),
-            ),
-
-          // 4. Daily Streak Reward Modal
-          if (_showDailyModal)
-            Positioned.fill(
-              child: Container(
+          'daily': (context, game) => Container(
                 color: Colors.black.withValues(alpha: 0.55),
                 child: DailyRewardModal(
-                  game: _game,
-                  onClose: () => setState(() => _showDailyModal = false),
+                  game: game,
+                  onClose: () => game.overlays.remove('daily'),
                 ),
               ),
-            ),
-
-          // 5. Upgrades Modal
-          if (_showUpgradesModal)
-            Positioned.fill(
-              child: Container(
+          'upgrades': (context, game) => Container(
                 color: Colors.black.withValues(alpha: 0.55),
                 child: UpgradesModal(
-                  game: _game,
-                  onClose: () => setState(() => _showUpgradesModal = false),
+                  game: game,
+                  onClose: () => game.overlays.remove('upgrades'),
                 ),
               ),
-            ),
-
-          // 6. Level Complete / Truck Delivery Modal
-          ValueListenableBuilder<bool>(
-            valueListenable: _game.showLevelCompleteModal,
-            builder: (context, showModal, _) {
-              if (!showModal) return const SizedBox.shrink();
-              return Positioned.fill(
-                child: Container(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  child: LevelCompleteModal(game: _game),
-                ),
-              );
-            },
-          ),
+          'levelComplete': (context, game) => Container(
+                color: Colors.black.withValues(alpha: 0.6),
+                child: LevelCompleteModal(game: game),
+              ),
+        },
+        initialActiveOverlays: [
+          'hud',
+          if (offlineReport.hasEarnings) 'offline',
         ],
       ),
     );

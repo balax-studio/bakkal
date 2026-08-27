@@ -157,13 +157,14 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
       );
     }
 
-    final barText = isCompleted ? '✅ SEVKİYAT HAZIR' : '🚚 $currentDelivered/$requiredItems';
+    final barText = isCompleted ? 'SEVKİYAT HAZIR' : 'HEDEF: $currentDelivered/$requiredItems';
     final span = TextSpan(
       text: barText,
       style: const TextStyle(
         color: NeoTheme.inkBlack,
         fontSize: 9,
         fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
       ),
     );
     final tp = TextPainter(text: span, textDirection: TextDirection.ltr);

@@ -40,7 +40,7 @@ class FloatingTextComponent extends PositionComponent {
         color: color.withValues(alpha: opacity),
         fontSize: 16,
         fontWeight: FontWeight.w900,
-        fontFamily: 'Roboto',
+        fontFamily: 'sans-serif',
         shadows: [
           Shadow(
             color: borderColor.withValues(alpha: opacity),
