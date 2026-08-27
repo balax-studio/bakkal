@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
@@ -27,42 +28,90 @@ class HUDOverlay extends StatelessWidget {
     return SafeArea(
       child: Stack(
         children: [
-          // 1. TOP BAR (Cash, Gems, Level, 2X Boost, Daily Streak)
+          // 1. TOP BAR (Cash, Gems, Level, 2X Boost, Daily Streak, Web Test Add Money)
           Positioned(
             top: 12,
             left: 16,
             right: 16,
             child: Row(
               children: [
-                // Cash Counter
+                // Cash Counter (Clickable to add test money on Web)
                 ValueListenableBuilder<int>(
                   valueListenable: game.cashNotifier,
                   builder: (context, cash, _) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    return GestureDetector(
+                      onTap: () {
+                        if (kIsWeb) {
+                          HapticService.heavy();
+                          SoundService.playCashCollect();
+                          game.playerData.cash += 500;
+                          game.notifyStateChanged();
+                          game.saveGame();
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: NeoTheme.neoCardDecoration(
+                          color: Colors.white,
+                          radius: 10,
+                          shadow: 3,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const NeoIcon(NeoIconType.cash, size: 18),
+                            const SizedBox(width: 6),
+                            Text(
+                              '\$$cash',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w900,
+                                color: NeoTheme.inkBlack,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                // Web-Only Test Money Button
+                if (kIsWeb) ...[
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      HapticService.heavy();
+                      SoundService.playCashCollect();
+                      game.playerData.cash += 500;
+                      game.notifyStateChanged();
+                      game.saveGame();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: NeoTheme.neoCardDecoration(
-                        color: Colors.white,
+                        color: NeoTheme.cashGreen,
                         radius: 10,
                         shadow: 3,
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const NeoIcon(NeoIconType.cash, size: 18),
-                          const SizedBox(width: 6),
+                          NeoIcon(NeoIconType.cash, size: 16),
+                          SizedBox(width: 5),
                           Text(
-                            '\$$cash',
-                            style: const TextStyle(
-                              fontSize: 15,
+                            r'+$500 TEST',
+                            style: TextStyle(
+                              fontSize: 11,
                               fontWeight: FontWeight.w900,
                               color: NeoTheme.inkBlack,
                             ),
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
 
                 const SizedBox(width: 8),
 
