@@ -330,8 +330,8 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   void update(double dt) {
     super.update(dt);
 
-    // 1. Keyboard Input Handling
-    _updateKeyboardDirection();
+    // 1. Movement Input Handling
+    _updateMovementDirection();
 
     // 2. Customer Spawner
     customerSpawnTimer += dt;
@@ -402,20 +402,22 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     SaveService.savePlayerData(playerData);
   }
 
+  Vector2 virtualJoystickDirection = Vector2.zero();
+
   void setJoystickVector(Vector2 vec) {
-    joystickDirection = vec;
+    virtualJoystickDirection = vec;
+    _updateMovementDirection();
   }
 
   @override
   KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     _pressedKeys.clear();
     _pressedKeys.addAll(keysPressed);
+    _updateMovementDirection();
     return KeyEventResult.handled;
   }
 
-  void _updateKeyboardDirection() {
-    if (_pressedKeys.isEmpty) return;
-
+  void _updateMovementDirection() {
     Vector2 dir = Vector2.zero();
     if (_pressedKeys.contains(LogicalKeyboardKey.keyW) || _pressedKeys.contains(LogicalKeyboardKey.arrowUp)) {
       dir.y -= 1;
@@ -430,7 +432,9 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       dir.x += 1;
     }
 
-    if (dir.length > 0) {
+    if (virtualJoystickDirection.length > 0.05) {
+      joystickDirection = virtualJoystickDirection;
+    } else if (dir.length > 0) {
       joystickDirection = dir.normalized();
     } else {
       joystickDirection = Vector2.zero();
