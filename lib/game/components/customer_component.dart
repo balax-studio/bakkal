@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../domain/models/game_models.dart';
+import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
 import 'cashier_component.dart';
 import 'shelf_component.dart';
@@ -29,7 +30,7 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
 
   double actionTimer = 0.0;
   double walkCycle = 0.0;
-  final double moveSpeed = 110.0;
+  final double moveSpeed = 105.0;
 
   CustomerComponent({
     required Vector2 spawnPosition,
@@ -37,10 +38,11 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
     required this.shirtColor,
   }) : super(
           position: spawnPosition,
-          size: Vector2(36, 36),
+          size: Vector2(40, 40),
           anchor: Anchor.center,
-          priority: 80,
-        );
+        ) {
+    priority = IsometricMath.calculatePriority(position.x, position.y);
+  }
 
   @override
   void update(double dt) {
@@ -67,6 +69,8 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
         _handleLeavingStore(dt);
         break;
     }
+
+    priority = IsometricMath.calculatePriority(position.x, position.y);
   }
 
   void _handleWalkingToShelf(double dt) {
@@ -80,14 +84,26 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
       }
     }
 
-    final shelfStandPos = targetShelf!.position + Vector2(0, 45);
+    final shelfStandPos = targetShelf!.position + Vector2(0, 42);
     final diff = shelfStandPos - position;
-    if (diff.length < 10.0) {
-      position = shelfStandPos;
+    if (diff.length < 12.0) {
+      position.setFrom(shelfStandPos);
       state = CustomerState.shoppingAtShelf;
       actionTimer = 0.0;
     } else {
-      position.add(diff.normalized() * moveSpeed * dt);
+      final vel = diff.normalized() * moveSpeed;
+      position.setFrom(
+        game.physicsWorld.resolveMovement(
+          currentPos: position,
+          velocity: vel,
+          dt: dt,
+          radius: 14.0,
+          worldMinX: 60.0,
+          worldMaxX: game.worldWidth - 60.0,
+          worldMinY: 160.0,
+          worldMaxY: game.worldHeight - 80.0,
+        ),
+      );
     }
   }
 
@@ -122,11 +138,23 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
 
     final queuePos = _calculateQueuePosition();
     final diff = queuePos - position;
-    if (diff.length < 10.0) {
-      position = queuePos;
+    if (diff.length < 12.0) {
+      position.setFrom(queuePos);
       state = CustomerState.waitingInQueue;
     } else {
-      position.add(diff.normalized() * moveSpeed * dt);
+      final vel = diff.normalized() * moveSpeed;
+      position.setFrom(
+        game.physicsWorld.resolveMovement(
+          currentPos: position,
+          velocity: vel,
+          dt: dt,
+          radius: 14.0,
+          worldMinX: 60.0,
+          worldMaxX: game.worldWidth - 60.0,
+          worldMinY: 160.0,
+          worldMaxY: game.worldHeight - 80.0,
+        ),
+      );
     }
   }
 
@@ -134,7 +162,8 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
     final queuePos = _calculateQueuePosition();
     final diff = queuePos - position;
     if (diff.length > 5.0) {
-      position.add(diff.normalized() * moveSpeed * dt);
+      final vel = diff.normalized() * moveSpeed;
+      position.add(vel * dt);
     }
 
     if (queueIndex == 0 && targetCashier != null && targetCashier!.isCashierPresent) {
@@ -164,74 +193,70 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
   }
 
   void _handleLeavingStore(double dt) {
-    final exitDoor = game.entrancePosition + Vector2(-60, 0);
+    final exitDoor = game.entrancePosition + Vector2(0, 20);
     final diff = exitDoor - position;
-    if (diff.length < 15.0) {
+    if (diff.length < 18.0) {
       game.removeCustomer(this);
       removeFromParent();
     } else {
-      position.add(diff.normalized() * moveSpeed * dt);
+      final vel = diff.normalized() * moveSpeed;
+      position.add(vel * dt);
     }
   }
 
   Vector2 _calculateQueuePosition() {
     if (targetCashier == null) return position;
-    final queueStart = targetCashier!.position + Vector2(-55, 0);
-    return queueStart + Vector2(-36.0 * queueIndex, 0);
+    final queueStart = targetCashier!.customerQueueStart;
+    return queueStart + Vector2(-32.0 * queueIndex, 0);
   }
 
   @override
   void render(Canvas canvas) {
-    // 1. Shadow
+    final cx = size.x * 0.5;
+    final cy = size.y * 0.5;
+
+    // 1. 2.5D Isometric Ground Shadow
     canvas.drawOval(
-      Rect.fromCenter(center: const Offset(18, 34), width: 28, height: 12),
-      Paint()..color = NeoTheme.shadowBlack,
+      Rect.fromCenter(center: Offset(cx, cy + 14), width: 30, height: 14),
+      NeoTheme.shadowPaint,
     );
 
-    // 2. Body / Shirt
-    final bodyRect = Rect.fromCenter(center: const Offset(18, 22), width: 22, height: 18);
+    // 2. Torso / Shirt
+    final bodyRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 22, height: 18);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(bodyRect, const Radius.circular(4)),
       fillPaint: NeoTheme.fill(shirtColor),
-      strokePaint: NeoTheme.stroke(width: 2.5),
+      strokePaint: NeoTheme.stroke(width: 2.2),
       shadowOffset: 2.0,
     );
 
     // 3. Head
-    final headRect = Rect.fromCenter(center: const Offset(18, 10), width: 18, height: 16);
+    final headRect = Rect.fromCenter(center: Offset(cx, cy - 10), width: 18, height: 16);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(headRect, const Radius.circular(4)),
       fillPaint: NeoTheme.fill(const Color(0xFFFFE0B2)),
-      strokePaint: NeoTheme.stroke(width: 2.5),
+      strokePaint: NeoTheme.stroke(width: 2.2),
       shadowOffset: 1.5,
     );
 
-    // 4. Shopping Basket / Bag
+    // 4. 2.5D Isometric Shopping Basket
     if (shoppingBasket.isNotEmpty) {
-      final basketRect = Rect.fromCenter(center: const Offset(28, 24), width: 14, height: 12);
+      final basketRect = Rect.fromCenter(center: Offset(cx + 14, cy + 6), width: 15, height: 12);
       NeoTheme.drawNeoRRect(
         canvas,
         RRect.fromRectAndRadius(basketRect, const Radius.circular(2)),
-        fillPaint: NeoTheme.fill(NeoTheme.goldCoin),
-        strokePaint: NeoTheme.stroke(width: 1.5),
-        shadowOffset: 1.0,
+        fillPaint: NeoTheme.fill(const Color(0xFFFFB703)),
+        strokePaint: NeoTheme.stroke(width: 1.8),
+        shadowOffset: 1.5,
       );
 
-      // Draw mini colored product cube inside basket
-      final miniCube = Rect.fromCenter(
-        center: const Offset(18, -8),
-        width: 8,
-        height: 8,
-      );
-      NeoTheme.drawNeoRRect(
-        canvas,
-        RRect.fromRectAndRadius(miniCube, const Radius.circular(2)),
-        fillPaint: NeoTheme.fill(shoppingBasket.first.type.color),
-        strokePaint: NeoTheme.stroke(width: 1.0),
-        shadowOffset: 0,
-      );
+      // 2.5D item in basket
+      final topItem = shoppingBasket.last;
+      final miniItemRect = Rect.fromCenter(center: Offset(cx + 14, cy + 2), width: 8, height: 8);
+      canvas.drawRect(miniItemRect, Paint()..color = topItem.type.color);
+      canvas.drawRect(miniItemRect, NeoTheme.stroke(width: 1.2));
     }
   }
 }

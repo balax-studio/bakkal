@@ -4,7 +4,9 @@ import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../domain/models/game_models.dart';
+import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
+import '../physics/collision_system.dart';
 import 'effects_component.dart';
 
 class TruckComponent extends PositionComponent with HasGameReference<MiniMartGame> {
@@ -13,17 +15,43 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
   double deliverCooldown = 0.0;
   bool isCompleted = false;
 
+  late final SolidBox solidCollider;
+
   TruckComponent({
     required Vector2 position,
     this.requiredItems = 25,
   }) : super(
           position: position,
-          size: Vector2(130, 90),
+          size: Vector2(140, 100),
           anchor: Anchor.center,
-          priority: 45,
-        );
+        ) {
+    priority = IsometricMath.calculatePriority(position.x, position.y);
+
+    // Solid obstacle bounds for physics collision
+    solidCollider = SolidBox(
+      id: 'truck_loading_bay',
+      bounds: Rect.fromCenter(
+        center: Offset(position.x, position.y + 4),
+        width: 110,
+        height: 60,
+      ),
+      label: 'Delivery Truck',
+    );
+  }
 
   double get progress => (currentDelivered / requiredItems).clamp(0.0, 1.0);
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    game.physicsWorld.addObstacle(solidCollider);
+  }
+
+  @override
+  void onRemove() {
+    game.physicsWorld.removeObstacle('truck_loading_bay');
+    super.onRemove();
+  }
 
   @override
   void update(double dt) {
@@ -31,11 +59,10 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
 
     if (isCompleted) return;
 
-    // Check player proximity to load truck
     final player = game.player;
     final dist = (player.position - position).length;
 
-    if (dist < 75.0 && player.carriedItems.isNotEmpty) {
+    if (dist < 80.0 && player.carriedItems.isNotEmpty) {
       deliverCooldown -= dt;
       if (deliverCooldown <= 0) {
         deliverCooldown = 0.12;
@@ -45,7 +72,6 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
           SoundService.playStockShelf();
           HapticService.light();
 
-          // Reward instant cash for delivery
           game.playerData.cash += (item.type.basePrice * 1.5).round();
           game.notifyStateChanged();
 
@@ -62,7 +88,6 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
     SoundService.playLevelUp();
     HapticService.heavy();
 
-    // Massive confetti explosion
     game.world.add(
       ParticleBurstComponent(
         position: position,
@@ -80,65 +105,80 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
 
     game.world.add(
       FloatingTextComponent(
-        text: 'MARKET TAMAMLANDI! 🚚🎉',
+        text: 'MARKET TAMAMLANDI!',
         position: position - Vector2(0, 50),
         color: NeoTheme.goldCoin,
       ),
     );
 
-    // Notify Game to show Level Transition Modal
     game.onLevelGoalCompleted();
   }
 
   @override
   void render(Canvas canvas) {
+    final cx = size.x * 0.5;
+    final cy = size.y * 0.5 + 4;
+    const w = 110.0;
+    const h = 54.0;
+    const depth = 28.0;
+
     // 1. Shadow
-    final shadowRect = Rect.fromCenter(center: const Offset(65, 52), width: 124, height: 74);
-    canvas.drawRect(shadowRect, Paint()..color = NeoTheme.shadowBlack);
+    final shadowPath = Path()
+      ..moveTo(cx, cy - h * 0.5 + 4)
+      ..lineTo(cx + w * 0.5 + 8, cy + 4)
+      ..lineTo(cx, cy + h * 0.5 + depth + 6)
+      ..lineTo(cx - w * 0.5 - 8, cy + depth + 6)
+      ..close();
+    canvas.drawPath(shadowPath, NeoTheme.shadowPaint);
 
-    // 2. Truck Cargo Container (Neo-Brutalist Bold Box)
-    final cargoRect = Rect.fromCenter(center: const Offset(45, 42), width: 78, height: 64);
+    // 2. Cargo Container - Front-Left Extrusion
+    final leftSidePath = Path()
+      ..moveTo(cx - w * 0.5, cy)
+      ..lineTo(cx, cy + h * 0.5)
+      ..lineTo(cx, cy + h * 0.5 + depth)
+      ..lineTo(cx - w * 0.5, cy + depth)
+      ..close();
+    canvas.drawPath(leftSidePath, Paint()..color = const Color(0xFF0096C7));
+    canvas.drawPath(leftSidePath, NeoTheme.stroke(width: 3.0));
+
+    // Cargo Container - Front-Right Extrusion
+    final rightSidePath = Path()
+      ..moveTo(cx, cy + h * 0.5)
+      ..lineTo(cx + w * 0.5, cy)
+      ..lineTo(cx + w * 0.5, cy + depth)
+      ..lineTo(cx, cy + h * 0.5 + depth)
+      ..close();
+    canvas.drawPath(rightSidePath, Paint()..color = const Color(0xFF0077B6));
+    canvas.drawPath(rightSidePath, NeoTheme.stroke(width: 3.0));
+
+    // Cargo Container - Top Roof
+    final topPath = Path()
+      ..moveTo(cx, cy - h * 0.5)
+      ..lineTo(cx + w * 0.5, cy)
+      ..lineTo(cx, cy + h * 0.5)
+      ..lineTo(cx - w * 0.5, cy)
+      ..close();
+    canvas.drawPath(topPath, Paint()..color = NeoTheme.boostCyan);
+    canvas.drawPath(topPath, NeoTheme.stroke(width: 3.0));
+
+    // Truck Cabin Accent
+    final cabinFront = Rect.fromCenter(center: Offset(cx + 34, cy + 8), width: 26, height: 22);
     NeoTheme.drawNeoRRect(
       canvas,
-      RRect.fromRectAndRadius(cargoRect, const Radius.circular(6)),
-      fillPaint: NeoTheme.fill(NeoTheme.boostCyan),
-      strokePaint: NeoTheme.stroke(width: 3.0),
-      shadowOffset: 0,
-    );
-
-    // Cargo Ridges / Striping
-    for (int i = 0; i < 4; i++) {
-      final lineX = 18.0 + (i * 18.0);
-      canvas.drawLine(
-        Offset(lineX, 14),
-        Offset(lineX, 70),
-        NeoTheme.stroke(width: 2.0, color: const Color(0xFF00B4D8)),
-      );
-    }
-
-    // 3. Truck Cabin
-    final cabinRect = Rect.fromCenter(center: const Offset(102, 42), width: 36, height: 52);
-    NeoTheme.drawNeoRRect(
-      canvas,
-      RRect.fromRectAndRadius(cabinRect, const Radius.circular(6)),
+      RRect.fromRectAndRadius(cabinFront, const Radius.circular(4)),
       fillPaint: NeoTheme.fill(NeoTheme.tomatoRed),
-      strokePaint: NeoTheme.stroke(width: 3.0),
-      shadowOffset: 0,
+      strokePaint: NeoTheme.stroke(width: 2.0),
+      shadowOffset: 2.0,
     );
 
     // Windshield
-    final windshieldRect = Rect.fromCenter(center: const Offset(105, 30), width: 22, height: 20);
-    canvas.drawRect(windshieldRect, Paint()..color = Colors.white);
-    canvas.drawRect(windshieldRect, NeoTheme.stroke(width: 2.0));
+    canvas.drawRect(
+      Rect.fromCenter(center: Offset(cx + 34, cy + 4), width: 18, height: 8),
+      Paint()..color = Colors.white,
+    );
 
-    // Wheels
-    final wheelPaint = Paint()..color = NeoTheme.inkBlack;
-    canvas.drawCircle(const Offset(25, 78), 10, wheelPaint);
-    canvas.drawCircle(const Offset(70, 78), 10, wheelPaint);
-    canvas.drawCircle(const Offset(105, 78), 10, wheelPaint);
-
-    // 4. Delivery Progress Bar & Badge
-    final barBgRect = Rect.fromCenter(center: const Offset(65, -8), width: 110, height: 16);
+    // 3. Progress Bar & Goal Pill
+    final barBgRect = Rect.fromCenter(center: Offset(cx, cy - h * 0.5 - 12), width: 110, height: 16);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(barBgRect, const Radius.circular(4)),
@@ -147,10 +187,9 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
       shadowOffset: 2.0,
     );
 
-    // Fill bar
     if (progress > 0) {
       final fillWidth = 106.0 * progress;
-      final fillRect = Rect.fromLTWH(12, -14, fillWidth, 12);
+      final fillRect = Rect.fromLTWH(cx - 53, cy - h * 0.5 - 18, fillWidth, 12);
       canvas.drawRect(
         fillRect,
         Paint()..color = isCompleted ? NeoTheme.cashGreen : NeoTheme.goldCoin,
@@ -169,6 +208,6 @@ class TruckComponent extends PositionComponent with HasGameReference<MiniMartGam
     );
     final tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
-    tp.paint(canvas, Offset(65 - tp.width / 2, -14));
+    tp.paint(canvas, Offset(cx - tp.width / 2, cy - h * 0.5 - 12 - tp.height / 2));
   }
 }

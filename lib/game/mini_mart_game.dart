@@ -16,10 +16,12 @@ import 'components/shelf_component.dart';
 import 'components/truck_component.dart';
 import 'components/unlock_pad_component.dart';
 import 'components/worker_component.dart';
+import 'physics/collision_system.dart';
 
 class MiniMartGame extends FlameGame with KeyboardEvents {
   final PlayerData playerData;
   final AdService adService = AdService.instance;
+  final PhysicsWorld physicsWorld = PhysicsWorld();
 
   // Reactive State Notifiers for Flutter UI Overlays
   final ValueNotifier<int> cashNotifier = ValueNotifier<int>(0);
@@ -31,8 +33,9 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   final double worldWidth = 650.0;
   final double worldHeight = 900.0;
 
-  // Joystick direction (updated via Virtual Joystick or Keyboard)
+  // Joystick direction
   Vector2 joystickDirection = Vector2.zero();
+  Vector2 virtualJoystickDirection = Vector2.zero();
   final Set<LogicalKeyboardKey> _pressedKeys = {};
 
   // Core entities
@@ -46,7 +49,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   TruckComponent? truck;
 
   // Customer Spawning
-  final Vector2 entrancePosition = Vector2(325, 840);
+  final Vector2 entrancePosition = Vector2(325, 830);
   double customerSpawnTimer = 0.0;
   final double customerSpawnInterval = 3.5;
   final int maxCustomers = 5;
@@ -54,7 +57,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   MiniMartGame({required this.playerData});
 
   @override
-  Color backgroundColor() => NeoTheme.bgCanvas;
+  Color backgroundColor() => const Color(0xFF5AB9EA); // Neo-Brutalist Sky Blue Canvas (like reference image)
 
   @override
   Future<void> onLoad() async {
@@ -73,18 +76,21 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 
   void _buildMarketLevel() {
-    // Clear any existing entities
     final componentsToRemove = world.children.whereType<Component>().toList();
     for (final c in componentsToRemove) {
       c.removeFromParent();
     }
+    physicsWorld.clear();
     fields.clear();
     shelves.clear();
     customers.clear();
     workers.clear();
     unlockPads.clear();
 
-    // 0. Store Floor (World coordinates, lowest priority)
+    // Register 2.5D Solid Perimeter Walls in Physics Engine (prevents walking out of map)
+    _registerPerimeterWalls();
+
+    // 0. 2.5D Isometric Store Floor & Cutaway Walls
     world.add(
       StoreFloorComponent(
         worldWidth: worldWidth,
@@ -94,14 +100,14 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     );
 
     // 1. Player Spawning
-    player = PlayerComponent(position: Vector2(325, 600));
+    player = PlayerComponent(position: Vector2(325, 580));
     world.add(player);
 
     // 2. Cashier Counter
-    cashier = CashierComponent(id: 'cashier_1', position: Vector2(325, 720));
+    cashier = CashierComponent(id: 'cashier_1', position: Vector2(325, 710));
     world.add(cashier);
 
-    // 3. Delivery Truck (Market milestone)
+    // 3. Delivery Truck
     truck = TruckComponent(position: Vector2(325, 120), requiredItems: 25);
     world.add(truck!);
 
@@ -118,81 +124,135 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     _spawnExistingWorkers();
   }
 
+  void _registerPerimeterWalls() {
+    // Top boundary wall behind truck and garden
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_top_left',
+        bounds: const Rect.fromLTWH(40, 60, 200, 40),
+        label: 'Top Left Wall',
+      ),
+    );
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_top_right',
+        bounds: const Rect.fromLTWH(410, 60, 200, 40),
+        label: 'Top Right Wall',
+      ),
+    );
+
+    // Left outer cutaway wall
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_left',
+        bounds: Rect.fromLTWH(30, 80, 24, worldHeight - 160),
+        label: 'Left Wall',
+      ),
+    );
+
+    // Right outer cutaway wall
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_right',
+        bounds: Rect.fromLTWH(worldWidth - 54, 80, 24, worldHeight - 160),
+        label: 'Right Wall',
+      ),
+    );
+
+    // Bottom left wall
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_bottom_left',
+        bounds: Rect.fromLTWH(40, worldHeight - 60, 200, 30),
+        label: 'Bottom Left Wall',
+      ),
+    );
+
+    // Bottom right wall
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_bottom_right',
+        bounds: Rect.fromLTWH(410, worldHeight - 60, 200, 30),
+        label: 'Bottom Right Wall',
+      ),
+    );
+  }
+
   void _setupMarket1OrganikManav() {
-    // Tomato Field 1 (Always unlocked at start)
+    // Tomato Field 1
     final fieldTomato1 = ProduceFieldComponent(
       id: 'field_tomato_1',
       productType: ProductType.tomato,
-      position: Vector2(160, 320),
+      position: Vector2(170, 300),
     );
     fields.add(fieldTomato1);
     world.add(fieldTomato1);
 
-    // Tomato Shelf 1 (Unlocked at start)
+    // Tomato Shelf 1
     final shelfTomato1 = ShelfComponent(
       id: 'shelf_tomato_1',
       productType: ProductType.tomato,
-      position: Vector2(160, 520),
+      position: Vector2(170, 490),
     );
     shelves.add(shelfTomato1);
     world.add(shelfTomato1);
 
-    // Unlock Pad for Corn Field (Cost: $40)
+    // Unlock Pad for Corn Field ($40)
     _addUnlockPad(
       unlockId: 'field_corn_1',
       title: 'Mısır Tarlası',
       totalCost: 40,
-      position: Vector2(490, 320),
+      position: Vector2(480, 300),
       onUnlock: () {
         final f = ProduceFieldComponent(
           id: 'field_corn_1',
           productType: ProductType.corn,
-          position: Vector2(490, 320),
+          position: Vector2(480, 300),
         );
         fields.add(f);
         world.add(f);
       },
     );
 
-    // Unlock Pad for Corn Shelf (Cost: $60)
+    // Unlock Pad for Corn Shelf ($60)
     _addUnlockPad(
       unlockId: 'shelf_corn_1',
       title: 'Mısır Reyonu',
       totalCost: 60,
-      position: Vector2(490, 520),
+      position: Vector2(480, 490),
       onUnlock: () {
         final s = ShelfComponent(
           id: 'shelf_corn_1',
           productType: ProductType.corn,
-          position: Vector2(490, 520),
+          position: Vector2(480, 490),
         );
         shelves.add(s);
         world.add(s);
       },
     );
 
-    // Unlock Pad for Auto-Restocker Worker (Cost: $100)
+    // Unlock Pad for Auto-Restocker ($100)
     _addUnlockPad(
       unlockId: 'worker_restocker_1',
       title: 'Reyon Görevlisi',
       totalCost: 100,
-      position: Vector2(160, 720),
+      position: Vector2(170, 680),
       onUnlock: () {
         final w = WorkerComponent(
           role: WorkerRole.restocker,
-          spawnPosition: Vector2(160, 720),
+          spawnPosition: Vector2(170, 680),
         );
         workers.add(w);
         world.add(w);
       },
     );
 
-    // Unlock Pad for Auto-Cashier Worker (Cost: $150)
+    // Unlock Pad for Auto-Cashier ($150)
     _addUnlockPad(
       unlockId: 'worker_cashier_1',
       title: 'Otomatik Kasiyer',
       totalCost: 150,
-      position: Vector2(490, 720),
+      position: Vector2(480, 680),
       onUnlock: () {
         final w = WorkerComponent(
           role: WorkerRole.cashier,
@@ -205,89 +265,103 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 
   void _setupMarket2FirinKafe() {
-    // Bread Bakery Plot
     final fieldBread1 = ProduceFieldComponent(
       id: 'field_bread_1',
       productType: ProductType.bread,
-      position: Vector2(160, 320),
+      position: Vector2(170, 300),
     );
     fields.add(fieldBread1);
     world.add(fieldBread1);
 
-    // Bread Shelf
     final shelfBread1 = ShelfComponent(
       id: 'shelf_bread_1',
       productType: ProductType.bread,
-      position: Vector2(160, 520),
+      position: Vector2(170, 490),
     );
     shelves.add(shelfBread1);
     world.add(shelfBread1);
 
-    // Unlock Pad for Espresso Machine (Cost: $120)
     _addUnlockPad(
       unlockId: 'field_coffee_1',
       title: 'Espresso Barı',
       totalCost: 120,
-      position: Vector2(490, 320),
+      position: Vector2(480, 300),
       onUnlock: () {
         final f = ProduceFieldComponent(
           id: 'field_coffee_1',
           productType: ProductType.coffee,
-          position: Vector2(490, 320),
+          position: Vector2(480, 300),
         );
         fields.add(f);
         world.add(f);
       },
     );
 
-    // Unlock Pad for Coffee Shelf (Cost: $160)
     _addUnlockPad(
       unlockId: 'shelf_coffee_1',
       title: 'Kahve Reyonu',
       totalCost: 160,
-      position: Vector2(490, 520),
+      position: Vector2(480, 490),
       onUnlock: () {
         final s = ShelfComponent(
           id: 'shelf_coffee_1',
           productType: ProductType.coffee,
-          position: Vector2(490, 520),
+          position: Vector2(480, 490),
         );
         shelves.add(s);
         world.add(s);
       },
     );
-
-    // Workers for Market 2
-    _addUnlockPad(
-      unlockId: 'worker_restocker_2',
-      title: 'Fırın Çırağı',
-      totalCost: 200,
-      position: Vector2(160, 720),
-      onUnlock: () {
-        final w = WorkerComponent(
-          role: WorkerRole.restocker,
-          spawnPosition: Vector2(160, 720),
-        );
-        workers.add(w);
-        world.add(w);
-      },
-    );
   }
 
   void _setupMarket3MegaMart() {
-    // Multi-category mega market setup
-    final f1 = ProduceFieldComponent(id: 'field_tomato_3', productType: ProductType.tomato, position: Vector2(160, 260));
-    final f2 = ProduceFieldComponent(id: 'field_corn_3', productType: ProductType.corn, position: Vector2(490, 260));
-    final f3 = ProduceFieldComponent(id: 'field_bread_3', productType: ProductType.bread, position: Vector2(160, 420));
-    final f4 = ProduceFieldComponent(id: 'field_coffee_3', productType: ProductType.coffee, position: Vector2(490, 420));
+    final fieldMega1 = ProduceFieldComponent(
+      id: 'field_mega_1',
+      productType: ProductType.tomato,
+      position: Vector2(170, 300),
+    );
+    fields.add(fieldMega1);
+    world.add(fieldMega1);
 
-    fields.addAll([f1, f2, f3, f4]);
-    world.addAll([f1, f2, f3, f4]);
+    final shelfMega1 = ShelfComponent(
+      id: 'shelf_mega_1',
+      productType: ProductType.tomato,
+      position: Vector2(170, 490),
+    );
+    shelves.add(shelfMega1);
+    world.add(shelfMega1);
 
-    final s1 = ShelfComponent(id: 'shelf_tomato_3', productType: ProductType.tomato, position: Vector2(160, 560));
-    final s2 = ShelfComponent(id: 'shelf_bread_3', productType: ProductType.bread, position: Vector2(490, 560));
-    shelves.addAll([s1, s2]);
-    world.addAll([s1, s2]);
+    _addUnlockPad(
+      unlockId: 'field_mega_2',
+      title: 'Gurme Kahve Barı',
+      totalCost: 200,
+      position: Vector2(480, 300),
+      onUnlock: () {
+        final f = ProduceFieldComponent(
+          id: 'field_mega_2',
+          productType: ProductType.coffee,
+          position: Vector2(480, 300),
+        );
+        fields.add(f);
+        world.add(f);
+      },
+    );
+
+    _addUnlockPad(
+      unlockId: 'shelf_mega_2',
+      title: 'Kahve Reyonu',
+      totalCost: 250,
+      position: Vector2(480, 490),
+      onUnlock: () {
+        final s = ShelfComponent(
+          id: 'shelf_mega_2',
+          productType: ProductType.coffee,
+          position: Vector2(480, 490),
+        );
+        shelves.add(s);
+        world.add(s);
+      },
+    );
   }
 
   void _addUnlockPad({
@@ -298,24 +372,24 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     required VoidCallback onUnlock,
   }) {
     if (playerData.unlockedAreas.contains(unlockId)) {
-      // Already unlocked in previous session, execute builder directly
       onUnlock();
-    } else {
-      final pad = UnlockPadComponent(
-        unlockId: unlockId,
-        title: title,
-        totalCost: totalCost,
-        position: position,
-        onUnlocked: onUnlock,
-      );
-      unlockPads.add(pad);
-      world.add(pad);
+      return;
     }
+
+    final pad = UnlockPadComponent(
+      unlockId: unlockId,
+      title: title,
+      totalCost: totalCost,
+      position: position,
+      onUnlocked: onUnlock,
+    );
+    unlockPads.add(pad);
+    world.add(pad);
   }
 
   void _spawnExistingWorkers() {
     if (playerData.unlockedAreas.contains('worker_restocker_1')) {
-      final w = WorkerComponent(role: WorkerRole.restocker, spawnPosition: Vector2(160, 720));
+      final w = WorkerComponent(role: WorkerRole.restocker, spawnPosition: Vector2(170, 680));
       workers.add(w);
       world.add(w);
     }
@@ -335,34 +409,32 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     // 2. Customer Spawner
     customerSpawnTimer += dt;
-    if (customerSpawnTimer >= customerSpawnInterval) {
+    if (customerSpawnTimer >= customerSpawnInterval && customers.length < maxCustomers) {
       customerSpawnTimer = 0.0;
-      if (customers.length < maxCustomers && shelves.isNotEmpty) {
-        _spawnCustomer();
-      }
+      _spawnCustomer();
     }
 
-    // 3. Keep Customer Queue in Order
     _updateCustomerQueueIndices();
   }
 
   void _spawnCustomer() {
-    final rand = math.Random();
-    final desiredCount = 1 + rand.nextInt(2);
     final shirtColors = [
       NeoTheme.tomatoRed,
       NeoTheme.cornYellow,
       NeoTheme.purpleAccent,
-      NeoTheme.coralOrange,
-      const Color(0xFF06B6D4),
+      NeoTheme.boostCyan,
+      const Color(0xFFEC4899),
+      const Color(0xFF10B981),
     ];
-    final color = shirtColors[rand.nextInt(shirtColors.length)];
+    final randomColor = shirtColors[math.Random().nextInt(shirtColors.length)];
+    final itemCount = 1 + math.Random().nextInt(3);
 
     final customer = CustomerComponent(
-      spawnPosition: entrancePosition.clone(),
-      desiredItemCount: desiredCount,
-      shirtColor: color,
+      spawnPosition: entrancePosition + Vector2(0, 30),
+      desiredItemCount: itemCount,
+      shirtColor: randomColor,
     );
+
     customers.add(customer);
     world.add(customer);
   }
@@ -375,7 +447,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 
   void onCustomerServed(CustomerComponent customer) {
-    // Customer finished checkout and is exiting
+    // Served
   }
 
   void removeCustomer(CustomerComponent customer) {
@@ -401,8 +473,6 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   void saveGame() {
     SaveService.savePlayerData(playerData);
   }
-
-  Vector2 virtualJoystickDirection = Vector2.zero();
 
   void setJoystickVector(Vector2 vec) {
     virtualJoystickDirection = vec;
@@ -442,7 +512,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 }
 
-/// Renders the Neo-Brutalist Store Floor, Wall Border, and Grid inside the World coordinate space
+/// Renders the 2.5D Neo-Brutalist Cutaway Room Floor, Raised 2.5D Walls, and Isometric Details
 class StoreFloorComponent extends PositionComponent {
   final double worldWidth;
   final double worldHeight;
@@ -458,39 +528,92 @@ class StoreFloorComponent extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    // 1. Store Perimeter
-    final floorRect = Rect.fromLTWH(40, 40, worldWidth - 80, worldHeight - 80);
+    final storeRect = Rect.fromLTWH(50, 70, worldWidth - 100, worldHeight - 130);
+
+    // 1. Isometric Cutaway Floor Shadow
+    final shadowPath = Path()
+      ..addRRect(RRect.fromRectAndRadius(storeRect.shift(const Offset(8, 10)), const Radius.circular(20)));
+    canvas.drawPath(shadowPath, NeoTheme.shadowPaint);
+
+    // 2. 2.5D Raised Cutaway Back & Left Wall Extrusion
+    // Left Wall (Vertical 2.5D thickness)
+    final leftWallPath = Path()
+      ..moveTo(50, 70)
+      ..lineTo(50, worldHeight - 60)
+      ..lineTo(32, worldHeight - 75)
+      ..lineTo(32, 55)
+      ..close();
+    canvas.drawPath(leftWallPath, Paint()..color = const Color(0xFF1E293B));
+    canvas.drawPath(leftWallPath, NeoTheme.stroke(width: 3.0));
+
+    // Left Wall Top Rim (Lime Green Accent like in reference image)
+    final leftWallTopPath = Path()
+      ..moveTo(32, 55)
+      ..lineTo(50, 70)
+      ..lineTo(50, 78)
+      ..lineTo(32, 63)
+      ..close();
+    canvas.drawPath(leftWallTopPath, Paint()..color = const Color(0xFF84CC16));
+    canvas.drawPath(leftWallTopPath, NeoTheme.stroke(width: 2.0));
+
+    // Back Wall Extrusion
+    final backWallPath = Path()
+      ..moveTo(50, 70)
+      ..lineTo(worldWidth - 50, 70)
+      ..lineTo(worldWidth - 50, 45)
+      ..lineTo(32, 45)
+      ..close();
+    canvas.drawPath(backWallPath, Paint()..color = const Color(0xFF0F172A));
+    canvas.drawPath(backWallPath, NeoTheme.stroke(width: 3.0));
+
+    // Back Wall Top Rim
+    final backWallTopPath = Path()
+      ..moveTo(32, 45)
+      ..lineTo(worldWidth - 50, 45)
+      ..lineTo(worldWidth - 50, 52)
+      ..lineTo(32, 52)
+      ..close();
+    canvas.drawPath(backWallTopPath, Paint()..color = const Color(0xFF84CC16));
+    canvas.drawPath(backWallTopPath, NeoTheme.stroke(width: 2.0));
+
+    // 3. Store Interior Floor (Warm Crisp Cream Neo-Brutalist Surface)
     NeoTheme.drawNeoRRect(
       canvas,
-      RRect.fromRectAndRadius(floorRect, const Radius.circular(16)),
-      fillPaint: NeoTheme.fill(const Color(0xFFFAF7F2)),
+      RRect.fromRectAndRadius(storeRect, const Radius.circular(16)),
+      fillPaint: NeoTheme.fill(const Color(0xFFFBF8F3)),
       strokePaint: NeoTheme.stroke(width: 4.0, color: NeoTheme.inkBlack),
-      shadowOffset: 6.0,
-    );
-
-    // 2. Decorative 16-Bit Grid Dots on floor
-    final dotPaint = Paint()..color = NeoTheme.gridDot;
-    for (double x = 70; x < worldWidth - 70; x += 40) {
-      for (double y = 70; y < worldHeight - 70; y += 40) {
-        canvas.drawCircle(Offset(x, y), 2.5, dotPaint);
-      }
-    }
-
-    // 3. Entrance Doorway Marker (Bottom)
-    final doorRect = Rect.fromCenter(
-      center: Offset(entrancePosition.x, worldHeight - 40),
-      width: 120,
-      height: 16,
-    );
-    NeoTheme.drawNeoRRect(
-      canvas,
-      RRect.fromRectAndRadius(doorRect, const Radius.circular(4)),
-      fillPaint: NeoTheme.fill(NeoTheme.boostCyan),
-      strokePaint: NeoTheme.stroke(width: 2.5),
       shadowOffset: 0,
     );
 
-    const doorText = 'GIRIS / CIKIS';
+    // 4. Subtle Isometric 16-bit Tile Diamonds on Floor
+    final tilePaint = Paint()
+      ..color = const Color(0xFFE2D9CC)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+
+    for (double y = 110; y < worldHeight - 90; y += 45) {
+      for (double x = 85; x < worldWidth - 85; x += 45) {
+        // Draw tiny isometric floor cross/diamond
+        canvas.drawLine(Offset(x - 4, y), Offset(x + 4, y), tilePaint);
+        canvas.drawLine(Offset(x, y - 4), Offset(x, y + 4), tilePaint);
+      }
+    }
+
+    // 5. Entrance Gate Mat & Neo-Brutalist Border (Bottom)
+    final doorRect = Rect.fromCenter(
+      center: Offset(entrancePosition.x, worldHeight - 58),
+      width: 130,
+      height: 22,
+    );
+    NeoTheme.drawNeoRRect(
+      canvas,
+      RRect.fromRectAndRadius(doorRect, const Radius.circular(6)),
+      fillPaint: NeoTheme.fill(NeoTheme.boostCyan),
+      strokePaint: NeoTheme.stroke(width: 3.0),
+      shadowOffset: 2.0,
+    );
+
+    const doorText = 'GIRIS / CIKIS (BAKKAL)';
     final span = const TextSpan(
       text: doorText,
       style: TextStyle(
@@ -502,7 +625,6 @@ class StoreFloorComponent extends PositionComponent {
     );
     final tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
-    tp.paint(canvas, Offset(entrancePosition.x - tp.width / 2, worldHeight - 46));
+    tp.paint(canvas, Offset(entrancePosition.x - tp.width / 2, worldHeight - 64));
   }
 }
-

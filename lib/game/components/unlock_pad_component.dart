@@ -25,9 +25,9 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
     required this.onUnlocked,
   }) : super(
           position: position,
-          size: Vector2(90, 90),
+          size: Vector2(100, 70),
           anchor: Anchor.center,
-          priority: 30,
+          priority: 15, // Ground-level priority
         );
 
   int get remainingCost => totalCost - currentContributed;
@@ -38,14 +38,13 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
     super.update(dt);
     pulseTimer += dt * 4.0;
 
-    // Check if player is standing on the pad
     final player = game.player;
     final dist = (player.position - position).length;
 
-    if (dist < 50.0 && game.playerData.cash > 0 && remainingCost > 0) {
+    if (dist < 55.0 && game.playerData.cash > 0 && remainingCost > 0) {
       drainCooldown -= dt;
       if (drainCooldown <= 0) {
-        drainCooldown = 0.08; // Fast money intake
+        drainCooldown = 0.08;
 
         final transferAmount = math.min(5, math.min(game.playerData.cash, remainingCost));
         if (transferAmount > 0) {
@@ -55,7 +54,6 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
           SoundService.playHarvest();
           HapticService.light();
 
-          // If unlock completed!
           if (currentContributed >= totalCost) {
             _triggerUnlock();
           }
@@ -72,7 +70,6 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
     SoundService.playUnlock();
     HapticService.heavy();
 
-    // Spawn celebration particles
     game.world.add(
       ParticleBurstComponent(
         position: position,
@@ -101,25 +98,31 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
 
   @override
   void render(Canvas canvas) {
-    final scale = 1.0 + math.sin(pulseTimer) * 0.03;
+    final scale = 1.0 + math.sin(pulseTimer) * 0.04;
+    final cx = size.x * 0.5;
+    final cy = size.y * 0.5;
+    const w = 84.0;
+    const h = 48.0;
+
     canvas.save();
-    canvas.translate(45, 45);
+    canvas.translate(cx, cy);
     canvas.scale(scale);
 
-    // 1. Shadow
-    canvas.drawCircle(const Offset(3, 3), 42, Paint()..color = NeoTheme.shadowBlack);
+    // 1. Isometric Drop Shadow
+    final shadowOval = Rect.fromCenter(center: const Offset(3, 4), width: w, height: h);
+    canvas.drawOval(shadowOval, NeoTheme.shadowPaint);
 
-    // 2. Base Pad Circle
-    final basePaint = Paint()..color = const Color(0xFFF1F5F9);
-    canvas.drawCircle(Offset.zero, 42, basePaint);
+    // 2. Base Isometric Ground Oval
+    final baseOval = Rect.fromCenter(center: Offset.zero, width: w, height: h);
+    canvas.drawOval(baseOval, Paint()..color = const Color(0xFFFFFFFF));
 
-    // 3. Progress Arc (Fill Circle)
+    // 3. Progress Arc Fill
     if (progress > 0) {
       final fillPaint = Paint()
-        ..color = NeoTheme.cashGreen
+        ..color = NeoTheme.cashGreen.withValues(alpha: 0.85)
         ..style = PaintingStyle.fill;
       canvas.drawArc(
-        Rect.fromCircle(center: Offset.zero, radius: 42),
+        baseOval,
         -math.pi / 2,
         progress * 2 * math.pi,
         true,
@@ -127,9 +130,8 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
       );
     }
 
-    // 4. Outer Border
-    final borderPaint = NeoTheme.stroke(width: 3.5, color: NeoTheme.inkBlack);
-    canvas.drawCircle(Offset.zero, 42, borderPaint);
+    // 4. Neo-Brutalist Border
+    canvas.drawOval(baseOval, NeoTheme.stroke(width: 3.0, color: NeoTheme.inkBlack));
 
     // 5. Title & Remaining Cost Badge
     final titleSpan = TextSpan(
@@ -141,9 +143,9 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
         fontFamily: 'sans-serif',
       ),
     );
-    final tpTitle = TextPainter(text: titleSpan, textDirection: TextDirection.ltr);
-    tpTitle.layout();
-    tpTitle.paint(canvas, Offset(-tpTitle.width / 2, -16));
+    final titlePainter = TextPainter(text: titleSpan, textDirection: TextDirection.ltr);
+    titlePainter.layout();
+    titlePainter.paint(canvas, Offset(-titlePainter.width / 2, -14));
 
     final costSpan = TextSpan(
       text: '\$$remainingCost',
@@ -154,9 +156,9 @@ class UnlockPadComponent extends PositionComponent with HasGameReference<MiniMar
         fontFamily: 'sans-serif',
       ),
     );
-    final tpCost = TextPainter(text: costSpan, textDirection: TextDirection.ltr);
-    tpCost.layout();
-    tpCost.paint(canvas, Offset(-tpCost.width / 2, 2));
+    final costPainter = TextPainter(text: costSpan, textDirection: TextDirection.ltr);
+    costPainter.layout();
+    costPainter.paint(canvas, Offset(-costPainter.width / 2, 0));
 
     canvas.restore();
   }

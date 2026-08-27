@@ -8,6 +8,7 @@ class NeoTheme {
   static const Color inkBlack = Color(0xFF141419); // Bold border stroke
   static const Color hardShadow = Color(0xFF141419); // 45-degree hard drop shadow
   static const Color shadowBlack = Color(0x33000000); // Translucent ground shadow
+  static final Paint shadowPaint = Paint()..color = const Color(0x33000000);
 
   // Product & Object Colors
   static const Color tomatoRed = Color(0xFFFF2E55);

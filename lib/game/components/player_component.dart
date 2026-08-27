@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../domain/models/game_models.dart';
+import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
 
 class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGame> {
@@ -12,13 +13,16 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
   double walkCycleTimer = 0.0;
   double wobbleTimer = 0.0;
 
+  final double bodyRadius = 18.0;
+
   PlayerComponent({required Vector2 position})
       : super(
           position: position,
-          size: Vector2(48, 48),
+          size: Vector2(52, 52),
           anchor: Anchor.center,
-          priority: 100,
-        );
+        ) {
+    priority = IsometricMath.calculatePriority(position.x, position.y);
+  }
 
   int get currentCount => carriedItems.length;
   int get maxCapacity => game.playerData.maxCapacity;
@@ -27,7 +31,6 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
   bool canAddProduct(ProductType type) {
     if (isFull) return false;
     if (carriedItems.isEmpty) return true;
-    // Allow carrying matching products or single-category per trip for clarity
     return carriedItems.first.type == type;
   }
 
@@ -61,128 +64,140 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
       walkCycleTimer += dt * 12.0;
       wobbleTimer += dt * 8.0;
 
-      // Update position with game bounds clamping
-      position.add(velocity * dt);
-      position.x = position.x.clamp(60.0, game.worldWidth - 60.0);
-      position.y = position.y.clamp(60.0, game.worldHeight - 60.0);
+      // Solid collision resolution with independent axis wall sliding (physics engine)
+      final resolvedPos = game.physicsWorld.resolveMovement(
+        currentPos: position,
+        velocity: velocity,
+        dt: dt,
+        radius: bodyRadius,
+        worldMinX: 60.0,
+        worldMaxX: game.worldWidth - 60.0,
+        worldMinY: 160.0,
+        worldMaxY: game.worldHeight - 80.0,
+      );
+
+      position.setFrom(resolvedPos);
     } else {
       velocity = Vector2.zero();
       walkCycleTimer = 0.0;
     }
+
+    // Dynamic 2.5D Y-sorting priority
+    priority = IsometricMath.calculatePriority(position.x, position.y);
   }
 
   @override
   void render(Canvas canvas) {
     final isMoving = velocity.length > 0.1;
     final isBoosted = game.adService.is2xBoostActive.value;
+    final cx = size.x * 0.5;
+    final cy = size.y * 0.5;
 
     canvas.save();
 
-    // 1. Draw Ground Shadow (Hard 45-degree offset)
-    final shadowPaint = Paint()..color = NeoTheme.shadowBlack;
+    // 1. 2.5D Isometric Ground Shadow
+    final shadowPaint = NeoTheme.shadowPaint;
     canvas.drawOval(
-      Rect.fromCenter(center: const Offset(24, 44), width: 38, height: 16),
+      Rect.fromCenter(center: Offset(cx, cy + 18), width: 36, height: 16),
       shadowPaint,
     );
 
-    // 2. Animated Legs
-    final legSwing = isMoving ? math.sin(walkCycleTimer) * 6.0 : 0.0;
-    final legPaint = NeoTheme.fill(const Color(0xFF2C3E50));
-    final legStroke = NeoTheme.stroke(width: 2.5);
+    // 2. Animated 2.5D Legs
+    final legSwing = isMoving ? math.sin(walkCycleTimer) * 5.0 : 0.0;
+    final legPaint = NeoTheme.fill(const Color(0xFF1E293B));
+    final legStroke = NeoTheme.stroke(width: 2.2);
 
     // Left Leg
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(16, 38 + legSwing), width: 10, height: 16),
+        Rect.fromCenter(center: Offset(cx - 7, cy + 12 + legSwing), width: 9, height: 14),
         const Radius.circular(3),
       ),
       fillPaint: legPaint,
       strokePaint: legStroke,
-      shadowOffset: 2,
+      shadowOffset: 1.5,
     );
 
     // Right Leg
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(32, 38 - legSwing), width: 10, height: 16),
+        Rect.fromCenter(center: Offset(cx + 7, cy + 12 - legSwing), width: 9, height: 14),
         const Radius.circular(3),
       ),
       fillPaint: legPaint,
       strokePaint: legStroke,
-      shadowOffset: 2,
+      shadowOffset: 1.5,
     );
 
-    // 3. Torso / Body (Neo-Brutalist Vibrant Outfit)
-    final bodyColor = isBoosted ? NeoTheme.boostCyan : const Color(0xFF3B82F6);
-    final bodyRect = Rect.fromCenter(center: const Offset(24, 26), width: 28, height: 22);
+    // 3. Torso / Body (Vibrant Blue/Cyan Outfit)
+    final bodyColor = isBoosted ? NeoTheme.boostCyan : const Color(0xFF2563EB);
+    final bodyRect = Rect.fromCenter(center: Offset(cx, cy), width: 26, height: 20);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(bodyRect, const Radius.circular(6)),
       fillPaint: NeoTheme.fill(bodyColor),
-      strokePaint: NeoTheme.stroke(width: 3.0),
-      shadowOffset: 3.0,
+      strokePaint: NeoTheme.stroke(width: 2.8),
+      shadowOffset: 2.5,
     );
 
-    // Apron / Shirt Detail
-    final apronRect = Rect.fromCenter(center: const Offset(24, 28), width: 16, height: 16);
+    // White Work Apron Detail
+    final apronRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 14, height: 14);
     canvas.drawRect(apronRect, Paint()..color = Colors.white);
-    canvas.drawRect(apronRect, NeoTheme.stroke(width: 2.0));
+    canvas.drawRect(apronRect, NeoTheme.stroke(width: 1.8));
 
-    // 4. Head & Stylized Cap
-    final headRect = Rect.fromCenter(center: const Offset(24, 12), width: 22, height: 20);
+    // 4. Head & 2.5D Cap
+    final headRect = Rect.fromCenter(center: Offset(cx, cy - 14), width: 20, height: 18);
     NeoTheme.drawNeoRRect(
       canvas,
-      RRect.fromRectAndRadius(headRect, const Radius.circular(6)),
-      fillPaint: NeoTheme.fill(const Color(0xFFFFD1A4)), // Skin tone
-      strokePaint: NeoTheme.stroke(width: 3.0),
-      shadowOffset: 2.0,
-    );
-
-    // Cap / Visor
-    final capRect = Rect.fromCenter(center: const Offset(24, 5), width: 26, height: 10);
-    NeoTheme.drawNeoRRect(
-      canvas,
-      RRect.fromRectAndRadius(capRect, const Radius.circular(4)),
-      fillPaint: NeoTheme.fill(NeoTheme.tomatoRed),
+      RRect.fromRectAndRadius(headRect, const Radius.circular(5)),
+      fillPaint: NeoTheme.fill(const Color(0xFFFFD1A4)),
       strokePaint: NeoTheme.stroke(width: 2.5),
       shadowOffset: 2.0,
     );
 
-    // 5. Stacked Product Crates on Back (with inertia wobble)
-    _renderCarriedStack(canvas, isMoving);
+    // Red Shopkeeper Cap with Visor
+    final capRect = Rect.fromCenter(center: Offset(cx, cy - 20), width: 24, height: 9);
+    NeoTheme.drawNeoRRect(
+      canvas,
+      RRect.fromRectAndRadius(capRect, const Radius.circular(4)),
+      fillPaint: NeoTheme.fill(NeoTheme.tomatoRed),
+      strokePaint: NeoTheme.stroke(width: 2.2),
+      shadowOffset: 1.5,
+    );
 
-    // 6. Capacity Badge Over Head
-    _renderCapacityBadge(canvas);
+    // 5. Stacked 2.5D Product Crates on Back with wobble
+    _renderCarriedStack(canvas, isMoving, cx, cy);
+
+    // 6. Capacity Pill Badge Over Head
+    _renderCapacityBadge(canvas, cx, cy);
 
     canvas.restore();
   }
 
-  void _renderCarriedStack(Canvas canvas, bool isMoving) {
+  void _renderCarriedStack(Canvas canvas, bool isMoving, double cx, double cy) {
     if (carriedItems.isEmpty) return;
 
     final itemType = carriedItems.first.type;
     final stackHeight = carriedItems.length;
-
-    // Stack wobble angle based on movement inertia
-    final wobble = isMoving ? math.sin(wobbleTimer) * 0.12 : 0.0;
+    final wobble = isMoving ? math.sin(wobbleTimer) * 0.10 : 0.0;
 
     for (int i = 0; i < stackHeight; i++) {
       canvas.save();
-      final itemY = -8.0 - (i * 12.0);
-      final itemX = 24.0 + (i * wobble * 8.0);
+      final itemY = cy - 24.0 - (i * 11.0);
+      final itemX = cx + (i * wobble * 6.0);
 
       canvas.translate(itemX, itemY);
-      canvas.rotate(wobble * (i + 1) * 0.15);
+      canvas.rotate(wobble * (i + 1) * 0.12);
 
+      // 2.5D Isometric Mini Crate
       final crateRect = Rect.fromCenter(
         center: Offset.zero,
         width: 22,
-        height: 12,
+        height: 11,
       );
 
-      // Draw Low-Poly Crate
       NeoTheme.drawNeoRRect(
         canvas,
         RRect.fromRectAndRadius(crateRect, const Radius.circular(3)),
@@ -195,7 +210,7 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
     }
   }
 
-  void _renderCapacityBadge(Canvas canvas) {
+  void _renderCapacityBadge(Canvas canvas, double cx, double cy) {
     final isFullCapacity = isFull;
     final text = isFullCapacity
         ? 'DOLU ($currentCount/$maxCapacity)'
@@ -214,14 +229,13 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
     final tp = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     tp.layout();
 
-    final badgeY = -18.0 - (carriedItems.length * 12.0);
+    final badgeY = cy - 36.0 - (carriedItems.length * 11.0);
     final badgeRect = Rect.fromCenter(
-      center: Offset(24, badgeY),
+      center: Offset(cx, badgeY),
       width: tp.width + 14,
       height: 18,
     );
 
-    // Neo-Brutalist Pill
     final bgBadgeColor = isFullCapacity ? NeoTheme.tomatoRed : Colors.white;
     NeoTheme.drawNeoRRect(
       canvas,
@@ -231,6 +245,6 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
       shadowOffset: 2.0,
     );
 
-    tp.paint(canvas, Offset(24 - tp.width / 2, badgeY - tp.height / 2));
+    tp.paint(canvas, Offset(cx - tp.width / 2, badgeY - tp.height / 2));
   }
 }

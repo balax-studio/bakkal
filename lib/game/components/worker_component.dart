@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../domain/models/game_models.dart';
+import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
 import 'field_component.dart';
 import 'shelf_component.dart';
@@ -16,7 +17,7 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
   final WorkerRole role;
   final List<ProductItem> carriedItems = [];
   final int maxCapacity = 4;
-  final double moveSpeed = 130.0;
+  final double moveSpeed = 125.0;
 
   ProduceFieldComponent? targetField;
   ShelfComponent? targetShelf;
@@ -28,10 +29,11 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
     required Vector2 spawnPosition,
   }) : super(
           position: spawnPosition,
-          size: Vector2(38, 38),
+          size: Vector2(42, 42),
           anchor: Anchor.center,
-          priority: 85,
-        );
+        ) {
+    priority = IsometricMath.calculatePriority(position.x, position.y);
+  }
 
   @override
   void update(double dt) {
@@ -43,6 +45,8 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
     } else {
       _handleCashierLoop(dt);
     }
+
+    priority = IsometricMath.calculatePriority(position.x, position.y);
   }
 
   void _handleRestockerLoop(double dt) {
@@ -51,12 +55,12 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
       final fields = game.fields.where((f) => f.isMounted).toList();
       if (fields.isNotEmpty) {
         targetField ??= fields.first;
-        final diff = targetField!.position - position;
+        final standPos = targetField!.position + Vector2(0, 40);
+        final diff = standPos - position;
         if (diff.length < 15.0) {
-          // Harvest at field
           actionCooldown -= dt;
           if (actionCooldown <= 0) {
-            actionCooldown = 0.2;
+            actionCooldown = 0.18;
             for (int i = 0; i < targetField!.slotCount; i++) {
               if (targetField!.isRipe[i] && carriedItems.length < maxCapacity) {
                 targetField!.isRipe[i] = false;
@@ -68,7 +72,19 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
             }
           }
         } else {
-          position.add(diff.normalized() * moveSpeed * dt);
+          final vel = diff.normalized() * moveSpeed;
+          position.setFrom(
+            game.physicsWorld.resolveMovement(
+              currentPos: position,
+              velocity: vel,
+              dt: dt,
+              radius: 14.0,
+              worldMinX: 60.0,
+              worldMaxX: game.worldWidth - 60.0,
+              worldMinY: 160.0,
+              worldMaxY: game.worldHeight - 80.0,
+            ),
+          );
         }
       }
     } else {
@@ -76,12 +92,12 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
       final shelves = game.shelves.where((s) => s.isMounted && !s.isFull).toList();
       if (shelves.isNotEmpty) {
         targetShelf ??= shelves.first;
-        final diff = (targetShelf!.position + Vector2(0, 35)) - position;
+        final standPos = targetShelf!.position + Vector2(0, 38);
+        final diff = standPos - position;
         if (diff.length < 15.0) {
-          // Unload at shelf
           actionCooldown -= dt;
           if (actionCooldown <= 0) {
-            actionCooldown = 0.15;
+            actionCooldown = 0.14;
             if (carriedItems.isNotEmpty && !targetShelf!.isFull) {
               final item = carriedItems.removeLast();
               targetShelf!.storedItems.add(item);
@@ -92,76 +108,90 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
             }
           }
         } else {
-          position.add(diff.normalized() * moveSpeed * dt);
+          final vel = diff.normalized() * moveSpeed;
+          position.setFrom(
+            game.physicsWorld.resolveMovement(
+              currentPos: position,
+              velocity: vel,
+              dt: dt,
+              radius: 14.0,
+              worldMinX: 60.0,
+              worldMaxX: game.worldWidth - 60.0,
+              worldMinY: 160.0,
+              worldMaxY: game.worldHeight - 80.0,
+            ),
+          );
         }
       }
     }
   }
 
   void _handleCashierLoop(double dt) {
-    // Stay at the cash register station
     final standPos = game.cashier.cashierStandPosition;
     final diff = standPos - position;
-    if (diff.length > 5.0) {
-      position.add(diff.normalized() * moveSpeed * dt);
+    if (diff.length > 4.0) {
+      final vel = diff.normalized() * moveSpeed;
+      position.add(vel * dt);
     }
   }
 
   @override
   void render(Canvas canvas) {
-    // 1. Shadow
+    final cx = size.x * 0.5;
+    final cy = size.y * 0.5;
+
+    // 1. 2.5D Isometric Ground Shadow
     canvas.drawOval(
-      Rect.fromCenter(center: const Offset(19, 36), width: 30, height: 12),
-      Paint()..color = NeoTheme.shadowBlack,
+      Rect.fromCenter(center: Offset(cx, cy + 14), width: 30, height: 14),
+      NeoTheme.shadowPaint,
     );
 
     // 2. Uniform Body
     final bodyColor = role == WorkerRole.restocker ? NeoTheme.cornYellow : NeoTheme.purpleAccent;
-    final bodyRect = Rect.fromCenter(center: const Offset(19, 24), width: 24, height: 20);
+    final bodyRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 24, height: 20);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(bodyRect, const Radius.circular(5)),
       fillPaint: NeoTheme.fill(bodyColor),
-      strokePaint: NeoTheme.stroke(width: 2.5),
+      strokePaint: NeoTheme.stroke(width: 2.2),
       shadowOffset: 2.0,
     );
 
     // Apron badge
     canvas.drawRect(
-      Rect.fromCenter(center: const Offset(19, 25), width: 14, height: 12),
+      Rect.fromCenter(center: Offset(cx, cy + 3), width: 14, height: 12),
       Paint()..color = Colors.white,
     );
     canvas.drawRect(
-      Rect.fromCenter(center: const Offset(19, 25), width: 14, height: 12),
+      Rect.fromCenter(center: Offset(cx, cy + 3), width: 14, height: 12),
       NeoTheme.stroke(width: 1.5),
     );
 
     // 3. Head & Cap
-    final headRect = Rect.fromCenter(center: const Offset(19, 10), width: 18, height: 16);
+    final headRect = Rect.fromCenter(center: Offset(cx, cy - 10), width: 18, height: 16);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(headRect, const Radius.circular(4)),
       fillPaint: NeoTheme.fill(const Color(0xFFFFD1A4)),
-      strokePaint: NeoTheme.stroke(width: 2.5),
+      strokePaint: NeoTheme.stroke(width: 2.2),
       shadowOffset: 1.5,
     );
 
-    // Worker Cap
-    final capRect = Rect.fromCenter(center: const Offset(19, 4), width: 22, height: 8);
+    final capRect = Rect.fromCenter(center: Offset(cx, cy - 16), width: 22, height: 8);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(capRect, const Radius.circular(3)),
       fillPaint: NeoTheme.fill(bodyColor),
-      strokePaint: NeoTheme.stroke(width: 2.0),
+      strokePaint: NeoTheme.stroke(width: 1.8),
       shadowOffset: 1.5,
     );
 
-    // 4. Carried Stack
+    // 4. 2.5D Carried Crates Stack
     if (carriedItems.isNotEmpty) {
       for (int i = 0; i < carriedItems.length; i++) {
         final crateRect = Rect.fromCenter(
-          center: Offset(19, -4.0 - (i * 9.0)),
-          width: 18,
+          center: Offset(cx, cy - 24.0 - (i * 10.0)),
+          width: 20,
           height: 10,
         );
         NeoTheme.drawNeoRRect(
