@@ -84,6 +84,15 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     workers.clear();
     unlockPads.clear();
 
+    // 0. Store Floor (World coordinates, lowest priority)
+    world.add(
+      StoreFloorComponent(
+        worldWidth: worldWidth,
+        worldHeight: worldHeight,
+        entrancePosition: entrancePosition,
+      ),
+    );
+
     // 1. Player Spawning
     player = PlayerComponent(position: Vector2(325, 600));
     world.add(player);
@@ -427,16 +436,25 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       joystickDirection = Vector2.zero();
     }
   }
+}
+
+/// Renders the Neo-Brutalist Store Floor, Wall Border, and Grid inside the World coordinate space
+class StoreFloorComponent extends PositionComponent {
+  final double worldWidth;
+  final double worldHeight;
+  final Vector2 entrancePosition;
+
+  StoreFloorComponent({
+    required this.worldWidth,
+    required this.worldHeight,
+    required this.entrancePosition,
+  }) : super(priority: -100);
 
   @override
   void render(Canvas canvas) {
-    // 1. Draw Neo-Brutalist Floor & Grid
-    _renderStoreFloor(canvas);
     super.render(canvas);
-  }
 
-  void _renderStoreFloor(Canvas canvas) {
-    // Store Perimeter
+    // 1. Store Perimeter
     final floorRect = Rect.fromLTWH(40, 40, worldWidth - 80, worldHeight - 80);
     NeoTheme.drawNeoRRect(
       canvas,
@@ -446,7 +464,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       shadowOffset: 6.0,
     );
 
-    // Decorative 16-Bit Grid Dots on floor
+    // 2. Decorative 16-Bit Grid Dots on floor
     final dotPaint = Paint()..color = NeoTheme.gridDot;
     for (double x = 70; x < worldWidth - 70; x += 40) {
       for (double y = 70; y < worldHeight - 70; y += 40) {
@@ -454,8 +472,12 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       }
     }
 
-    // Entrance Doorway Marker (Bottom)
-    final doorRect = Rect.fromCenter(center: Offset(entrancePosition.x, worldHeight - 40), width: 120, height: 16);
+    // 3. Entrance Doorway Marker (Bottom)
+    final doorRect = Rect.fromCenter(
+      center: Offset(entrancePosition.x, worldHeight - 40),
+      width: 120,
+      height: 16,
+    );
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(doorRect, const Radius.circular(4)),
@@ -464,10 +486,10 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       shadowOffset: 0,
     );
 
-    final doorText = '🚪 GİRİŞ / ÇIKIŞ';
-    final span = TextSpan(
+    const doorText = '🚪 GİRİŞ / ÇIKIŞ';
+    final span = const TextSpan(
       text: doorText,
-      style: const TextStyle(
+      style: TextStyle(
         color: NeoTheme.inkBlack,
         fontSize: 9,
         fontWeight: FontWeight.w900,
@@ -478,3 +500,4 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     tp.paint(canvas, Offset(entrancePosition.x - tp.width / 2, worldHeight - 46));
   }
 }
+
