@@ -8,6 +8,7 @@ import '../core/theme/neo_theme.dart';
 import '../domain/models/game_models.dart';
 import '../services/ad_service.dart';
 import '../services/save_service.dart';
+import 'components/ambient_outdoor_component.dart';
 import 'components/cashier_component.dart';
 import 'components/customer_component.dart';
 import 'components/field_component.dart';
@@ -90,7 +91,10 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // Register 2.5D Solid Perimeter Walls in Physics Engine (prevents walking out of map)
     _registerPerimeterWalls();
 
-    // 0. 2.5D Isometric Store Floor & Cutaway Walls
+    // 0. Ambient Living Outdoors (Trees, Grass, Flowers, Fauna, Clouds)
+    world.add(AmbientOutdoorComponent());
+
+    // 1. 2.5D Isometric Store Floor & Cutaway Walls
     world.add(
       StoreFloorComponent(
         worldWidth: worldWidth,
