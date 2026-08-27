@@ -4,16 +4,22 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../core/audio/sound_service.dart';
 import '../core/theme/neo_theme.dart';
 import '../domain/models/game_models.dart';
 import '../services/ad_service.dart';
 import '../services/save_service.dart';
 import 'components/ambient_outdoor_component.dart';
+import 'components/animal_pen_component.dart';
 import 'components/cashier_component.dart';
+import 'components/courier_component.dart';
 import 'components/customer_component.dart';
+import 'components/dirt_puddle_component.dart';
 import 'components/field_component.dart';
 import 'components/player_component.dart';
+import 'components/processing_station_component.dart';
 import 'components/shelf_component.dart';
+import 'components/thief_component.dart';
 import 'components/truck_component.dart';
 import 'components/unlock_pad_component.dart';
 import 'components/worker_component.dart';
@@ -30,9 +36,9 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   final ValueNotifier<bool> showLevelCompleteModal = ValueNotifier<bool>(false);
   final ValueNotifier<bool> showUpgradesModal = ValueNotifier<bool>(false);
 
-  // World dimensions
-  final double worldWidth = 650.0;
-  final double worldHeight = 900.0;
+  // Dual-Zone World dimensions (1150 x 950)
+  final double worldWidth = 1150.0;
+  final double worldHeight = 950.0;
 
   // Joystick direction
   Vector2 joystickDirection = Vector2.zero();
@@ -48,17 +54,24 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   final List<WorkerComponent> workers = [];
   final List<UnlockPadComponent> unlockPads = [];
   TruckComponent? truck;
+  CourierComponent? courier;
 
-  // Customer Spawning
-  final Vector2 entrancePosition = Vector2(325, 830);
+  // Spawners & Timers
+  final Vector2 entrancePosition = Vector2(850, 870);
   double customerSpawnTimer = 0.0;
-  final double customerSpawnInterval = 3.5;
-  final int maxCustomers = 5;
+  final double customerSpawnInterval = 3.2;
+  final int maxCustomers = 6;
+
+  double thiefSpawnTimer = 0.0;
+  final double thiefSpawnInterval = 45.0;
+
+  double puddleSpawnTimer = 0.0;
+  final double puddleSpawnInterval = 18.0;
 
   MiniMartGame({required this.playerData});
 
   @override
-  Color backgroundColor() => const Color(0xFF5AB9EA); // Neo-Brutalist Sky Blue Canvas (like reference image)
+  Color backgroundColor() => const Color(0xFF5AB9EA); // Neo-Brutalist Sky Blue Canvas
 
   @override
   Future<void> onLoad() async {
@@ -72,7 +85,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     // 2. Setup Camera
     camera.viewfinder.anchor = Anchor.center;
-    camera.viewfinder.zoom = 1.0;
+    camera.viewfinder.zoom = 0.95;
     camera.follow(player);
   }
 
@@ -88,13 +101,13 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     workers.clear();
     unlockPads.clear();
 
-    // Register 2.5D Solid Perimeter Walls in Physics Engine (prevents walking out of map)
+    // Register 2.5D Solid Perimeter & Dividing Walls in Physics Engine
     _registerPerimeterWalls();
 
-    // 0. Ambient Living Outdoors (Trees, Grass, Flowers, Fauna, Clouds)
+    // 0. Ambient Living Outdoors (Trees, Grass, Flowers, Butterflies, Clouds)
     world.add(AmbientOutdoorComponent());
 
-    // 1. 2.5D Isometric Store Floor & Cutaway Walls
+    // 1. 2.5D Dual-Zone Store Floor & Walls
     world.add(
       StoreFloorComponent(
         worldWidth: worldWidth,
@@ -103,49 +116,43 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       ),
     );
 
-    // 1. Player Spawning
-    player = PlayerComponent(position: Vector2(325, 580));
+    // 2. Player Spawning (Center of market)
+    player = PlayerComponent(position: Vector2(750, 580));
     world.add(player);
 
-    // 2. Cashier Counter
-    cashier = CashierComponent(id: 'cashier_1', position: Vector2(325, 710));
+    // 3. Cashier Counter (Right Zone)
+    cashier = CashierComponent(id: 'cashier_1', position: Vector2(850, 750));
     world.add(cashier);
 
-    // 3. Delivery Truck
-    truck = TruckComponent(position: Vector2(325, 120), requiredItems: 25);
-    world.add(truck!);
+    // 4. Motorized Delivery Courier (Middle Top Dock)
+    courier = CourierComponent(position: Vector2(550, 130));
+    world.add(courier!);
 
     // Level-specific setups
-    final marketIdx = playerData.activeMarketIndex;
-    if (marketIdx == 0) {
-      _setupMarket1OrganikManav();
-    } else if (marketIdx == 1) {
-      _setupMarket2FirinKafe();
-    } else {
-      _setupMarket3MegaMart();
-    }
-
+    _setupLevel1MahalleBakkali();
     _spawnExistingWorkers();
   }
 
   void _registerPerimeterWalls() {
-    // Top boundary wall behind truck and garden
+    // Outer Top Left Wall (Farm Roof)
     physicsWorld.addObstacle(
       SolidBox(
         id: 'wall_top_left',
-        bounds: const Rect.fromLTWH(40, 60, 200, 40),
-        label: 'Top Left Wall',
-      ),
-    );
-    physicsWorld.addObstacle(
-      SolidBox(
-        id: 'wall_top_right',
-        bounds: const Rect.fromLTWH(410, 60, 200, 40),
-        label: 'Top Right Wall',
+        bounds: const Rect.fromLTWH(40, 60, 480, 40),
+        label: 'Top Left Farm Wall',
       ),
     );
 
-    // Left outer cutaway wall
+    // Outer Top Right Wall (Store Roof)
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_top_right',
+        bounds: Rect.fromLTWH(580, 60, worldWidth - 620, 40),
+        label: 'Top Right Store Wall',
+      ),
+    );
+
+    // Left Outer Wall
     physicsWorld.addObstacle(
       SolidBox(
         id: 'wall_left',
@@ -154,7 +161,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       ),
     );
 
-    // Right outer cutaway wall
+    // Right Outer Wall
     physicsWorld.addObstacle(
       SolidBox(
         id: 'wall_right',
@@ -163,204 +170,271 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
       ),
     );
 
-    // Bottom left wall
+    // Dividing Middle Wall Top Segment
     physicsWorld.addObstacle(
       SolidBox(
-        id: 'wall_bottom_left',
-        bounds: Rect.fromLTWH(40, worldHeight - 60, 200, 30),
-        label: 'Bottom Left Wall',
+        id: 'wall_mid_top',
+        bounds: const Rect.fromLTWH(535, 170, 20, 240),
+        label: 'Middle Dividing Wall Top',
       ),
     );
 
-    // Bottom right wall
+    // Dividing Middle Wall Bottom Segment (Leaves open archway in middle at y: 410-600)
     physicsWorld.addObstacle(
       SolidBox(
-        id: 'wall_bottom_right',
-        bounds: Rect.fromLTWH(410, worldHeight - 60, 200, 30),
-        label: 'Bottom Right Wall',
+        id: 'wall_mid_bottom',
+        bounds: Rect.fromLTWH(535, 600, 20, worldHeight - 680),
+        label: 'Middle Dividing Wall Bottom',
+      ),
+    );
+
+    // Bottom Farm Wall
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_bottom_farm',
+        bounds: Rect.fromLTWH(40, worldHeight - 60, 490, 30),
+        label: 'Bottom Farm Wall',
+      ),
+    );
+
+    // Bottom Store Wall (with entrance opening at 850)
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_bottom_store_left',
+        bounds: const Rect.fromLTWH(540, 890, 240, 30),
+        label: 'Bottom Store Left Wall',
+      ),
+    );
+    physicsWorld.addObstacle(
+      SolidBox(
+        id: 'wall_bottom_store_right',
+        bounds: Rect.fromLTWH(920, 890, worldWidth - 950, 30),
+        label: 'Bottom Store Right Wall',
       ),
     );
   }
 
-  void _setupMarket1OrganikManav() {
-    // Tomato Field 1
+  void _setupLevel1MahalleBakkali() {
+    // ==========================================
+    // SOL BÖLGE: TARIM, HAYVANCILIK & İMALATHANELER
+    // ==========================================
+
+    // 1. Domates Serası & Reyonu
     final fieldTomato1 = ProduceFieldComponent(
       id: 'field_tomato_1',
       productType: ProductType.tomato,
-      position: Vector2(170, 300),
+      position: Vector2(160, 240),
     );
     fields.add(fieldTomato1);
     world.add(fieldTomato1);
 
-    // Tomato Shelf 1
     final shelfTomato1 = ShelfComponent(
       id: 'shelf_tomato_1',
       productType: ProductType.tomato,
-      position: Vector2(170, 490),
+      position: Vector2(680, 240),
     );
     shelves.add(shelfTomato1);
     world.add(shelfTomato1);
 
-    // Unlock Pad for Corn Field ($40)
+    // 2. Mısır Tarlası ($30) & Mısır Reyonu ($40)
     _addUnlockPad(
       unlockId: 'field_corn_1',
-      title: 'Mısır Tarlası',
-      totalCost: 40,
-      position: Vector2(480, 300),
+      title: '🌽 Mısır Tarlası',
+      totalCost: 30,
+      position: Vector2(380, 240),
       onUnlock: () {
         final f = ProduceFieldComponent(
           id: 'field_corn_1',
           productType: ProductType.corn,
-          position: Vector2(480, 300),
+          position: Vector2(380, 240),
         );
         fields.add(f);
         world.add(f);
       },
     );
 
-    // Unlock Pad for Corn Shelf ($60)
     _addUnlockPad(
       unlockId: 'shelf_corn_1',
-      title: 'Mısır Reyonu',
-      totalCost: 60,
-      position: Vector2(480, 490),
+      title: '🌽 Mısır Reyonu',
+      totalCost: 40,
+      position: Vector2(860, 240),
       onUnlock: () {
         final s = ShelfComponent(
           id: 'shelf_corn_1',
           productType: ProductType.corn,
-          position: Vector2(480, 490),
+          position: Vector2(860, 240),
         );
         shelves.add(s);
         world.add(s);
       },
     );
 
-    // Unlock Pad for Auto-Restocker ($100)
+    // 3. Buğday Tarlası ($50) -> Değirmen/Fırın ($70) -> Ekmek Reyonu ($80)
     _addUnlockPad(
-      unlockId: 'worker_restocker_1',
-      title: 'Reyon Görevlisi',
-      totalCost: 100,
-      position: Vector2(170, 680),
+      unlockId: 'field_wheat_1',
+      title: '🌾 Buğday Tarlası',
+      totalCost: 50,
+      position: Vector2(160, 420),
       onUnlock: () {
-        final w = WorkerComponent(
-          role: WorkerRole.restocker,
-          spawnPosition: Vector2(170, 680),
+        final f = ProduceFieldComponent(
+          id: 'field_wheat_1',
+          productType: ProductType.wheat,
+          position: Vector2(160, 420),
         );
-        workers.add(w);
-        world.add(w);
+        fields.add(f);
+        world.add(f);
       },
     );
 
-    // Unlock Pad for Auto-Cashier ($150)
     _addUnlockPad(
-      unlockId: 'worker_cashier_1',
-      title: 'Otomatik Kasiyer',
-      totalCost: 150,
-      position: Vector2(480, 680),
+      unlockId: 'station_mill_1',
+      title: '🍞 Değirmen & Fırın',
+      totalCost: 70,
+      position: Vector2(380, 420),
       onUnlock: () {
-        final w = WorkerComponent(
-          role: WorkerRole.cashier,
-          spawnPosition: cashier.cashierStandPosition,
+        final station = ProcessingStationComponent(
+          id: 'station_mill_1',
+          title: '🍞 Fırın',
+          inputType: ProductType.wheat,
+          outputType: ProductType.bread,
+          position: Vector2(380, 420),
+          machineColor: const Color(0xFFD97706),
         );
-        workers.add(w);
-        world.add(w);
+        world.add(station);
       },
     );
-  }
-
-  void _setupMarket2FirinKafe() {
-    final fieldBread1 = ProduceFieldComponent(
-      id: 'field_bread_1',
-      productType: ProductType.bread,
-      position: Vector2(170, 300),
-    );
-    fields.add(fieldBread1);
-    world.add(fieldBread1);
-
-    final shelfBread1 = ShelfComponent(
-      id: 'shelf_bread_1',
-      productType: ProductType.bread,
-      position: Vector2(170, 490),
-    );
-    shelves.add(shelfBread1);
-    world.add(shelfBread1);
 
     _addUnlockPad(
-      unlockId: 'field_coffee_1',
-      title: 'Espresso Barı',
+      unlockId: 'shelf_bread_1',
+      title: '🍞 Somun Ekmek Reyonu',
+      totalCost: 80,
+      position: Vector2(1040, 240),
+      onUnlock: () {
+        final s = ShelfComponent(
+          id: 'shelf_bread_1',
+          productType: ProductType.bread,
+          position: Vector2(1040, 240),
+        );
+        shelves.add(s);
+        world.add(s);
+      },
+    );
+
+    // 4. İnek Ahırı ($90) -> Ayran Şelalesi ($110) -> Ayran Reyonu ($120)
+    _addUnlockPad(
+      unlockId: 'pen_cow_1',
+      title: '🐄 İnek Ahırı',
+      totalCost: 90,
+      position: Vector2(160, 600),
+      onUnlock: () {
+        final pen = AnimalPenComponent(
+          id: 'pen_cow_1',
+          title: '🐄 Ahır (Süt)',
+          productType: ProductType.milk,
+          position: Vector2(160, 600),
+        );
+        world.add(pen);
+      },
+    );
+
+    _addUnlockPad(
+      unlockId: 'station_ayran_1',
+      title: '🥤 Ayran Şelalesi',
+      totalCost: 110,
+      position: Vector2(380, 600),
+      onUnlock: () {
+        final station = ProcessingStationComponent(
+          id: 'station_ayran_1',
+          title: '🥤 Ayran Şelalesi',
+          inputType: ProductType.milk,
+          outputType: ProductType.ayran,
+          position: Vector2(380, 600),
+          machineColor: const Color(0xFF38BDF8),
+        );
+        world.add(station);
+      },
+    );
+
+    _addUnlockPad(
+      unlockId: 'shelf_ayran_1',
+      title: '🥤 Ayran Reyonu',
       totalCost: 120,
-      position: Vector2(480, 300),
-      onUnlock: () {
-        final f = ProduceFieldComponent(
-          id: 'field_coffee_1',
-          productType: ProductType.coffee,
-          position: Vector2(480, 300),
-        );
-        fields.add(f);
-        world.add(f);
-      },
-    );
-
-    _addUnlockPad(
-      unlockId: 'shelf_coffee_1',
-      title: 'Kahve Reyonu',
-      totalCost: 160,
-      position: Vector2(480, 490),
+      position: Vector2(680, 420),
       onUnlock: () {
         final s = ShelfComponent(
-          id: 'shelf_coffee_1',
-          productType: ProductType.coffee,
-          position: Vector2(480, 490),
+          id: 'shelf_ayran_1',
+          productType: ProductType.ayran,
+          position: Vector2(680, 420),
         );
         shelves.add(s);
         world.add(s);
       },
     );
-  }
 
-  void _setupMarket3MegaMart() {
-    final fieldMega1 = ProduceFieldComponent(
-      id: 'field_mega_1',
-      productType: ProductType.tomato,
-      position: Vector2(170, 300),
-    );
-    fields.add(fieldMega1);
-    world.add(fieldMega1);
-
-    final shelfMega1 = ShelfComponent(
-      id: 'shelf_mega_1',
-      productType: ProductType.tomato,
-      position: Vector2(170, 490),
-    );
-    shelves.add(shelfMega1);
-    world.add(shelfMega1);
-
+    // 5. Salça Fabrikası ($130) -> Salça Reyonu ($140)
     _addUnlockPad(
-      unlockId: 'field_mega_2',
-      title: 'Gurme Kahve Barı',
-      totalCost: 200,
-      position: Vector2(480, 300),
+      unlockId: 'station_paste_1',
+      title: '🥫 Salça Kazanı',
+      totalCost: 130,
+      position: Vector2(160, 780),
       onUnlock: () {
-        final f = ProduceFieldComponent(
-          id: 'field_mega_2',
-          productType: ProductType.coffee,
-          position: Vector2(480, 300),
+        final station = ProcessingStationComponent(
+          id: 'station_paste_1',
+          title: '🥫 Salça Kazanı',
+          inputType: ProductType.tomato,
+          outputType: ProductType.tomatoPaste,
+          position: Vector2(160, 780),
+          machineColor: NeoTheme.tomatoRed,
         );
-        fields.add(f);
-        world.add(f);
+        world.add(station);
       },
     );
 
     _addUnlockPad(
-      unlockId: 'shelf_mega_2',
-      title: 'Kahve Reyonu',
-      totalCost: 250,
-      position: Vector2(480, 490),
+      unlockId: 'shelf_paste_1',
+      title: '🥫 Salça Reyonu',
+      totalCost: 140,
+      position: Vector2(860, 420),
       onUnlock: () {
         final s = ShelfComponent(
-          id: 'shelf_mega_2',
-          productType: ProductType.coffee,
-          position: Vector2(480, 490),
+          id: 'shelf_paste_1',
+          productType: ProductType.tomatoPaste,
+          position: Vector2(860, 420),
+        );
+        shelves.add(s);
+        world.add(s);
+      },
+    );
+
+    // 6. Patates Tarlası ($150) -> Cips Fritözü ($160) -> Cips Reyonu ($170)
+    _addUnlockPad(
+      unlockId: 'station_chips_1',
+      title: '🍟 Cips Fritözü',
+      totalCost: 160,
+      position: Vector2(380, 780),
+      onUnlock: () {
+        final station = ProcessingStationComponent(
+          id: 'station_chips_1',
+          title: '🍟 Cips Fritözü',
+          inputType: ProductType.potato,
+          outputType: ProductType.chips,
+          position: Vector2(380, 780),
+          machineColor: NeoTheme.cornYellow,
+        );
+        world.add(station);
+      },
+    );
+
+    _addUnlockPad(
+      unlockId: 'shelf_chips_1',
+      title: '🍟 Külah Cips Reyonu',
+      totalCost: 170,
+      position: Vector2(1040, 420),
+      onUnlock: () {
+        final s = ShelfComponent(
+          id: 'shelf_chips_1',
+          productType: ProductType.chips,
+          position: Vector2(1040, 420),
         );
         shelves.add(s);
         world.add(s);
@@ -392,23 +466,42 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 
   void _spawnExistingWorkers() {
-    if (playerData.unlockedAreas.contains('worker_restocker_1')) {
-      final w = WorkerComponent(role: WorkerRole.restocker, spawnPosition: Vector2(170, 680));
-      workers.add(w);
-      world.add(w);
+    for (final entry in playerData.workerStats.entries) {
+      final role = entry.key;
+      final count = entry.value.hiredCount;
+      for (int i = 0; i < count; i++) {
+        spawnWorker(role);
+      }
     }
-    if (playerData.unlockedAreas.contains('worker_cashier_1')) {
-      final w = WorkerComponent(role: WorkerRole.cashier, spawnPosition: cashier.cashierStandPosition);
-      workers.add(w);
-      world.add(w);
+  }
+
+  void spawnWorker(WorkerRole role) {
+    Vector2 spawnPos;
+    switch (role) {
+      case WorkerRole.farmer:
+        spawnPos = Vector2(250, 400 + (workers.length * 15) % 200);
+        break;
+      case WorkerRole.stocker:
+        spawnPos = Vector2(550, 500);
+        break;
+      case WorkerRole.cashier:
+        spawnPos = cashier.cashierStandPosition;
+        break;
+      case WorkerRole.cleaner:
+        spawnPos = Vector2(750, 600);
+        break;
     }
+
+    final w = WorkerComponent(role: role, spawnPosition: spawnPos);
+    workers.add(w);
+    world.add(w);
   }
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    // 1. Movement Input Handling
+    // 1. Movement Input
     _updateMovementDirection();
 
     // 2. Customer Spawner
@@ -416,6 +509,25 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     if (customerSpawnTimer >= customerSpawnInterval && customers.length < maxCustomers) {
       customerSpawnTimer = 0.0;
       _spawnCustomer();
+    }
+
+    // 3. Thief Spawner
+    thiefSpawnTimer += dt;
+    if (thiefSpawnTimer >= thiefSpawnInterval) {
+      thiefSpawnTimer = 0.0;
+      _spawnThief();
+    }
+
+    // 4. Dirt Puddle Spawner (from active customer traffic)
+    puddleSpawnTimer += dt;
+    if (puddleSpawnTimer >= puddleSpawnInterval && customers.isNotEmpty) {
+      puddleSpawnTimer = 0.0;
+      final c = customers[math.Random().nextInt(customers.length)];
+      final puddle = DirtPuddleComponent(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        position: c.position.clone(),
+      );
+      world.add(puddle);
     }
 
     _updateCustomerQueueIndices();
@@ -433,14 +545,31 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     final randomColor = shirtColors[math.Random().nextInt(shirtColors.length)];
     final itemCount = 1 + math.Random().nextInt(3);
 
+    // 1 in 6 chance for VIP customer!
+    final isVip = math.Random().nextInt(6) == 0;
+    final vipTitles = ['Muhtar', 'Fenomen', 'Mahalle Teyzesi', 'Gurme'];
+    final vipTitle = vipTitles[math.Random().nextInt(vipTitles.length)];
+
     final customer = CustomerComponent(
-      spawnPosition: entrancePosition + Vector2(0, 30),
+      spawnPosition: entrancePosition + Vector2(0, 20),
       desiredItemCount: itemCount,
       shirtColor: randomColor,
+      isVip: isVip,
+      vipTitle: vipTitle,
     );
 
     customers.add(customer);
     world.add(customer);
+  }
+
+  void _spawnThief() {
+    final thief = ThiefComponent(
+      startPos: entrancePosition + Vector2(0, 20),
+      targetPos: Vector2(750, 300),
+      exitPos: entrancePosition + Vector2(0, 40),
+    );
+    world.add(thief);
+    SoundService.playSpecialEvent();
   }
 
   void _updateCustomerQueueIndices() {
@@ -451,7 +580,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 
   void onCustomerServed(CustomerComponent customer) {
-    // Served
+    // Handled
   }
 
   void removeCustomer(CustomerComponent customer) {
@@ -516,7 +645,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
   }
 }
 
-/// Renders the 2.5D Neo-Brutalist Cutaway Room Floor, Raised 2.5D Walls, and Isometric Details
+/// Renders the 2.5D Dual-Zone Floor: Left Farm/Workshop & Right Supermarket
 class StoreFloorComponent extends PositionComponent {
   final double worldWidth;
   final double worldHeight;
@@ -532,81 +661,78 @@ class StoreFloorComponent extends PositionComponent {
   void render(Canvas canvas) {
     super.render(canvas);
 
-    final storeRect = Rect.fromLTWH(50, 70, worldWidth - 100, worldHeight - 130);
+    // ==========================================
+    // 1. SOL BÖLGE: ÇİFTLİK & İMALATHANE ZEMİNİ
+    // ==========================================
+    final farmRect = Rect.fromLTWH(50, 70, 480, worldHeight - 130);
 
-    // 1. Isometric Cutaway Floor Shadow
-    final shadowPath = Path()
-      ..addRRect(RRect.fromRectAndRadius(storeRect.shift(const Offset(8, 10)), const Radius.circular(20)));
-    canvas.drawPath(shadowPath, NeoTheme.shadowPaint);
+    // Shadow
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(farmRect.shift(const Offset(8, 10)), const Radius.circular(20)),
+      NeoTheme.shadowPaint,
+    );
 
-    // 2. 2.5D Raised Cutaway Back & Left Wall Extrusion
-    // Left Wall (Vertical 2.5D thickness)
-    final leftWallPath = Path()
-      ..moveTo(50, 70)
-      ..lineTo(50, worldHeight - 60)
-      ..lineTo(32, worldHeight - 75)
-      ..lineTo(32, 55)
-      ..close();
-    canvas.drawPath(leftWallPath, Paint()..color = const Color(0xFF1E293B));
-    canvas.drawPath(leftWallPath, NeoTheme.stroke(width: 3.0));
+    // Grass & Garden Path Texture
+    NeoTheme.drawNeoRRect(
+      canvas,
+      RRect.fromRectAndRadius(farmRect, const Radius.circular(16)),
+      fillPaint: NeoTheme.fill(const Color(0xFFECFDF5)), // Crisp Mint Grass Tone
+      strokePaint: NeoTheme.stroke(width: 4.0, color: const Color(0xFF0F172A)),
+      shadowOffset: 0,
+    );
 
-    // Left Wall Top Rim (Lime Green Accent like in reference image)
-    final leftWallTopPath = Path()
-      ..moveTo(32, 55)
-      ..lineTo(50, 70)
-      ..lineTo(50, 78)
-      ..lineTo(32, 63)
-      ..close();
-    canvas.drawPath(leftWallTopPath, Paint()..color = const Color(0xFF84CC16));
-    canvas.drawPath(leftWallTopPath, NeoTheme.stroke(width: 2.0));
+    // Farm Title Decal
+    _drawZoneHeader(canvas, 290, 88, '🌾 ORGANİK ÇİFTLİK & İMALATHANELER', NeoTheme.grassGreen);
 
-    // Back Wall Extrusion
-    final backWallPath = Path()
-      ..moveTo(50, 70)
-      ..lineTo(worldWidth - 50, 70)
-      ..lineTo(worldWidth - 50, 45)
-      ..lineTo(32, 45)
-      ..close();
-    canvas.drawPath(backWallPath, Paint()..color = const Color(0xFF0F172A));
-    canvas.drawPath(backWallPath, NeoTheme.stroke(width: 3.0));
+    // ==========================================
+    // 2. SAĞ BÖLGE: BAKKAL SATIŞ ALANI ZEMİNİ
+    // ==========================================
+    final storeRect = Rect.fromLTWH(570, 70, worldWidth - 620, worldHeight - 130);
 
-    // Back Wall Top Rim
-    final backWallTopPath = Path()
-      ..moveTo(32, 45)
-      ..lineTo(worldWidth - 50, 45)
-      ..lineTo(worldWidth - 50, 52)
-      ..lineTo(32, 52)
-      ..close();
-    canvas.drawPath(backWallTopPath, Paint()..color = const Color(0xFF84CC16));
-    canvas.drawPath(backWallTopPath, NeoTheme.stroke(width: 2.0));
+    // Shadow
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(storeRect.shift(const Offset(8, 10)), const Radius.circular(20)),
+      NeoTheme.shadowPaint,
+    );
 
-    // 3. Store Interior Floor (Warm Crisp Cream Neo-Brutalist Surface)
+    // Crisp Tile Floor
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(storeRect, const Radius.circular(16)),
       fillPaint: NeoTheme.fill(const Color(0xFFFBF8F3)),
-      strokePaint: NeoTheme.stroke(width: 4.0, color: NeoTheme.inkBlack),
+      strokePaint: NeoTheme.stroke(width: 4.0, color: const Color(0xFF0F172A)),
       shadowOffset: 0,
     );
 
-    // 4. Subtle Isometric 16-bit Tile Diamonds on Floor
+    // Supermarket Title Decal
+    _drawZoneHeader(canvas, 860, 88, '🏪 BAKKAL SATIŞ REYONLARI', NeoTheme.purpleAccent);
+
+    // Floor Diamonds
     final tilePaint = Paint()
       ..color = const Color(0xFFE2D9CC)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2;
 
-    for (double y = 110; y < worldHeight - 90; y += 45) {
-      for (double x = 85; x < worldWidth - 85; x += 45) {
-        // Draw tiny isometric floor cross/diamond
+    for (double y = 130; y < worldHeight - 90; y += 45) {
+      for (double x = 600; x < worldWidth - 85; x += 45) {
         canvas.drawLine(Offset(x - 4, y), Offset(x + 4, y), tilePaint);
         canvas.drawLine(Offset(x, y - 4), Offset(x, y + 4), tilePaint);
       }
     }
 
-    // 5. Entrance Gate Mat & Neo-Brutalist Border (Bottom)
+    // ==========================================
+    // 3. ORTA SERVİS GEÇİŞİ (ARCHWAY / PASSAGE)
+    // ==========================================
+    final passageRect = Rect.fromCenter(center: Offset(550, 500), width: 50, height: 140);
+    canvas.drawRect(passageRect, Paint()..color = const Color(0xFFCBD5E1));
+    canvas.drawRect(passageRect, NeoTheme.stroke(width: 2.0));
+
+    // ==========================================
+    // 4. GİRİŞ KAPISI PASPASI (ENTRANCE GATE)
+    // ==========================================
     final doorRect = Rect.fromCenter(
       center: Offset(entrancePosition.x, worldHeight - 58),
-      width: 130,
+      width: 140,
       height: 22,
     );
     NeoTheme.drawNeoRRect(
@@ -617,7 +743,7 @@ class StoreFloorComponent extends PositionComponent {
       shadowOffset: 2.0,
     );
 
-    const doorText = 'GIRIS / CIKIS (BAKKAL)';
+    const doorText = 'MÜŞTERİ GİRİŞİ (BAKKAL)';
     final span = const TextSpan(
       text: doorText,
       style: TextStyle(
@@ -630,5 +756,29 @@ class StoreFloorComponent extends PositionComponent {
     final tp = TextPainter(text: span, textDirection: TextDirection.ltr);
     tp.layout();
     tp.paint(canvas, Offset(entrancePosition.x - tp.width / 2, worldHeight - 64));
+  }
+
+  void _drawZoneHeader(Canvas canvas, double x, double y, String text, Color accentColor) {
+    final span = TextSpan(
+      text: text,
+      style: const TextStyle(
+        color: NeoTheme.inkBlack,
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        fontFamily: 'sans-serif',
+      ),
+    );
+    final tp = TextPainter(text: span, textDirection: TextDirection.ltr);
+    tp.layout();
+
+    final headerRect = Rect.fromCenter(center: Offset(x, y), width: tp.width + 16, height: 22);
+    NeoTheme.drawNeoRRect(
+      canvas,
+      RRect.fromRectAndRadius(headerRect, const Radius.circular(6)),
+      fillPaint: NeoTheme.fill(Colors.white),
+      strokePaint: NeoTheme.stroke(width: 2.0),
+      shadowOffset: 2.0,
+    );
+    tp.paint(canvas, Offset(x - tp.width / 2, y - tp.height / 2));
   }
 }

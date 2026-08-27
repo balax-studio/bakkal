@@ -13,6 +13,7 @@ import 'ui/overlays/daily_reward_modal.dart';
 import 'ui/overlays/level_complete_modal.dart';
 import 'ui/overlays/offline_earnings_modal.dart';
 import 'ui/overlays/upgrades_modal.dart';
+import 'ui/overlays/worker_management_drawer.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -96,6 +97,7 @@ class GameScreen extends StatelessWidget {
                 game: game,
                 onOpenUpgrades: () => game.overlays.add('upgrades'),
                 onOpenDailyStreak: () => game.overlays.add('daily'),
+                onOpenWorkerManagement: () => game.overlays.add('workers'),
               ),
           'offline': (context, game) => Container(
                 color: Colors.black.withValues(alpha: 0.55),
@@ -118,6 +120,10 @@ class GameScreen extends StatelessWidget {
                   game: game,
                   onClose: () => game.overlays.remove('upgrades'),
                 ),
+              ),
+          'workers': (context, game) => WorkerManagementDrawer(
+                game: game,
+                onClose: () => game.overlays.remove('workers'),
               ),
           'levelComplete': (context, game) => Container(
                 color: Colors.black.withValues(alpha: 0.6),

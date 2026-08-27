@@ -7,6 +7,8 @@ import '../../domain/models/game_models.dart';
 import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
 import 'cashier_component.dart';
+import 'dirt_puddle_component.dart';
+import 'effects_component.dart';
 import 'shelf_component.dart';
 
 enum CustomerState {
@@ -23,6 +25,8 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
   final List<ProductItem> shoppingBasket = [];
   final int desiredItemCount;
   final Color shirtColor;
+  final bool isVip;
+  final String vipTitle;
 
   ShelfComponent? targetShelf;
   CashierComponent? targetCashier;
@@ -30,24 +34,45 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
 
   double actionTimer = 0.0;
   double walkCycle = 0.0;
-  final double moveSpeed = 105.0;
+  double vipTimer = 35.0;
+  final double baseSpeed = 105.0;
 
   CustomerComponent({
     required Vector2 spawnPosition,
     required this.desiredItemCount,
     required this.shirtColor,
+    this.isVip = false,
+    this.vipTitle = '',
   }) : super(
           position: spawnPosition,
-          size: Vector2(40, 40),
+          size: Vector2(42, 42),
           anchor: Anchor.center,
         ) {
     priority = IsometricMath.calculatePriority(position.x, position.y);
+  }
+
+  double get currentSpeed {
+    // Check if on a dirt puddle
+    final puddles = game.world.children.whereType<DirtPuddleComponent>();
+    for (final p in puddles) {
+      if ((p.position - position).length < 24.0) {
+        return baseSpeed * 0.55; // Slowed down by mud
+      }
+    }
+    return baseSpeed;
   }
 
   @override
   void update(double dt) {
     super.update(dt);
     walkCycle += dt * 10.0;
+
+    if (isVip && state != CustomerState.leavingStore) {
+      vipTimer -= dt;
+      if (vipTimer <= 0) {
+        state = CustomerState.leavingStore; // VIP leaves if not served in time
+      }
+    }
 
     switch (state) {
       case CustomerState.walkingToShelf:
@@ -86,22 +111,22 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
 
     final shelfStandPos = targetShelf!.position + Vector2(0, 42);
     final diff = shelfStandPos - position;
-    if (diff.length < 12.0) {
+    if (diff.length < 14.0) {
       position.setFrom(shelfStandPos);
       state = CustomerState.shoppingAtShelf;
       actionTimer = 0.0;
     } else {
-      final vel = diff.normalized() * moveSpeed;
+      final vel = diff.normalized() * currentSpeed;
       position.setFrom(
         game.physicsWorld.resolveMovement(
           currentPos: position,
           velocity: vel,
           dt: dt,
           radius: 14.0,
-          worldMinX: 60.0,
-          worldMaxX: game.worldWidth - 60.0,
-          worldMinY: 160.0,
-          worldMaxY: game.worldHeight - 80.0,
+          worldMinX: 40.0,
+          worldMaxX: game.worldWidth - 40.0,
+          worldMinY: 140.0,
+          worldMaxY: game.worldHeight - 60.0,
         ),
       );
     }
@@ -109,7 +134,7 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
 
   void _handleShoppingAtShelf(double dt) {
     actionTimer += dt;
-    if (actionTimer >= 0.4) {
+    if (actionTimer >= 0.35) {
       actionTimer = 0.0;
       if (targetShelf != null && targetShelf!.hasStock) {
         final item = targetShelf!.takeProduct();
@@ -138,21 +163,21 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
 
     final queuePos = _calculateQueuePosition();
     final diff = queuePos - position;
-    if (diff.length < 12.0) {
+    if (diff.length < 14.0) {
       position.setFrom(queuePos);
       state = CustomerState.waitingInQueue;
     } else {
-      final vel = diff.normalized() * moveSpeed;
+      final vel = diff.normalized() * currentSpeed;
       position.setFrom(
         game.physicsWorld.resolveMovement(
           currentPos: position,
           velocity: vel,
           dt: dt,
           radius: 14.0,
-          worldMinX: 60.0,
-          worldMaxX: game.worldWidth - 60.0,
-          worldMinY: 160.0,
-          worldMaxY: game.worldHeight - 80.0,
+          worldMinX: 40.0,
+          worldMaxX: game.worldWidth - 40.0,
+          worldMinY: 140.0,
+          worldMaxY: game.worldHeight - 60.0,
         ),
       );
     }
@@ -162,7 +187,7 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
     final queuePos = _calculateQueuePosition();
     final diff = queuePos - position;
     if (diff.length > 5.0) {
-      final vel = diff.normalized() * moveSpeed;
+      final vel = diff.normalized() * currentSpeed;
       position.add(vel * dt);
     }
 
@@ -178,13 +203,26 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
     }
 
     actionTimer += dt;
-    if (actionTimer >= 0.35) {
+    if (actionTimer >= 0.30) {
       actionTimer = 0.0;
       if (shoppingBasket.isNotEmpty) {
         final item = shoppingBasket.removeLast();
-        final price = item.type.basePrice;
-        targetCashier!.addCash(price);
+        final basePrice = item.type.basePrice;
+        final multiplier = isVip ? 3.0 : 1.0;
+        final finalPrice = (basePrice * multiplier).toInt();
+
+        targetCashier!.addCash(finalPrice);
         SoundService.playStockShelf();
+
+        if (isVip) {
+          game.world.add(
+            FloatingTextComponent(
+              text: '👑 VIP BAHŞİŞ! +$finalPrice \$',
+              position: position - Vector2(0, 30),
+              color: NeoTheme.goldCoin,
+            ),
+          );
+        }
       } else {
         state = CustomerState.leavingStore;
         game.onCustomerServed(this);
@@ -199,7 +237,7 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
       game.removeCustomer(this);
       removeFromParent();
     } else {
-      final vel = diff.normalized() * moveSpeed;
+      final vel = diff.normalized() * currentSpeed;
       position.add(vel * dt);
     }
   }
@@ -222,11 +260,12 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
     );
 
     // 2. Torso / Shirt
+    final bodyColor = isVip ? const Color(0xFFEAB308) : shirtColor;
     final bodyRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 22, height: 18);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(bodyRect, const Radius.circular(4)),
-      fillPaint: NeoTheme.fill(shirtColor),
+      fillPaint: NeoTheme.fill(bodyColor),
       strokePaint: NeoTheme.stroke(width: 2.2),
       shadowOffset: 2.0,
     );
@@ -241,6 +280,31 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
       shadowOffset: 1.5,
     );
 
+    // VIP Crown / Badge
+    if (isVip) {
+      final crownSpan = TextSpan(
+        text: '👑 $vipTitle',
+        style: const TextStyle(
+          color: NeoTheme.inkBlack,
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
+          fontFamily: 'sans-serif',
+        ),
+      );
+      final tp = TextPainter(text: crownSpan, textDirection: TextDirection.ltr);
+      tp.layout();
+
+      final pillRect = Rect.fromCenter(center: Offset(cx, cy - 24), width: tp.width + 10, height: 14);
+      NeoTheme.drawNeoRRect(
+        canvas,
+        RRect.fromRectAndRadius(pillRect, const Radius.circular(4)),
+        fillPaint: NeoTheme.fill(const Color(0xFFFEF08A)),
+        strokePaint: NeoTheme.stroke(width: 1.2),
+        shadowOffset: 1.0,
+      );
+      tp.paint(canvas, Offset(cx - tp.width / 2, cy - 24 - tp.height / 2));
+    }
+
     // 4. 2.5D Isometric Shopping Basket
     if (shoppingBasket.isNotEmpty) {
       final basketRect = Rect.fromCenter(center: Offset(cx + 14, cy + 6), width: 15, height: 12);
@@ -252,7 +316,6 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
         shadowOffset: 1.5,
       );
 
-      // 2.5D item in basket
       final topItem = shoppingBasket.last;
       final miniItemRect = Rect.fromCenter(center: Offset(cx + 14, cy + 2), width: 8, height: 8);
       canvas.drawRect(miniItemRect, Paint()..color = topItem.type.color);

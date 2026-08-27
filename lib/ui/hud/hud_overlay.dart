@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../game/mini_mart_game.dart';
@@ -8,12 +9,14 @@ class HUDOverlay extends StatelessWidget {
   final MiniMartGame game;
   final VoidCallback onOpenUpgrades;
   final VoidCallback onOpenDailyStreak;
+  final VoidCallback onOpenWorkerManagement;
 
   const HUDOverlay({
     super.key,
     required this.game,
     required this.onOpenUpgrades,
     required this.onOpenDailyStreak,
+    required this.onOpenWorkerManagement,
   });
 
   @override
@@ -21,7 +24,7 @@ class HUDOverlay extends StatelessWidget {
     return SafeArea(
       child: Stack(
         children: [
-          // 1. TOP BAR (Cash, Level, 2X Boost, Daily Streak)
+          // 1. TOP BAR (Cash, Gems, Level, 2X Boost, Daily Streak)
           Positioned(
             top: 12,
             left: 16,
@@ -33,7 +36,7 @@ class HUDOverlay extends StatelessWidget {
                   valueListenable: game.cashNotifier,
                   builder: (context, cash, _) {
                     return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: NeoTheme.neoCardDecoration(
                         color: Colors.white,
                         radius: 10,
@@ -42,12 +45,12 @@ class HUDOverlay extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('💵', style: TextStyle(fontSize: 18)),
-                          const SizedBox(width: 6),
+                          const Text('💵', style: TextStyle(fontSize: 16)),
+                          const SizedBox(width: 5),
                           Text(
                             '\$$cash',
                             style: const TextStyle(
-                              fontSize: 16,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: NeoTheme.inkBlack,
                             ),
@@ -56,6 +59,33 @@ class HUDOverlay extends StatelessWidget {
                       ),
                     );
                   },
+                ),
+
+                const SizedBox(width: 8),
+
+                // Gems Counter
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: NeoTheme.neoCardDecoration(
+                    color: Colors.white,
+                    radius: 10,
+                    shadow: 3,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('💎', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${game.playerData.gems}',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          color: NeoTheme.boostCyan,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 const Spacer(),
@@ -76,7 +106,7 @@ class HUDOverlay extends StatelessWidget {
                     child: const Text(
                       '🎁 ÖDÜL',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w900,
                         color: NeoTheme.inkBlack,
                       ),
@@ -100,7 +130,6 @@ class HUDOverlay extends StatelessWidget {
                           onTap: () async {
                             if (!isActive) {
                               HapticService.medium();
-                              // Watch Rewarded Ad to get 3 min frenzy boost!
                               final watched = await game.adService.showRewardedAd(placement: 'hud_2x_boost');
                               if (watched) {
                                 game.adService.activate2xBoost();
@@ -108,7 +137,7 @@ class HUDOverlay extends StatelessWidget {
                             }
                           },
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                             decoration: NeoTheme.neoCardDecoration(
                               color: isActive ? NeoTheme.boostCyan : NeoTheme.cashGreen,
                               radius: 10,
@@ -117,12 +146,12 @@ class HUDOverlay extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('⚡', style: TextStyle(fontSize: 16)),
+                                const Text('⚡', style: TextStyle(fontSize: 15)),
                                 const SizedBox(width: 4),
                                 Text(
-                                  isActive ? '$minutes:$seconds' : '2X HIZ (Reklam)',
+                                  isActive ? '$minutes:$seconds' : '2X HIZ',
                                   style: const TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w900,
                                     color: NeoTheme.inkBlack,
                                   ),
@@ -139,42 +168,67 @@ class HUDOverlay extends StatelessWidget {
             ),
           ),
 
-          // 2. MARKET TITLE BADGE
+          // 2. ZONE BADGE
           Positioned(
-            top: 66,
+            top: 64,
             left: 16,
-            child: ValueListenableBuilder<int>(
-              valueListenable: game.marketLevelNotifier,
-              builder: (context, level, _) {
-                final titles = [
-                  '🏪 Market 1: Organik Manav',
-                  '🥐 Market 2: Fırın & Kafe',
-                  '🛒 Market 3: Mega Hipermarket',
-                ];
-                final title = titles[level % titles.length];
-
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: NeoTheme.neoCardDecoration(
-                    color: const Color(0xFFE2E8F0),
-                    radius: 6,
-                    borderWidth: 2,
-                    shadow: 2,
-                  ),
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w900,
-                      color: NeoTheme.inkBlack,
-                    ),
-                  ),
-                );
-              },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: NeoTheme.neoCardDecoration(
+                color: const Color(0xFFE2E8F0),
+                radius: 6,
+                borderWidth: 2,
+                shadow: 2,
+              ),
+              child: const Text(
+                '🌾 Sol: Tarla & Atölye | 🏪 Sağ: Bakkal',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  color: NeoTheme.inkBlack,
+                ),
+              ),
             ),
           ),
 
-          // 3. BOTTOM CONTROLS (Joystick + Upgrades Button)
+          // 3. TEA BREAK BOOST GAUGE (Çay Molası)
+          Positioned(
+            top: 64,
+            right: 16,
+            child: GestureDetector(
+              onTap: () {
+                HapticService.heavy();
+                SoundService.playLevelUp();
+                game.adService.activate2xBoost();
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: NeoTheme.neoCardDecoration(
+                  color: const Color(0xFFFEF08A),
+                  radius: 8,
+                  borderWidth: 2,
+                  shadow: 3,
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('☕', style: TextStyle(fontSize: 16)),
+                    SizedBox(width: 4),
+                    Text(
+                      'ÇAY MOLASI!',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: NeoTheme.inkBlack,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // 4. BOTTOM CONTROLS (Joystick + Workers & Upgrades Buttons)
           Positioned(
             bottom: 24,
             left: 24,
@@ -186,19 +240,52 @@ class HUDOverlay extends StatelessWidget {
           ),
 
           Positioned(
-            bottom: 32,
-            right: 24,
-            child: Column(
+            bottom: 28,
+            right: 20,
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Upgrades Floating Action Card
+                // Workers Management Button
+                GestureDetector(
+                  onTap: () {
+                    HapticService.selection();
+                    onOpenWorkerManagement();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: NeoTheme.neoCardDecoration(
+                      color: NeoTheme.cornYellow,
+                      radius: 12,
+                      shadow: 4,
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('👷‍♂️', style: TextStyle(fontSize: 20)),
+                        SizedBox(height: 2),
+                        Text(
+                          'İŞÇİLER',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: NeoTheme.inkBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 10),
+
+                // Player Upgrades Button
                 GestureDetector(
                   onTap: () {
                     HapticService.selection();
                     onOpenUpgrades();
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     decoration: NeoTheme.neoCardDecoration(
                       color: NeoTheme.purpleAccent,
                       radius: 12,
@@ -207,12 +294,12 @@ class HUDOverlay extends StatelessWidget {
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('⬆️', style: TextStyle(fontSize: 22)),
-                        SizedBox(height: 4),
+                        Text('⬆️', style: TextStyle(fontSize: 20)),
+                        SizedBox(height: 2),
                         Text(
                           'YÜKSELT',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
                           ),

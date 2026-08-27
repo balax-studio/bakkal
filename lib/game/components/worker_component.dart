@@ -5,22 +5,20 @@ import '../../core/theme/neo_theme.dart';
 import '../../domain/models/game_models.dart';
 import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
+import 'dirt_puddle_component.dart';
 import 'field_component.dart';
+import 'processing_station_component.dart';
 import 'shelf_component.dart';
-
-enum WorkerRole {
-  restocker,
-  cashier,
-}
 
 class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGame> {
   final WorkerRole role;
   final List<ProductItem> carriedItems = [];
-  final int maxCapacity = 4;
-  final double moveSpeed = 125.0;
 
   ProduceFieldComponent? targetField;
+  ProcessingStationComponent? targetStation;
   ShelfComponent? targetShelf;
+  DirtPuddleComponent? targetPuddle;
+
   double actionCooldown = 0.0;
   double walkCycle = 0.0;
 
@@ -29,35 +27,48 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
     required Vector2 spawnPosition,
   }) : super(
           position: spawnPosition,
-          size: Vector2(42, 42),
+          size: Vector2(44, 44),
           anchor: Anchor.center,
         ) {
     priority = IsometricMath.calculatePriority(position.x, position.y);
   }
+
+  int get maxCapacity => game.playerData.getWorkerStats(role).capacity;
+  double get moveSpeed => 125.0 * game.playerData.getWorkerStats(role).speedMultiplier;
 
   @override
   void update(double dt) {
     super.update(dt);
     walkCycle += dt * 10.0;
 
-    if (role == WorkerRole.restocker) {
-      _handleRestockerLoop(dt);
-    } else {
-      _handleCashierLoop(dt);
+    switch (role) {
+      case WorkerRole.farmer:
+        _handleFarmerLoop(dt);
+        break;
+      case WorkerRole.stocker:
+        _handleStockerLoop(dt);
+        break;
+      case WorkerRole.cashier:
+        _handleCashierLoop(dt);
+        break;
+      case WorkerRole.cleaner:
+        _handleCleanerLoop(dt);
+        break;
     }
 
     priority = IsometricMath.calculatePriority(position.x, position.y);
   }
 
-  void _handleRestockerLoop(double dt) {
+  /// Farmer: Harvests fields / pens -> drops in processing stations / storage
+  void _handleFarmerLoop(double dt) {
     if (carriedItems.length < maxCapacity) {
-      // 1. Walk to an available field to harvest
+      // Find ripe field
       final fields = game.fields.where((f) => f.isMounted).toList();
       if (fields.isNotEmpty) {
         targetField ??= fields.first;
         final standPos = targetField!.position + Vector2(0, 40);
         final diff = standPos - position;
-        if (diff.length < 15.0) {
+        if (diff.length < 16.0) {
           actionCooldown -= dt;
           if (actionCooldown <= 0) {
             actionCooldown = 0.18;
@@ -72,29 +83,92 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
             }
           }
         } else {
-          final vel = diff.normalized() * moveSpeed;
-          position.setFrom(
-            game.physicsWorld.resolveMovement(
-              currentPos: position,
-              velocity: vel,
-              dt: dt,
-              radius: 14.0,
-              worldMinX: 60.0,
-              worldMaxX: game.worldWidth - 60.0,
-              worldMinY: 160.0,
-              worldMaxY: game.worldHeight - 80.0,
-            ),
-          );
+          _moveTo(standPos, dt);
         }
       }
     } else {
-      // 2. Full backpack: walk to target shelf to restock
+      // Drop to processing station or store shelf
+      final stations = game.world.children.whereType<ProcessingStationComponent>().where((s) => s.canAcceptInput).toList();
+      if (stations.isNotEmpty) {
+        targetStation ??= stations.first;
+        final standPos = targetStation!.position + Vector2(0, 36);
+        final diff = standPos - position;
+        if (diff.length < 16.0) {
+          actionCooldown -= dt;
+          if (actionCooldown <= 0) {
+            actionCooldown = 0.14;
+            if (carriedItems.isNotEmpty && targetStation!.canAcceptInput) {
+              final item = carriedItems.removeLast();
+              targetStation!.inputBuffer.add(item);
+              SoundService.playStockShelf();
+            } else {
+              targetStation = null;
+            }
+          }
+        } else {
+          _moveTo(standPos, dt);
+        }
+      } else {
+        // Drop to shelf directly if matches
+        final shelves = game.shelves.where((s) => s.isMounted && !s.isFull).toList();
+        if (shelves.isNotEmpty) {
+          targetShelf ??= shelves.first;
+          final standPos = targetShelf!.position + Vector2(0, 38);
+          final diff = standPos - position;
+          if (diff.length < 16.0) {
+            actionCooldown -= dt;
+            if (actionCooldown <= 0) {
+              actionCooldown = 0.14;
+              if (carriedItems.isNotEmpty && !targetShelf!.isFull) {
+                final item = carriedItems.removeLast();
+                targetShelf!.storedItems.add(item);
+                SoundService.playStockShelf();
+              } else {
+                targetShelf = null;
+              }
+            }
+          } else {
+            _moveTo(standPos, dt);
+          }
+        }
+      }
+    }
+  }
+
+  /// Stocker: Picks finished products from processing stations -> restocks market shelves
+  void _handleStockerLoop(double dt) {
+    if (carriedItems.length < maxCapacity) {
+      final stations = game.world.children.whereType<ProcessingStationComponent>().where((s) => s.hasOutput).toList();
+      if (stations.isNotEmpty) {
+        targetStation ??= stations.first;
+        final standPos = targetStation!.position + Vector2(0, 36);
+        final diff = standPos - position;
+        if (diff.length < 16.0) {
+          actionCooldown -= dt;
+          if (actionCooldown <= 0) {
+            actionCooldown = 0.14;
+            if (targetStation!.hasOutput && carriedItems.length < maxCapacity) {
+              final item = targetStation!.outputBuffer.removeLast();
+              carriedItems.add(item);
+              SoundService.playHarvest();
+            } else {
+              targetStation = null;
+            }
+          }
+        } else {
+          _moveTo(standPos, dt);
+        }
+      } else {
+        // Fallback: Help restock raw crops to shelves
+        _handleFarmerLoop(dt);
+      }
+    } else {
       final shelves = game.shelves.where((s) => s.isMounted && !s.isFull).toList();
       if (shelves.isNotEmpty) {
         targetShelf ??= shelves.first;
         final standPos = targetShelf!.position + Vector2(0, 38);
         final diff = standPos - position;
-        if (diff.length < 15.0) {
+        if (diff.length < 16.0) {
           actionCooldown -= dt;
           if (actionCooldown <= 0) {
             actionCooldown = 0.14;
@@ -104,34 +178,64 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
               SoundService.playStockShelf();
             } else {
               targetShelf = null;
-              targetField = null;
             }
           }
         } else {
-          final vel = diff.normalized() * moveSpeed;
-          position.setFrom(
-            game.physicsWorld.resolveMovement(
-              currentPos: position,
-              velocity: vel,
-              dt: dt,
-              radius: 14.0,
-              worldMinX: 60.0,
-              worldMaxX: game.worldWidth - 60.0,
-              worldMinY: 160.0,
-              worldMaxY: game.worldHeight - 80.0,
-            ),
-          );
+          _moveTo(standPos, dt);
         }
       }
     }
   }
 
+  /// Cashier: Stands at POS and accelerates checkout
   void _handleCashierLoop(double dt) {
     final standPos = game.cashier.cashierStandPosition;
     final diff = standPos - position;
     if (diff.length > 4.0) {
+      _moveTo(standPos, dt);
+    }
+  }
+
+  /// Cleaner: Searches for dirt puddles and sweeps them
+  void _handleCleanerLoop(double dt) {
+    final puddles = game.world.children.whereType<DirtPuddleComponent>().toList();
+    if (puddles.isNotEmpty) {
+      targetPuddle ??= puddles.first;
+      if (!targetPuddle!.isMounted) {
+        targetPuddle = null;
+        return;
+      }
+      final diff = targetPuddle!.position - position;
+      if (diff.length < 16.0) {
+        targetPuddle!.progressClean(dt * 2.0);
+      } else {
+        _moveTo(targetPuddle!.position, dt);
+      }
+    } else {
+      // Idle patrol around store center
+      final patrolPos = Vector2(game.worldWidth * 0.7, game.worldHeight * 0.5);
+      if ((patrolPos - position).length > 20.0) {
+        _moveTo(patrolPos, dt);
+      }
+    }
+  }
+
+  void _moveTo(Vector2 target, double dt) {
+    final diff = target - position;
+    if (diff.length > 2.0) {
       final vel = diff.normalized() * moveSpeed;
-      position.add(vel * dt);
+      position.setFrom(
+        game.physicsWorld.resolveMovement(
+          currentPos: position,
+          velocity: vel,
+          dt: dt,
+          radius: 14.0,
+          worldMinX: 40.0,
+          worldMaxX: game.worldWidth - 40.0,
+          worldMinY: 140.0,
+          worldMaxY: game.worldHeight - 60.0,
+        ),
+      );
     }
   }
 
@@ -147,7 +251,7 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
     );
 
     // 2. Uniform Body
-    final bodyColor = role == WorkerRole.restocker ? NeoTheme.cornYellow : NeoTheme.purpleAccent;
+    final bodyColor = role.color;
     final bodyRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 24, height: 20);
     NeoTheme.drawNeoRRect(
       canvas,
@@ -186,7 +290,7 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
       shadowOffset: 1.5,
     );
 
-    // 4. 2.5D Carried Crates Stack
+    // 4. Carried Items Stack
     if (carriedItems.isNotEmpty) {
       for (int i = 0; i < carriedItems.length; i++) {
         final crateRect = Rect.fromCenter(

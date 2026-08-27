@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 class SoundService {
   static bool soundEnabled = true;
 
-  // Sound triggers with haptics
   static void playHarvest() {
     if (!soundEnabled) return;
     SystemSound.play(SystemSoundType.click);
@@ -25,6 +24,16 @@ class SoundService {
   }
 
   static void playLevelUp() {
+    if (!soundEnabled) return;
+    SystemSound.play(SystemSoundType.alert);
+  }
+
+  static void playCleanSweep() {
+    if (!soundEnabled) return;
+    SystemSound.play(SystemSoundType.click);
+  }
+
+  static void playSpecialEvent() {
     if (!soundEnabled) return;
     SystemSound.play(SystemSoundType.alert);
   }
