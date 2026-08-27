@@ -11,14 +11,19 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
   Vector2 velocity = Vector2.zero();
   double facingAngle = 0.0;
   double walkCycleTimer = 0.0;
-  double wobbleTimer = 0.0;
+
+  // Elastic Stack Jiggle Physics State
+  double stackTiltAngle = 0.0;
+  double stackAngularVelocity = 0.0;
+  final double springK = 65.0; // Spring stiffness
+  final double springDamping = 8.5; // Damping ratio
 
   final double bodyRadius = 18.0;
 
   PlayerComponent({required Vector2 position})
       : super(
           position: position,
-          size: Vector2(52, 52),
+          size: Vector2(56, 56),
           anchor: Anchor.center,
         ) {
     priority = IsometricMath.calculatePriority(position.x, position.y);
@@ -37,6 +42,8 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
   bool addProduct(ProductType type) {
     if (canAddProduct(type)) {
       carriedItems.add(ProductItem(type: type));
+      // Impulse jiggle on pickup
+      stackAngularVelocity += (math.Random().nextBool() ? 1.0 : -1.0) * 4.0;
       return true;
     }
     return false;
@@ -44,6 +51,8 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
 
   ProductItem? takeTopProduct() {
     if (carriedItems.isNotEmpty) {
+      // Impulse jiggle on drop
+      stackAngularVelocity += (math.Random().nextBool() ? 1.0 : -1.0) * 3.0;
       return carriedItems.removeLast();
     }
     return null;
@@ -59,12 +68,22 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
     final speed = game.playerData.moveSpeed * speedMultiplier;
 
     if (moveDir.length > 0.1) {
+      final prevVel = velocity.clone();
       velocity = moveDir.normalized() * speed;
       facingAngle = math.atan2(velocity.y, velocity.x);
-      walkCycleTimer += dt * 12.0;
-      wobbleTimer += dt * 8.0;
+      walkCycleTimer += dt * 14.0;
 
-      // Solid collision resolution with independent axis wall sliding (physics engine)
+      // Inertia target angle based on lateral acceleration
+      final accelX = (velocity.x - prevVel.x) / (dt > 0 ? dt : 0.016);
+      final targetTilt = (-accelX * 0.0008).clamp(-0.35, 0.35);
+
+      // Spring-damper differential equation
+      final springForce = (targetTilt - stackTiltAngle) * springK;
+      final dampingForce = -stackAngularVelocity * springDamping;
+      stackAngularVelocity += (springForce + dampingForce) * dt;
+      stackTiltAngle += stackAngularVelocity * dt;
+
+      // Solid collision resolution with independent axis wall sliding
       final resolvedPos = game.physicsWorld.resolveMovement(
         currentPos: position,
         velocity: velocity,
@@ -80,9 +99,14 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
     } else {
       velocity = Vector2.zero();
       walkCycleTimer = 0.0;
+
+      // Spring back to center when stationary
+      final springForce = -stackTiltAngle * springK;
+      final dampingForce = -stackAngularVelocity * springDamping;
+      stackAngularVelocity += (springForce + dampingForce) * dt;
+      stackTiltAngle += stackAngularVelocity * dt;
     }
 
-    // Dynamic 2.5D Y-sorting priority
     priority = IsometricMath.calculatePriority(position.x, position.y);
   }
 
@@ -96,14 +120,14 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
     canvas.save();
 
     // 1. 2.5D Isometric Ground Shadow
-    final shadowPaint = NeoTheme.shadowPaint;
+    final shadowWidth = 36.0 + (isMoving ? math.sin(walkCycleTimer * 2) * 2.0 : 0.0);
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 18), width: 36, height: 16),
-      shadowPaint,
+      Rect.fromCenter(center: Offset(cx, cy + 18), width: shadowWidth, height: 16),
+      NeoTheme.shadowPaint,
     );
 
-    // 2. Animated 2.5D Legs
-    final legSwing = isMoving ? math.sin(walkCycleTimer) * 5.0 : 0.0;
+    // 2. Animated Legs with Step Swing
+    final legSwing = isMoving ? math.sin(walkCycleTimer) * 6.0 : 0.0;
     final legPaint = NeoTheme.fill(const Color(0xFF1E293B));
     final legStroke = NeoTheme.stroke(width: 2.2);
 
@@ -131,9 +155,13 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
       shadowOffset: 1.5,
     );
 
-    // 3. Torso / Body (Vibrant Blue/Cyan Outfit)
+    // 3. Squash & Stretch Torso
+    final stepSquash = isMoving ? (math.cos(walkCycleTimer * 2) * 0.08) : 0.0;
+    final bodyHeight = 20.0 * (1.0 - stepSquash);
+    final bodyWidth = 26.0 * (1.0 + stepSquash);
+
     final bodyColor = isBoosted ? NeoTheme.boostCyan : const Color(0xFF2563EB);
-    final bodyRect = Rect.fromCenter(center: Offset(cx, cy), width: 26, height: 20);
+    final bodyRect = Rect.fromCenter(center: Offset(cx, cy + (stepSquash * 2.0)), width: bodyWidth, height: bodyHeight);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(bodyRect, const Radius.circular(6)),
@@ -142,12 +170,12 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
       shadowOffset: 2.5,
     );
 
-    // White Work Apron Detail
-    final apronRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 14, height: 14);
+    // Work Apron
+    final apronRect = Rect.fromCenter(center: Offset(cx, cy + 2), width: 14, height: 13);
     canvas.drawRect(apronRect, Paint()..color = Colors.white);
     canvas.drawRect(apronRect, NeoTheme.stroke(width: 1.8));
 
-    // 4. Head & 2.5D Cap
+    // 4. Head & Shopkeeper Cap
     final headRect = Rect.fromCenter(center: Offset(cx, cy - 14), width: 20, height: 18);
     NeoTheme.drawNeoRRect(
       canvas,
@@ -157,7 +185,6 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
       shadowOffset: 2.0,
     );
 
-    // Red Shopkeeper Cap with Visor
     final capRect = Rect.fromCenter(center: Offset(cx, cy - 20), width: 24, height: 9);
     NeoTheme.drawNeoRRect(
       canvas,
@@ -167,35 +194,36 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
       shadowOffset: 1.5,
     );
 
-    // 5. Stacked 2.5D Product Crates on Back with wobble
-    _renderCarriedStack(canvas, isMoving, cx, cy);
+    // 5. Elastic Jiggle Stacked Crates on Back
+    _renderCarriedStack(canvas, cx, cy);
 
-    // 6. Capacity Pill Badge Over Head
+    // 6. Capacity Badge
     _renderCapacityBadge(canvas, cx, cy);
 
     canvas.restore();
   }
 
-  void _renderCarriedStack(Canvas canvas, bool isMoving, double cx, double cy) {
+  void _renderCarriedStack(Canvas canvas, double cx, double cy) {
     if (carriedItems.isEmpty) return;
 
     final itemType = carriedItems.first.type;
     final stackHeight = carriedItems.length;
-    final wobble = isMoving ? math.sin(wobbleTimer) * 0.10 : 0.0;
 
     for (int i = 0; i < stackHeight; i++) {
       canvas.save();
-      final itemY = cy - 24.0 - (i * 11.0);
-      final itemX = cx + (i * wobble * 6.0);
+      // Cumulative spring sway per tier
+      final tierFactor = (i + 1) / stackHeight;
+      final tierAngle = stackTiltAngle * (0.8 + (i * 0.4));
+      final itemY = cy - 24.0 - (i * 12.0);
+      final itemX = cx + (tierAngle * 18.0 * tierFactor);
 
       canvas.translate(itemX, itemY);
-      canvas.rotate(wobble * (i + 1) * 0.12);
+      canvas.rotate(tierAngle);
 
-      // 2.5D Isometric Mini Crate
       final crateRect = Rect.fromCenter(
         center: Offset.zero,
-        width: 22,
-        height: 11,
+        width: 24,
+        height: 12,
       );
 
       NeoTheme.drawNeoRRect(
@@ -229,7 +257,7 @@ class PlayerComponent extends PositionComponent with HasGameReference<MiniMartGa
     final tp = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     tp.layout();
 
-    final badgeY = cy - 36.0 - (carriedItems.length * 11.0);
+    final badgeY = cy - 38.0 - (carriedItems.length * 12.0);
     final badgeRect = Rect.fromCenter(
       center: Offset(cx, badgeY),
       width: tp.width + 14,

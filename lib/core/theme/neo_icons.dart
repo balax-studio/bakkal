@@ -47,16 +47,29 @@ class NeoIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       size: Size(size, size),
-      painter: _NeoIconPainter(type: type, customColor: color),
+      painter: NeoIconPainter(type: type, customColor: color),
     );
   }
 }
 
-class _NeoIconPainter extends CustomPainter {
+class NeoIconPainter extends CustomPainter {
   final NeoIconType type;
   final Color? customColor;
 
-  _NeoIconPainter({required this.type, this.customColor});
+  const NeoIconPainter({required this.type, this.customColor});
+
+  static void drawIcon(
+    Canvas canvas,
+    NeoIconType type,
+    Offset center,
+    double size, {
+    Color? color,
+  }) {
+    canvas.save();
+    canvas.translate(center.dx - size * 0.5, center.dy - size * 0.5);
+    NeoIconPainter(type: type, customColor: color).paint(canvas, Size(size, size));
+    canvas.restore();
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -396,6 +409,6 @@ class _NeoIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _NeoIconPainter oldDelegate) =>
+  bool shouldRepaint(covariant NeoIconPainter oldDelegate) =>
       oldDelegate.type != type || oldDelegate.customColor != customColor;
 }

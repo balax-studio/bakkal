@@ -14,6 +14,7 @@ import 'components/animal_pen_component.dart';
 import 'components/cashier_component.dart';
 import 'components/courier_component.dart';
 import 'components/customer_component.dart';
+import 'components/diorama_environment_component.dart';
 import 'components/dirt_puddle_component.dart';
 import 'components/field_component.dart';
 import 'components/player_component.dart';
@@ -104,7 +105,8 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // Register 2.5D Solid Perimeter & Dividing Walls in Physics Engine
     _registerPerimeterWalls();
 
-    // 0. Ambient Living Outdoors (Trees, Grass, Flowers, Butterflies, Clouds)
+    // 0. Ambient Living Outdoors & Diorama Environment
+    world.add(DioramaEnvironmentComponent());
     world.add(AmbientOutdoorComponent());
 
     // 1. 2.5D Dual-Zone Store Floor & Walls
@@ -597,6 +599,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     marketLevelNotifier.value = playerData.activeMarketIndex;
     saveGame();
     _buildMarketLevel();
+    camera.follow(player);
   }
 
   void notifyStateChanged() {

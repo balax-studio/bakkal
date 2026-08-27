@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
 import '../../core/theme/neo_theme.dart';
+import '../../domain/models/game_models.dart';
 import '../math/isometric_math.dart';
 import '../mini_mart_game.dart';
 import '../physics/collision_system.dart';
@@ -66,7 +67,8 @@ class CashierComponent extends PositionComponent with HasGameReference<MiniMartG
     // 1. Check if player or worker is standing behind register
     final player = game.player;
     final distToRegister = (player.position - cashierStandPosition).length;
-    final hasWorkerCashier = game.playerData.unlockedAreas.contains('worker_cashier_1');
+    final hasWorkerCashier = game.playerData.unlockedAreas.contains('worker_cashier_1') ||
+        game.playerData.getWorkerStats(WorkerRole.cashier).hiredCount > 0;
 
     isCashierPresent = (distToRegister < 50.0) || hasWorkerCashier;
 

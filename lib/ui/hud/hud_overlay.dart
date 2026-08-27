@@ -11,6 +11,7 @@ class HUDOverlay extends StatelessWidget {
   final VoidCallback onOpenUpgrades;
   final VoidCallback onOpenDailyStreak;
   final VoidCallback onOpenWorkerManagement;
+  final VoidCallback onOpenFranchise;
 
   const HUDOverlay({
     super.key,
@@ -18,6 +19,7 @@ class HUDOverlay extends StatelessWidget {
     required this.onOpenUpgrades,
     required this.onOpenDailyStreak,
     required this.onOpenWorkerManagement,
+    required this.onOpenFranchise,
   });
 
   @override
@@ -90,6 +92,39 @@ class HUDOverlay extends StatelessWidget {
                 ),
 
                 const Spacer(),
+
+                // Franchise Map Button
+                GestureDetector(
+                  onTap: () {
+                    HapticService.selection();
+                    onOpenFranchise();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: NeoTheme.neoCardDecoration(
+                      color: NeoTheme.boostCyan,
+                      radius: 10,
+                      shadow: 3,
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NeoIcon(NeoIconType.crown, size: 16),
+                        SizedBox(width: 5),
+                        Text(
+                          'ŞEHİRLER',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                            color: NeoTheme.inkBlack,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 8),
 
                 // Daily Reward Button
                 GestureDetector(

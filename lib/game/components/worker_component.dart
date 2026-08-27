@@ -87,8 +87,12 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
         }
       }
     } else {
-      // Drop to processing station or store shelf
-      final stations = game.world.children.whereType<ProcessingStationComponent>().where((s) => s.canAcceptInput).toList();
+      final itemType = carriedItems.last.type;
+      final stations = game.world.children
+          .whereType<ProcessingStationComponent>()
+          .where((s) => s.inputType == itemType && s.canAcceptInput)
+          .toList();
+
       if (stations.isNotEmpty) {
         targetStation ??= stations.first;
         final standPos = targetStation!.position + Vector2(0, 36);
@@ -97,7 +101,7 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
           actionCooldown -= dt;
           if (actionCooldown <= 0) {
             actionCooldown = 0.14;
-            if (carriedItems.isNotEmpty && targetStation!.canAcceptInput) {
+            if (carriedItems.isNotEmpty && targetStation!.canAcceptInput && targetStation!.inputType == carriedItems.last.type) {
               final item = carriedItems.removeLast();
               targetStation!.inputBuffer.add(item);
               SoundService.playStockShelf();
@@ -109,8 +113,11 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
           _moveTo(standPos, dt);
         }
       } else {
-        // Drop to shelf directly if matches
-        final shelves = game.shelves.where((s) => s.isMounted && !s.isFull).toList();
+        // Drop to matching shelf directly
+        final shelves = game.shelves
+            .where((s) => s.isMounted && s.productType == itemType && !s.isFull)
+            .toList();
+
         if (shelves.isNotEmpty) {
           targetShelf ??= shelves.first;
           final standPos = targetShelf!.position + Vector2(0, 38);
@@ -119,7 +126,7 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
             actionCooldown -= dt;
             if (actionCooldown <= 0) {
               actionCooldown = 0.14;
-              if (carriedItems.isNotEmpty && !targetShelf!.isFull) {
+              if (carriedItems.isNotEmpty && !targetShelf!.isFull && targetShelf!.productType == carriedItems.last.type) {
                 final item = carriedItems.removeLast();
                 targetShelf!.storedItems.add(item);
                 SoundService.playStockShelf();
@@ -130,6 +137,9 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
           } else {
             _moveTo(standPos, dt);
           }
+        } else {
+          targetShelf = null;
+          targetStation = null;
         }
       }
     }
@@ -163,7 +173,11 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
         _handleFarmerLoop(dt);
       }
     } else {
-      final shelves = game.shelves.where((s) => s.isMounted && !s.isFull).toList();
+      final itemType = carriedItems.last.type;
+      final shelves = game.shelves
+          .where((s) => s.isMounted && s.productType == itemType && !s.isFull)
+          .toList();
+
       if (shelves.isNotEmpty) {
         targetShelf ??= shelves.first;
         final standPos = targetShelf!.position + Vector2(0, 38);
@@ -172,7 +186,7 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
           actionCooldown -= dt;
           if (actionCooldown <= 0) {
             actionCooldown = 0.14;
-            if (carriedItems.isNotEmpty && !targetShelf!.isFull) {
+            if (carriedItems.isNotEmpty && !targetShelf!.isFull && targetShelf!.productType == carriedItems.last.type) {
               final item = carriedItems.removeLast();
               targetShelf!.storedItems.add(item);
               SoundService.playStockShelf();
@@ -183,6 +197,8 @@ class WorkerComponent extends PositionComponent with HasGameReference<MiniMartGa
         } else {
           _moveTo(standPos, dt);
         }
+      } else {
+        targetShelf = null;
       }
     }
   }

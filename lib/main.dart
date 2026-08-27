@@ -10,6 +10,7 @@ import 'services/retention_service.dart';
 import 'services/save_service.dart';
 import 'ui/hud/hud_overlay.dart';
 import 'ui/overlays/daily_reward_modal.dart';
+import 'ui/overlays/franchise_map_modal.dart';
 import 'ui/overlays/level_complete_modal.dart';
 import 'ui/overlays/offline_earnings_modal.dart';
 import 'ui/overlays/upgrades_modal.dart';
@@ -98,6 +99,14 @@ class GameScreen extends StatelessWidget {
                 onOpenUpgrades: () => game.overlays.add('upgrades'),
                 onOpenDailyStreak: () => game.overlays.add('daily'),
                 onOpenWorkerManagement: () => game.overlays.add('workers'),
+                onOpenFranchise: () => game.overlays.add('franchise'),
+              ),
+          'franchise': (context, game) => Container(
+                color: Colors.black.withValues(alpha: 0.55),
+                child: FranchiseMapModal(
+                  game: game,
+                  onClose: () => game.overlays.remove('franchise'),
+                ),
               ),
           'offline': (context, game) => Container(
                 color: Colors.black.withValues(alpha: 0.55),
