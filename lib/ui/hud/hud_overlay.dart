@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../game/mini_mart_game.dart';
 import 'virtual_joystick.dart';
@@ -45,8 +46,8 @@ class HUDOverlay extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('💵', style: TextStyle(fontSize: 16)),
-                          const SizedBox(width: 5),
+                          const NeoIcon(NeoIconType.cash, size: 18),
+                          const SizedBox(width: 6),
                           Text(
                             '\$$cash',
                             style: const TextStyle(
@@ -74,8 +75,8 @@ class HUDOverlay extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('💎', style: TextStyle(fontSize: 16)),
-                      const SizedBox(width: 4),
+                      const NeoIcon(NeoIconType.gem, size: 18),
+                      const SizedBox(width: 5),
                       Text(
                         '${game.playerData.gems}',
                         style: const TextStyle(
@@ -103,13 +104,20 @@ class HUDOverlay extends StatelessWidget {
                       radius: 10,
                       shadow: 3,
                     ),
-                    child: const Text(
-                      '🎁 ÖDÜL',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                        color: NeoTheme.inkBlack,
-                      ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NeoIcon(NeoIconType.gift, size: 16),
+                        SizedBox(width: 5),
+                        Text(
+                          'ÖDÜL',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                            color: NeoTheme.inkBlack,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -146,8 +154,8 @@ class HUDOverlay extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('⚡', style: TextStyle(fontSize: 15)),
-                                const SizedBox(width: 4),
+                                const NeoIcon(NeoIconType.lightning, size: 16),
+                                const SizedBox(width: 5),
                                 Text(
                                   isActive ? '$minutes:$seconds' : '2X HIZ',
                                   style: const TextStyle(
@@ -181,7 +189,7 @@ class HUDOverlay extends StatelessWidget {
                 shadow: 2,
               ),
               child: const Text(
-                '🌾 Sol: Tarla & Atölye | 🏪 Sağ: Bakkal',
+                'Sol: Tarla & Atölye | Sağ: Bakkal',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
@@ -212,8 +220,8 @@ class HUDOverlay extends StatelessWidget {
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('☕', style: TextStyle(fontSize: 16)),
-                    SizedBox(width: 4),
+                    NeoIcon(NeoIconType.teaCup, size: 16),
+                    SizedBox(width: 5),
                     Text(
                       'ÇAY MOLASI!',
                       style: TextStyle(
@@ -261,8 +269,8 @@ class HUDOverlay extends StatelessWidget {
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('👷‍♂️', style: TextStyle(fontSize: 20)),
-                        SizedBox(height: 2),
+                        NeoIcon(NeoIconType.worker, size: 22),
+                        SizedBox(height: 3),
                         Text(
                           'İŞÇİLER',
                           style: TextStyle(
@@ -294,8 +302,8 @@ class HUDOverlay extends StatelessWidget {
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('⬆️', style: TextStyle(fontSize: 20)),
-                        SizedBox(height: 2),
+                        NeoIcon(NeoIconType.upgrade, size: 22),
+                        SizedBox(height: 3),
                         Text(
                           'YÜKSELT',
                           style: TextStyle(

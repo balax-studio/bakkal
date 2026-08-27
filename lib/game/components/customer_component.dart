@@ -217,7 +217,7 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
         if (isVip) {
           game.world.add(
             FloatingTextComponent(
-              text: '👑 VIP BAHŞİŞ! +$finalPrice \$',
+              text: 'VIP BAHŞİŞ! +$finalPrice \$',
               position: position - Vector2(0, 30),
               color: NeoTheme.goldCoin,
             ),
@@ -283,7 +283,7 @@ class CustomerComponent extends PositionComponent with HasGameReference<MiniMart
     // VIP Crown / Badge
     if (isVip) {
       final crownSpan = TextSpan(
-        text: '👑 $vipTitle',
+        text: 'VIP: $vipTitle',
         style: const TextStyle(
           color: NeoTheme.inkBlack,
           fontSize: 8,

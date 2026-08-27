@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../game/mini_mart_game.dart';
 
@@ -16,9 +17,9 @@ class LevelCompleteModal extends StatelessWidget {
   Widget build(BuildContext context) {
     final nextLevelIdx = (game.playerData.activeMarketIndex + 1) % 3;
     final nextTitles = [
-      'Organik Manav 🍅',
-      'Fırın & Kafe 🥐☕',
-      'Mega Hipermarket 🛒💎',
+      'Organik Manav & Sera',
+      'Fırın & Kahvaltı Atölyesi',
+      'Mega Hipermarket & Gurme',
     ];
     final nextTitle = nextTitles[nextLevelIdx];
 
@@ -26,7 +27,7 @@ class LevelCompleteModal extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: 320,
+          width: 340,
           padding: const EdgeInsets.all(20),
           decoration: NeoTheme.neoCardDecoration(
             color: Colors.white,
@@ -44,19 +45,26 @@ class LevelCompleteModal extends StatelessWidget {
                   radius: 8,
                   shadow: 2,
                 ),
-                child: const Text(
-                  '🏆 SEVKİYAT TAMAMLANDI!',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w900,
-                    color: NeoTheme.inkBlack,
-                  ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    NeoIcon(NeoIconType.crown, size: 18),
+                    SizedBox(width: 6),
+                    Text(
+                      'SEVKİYAT TAMAMLANDI!',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        color: NeoTheme.inkBlack,
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
               const SizedBox(height: 16),
-              const Text('🚚', style: TextStyle(fontSize: 48)),
-              const SizedBox(height: 8),
+              const NeoIcon(NeoIconType.motorcycle, size: 48),
+              const SizedBox(height: 10),
 
               const Text(
                 'Tebrikler!\nTüm siparişler kamyona yüklendi.',
@@ -90,7 +98,7 @@ class LevelCompleteModal extends StatelessWidget {
                     Text(
                       nextTitle,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w900,
                         color: NeoTheme.purpleAccent,
                       ),
@@ -117,13 +125,20 @@ class LevelCompleteModal extends StatelessWidget {
                     shadow: 4,
                   ),
                   child: const Center(
-                    child: Text(
-                      '🚀 YENİ MARKETE GEÇ',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                        color: NeoTheme.inkBlack,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NeoIcon(NeoIconType.lightning, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'YENİ MARKETE GEÇ',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            color: NeoTheme.inkBlack,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

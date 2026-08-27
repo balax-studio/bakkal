@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../game/mini_mart_game.dart';
 
@@ -27,7 +28,7 @@ class _UpgradesModalState extends State<UpgradesModal> {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: 340,
+          width: 350,
           padding: const EdgeInsets.all(20),
           decoration: NeoTheme.neoCardDecoration(
             color: Colors.white,
@@ -48,13 +49,20 @@ class _UpgradesModalState extends State<UpgradesModal> {
                       radius: 8,
                       shadow: 2,
                     ),
-                    child: const Text(
-                      '⚡ MAĞAZA YÜKSELTMELERİ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                      ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NeoIcon(NeoIconType.upgrade, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'YÜKSELTMELER',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   IconButton(
@@ -68,7 +76,7 @@ class _UpgradesModalState extends State<UpgradesModal> {
 
               // 1. Movement Speed Upgrade Card
               _buildUpgradeCard(
-                icon: '🏃',
+                iconType: NeoIconType.lightning,
                 title: 'Karakter Hızı',
                 level: 'Sv. ${player.speedLevel}',
                 benefit: '${player.moveSpeed.toInt()} px/s',
@@ -89,7 +97,7 @@ class _UpgradesModalState extends State<UpgradesModal> {
 
               // 2. Backpack Capacity Upgrade Card
               _buildUpgradeCard(
-                icon: '🎒',
+                iconType: NeoIconType.stocker,
                 title: 'Taşıma Kapasitesi',
                 level: 'Sv. ${player.capacityLevel}',
                 benefit: '${player.maxCapacity} Koli',
@@ -110,7 +118,7 @@ class _UpgradesModalState extends State<UpgradesModal> {
 
               // 3. Profit Multiplier Upgrade Card
               _buildUpgradeCard(
-                icon: '💰',
+                iconType: NeoIconType.cash,
                 title: 'Kâr Çarpanı',
                 level: 'Sv. ${player.profitLevel}',
                 benefit: '${player.profitMultiplier.toStringAsFixed(2)}x Fiyat',
@@ -141,7 +149,7 @@ class _UpgradesModalState extends State<UpgradesModal> {
   }
 
   Widget _buildUpgradeCard({
-    required String icon,
+    required NeoIconType iconType,
     required String title,
     required String level,
     required String benefit,
@@ -159,7 +167,7 @@ class _UpgradesModalState extends State<UpgradesModal> {
       ),
       child: Row(
         children: [
-          Text(icon, style: const TextStyle(fontSize: 24)),
+          NeoIcon(iconType, size: 24),
           const SizedBox(width: 10),
           Expanded(
             child: Column(

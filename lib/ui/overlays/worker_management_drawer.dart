@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../domain/models/game_models.dart';
 import '../../game/mini_mart_game.dart';
@@ -31,8 +32,10 @@ class _WorkerManagementDrawerState extends State<WorkerManagementDrawer> {
         widget.game.playerData.cash -= cost;
         stats.hiredCount += 1;
         widget.game.cashNotifier.value = widget.game.playerData.cash;
-        widget.game.spawnWorker(role);
       });
+
+      widget.game.spawnWorker(role);
+      widget.game.saveGame();
 
       SoundService.playLevelUp();
       HapticService.heavy();
@@ -50,22 +53,24 @@ class _WorkerManagementDrawerState extends State<WorkerManagementDrawer> {
         widget.game.cashNotifier.value = widget.game.playerData.cash;
       });
 
+      widget.game.saveGame();
+
       SoundService.playLevelUp();
-      HapticService.medium();
+      HapticService.heavy();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentCash = widget.game.playerData.cash;
     final currentStats = widget.game.playerData.getWorkerStats(selectedRole);
+    final currentCash = widget.game.playerData.cash;
 
-    return Scaffold(
-      backgroundColor: Colors.black.withValues(alpha: 0.55),
-      body: Center(
+    return Center(
+      child: Material(
+        color: Colors.transparent,
         child: Container(
-          width: 380,
-          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+          width: 360,
+          margin: const EdgeInsets.symmetric(horizontal: 20),
           padding: const EdgeInsets.all(20),
           decoration: NeoTheme.neoCardDecoration(
             color: Colors.white,
@@ -85,7 +90,7 @@ class _WorkerManagementDrawerState extends State<WorkerManagementDrawer> {
                       radius: 8,
                       shadow: 2,
                     ),
-                    child: const Text('👷‍♂️', style: TextStyle(fontSize: 20)),
+                    child: const NeoIcon(NeoIconType.worker, size: 20),
                   ),
                   const SizedBox(width: 10),
                   const Text(
@@ -123,11 +128,6 @@ class _WorkerManagementDrawerState extends State<WorkerManagementDrawer> {
                   final isSelected = role == selectedRole;
                   final stats = widget.game.playerData.getWorkerStats(role);
 
-                  String roleIcon = '🌾';
-                  if (role == WorkerRole.stocker) roleIcon = '📦';
-                  if (role == WorkerRole.cashier) roleIcon = '💳';
-                  if (role == WorkerRole.cleaner) roleIcon = '🧹';
-
                   return Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -147,8 +147,8 @@ class _WorkerManagementDrawerState extends State<WorkerManagementDrawer> {
                         ),
                         child: Column(
                           children: [
-                            Text(roleIcon, style: const TextStyle(fontSize: 16)),
-                            const SizedBox(height: 2),
+                            NeoIcon(role.iconType, size: 18),
+                            const SizedBox(height: 3),
                             Text(
                               '(${stats.hiredCount})',
                               style: TextStyle(

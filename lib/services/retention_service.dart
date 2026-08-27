@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import '../core/theme/neo_icons.dart';
 import '../domain/models/game_models.dart';
 
 class OfflineEarningsReport {
@@ -55,13 +56,13 @@ class RetentionService {
 
   // Daily Streak Rewards table (7 Days)
   static final List<DailyRewardItem> dailyRewards = [
-    DailyRewardItem(day: 1, rewardTitle: '50 Nakit', cashAmount: 50, emoji: '💵'),
-    DailyRewardItem(day: 2, rewardTitle: '120 Nakit', cashAmount: 120, emoji: '💰'),
-    DailyRewardItem(day: 3, rewardTitle: '250 Nakit + 2X Hız', cashAmount: 250, emoji: '⚡'),
-    DailyRewardItem(day: 4, rewardTitle: '400 Nakit', cashAmount: 400, emoji: '💵'),
-    DailyRewardItem(day: 5, rewardTitle: '700 Nakit', cashAmount: 700, emoji: '💎'),
-    DailyRewardItem(day: 6, rewardTitle: '1,200 Nakit', cashAmount: 1200, emoji: '📦'),
-    DailyRewardItem(day: 7, rewardTitle: '3,000 Altın + Süper Kasiyer', cashAmount: 3000, emoji: '👑'),
+    DailyRewardItem(day: 1, rewardTitle: '50 Nakit', cashAmount: 50, iconType: NeoIconType.cash),
+    DailyRewardItem(day: 2, rewardTitle: '120 Nakit', cashAmount: 120, iconType: NeoIconType.cash),
+    DailyRewardItem(day: 3, rewardTitle: '250 Nakit + 2X Hız', cashAmount: 250, iconType: NeoIconType.lightning),
+    DailyRewardItem(day: 4, rewardTitle: '400 Nakit', cashAmount: 400, iconType: NeoIconType.cash),
+    DailyRewardItem(day: 5, rewardTitle: '700 Nakit', cashAmount: 700, iconType: NeoIconType.gem),
+    DailyRewardItem(day: 6, rewardTitle: '1,200 Nakit', cashAmount: 1200, iconType: NeoIconType.stocker),
+    DailyRewardItem(day: 7, rewardTitle: '3,000 Altın + Süper Kasiyer', cashAmount: 3000, iconType: NeoIconType.crown),
   ];
 
   static bool isDailyRewardAvailable(PlayerData player) {
@@ -91,12 +92,12 @@ class DailyRewardItem {
   final int day;
   final String rewardTitle;
   final int cashAmount;
-  final String emoji;
+  final NeoIconType iconType;
 
   DailyRewardItem({
     required this.day,
     required this.rewardTitle,
     required this.cashAmount,
-    required this.emoji,
+    required this.iconType,
   });
 }

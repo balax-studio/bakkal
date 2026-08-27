@@ -40,7 +40,7 @@ class ThiefComponent extends PositionComponent with HasGameReference<MiniMartGam
 
     game.world.add(
       FloatingTextComponent(
-        text: '🚨 HIRSIZ YAKALANDI! +$reward \$',
+        text: 'HIRSIZ YAKALANDI! +$reward \$',
         position: position - Vector2(0, 30),
         color: NeoTheme.tomatoRed,
       ),
@@ -147,9 +147,9 @@ class ThiefComponent extends PositionComponent with HasGameReference<MiniMartGam
       tp.paint(canvas, Offset(cx + 12 - tp.width / 2, cy - 2 - tp.height / 2));
     }
 
-    // "🚨 HIRSIZ!" Alert Pill
+    // "HIRSIZ!" Alert Pill
     final alertSpan = const TextSpan(
-      text: '🚨 HIRSIZ!',
+      text: 'HIRSIZ!',
       style: TextStyle(
         color: Colors.white,
         fontSize: 8,

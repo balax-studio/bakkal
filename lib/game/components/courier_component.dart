@@ -139,7 +139,7 @@ class CourierComponent extends PositionComponent with HasGameReference<MiniMartG
 
             game.world.add(
               FloatingTextComponent(
-                text: '🏆 SİPARİŞ TAMAMLANDI! +$cash +$gems Elmas',
+                text: 'SİPARİŞ TAMAMLANDI! +$cash +$gems Elmas',
                 position: position - Vector2(0, 45),
                 color: NeoTheme.goldCoin,
               ),
@@ -200,8 +200,8 @@ class CourierComponent extends PositionComponent with HasGameReference<MiniMartG
 
     // 3. Order Bubble Above Scooter
     if (currentOrder != null) {
-      final reqs = currentOrder!.requiredItems.entries.map((e) => '${e.value}x ${e.key.emoji}').join(' + ');
-      final orderText = '🛵 PAKET: $reqs (⏳${currentOrder!.remainingSeconds.toInt()}s)';
+      final reqs = currentOrder!.requiredItems.entries.map((e) => '${e.value}x ${e.key.displayName}').join(' + ');
+      final orderText = 'KURYE: $reqs (${currentOrder!.remainingSeconds.toInt()}s)';
 
       final span = TextSpan(
         text: orderText,
@@ -226,7 +226,7 @@ class CourierComponent extends PositionComponent with HasGameReference<MiniMartG
       tp.paint(canvas, Offset(cx - tp.width / 2, cy - 36 - tp.height / 2));
     } else {
       final span = const TextSpan(
-        text: '🛵 Kurye Yolda...',
+        text: 'KURYE: Yolda...',
         style: TextStyle(
           color: Colors.white,
           fontSize: 9,

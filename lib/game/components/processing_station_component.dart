@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
@@ -23,6 +24,7 @@ class ProcessingStationComponent extends PositionComponent with HasGameReference
 
   double currentProgress = 0.0;
   double interactCooldown = 0.0;
+  double animTime = 0.0;
   late final SolidBox solidCollider;
 
   ProcessingStationComponent({
@@ -69,6 +71,7 @@ class ProcessingStationComponent extends PositionComponent with HasGameReference
   @override
   void update(double dt) {
     super.update(dt);
+    animTime += dt;
 
     final isBoosted = game.adService.is2xBoostActive.value;
     final speedMultiplier = isBoosted ? 2.0 : 1.0;
@@ -174,8 +177,29 @@ class ProcessingStationComponent extends PositionComponent with HasGameReference
     canvas.drawPath(topSurface, Paint()..color = machineColor);
     canvas.drawPath(topSurface, NeoTheme.stroke(width: 3.0));
 
-    // 5. Input Hopper (Left) & Output Tray (Right)
-    final inputHopperRect = Rect.fromCenter(center: Offset(cx - 20, cy), width: 22, height: 16);
+    // 5. Animated Visual Machine Elements (Gears / Smoke / Bubbles)
+    if (inputBuffer.isNotEmpty) {
+      // Rotating Cog in Center
+      final gearAngle = animTime * 4.0;
+      final gearCenter = Offset(cx, cy - 4);
+      canvas.drawCircle(gearCenter, 7, Paint()..color = const Color(0xFF334155));
+      canvas.drawCircle(gearCenter, 7, NeoTheme.stroke(width: 1.5));
+      for (int g = 0; g < 4; g++) {
+        final a = gearAngle + (g * math.pi / 2);
+        final tx = gearCenter.dx + math.cos(a) * 9;
+        final ty = gearCenter.dy + math.sin(a) * 9;
+        canvas.drawCircle(Offset(tx, ty), 2, Paint()..color = const Color(0xFFF1F5F9));
+        canvas.drawCircle(Offset(tx, ty), 2, NeoTheme.stroke(width: 1.0));
+      }
+
+      // Steam/Smoke Puff on top
+      final puffOffset = math.sin(animTime * 6.0) * 4;
+      canvas.drawCircle(Offset(cx - 16, cy - 24 + puffOffset), 4, Paint()..color = Colors.white.withValues(alpha: 0.6));
+      canvas.drawCircle(Offset(cx - 14, cy - 32 + puffOffset), 5, Paint()..color = Colors.white.withValues(alpha: 0.4));
+    }
+
+    // 6. Input Hopper (Left) & Output Tray (Right)
+    final inputHopperRect = Rect.fromCenter(center: Offset(cx - 24, cy + 2), width: 22, height: 16);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(inputHopperRect, const Radius.circular(3)),
@@ -184,7 +208,7 @@ class ProcessingStationComponent extends PositionComponent with HasGameReference
       shadowOffset: 1.5,
     );
 
-    final outputTrayRect = Rect.fromCenter(center: Offset(cx + 20, cy), width: 22, height: 16);
+    final outputTrayRect = Rect.fromCenter(center: Offset(cx + 24, cy + 2), width: 22, height: 16);
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(outputTrayRect, const Radius.circular(3)),
@@ -193,7 +217,7 @@ class ProcessingStationComponent extends PositionComponent with HasGameReference
       shadowOffset: 1.5,
     );
 
-    // 6. Animated Crafting Progress Bar
+    // 7. Animated Crafting Progress Bar
     final progressFraction = (currentProgress / processSeconds).clamp(0.0, 1.0);
     if (inputBuffer.isNotEmpty) {
       final barRect = Rect.fromCenter(center: Offset(cx, cy + depth + 4), width: 50, height: 8);
@@ -205,8 +229,8 @@ class ProcessingStationComponent extends PositionComponent with HasGameReference
       canvas.drawRect(barRect, NeoTheme.stroke(width: 1.5));
     }
 
-    // 7. Title Header Pill
-    final badgeText = '$title (${inputBuffer.length} ➜ ${outputBuffer.length})';
+    // 8. Title Header Pill (Zero Emojis, crisp vector label)
+    final badgeText = '$title (${inputBuffer.length} / ${outputBuffer.length})';
     final span = TextSpan(
       text: badgeText,
       style: const TextStyle(

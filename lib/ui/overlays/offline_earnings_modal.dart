@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/haptics/haptic_service.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../game/mini_mart_game.dart';
 import '../../services/retention_service.dart';
@@ -27,7 +28,7 @@ class OfflineEarningsModal extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: 320,
+          width: 340,
           padding: const EdgeInsets.all(20),
           decoration: NeoTheme.neoCardDecoration(
             color: Colors.white,
@@ -46,7 +47,7 @@ class OfflineEarningsModal extends StatelessWidget {
                   shadow: 2,
                 ),
                 child: const Text(
-                  '🎉 HOŞ GELDİN PATRON!',
+                  'HOŞ GELDİN PATRON!',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
@@ -56,8 +57,8 @@ class OfflineEarningsModal extends StatelessWidget {
               ),
 
               const SizedBox(height: 16),
-              const Text('💰', style: TextStyle(fontSize: 48)),
-              const SizedBox(height: 8),
+              const NeoIcon(NeoIconType.cash, size: 48),
+              const SizedBox(height: 10),
 
               Text(
                 'Sen yokken ($timeStr)\nçalışanların marketi işletti!',
@@ -102,7 +103,7 @@ class OfflineEarningsModal extends StatelessWidget {
 
               const SizedBox(height: 18),
 
-              // Action 1: 2X Claim with Rewarded Ad (High Dopamine Button)
+              // Action 1: 2X Claim with Rewarded Ad
               GestureDetector(
                 onTap: () async {
                   HapticService.heavy();
@@ -126,7 +127,7 @@ class OfflineEarningsModal extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text('📺', style: TextStyle(fontSize: 18)),
+                        const NeoIcon(NeoIconType.lightning, size: 18),
                         const SizedBox(width: 8),
                         Text(
                           '2X İLE AL: +\$${report.earnedCash * 2}',

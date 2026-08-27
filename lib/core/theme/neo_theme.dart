@@ -3,39 +3,49 @@ import 'package:flutter/material.dart';
 /// Neo-Brutalist Design Tokens & Color Palette
 class NeoTheme {
   // Vibrant 16-Bit / Neo-Brutalist Palette
-  static const Color bgCanvas = Color(0xFFF4EFE6); // Warm retro background
+  static const Color bgCanvas = Color(0xFF5AB9EA); // Sky blue canvas
   static const Color gridDot = Color(0xFFDED6C7); // Floor grid
-  static const Color inkBlack = Color(0xFF141419); // Bold border stroke
-  static const Color hardShadow = Color(0xFF141419); // 45-degree hard drop shadow
+  static const Color inkBlack = Color(0xFF0F172A); // Ultra-deep slate black border
+  static const Color hardShadow = Color(0xFF0F172A); // 45-degree hard drop shadow
   static const Color shadowBlack = Color(0x33000000); // Translucent ground shadow
+
+  // Pre-allocated static Paints (Zero GC Pressure in Flame render loop)
   static final Paint shadowPaint = Paint()..color = const Color(0x33000000);
+  static final Paint solidShadow = Paint()..color = const Color(0xFF0F172A);
+  static final Paint darkExtrusion = Paint()..color = const Color(0xFF1E293B);
+  static final Paint stroke2_0 = stroke(width: 2.0);
+  static final Paint stroke2_5 = stroke(width: 2.5);
+  static final Paint stroke3_0 = stroke(width: 3.0);
+  static final Paint glowPaint = Paint()..color = const Color(0x66FBBF24);
 
   // Product & Object Colors
-  static const Color tomatoRed = Color(0xFFFF2E55);
-  static const Color tomatoLeaf = Color(0xFF00E676);
-  static const Color cornYellow = Color(0xFFFFD000);
-  static const Color breadGold = Color(0xFFFF9E1B);
+  static const Color tomatoRed = Color(0xFFEF4444);
+  static const Color tomatoLeaf = Color(0xFF22C55E);
+  static const Color cornYellow = Color(0xFFFBBF24);
+  static const Color breadGold = Color(0xFFF59E0B);
   static const Color milkWhite = Color(0xFFFFFFFF);
-  static const Color coffeeBrown = Color(0xFF6D4C41);
+  static const Color coffeeBrown = Color(0xFF78350F);
 
   // Economy & Dopamine Accents
-  static const Color cashGreen = Color(0xFF00E676);
-  static const Color cashDarkGreen = Color(0xFF00A352);
-  static const Color goldCoin = Color(0xFFFFD000);
-  static const Color boostCyan = Color(0xFF00F0FF);
+  static const Color cashGreen = Color(0xFF10B981);
+  static const Color cashDarkGreen = Color(0xFF047857);
+  static const Color goldCoin = Color(0xFFFACC15);
+  static const Color boostCyan = Color(0xFF06B6D4);
   static const Color purpleAccent = Color(0xFF8B5CF6);
-  static const Color coralOrange = Color(0xFFFF6B00);
+  static const Color coralOrange = Color(0xFFF97316);
 
   // Architectural Colors
-  static const Color woodShelf = Color(0xFFE0A96D);
-  static const Color woodDark = Color(0xFFB8783C);
-  static const Color counterGray = Color(0xFFECEFF1);
-  static const Color soilBrown = Color(0xFF6D4C41);
-  static const Color grassGreen = Color(0xFF7CB342);
+  static const Color woodShelf = Color(0xFFD97706);
+  static const Color woodDark = Color(0xFF92400E);
+  static const Color counterGray = Color(0xFF334155);
+  static const Color soilBrown = Color(0xFF451A03);
+  static const Color grassGreen = Color(0xFF16A34A);
+  static const Color mintFloor = Color(0xFFECFDF5);
+  static const Color ivoryFloor = Color(0xFFFAF8F5);
 
   // Border & Shadow Dimensions
-  static const double strokeWidth = 3.0;
-  static const double shadowOffset = 4.0;
+  static const double strokeWidth = 2.5;
+  static const double shadowOffset = 3.5;
   static const double borderRadius = 12.0;
 
   // Neo-Brutalist Box Shadow
@@ -65,7 +75,7 @@ class NeoTheme {
       color: color,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(color: borderColor, width: borderWidth),
-      boxShadow: neoBoxShadow(offset: shadow),
+      boxShadow: neoBoxShadow(offset: shadow, color: borderColor),
     );
   }
 
@@ -79,8 +89,7 @@ class NeoTheme {
   }) {
     if (shadowOffset > 0) {
       final shadowRect = rect.shift(Offset(shadowOffset, shadowOffset));
-      final shadowPaint = Paint()..color = inkBlack;
-      canvas.drawRect(shadowRect, shadowPaint);
+      canvas.drawRect(shadowRect, solidShadow);
     }
     canvas.drawRect(rect, fillPaint);
     if (strokePaint != null) {
@@ -97,8 +106,7 @@ class NeoTheme {
   }) {
     if (shadowOffset > 0) {
       final shadowRRect = rrect.shift(Offset(shadowOffset, shadowOffset));
-      final shadowPaint = Paint()..color = inkBlack;
-      canvas.drawRRect(shadowRRect, shadowPaint);
+      canvas.drawRRect(shadowRRect, solidShadow);
     }
     canvas.drawRRect(rrect, fillPaint);
     if (strokePaint != null) {
@@ -112,7 +120,7 @@ class NeoTheme {
       ..style = PaintingStyle.stroke
       ..strokeWidth = width
       ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.miter;
+      ..strokeJoin = StrokeJoin.round;
   }
 
   static Paint fill(Color color) {

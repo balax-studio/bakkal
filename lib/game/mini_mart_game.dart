@@ -239,7 +239,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // 2. Mısır Tarlası ($30) & Mısır Reyonu ($40)
     _addUnlockPad(
       unlockId: 'field_corn_1',
-      title: '🌽 Mısır Tarlası',
+      title: 'Mısır Tarlası',
       totalCost: 30,
       position: Vector2(380, 240),
       onUnlock: () {
@@ -255,7 +255,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'shelf_corn_1',
-      title: '🌽 Mısır Reyonu',
+      title: 'Mısır Reyonu',
       totalCost: 40,
       position: Vector2(860, 240),
       onUnlock: () {
@@ -272,7 +272,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // 3. Buğday Tarlası ($50) -> Değirmen/Fırın ($70) -> Ekmek Reyonu ($80)
     _addUnlockPad(
       unlockId: 'field_wheat_1',
-      title: '🌾 Buğday Tarlası',
+      title: 'Buğday Tarlası',
       totalCost: 50,
       position: Vector2(160, 420),
       onUnlock: () {
@@ -288,13 +288,13 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'station_mill_1',
-      title: '🍞 Değirmen & Fırın',
+      title: 'Değirmen & Fırın',
       totalCost: 70,
       position: Vector2(380, 420),
       onUnlock: () {
         final station = ProcessingStationComponent(
           id: 'station_mill_1',
-          title: '🍞 Fırın',
+          title: 'Fırın',
           inputType: ProductType.wheat,
           outputType: ProductType.bread,
           position: Vector2(380, 420),
@@ -306,7 +306,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'shelf_bread_1',
-      title: '🍞 Somun Ekmek Reyonu',
+      title: 'Somun Ekmek Reyonu',
       totalCost: 80,
       position: Vector2(1040, 240),
       onUnlock: () {
@@ -323,13 +323,13 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // 4. İnek Ahırı ($90) -> Ayran Şelalesi ($110) -> Ayran Reyonu ($120)
     _addUnlockPad(
       unlockId: 'pen_cow_1',
-      title: '🐄 İnek Ahırı',
+      title: 'İnek Ahırı',
       totalCost: 90,
       position: Vector2(160, 600),
       onUnlock: () {
         final pen = AnimalPenComponent(
           id: 'pen_cow_1',
-          title: '🐄 Ahır (Süt)',
+          title: 'Ahır (Süt)',
           productType: ProductType.milk,
           position: Vector2(160, 600),
         );
@@ -339,13 +339,13 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'station_ayran_1',
-      title: '🥤 Ayran Şelalesi',
+      title: 'Ayran Şelalesi',
       totalCost: 110,
       position: Vector2(380, 600),
       onUnlock: () {
         final station = ProcessingStationComponent(
           id: 'station_ayran_1',
-          title: '🥤 Ayran Şelalesi',
+          title: 'Ayran Şelalesi',
           inputType: ProductType.milk,
           outputType: ProductType.ayran,
           position: Vector2(380, 600),
@@ -357,7 +357,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'shelf_ayran_1',
-      title: '🥤 Ayran Reyonu',
+      title: 'Ayran Reyonu',
       totalCost: 120,
       position: Vector2(680, 420),
       onUnlock: () {
@@ -374,13 +374,13 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // 5. Salça Fabrikası ($130) -> Salça Reyonu ($140)
     _addUnlockPad(
       unlockId: 'station_paste_1',
-      title: '🥫 Salça Kazanı',
+      title: 'Salça Kazanı',
       totalCost: 130,
       position: Vector2(160, 780),
       onUnlock: () {
         final station = ProcessingStationComponent(
           id: 'station_paste_1',
-          title: '🥫 Salça Kazanı',
+          title: 'Salça Kazanı',
           inputType: ProductType.tomato,
           outputType: ProductType.tomatoPaste,
           position: Vector2(160, 780),
@@ -392,7 +392,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'shelf_paste_1',
-      title: '🥫 Salça Reyonu',
+      title: 'Salça Reyonu',
       totalCost: 140,
       position: Vector2(860, 420),
       onUnlock: () {
@@ -409,13 +409,13 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
     // 6. Patates Tarlası ($150) -> Cips Fritözü ($160) -> Cips Reyonu ($170)
     _addUnlockPad(
       unlockId: 'station_chips_1',
-      title: '🍟 Cips Fritözü',
+      title: 'Cips Fritözü',
       totalCost: 160,
       position: Vector2(380, 780),
       onUnlock: () {
         final station = ProcessingStationComponent(
           id: 'station_chips_1',
-          title: '🍟 Cips Fritözü',
+          title: 'Cips Fritözü',
           inputType: ProductType.potato,
           outputType: ProductType.chips,
           position: Vector2(380, 780),
@@ -427,7 +427,7 @@ class MiniMartGame extends FlameGame with KeyboardEvents {
 
     _addUnlockPad(
       unlockId: 'shelf_chips_1',
-      title: '🍟 Külah Cips Reyonu',
+      title: 'Külah Cips Reyonu',
       totalCost: 170,
       position: Vector2(1040, 420),
       onUnlock: () {
@@ -682,7 +682,7 @@ class StoreFloorComponent extends PositionComponent {
     );
 
     // Farm Title Decal
-    _drawZoneHeader(canvas, 290, 88, '🌾 ORGANİK ÇİFTLİK & İMALATHANELER', NeoTheme.grassGreen);
+    _drawZoneHeader(canvas, 290, 88, 'ORGANİK ÇİFTLİK & İMALATHANELER', NeoTheme.grassGreen);
 
     // ==========================================
     // 2. SAĞ BÖLGE: BAKKAL SATIŞ ALANI ZEMİNİ
@@ -705,7 +705,7 @@ class StoreFloorComponent extends PositionComponent {
     );
 
     // Supermarket Title Decal
-    _drawZoneHeader(canvas, 860, 88, '🏪 BAKKAL SATIŞ REYONLARI', NeoTheme.purpleAccent);
+    _drawZoneHeader(canvas, 860, 88, 'BAKKAL SATIŞ REYONLARI', NeoTheme.purpleAccent);
 
     // Floor Diamonds
     final tilePaint = Paint()

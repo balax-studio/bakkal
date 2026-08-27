@@ -17,7 +17,7 @@ class FloatingTextComponent extends PositionComponent {
     required Vector2 position,
     this.color = NeoTheme.cashGreen,
     this.borderColor = NeoTheme.inkBlack,
-  }) : super(position: position, size: Vector2(100, 30), priority: 200);
+  }) : super(position: position, size: Vector2(120, 30), priority: 200);
 
   @override
   void update(double dt) {
@@ -38,7 +38,7 @@ class FloatingTextComponent extends PositionComponent {
       text: text,
       style: TextStyle(
         color: color.withValues(alpha: opacity),
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: FontWeight.w900,
         fontFamily: 'sans-serif',
         shadows: [
@@ -68,7 +68,7 @@ class FlyingItemComponent extends PositionComponent {
   final VoidCallback onArrive;
 
   double progress = 0.0;
-  final double duration = 0.35; // Fast and snappy
+  final double duration = 0.35;
   late final double arcHeight;
 
   FlyingItemComponent({
@@ -91,7 +91,6 @@ class FlyingItemComponent extends PositionComponent {
       return;
     }
 
-    // Quadratic Bezier interpolation with arc
     final p0 = startPos;
     final p2 = target.position;
     final p1 = Vector2(
@@ -113,7 +112,6 @@ class FlyingItemComponent extends PositionComponent {
       height: 18,
     );
 
-    // Draw Neo-Brutalist product cube
     NeoTheme.drawNeoRRect(
       canvas,
       RRect.fromRectAndRadius(rect, const Radius.circular(4)),
@@ -121,6 +119,55 @@ class FlyingItemComponent extends PositionComponent {
       strokePaint: NeoTheme.stroke(width: 2.0),
       shadowOffset: 2.0,
     );
+  }
+}
+
+/// Curved flying Gold Coin arc
+class FlyingCoinComponent extends PositionComponent {
+  final Vector2 startPos;
+  final Vector2 targetPos;
+  final VoidCallback? onArrive;
+
+  double progress = 0.0;
+  final double duration = 0.45;
+  late final double arcHeight;
+
+  FlyingCoinComponent({
+    required this.startPos,
+    required this.targetPos,
+    this.onArrive,
+  }) : super(position: startPos.clone(), size: Vector2(16, 16), priority: 250) {
+    arcHeight = 35.0 + math.Random().nextDouble() * 25.0;
+  }
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    progress += dt / duration;
+    if (progress >= 1.0) {
+      onArrive?.call();
+      removeFromParent();
+      return;
+    }
+
+    final p0 = startPos;
+    final p2 = targetPos;
+    final p1 = Vector2((p0.x + p2.x) / 2, math.min(p0.y, p2.y) - arcHeight);
+
+    final t = progress;
+    final u = 1 - t;
+    position.x = u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x;
+    position.y = u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final cx = size.x * 0.5;
+    final cy = size.y * 0.5;
+
+    canvas.drawCircle(Offset(cx, cy), 7, Paint()..color = NeoTheme.goldCoin);
+    canvas.drawCircle(Offset(cx, cy), 7, NeoTheme.stroke(width: 1.5));
+    canvas.drawCircle(Offset(cx, cy), 4, Paint()..color = const Color(0xFFFDE047));
   }
 }
 

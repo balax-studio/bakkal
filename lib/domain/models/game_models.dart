@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 
 /// 17 Types of Goods in the Tycoon Ecosystem
@@ -68,44 +69,37 @@ extension ProductTypeExt on ProductType {
     }
   }
 
-  String get emoji {
+  NeoIconType get iconType {
     switch (this) {
       case ProductType.tomato:
-        return '🍅';
+        return NeoIconType.tomato;
       case ProductType.corn:
-        return '🌽';
+        return NeoIconType.corn;
       case ProductType.wheat:
-        return '🌾';
-      case ProductType.teaLeaf:
-        return '🍃';
-      case ProductType.sunflower:
-        return '🌻';
-      case ProductType.potato:
-        return '🥔';
-      case ProductType.egg:
-        return '🥚';
-      case ProductType.milk:
-        return '🥛';
       case ProductType.flour:
-        return '🥡';
+        return NeoIconType.wheat;
       case ProductType.bread:
-        return '🍞';
-      case ProductType.teaCup:
-        return '☕';
-      case ProductType.seeds:
-        return '🥜';
-      case ProductType.chips:
-        return '🍟';
-      case ProductType.yogurt:
-        return '🥣';
-      case ProductType.ayran:
-        return '🥤';
-      case ProductType.tomatoPaste:
-        return '🥫';
       case ProductType.toast:
-        return '🥪';
+        return NeoIconType.bread;
+      case ProductType.teaLeaf:
+      case ProductType.teaCup:
       case ProductType.coffee:
-        return '☕';
+        return NeoIconType.teaCup;
+      case ProductType.sunflower:
+      case ProductType.seeds:
+        return NeoIconType.seeds;
+      case ProductType.potato:
+      case ProductType.chips:
+        return NeoIconType.chips;
+      case ProductType.egg:
+        return NeoIconType.egg;
+      case ProductType.milk:
+      case ProductType.yogurt:
+        return NeoIconType.milk;
+      case ProductType.ayran:
+        return NeoIconType.ayran;
+      case ProductType.tomatoPaste:
+        return NeoIconType.paste;
     }
   }
 
@@ -217,23 +211,23 @@ extension ProductTypeExt on ProductType {
 
 /// 4 Specialized Worker Classes
 enum WorkerRole {
-  farmer, // Hasatçı: Harvests fields/animals -> carries to processing hopper / storage
-  stocker, // Lojistikçi: Restocks finished items from workshop to market shelves
-  cashier, // Kasiyer: Speeds up checkout at register counter
-  cleaner, // Temizlikçi: Sweeps dropped dirt/mud to prevent customer slow-down
+  farmer,
+  stocker,
+  cashier,
+  cleaner,
 }
 
 extension WorkerRoleExt on WorkerRole {
   String get title {
     switch (this) {
       case WorkerRole.farmer:
-        return 'Tarım İşçisi (Hasatçı)';
+        return 'Tarım Hasatçısı';
       case WorkerRole.stocker:
-        return 'Lojistikçi (Raf Dizici)';
+        return 'Lojistik Rafçısı';
       case WorkerRole.cashier:
         return 'Kasiyer';
       case WorkerRole.cleaner:
-        return 'Temizlikçi (Teyze/Amca)';
+        return 'Temizlik Görevlisi';
     }
   }
 
@@ -247,6 +241,19 @@ extension WorkerRoleExt on WorkerRole {
         return 'Müşteri kuyruğunu hızla eritir, marketin tıkanmasını engeller.';
       case WorkerRole.cleaner:
         return 'Yere dökülen çamur ve kirleri temizler, müşteri akışını %40 hızlandırır.';
+    }
+  }
+
+  NeoIconType get iconType {
+    switch (this) {
+      case WorkerRole.farmer:
+        return NeoIconType.farmer;
+      case WorkerRole.stocker:
+        return NeoIconType.stocker;
+      case WorkerRole.cashier:
+        return NeoIconType.cashier;
+      case WorkerRole.cleaner:
+        return NeoIconType.cleaner;
     }
   }
 
@@ -274,8 +281,8 @@ class WorkerStats {
     this.hiredCount = 0,
   });
 
-  int get capacity => 2 + (level - 1) * 2; // 2, 4, 6, 8...
-  double get speedMultiplier => 1.0 + (level - 1) * 0.20; // +20% speed per level
+  int get capacity => 2 + (level - 1) * 2;
+  double get speedMultiplier => 1.0 + (level - 1) * 0.20;
   double get processingSpeedMultiplier => 1.0 + (level - 1) * 0.25;
 
   int get hireCost => 80 + (hiredCount * 120);
@@ -333,7 +340,6 @@ class PlayerData {
   int lastDailyClaimEpochDay;
   int lastSavedEpochSeconds;
 
-  // 4 Worker Class Upgrades
   final Map<WorkerRole, WorkerStats> workerStats;
 
   PlayerData({

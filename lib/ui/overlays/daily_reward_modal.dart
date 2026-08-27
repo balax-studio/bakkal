@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/audio/sound_service.dart';
 import '../../core/haptics/haptic_service.dart';
+import '../../core/theme/neo_icons.dart';
 import '../../core/theme/neo_theme.dart';
 import '../../game/mini_mart_game.dart';
 import '../../services/retention_service.dart';
@@ -25,7 +26,7 @@ class DailyRewardModal extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: Container(
-          width: 340,
+          width: 350,
           padding: const EdgeInsets.all(20),
           decoration: NeoTheme.neoCardDecoration(
             color: Colors.white,
@@ -46,13 +47,20 @@ class DailyRewardModal extends StatelessWidget {
                       radius: 8,
                       shadow: 2,
                     ),
-                    child: const Text(
-                      '🎁 7 GÜNLÜK SERİ ÖDÜLÜ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                      ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        NeoIcon(NeoIconType.gift, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          '7 GÜNLÜK SERİ ÖDÜLÜ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   IconButton(
@@ -107,10 +115,10 @@ class DailyRewardModal extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(reward.emoji, style: const TextStyle(fontSize: 18)),
-                        const SizedBox(height: 2),
+                        NeoIcon(reward.iconType, size: 20),
+                        const SizedBox(height: 3),
                         Text(
-                          isPast ? '✅ Alındı' : '\$${reward.cashAmount}',
+                          isPast ? 'ALINDI' : '\$${reward.cashAmount}',
                           style: TextStyle(
                             fontSize: 8,
                             fontWeight: FontWeight.w800,
@@ -147,7 +155,7 @@ class DailyRewardModal extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      isAvailable ? '🎉 GÜN $currentDay ÖDÜLÜNÜ AL' : 'Yarın Tekrar Gel!',
+                      isAvailable ? 'GÜN $currentDay ÖDÜLÜNÜ AL' : 'Yarın Tekrar Gel!',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
