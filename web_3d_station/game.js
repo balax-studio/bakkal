@@ -720,6 +720,38 @@ function buildDiorama() {
 // Helper Creators for Props, Flora, Fauna & Street Furniture
 // ---------------------------------------------------------
 
+function createPumpMesh(id) {
+  const pump = new THREE.Group();
+  pump.userData = { isPump: true, pumpId: id };
+
+  // Concrete Island Base
+  const base = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.25, 4.2), Mat.concrete);
+  base.position.y = 0.125;
+  base.receiveShadow = true;
+  pump.add(base);
+
+  // Dispenser Body
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 1.4), Mat.buildingWall);
+  body.position.y = 1.05;
+  body.castShadow = true;
+  body.userData = { isPump: true, pumpId: id };
+  pump.add(body);
+
+  // Red Side Trim
+  const side1 = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.2), Mat.redTrim);
+  side1.position.set(0, 1.05, -0.65);
+  const side2 = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.2), Mat.redTrim);
+  side2.position.set(0, 1.05, 0.65);
+  pump.add(side1, side2);
+
+  // Glowing LCD Screen
+  const lcd = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.45, 0.7), new THREE.MeshBasicMaterial({ color: 0x0C1610 }));
+  lcd.position.set(0, 1.3, 0);
+  pump.add(lcd);
+
+  return pump;
+}
+
 function createStreetLamp() {
   const lamp = new THREE.Group();
 
