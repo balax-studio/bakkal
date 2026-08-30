@@ -269,6 +269,70 @@ body, html {
 }
 
 /* =========================================================
+   BOTTOM-RIGHT FLOATING CAMERA CONTROLS BAR
+   ========================================================= */
+#camera-controls-bar {
+  position: absolute;
+  bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  right: max(16px, env(safe-area-inset-right, 16px));
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+}
+
+.cam-btn {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 6px 10px;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--bg-card);
+}
+.cam-btn:hover {
+  background: var(--accent-gold);
+  color: var(--ink-text);
+}
+.cam-btn-text {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.cam-hint-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background: var(--bg-inner);
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  #camera-controls-bar {
+    bottom: calc(max(16px, env(safe-area-inset-bottom, 16px)) + 64px);
+    right: max(12px, env(safe-area-inset-right, 12px));
+    padding: 4px 6px;
+    gap: 4px;
+  }
+  .cam-btn {
+    min-height: 36px;
+    min-width: 36px;
+    padding: 4px 6px;
+  }
+  .cam-btn-text, .cam-hint-chip {
+    display: none;
+  }
+}
+
+
+/* =========================================================
    MODAL DIALOGS
    ========================================================= */
 .modal-overlay {

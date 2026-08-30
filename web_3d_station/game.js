@@ -142,7 +142,10 @@ const I18N = {
     toast_debug_money: 'Debug: Kasa ₺{0} artırıldı.',
     toast_debug_tanks: 'Debug: Tüm depolar dolduruldu (%100).',
     toast_debug_timers: 'Debug: Tüm aktif süreler tamamlandı.',
-    toast_debug_unlock: 'Debug: Tüm tesisler ve arsalar açıldı!'
+    toast_debug_unlock: 'Debug: Tüm tesisler ve arsalar açıldı!',
+    cam_center: 'Odak',
+    cam_hint: 'Sol Tık: Kaydır · Sağ Tık: Döndür · WASD',
+    toast_cam_reset: 'Kamera istasyon merkezine odaklandı.'
   },
   en: {
     cash: 'CASH',
@@ -169,33 +172,33 @@ const I18N = {
     themes_title: 'Station Theme',
     visual_addons_title: 'Visual Addons',
     addon_totem_title: 'LED Digital Price Totem',
-    addon_totem_desc: 'Increases bypass vehicle turn-in rate.',
+    addon_totem_desc: 'Increases highway bypass vehicle turn-in rate.',
     addon_garden_title: 'Landscape & Flower Gardens',
-    addon_garden_desc: 'Boosts customer satisfaction and tip rate.',
-    fac_title: 'Ancillary Facilities',
+    addon_garden_desc: 'Increases customer satisfaction and tip rates.',
+    fac_title: 'Secondary Revenue Facilities',
     upgrade_pump_title: 'Add Pump Island',
-    upgrade_pump_desc: 'Serve more vehicles simultaneously.',
+    upgrade_pump_desc: 'Service more vehicles simultaneously.',
     upgrade_wash_title: 'Automatic Tunnel Car Wash',
-    upgrade_wash_desc: 'Collects ₺45 automatic wash fee per car.',
+    upgrade_wash_desc: 'Charges ₺45 automatic wash fee per serviced car.',
     upgrade_market_title: '24/7 Mini Market & Cafe',
-    upgrade_market_desc: 'Sells snacks and coffee to fueling drivers (+₺35/car).',
+    upgrade_market_desc: 'Sells coffee & snacks to fuel customers (+₺35/car).',
     staff_title: 'Staff Hiring & Training',
     staff_attendant: 'Pump Attendant',
-    staff_attendant_desc: 'Automates car refueling, speeds up with level.',
+    staff_attendant_desc: 'Automates refueling, speed increases per level.',
     staff_cashier: 'Cashier',
-    staff_cashier_desc: 'Doubles market and checkout transaction speed.',
+    staff_cashier_desc: 'Doubles market and checkout register speed.',
     staff_manager: 'Shift Manager',
-    staff_manager_desc: 'Fully automates car refueling and tanker orders.',
-    energy_title: 'Green Energy Grid',
-    ev_title: 'EV Supercharger Hub',
-    ev_charger_title: '350kW DC Ultra Fast EV Bay',
-    ev_charger_desc: 'Charges electric vehicles in 15 seconds (+₺120 fee).',
-    land_title: 'Zoning Permits & Land Parcels',
-    btn_bought: 'OWNED',
+    staff_manager_desc: 'Fully automates refueling and tanker replenishments.',
+    energy_title: 'Green Energy Infrastructure',
+    ev_title: 'EV Ultra Fast Charging Network',
+    ev_charger_title: '350kW DC Ultra Fast EV Charger',
+    ev_charger_desc: 'Charges EVs in 15 seconds (+₺120 charging fee).',
+    land_title: 'Zoning Permits & Parcel Acquisition',
+    btn_bought: 'PURCHASED',
     btn_active: 'ACTIVE',
-    btn_working: 'ACTIVE',
-    btn_in_progress: 'BUILDING...',
-    btn_training: 'TRAINING...',
+    btn_working: 'WORKING',
+    btn_in_progress: 'BUILDING',
+    btn_training: 'TRAINING',
     order_title: 'Fuel Tanker Order',
     tank_status: 'Tank',
     office_title: 'Station Management & Finance',
@@ -258,14 +261,14 @@ const I18N = {
     settings_lang_select: 'Language',
     settings_lang_desc: 'Switch instantly between Turkish and English.',
     settings_graphics_title: 'Graphics & 60 FPS Optimization',
-    settings_shadows_title: 'Real-Time Shadows',
-    settings_shadows_desc: 'Can be disabled to improve performance on low-end devices.',
+    settings_shadows_title: 'Real-time Shadows',
+    settings_shadows_desc: 'Turn off to maximize performance on lower-end devices.',
     settings_quality_title: 'Render Quality Profile',
-    settings_quality_desc: 'Pixel resolution scaling and texture filtering quality.',
+    settings_quality_desc: 'Pixel resolution scale and texture filtering quality.',
     settings_fps_title: 'Target Frame Rate (FPS)',
-    settings_fps_desc: 'Cap at 30 or 60 FPS to save mobile battery.',
+    settings_fps_desc: 'Cap frame rate at 30 or 60 FPS for battery optimization.',
     settings_legal_title: 'App Store & Google Play Standards',
-    compliance_desc: 'PixelOil 3D is fully compliant with Apple App Store Guidelines (§5.1.1 Data Privacy, §3.1.1 IAP Standards) and Google Play Policies.',
+    compliance_desc: 'PixelOil 3D fully complies with Apple App Store Guidelines (§5.1.1 Privacy, §3.1.1 IAP) and Google Play Policies.',
     legal_privacy_btn: 'Privacy Policy',
     legal_terms_btn: 'Terms of Service',
     legal_restore_btn: 'Restore Purchases',
@@ -278,7 +281,10 @@ const I18N = {
     toast_debug_money: 'Debug: Added ₺{0} to balance.',
     toast_debug_tanks: 'Debug: All fuel tanks filled (100%).',
     toast_debug_timers: 'Debug: Completed all active timers.',
-    toast_debug_unlock: 'Debug: All facilities and land unlocked!'
+    toast_debug_unlock: 'Debug: All facilities and land unlocked!',
+    cam_center: 'Focus',
+    cam_hint: 'Left Click: Pan · Right Click: Rotate · WASD',
+    toast_cam_reset: 'Camera centered on station.'
   }
 };
 
@@ -702,25 +708,27 @@ function initThree() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  // Controls with Elastic Free Pan
+  // Controls with Smooth Isometric Tycoon Ground Pan
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableRotate = true;
   controls.enablePan = true;
-  controls.screenSpacePanning = true;
-  controls.maxPolarAngle = Math.PI / 2.08;
-  controls.minPolarAngle = Math.PI / 8;
-  controls.minZoom = 0.45;
-  controls.maxZoom = 3.2;
+  controls.screenSpacePanning = false; // Smooth horizontal ground-plane panning (Tycoon standard)
+  controls.panSpeed = 1.35;
+  controls.rotateSpeed = 0.85;
+  controls.maxPolarAngle = Math.PI / 2.05;
+  controls.minPolarAngle = Math.PI / 10;
+  controls.minZoom = 0.35;
+  controls.maxZoom = 4.0;
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.mouseButtons = {
-    LEFT: THREE.MOUSE.ROTATE,
-    MIDDLE: THREE.MOUSE.DOLLY,
-    RIGHT: THREE.MOUSE.PAN
+    LEFT: THREE.MOUSE.PAN,      // Sol tık ile haritada serbestçe gezinme / kaydırma
+    MIDDLE: THREE.MOUSE.DOLLY,  // Orta tekerlek ile yakınlaştırma / uzaklaştırma
+    RIGHT: THREE.MOUSE.ROTATE   // Sağ tık ile 360 izometrik açıyı döndürme
   };
   controls.touches = {
-    ONE: THREE.TOUCH.ROTATE,
-    TWO: THREE.TOUCH.DOLLY_PAN
+    ONE: THREE.TOUCH.PAN,       // Mobil tek parmak: kaydır
+    TWO: THREE.TOUCH.DOLLY_PAN  // Mobil iki parmak: yakınlaştır ve kaydır
   };
 
   // Lights
@@ -746,7 +754,7 @@ function initThree() {
 
   // Events
   window.addEventListener('resize', onWindowResize);
-  renderer.domElement.addEventListener('pointerdown', onCanvasClick);
+  initPointerAndKeyboard();
 
   // Start Loop
   animate();
@@ -1804,8 +1812,122 @@ function updateSpawner(delta) {
 }
 
 // =========================================================
-// 7. INTERACTIVE RAYCASTING & CLICK HANDLERS
+// 7. INTERACTIVE RAYCASTING, KEYBOARD & CAMERA CONTROLLERS
 // =========================================================
+
+let pointerDownPos = { x: 0, y: 0, time: 0 };
+const keysPressed = {};
+
+function initPointerAndKeyboard() {
+  renderer.domElement.addEventListener('pointerdown', (e) => {
+    pointerDownPos = { x: e.clientX, y: e.clientY, time: performance.now() };
+  });
+
+  renderer.domElement.addEventListener('pointerup', (e) => {
+    const dist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+    const elapsed = performance.now() - pointerDownPos.time;
+    // Only treat as an intentional interactive click if mouse didn't drag
+    if (dist < 6 && elapsed < 500) {
+      onCanvasClick(e);
+    }
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+    keysPressed[e.code] = true;
+    if (e.code === 'KeyR' || e.code === 'Space') {
+      resetCameraView();
+    } else if (e.code === 'KeyQ') {
+      rotateCameraBy(Math.PI / 4);
+    } else if (e.code === 'KeyE') {
+      rotateCameraBy(-Math.PI / 4);
+    } else if (e.code === 'Equal' || e.code === 'NumpadAdd') {
+      zoomCamera(1.25);
+    } else if (e.code === 'Minus' || e.code === 'NumpadSubtract') {
+      zoomCamera(0.8);
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    keysPressed[e.code] = false;
+  });
+}
+
+function resetCameraView() {
+  if (!controls || !camera) return;
+  controls.target.set(0, 0, 0);
+  camera.position.set(26, 24, 26);
+  camera.zoom = 1.0;
+  camera.updateProjectionMatrix();
+  controls.update();
+  showToast(t('toast_cam_reset'));
+}
+
+function rotateCameraBy(angle) {
+  if (!controls || !camera) return;
+  const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
+  const radius = Math.hypot(offset.x, offset.z);
+  const currentAngle = Math.atan2(offset.z, offset.x);
+  const newAngle = currentAngle + angle;
+  camera.position.x = controls.target.x + radius * Math.cos(newAngle);
+  camera.position.z = controls.target.z + radius * Math.sin(newAngle);
+  controls.update();
+}
+
+function zoomCamera(factor) {
+  if (!camera || !controls) return;
+  camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.35, 4.0);
+  camera.updateProjectionMatrix();
+  controls.update();
+}
+
+function updateKeyboardCamera(delta) {
+  if (!controls || !camera) return;
+  const moveSpeed = 32 * delta;
+
+  // View forward vector projected on horizontal X-Z plane
+  const forward = new THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+  forward.normalize();
+
+  // Right vector on horizontal X-Z plane
+  const right = new THREE.Vector3();
+  right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
+
+  const moveDelta = new THREE.Vector3();
+  if (keysPressed['KeyW'] || keysPressed['ArrowUp']) {
+    moveDelta.addScaledVector(forward, moveSpeed);
+  }
+  if (keysPressed['KeyS'] || keysPressed['ArrowDown']) {
+    moveDelta.addScaledVector(forward, -moveSpeed);
+  }
+  if (keysPressed['KeyD'] || keysPressed['ArrowRight']) {
+    moveDelta.addScaledVector(right, moveSpeed);
+  }
+  if (keysPressed['KeyA'] || keysPressed['ArrowLeft']) {
+    moveDelta.addScaledVector(right, -moveSpeed);
+  }
+
+  if (moveDelta.lengthSq() > 0) {
+    camera.position.add(moveDelta);
+    controls.target.add(moveDelta);
+  }
+
+  // Smooth island bounding box limit with generous navigation freedom
+  const maxPan = Math.max(45, State.land.size * 0.7);
+  const clampedX = THREE.MathUtils.clamp(controls.target.x, -maxPan, maxPan);
+  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -maxPan, maxPan);
+  const diffX = clampedX - controls.target.x;
+  const diffZ = clampedZ - controls.target.z;
+
+  if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
+    controls.target.x = clampedX;
+    controls.target.z = clampedZ;
+    camera.position.x += diffX;
+    camera.position.z += diffZ;
+  }
+}
 
 function onCanvasClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -2966,10 +3088,8 @@ function animate() {
   lastTime = now;
   const totalSeconds = now * 0.001;
 
-  const maxPan = State.land.size * 0.35;
-  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -maxPan, maxPan);
-  controls.target.y = THREE.MathUtils.clamp(controls.target.y, -2, 10);
-  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -maxPan, maxPan);
+  // Camera Navigation & Smooth Pan Clamping
+  updateKeyboardCamera(delta);
   controls.update();
 
   updateDayNightCycle(delta);

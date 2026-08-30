@@ -4,9 +4,92 @@ extends Node3D
 @onready var dir_light: DirectionalLight3D = $DirectionalLight3D
 @onready var camera: Camera3D = $Camera3D
 
+var is_dragging: bool = false
+var last_mouse_pos: Vector2 = Vector2.ZERO
+var initial_cam_pos: Vector3 = Vector3(26, 24, 26)
+var cam_speed: float = 25.0
+
 func _ready() -> void:
 	EventBus.time_updated.connect(_on_time_updated)
 	_update_lighting(GameState.hour)
+	if camera:
+		initial_cam_pos = camera.position
+
+func _process(delta: float) -> void:
+	_handle_keyboard_pan(delta)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.pressed:
+				is_dragging = true
+				last_mouse_pos = event.position
+			else:
+				is_dragging = false
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_zoom_camera(-1.5)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_zoom_camera(1.5)
+	elif event is InputEventMouseMotion and is_dragging:
+		var delta_m = event.position - last_mouse_pos
+		last_mouse_pos = event.position
+		_pan_camera_by_mouse(delta_m)
+
+func _pan_camera_by_mouse(delta_m: Vector2) -> void:
+	if not camera:
+		return
+	var factor: float = 0.05
+	var right: Vector3 = camera.global_transform.basis.x
+	var up: Vector3 = camera.global_transform.basis.y
+	right.y = 0.0
+	up.y = 0.0
+	right = right.normalized()
+	up = up.normalized()
+	var offset: Vector3 = (-right * delta_m.x + up * delta_m.y) * factor
+	camera.position += offset
+	_clamp_camera()
+
+func _handle_keyboard_pan(delta: float) -> void:
+	if not camera:
+		return
+	var forward: Vector3 = -camera.global_transform.basis.z
+	var right: Vector3 = camera.global_transform.basis.x
+	forward.y = 0.0
+	right.y = 0.0
+	forward = forward.normalized()
+	right = right.normalized()
+
+	var move_vec: Vector3 = Vector3.ZERO
+	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
+		move_vec += forward
+	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
+		move_vec -= forward
+	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+		move_vec += right
+	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+		move_vec -= right
+	if Input.is_key_pressed(KEY_R) or Input.is_key_pressed(KEY_SPACE):
+		camera.position = initial_cam_pos
+
+	if move_vec.length_squared() > 0.0:
+		camera.position += move_vec.normalized() * cam_speed * delta
+		_clamp_camera()
+
+func _zoom_camera(amount: float) -> void:
+	if not camera:
+		return
+	if camera.projection == Camera3D.PROJECTION_ORTHOGONAL:
+		camera.size = clampf(camera.size + amount, 8.0, 50.0)
+	else:
+		var forward: Vector3 = -camera.global_transform.basis.z
+		camera.position += forward * (-amount)
+
+func _clamp_camera() -> void:
+	if not camera:
+		return
+	var max_pan: float = 45.0
+	camera.position.x = clampf(camera.position.x, initial_cam_pos.x - max_pan, initial_cam_pos.x + max_pan)
+	camera.position.z = clampf(camera.position.z, initial_cam_pos.z - max_pan, initial_cam_pos.z + max_pan)
 
 func _on_time_updated(h: int, _m: int, _d: int) -> void:
 	_update_lighting(h)
