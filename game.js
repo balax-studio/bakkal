@@ -349,16 +349,26 @@ function initThree() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  // Controls with Strict Bounds (Prevents drifting out of diorama)
+  // Controls with Elastic Bounds & Free Pan (Allows free exploration while keeping scene in frame)
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableRotate = true;
-  controls.maxPolarAngle = Math.PI / 2.15;
-  controls.minPolarAngle = Math.PI / 6;
-  controls.minDistance = 12;
-  controls.maxDistance = 42;
+  controls.enablePan = true;
+  controls.screenSpacePanning = true;
+  controls.maxPolarAngle = Math.PI / 2.08;
+  controls.minPolarAngle = Math.PI / 8;
+  controls.minZoom = 0.45;
+  controls.maxZoom = 3.2;
   controls.enableDamping = true;
-  controls.dampingFactor = 0.06;
-  controls.target.set(0, 0, 0);
+  controls.dampingFactor = 0.08;
+  controls.mouseButtons = {
+    LEFT: THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.PAN
+  };
+  controls.touches = {
+    ONE: THREE.TOUCH.ROTATE,
+    TWO: THREE.TOUCH.DOLLY_PAN
+  };
 
   // Lights
   ambientLight = new THREE.AmbientLight(0xEAECEF, 0.7);
@@ -427,6 +437,9 @@ const Mat = {
   foliageDark: new THREE.MeshLambertMaterial({ color: 0x2A5A22 }),
   metalTank: new THREE.MeshLambertMaterial({ color: 0xEDE8DC }),
   chrome: new THREE.MeshLambertMaterial({ color: 0xA8B2BC }),
+  rockGrey: new THREE.MeshLambertMaterial({ color: 0x7E8B9B }),
+  rockDark: new THREE.MeshLambertMaterial({ color: 0x4D5866 }),
+  grassHill: new THREE.MeshLambertMaterial({ color: 0x649B35 }),
   // Rich Flora & Props
   flowerRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
   flowerYellow: new THREE.MeshLambertMaterial({ color: 0xFFD166 }),
@@ -455,34 +468,34 @@ const Mat = {
 function buildDiorama() {
   const diorama = new THREE.Group();
 
-  // 1. Extended Island Ground Base (46x46 Floating Neo-Brutalist Diorama)
-  const grassGeo = new THREE.BoxGeometry(46, 1.5, 46);
+  // 1. Extended Island Ground Base (80x80 Floating Neo-Brutalist Diorama)
+  const grassGeo = new THREE.BoxGeometry(80, 1.5, 80);
   const grassMesh = new THREE.Mesh(grassGeo, Mat.grass);
   grassMesh.position.y = -0.75;
   grassMesh.receiveShadow = true;
   diorama.add(grassMesh);
 
   // Stepped Earth Soil Layer
-  const dirtGeo = new THREE.BoxGeometry(46, 2.2, 46);
+  const dirtGeo = new THREE.BoxGeometry(80, 2.2, 80);
   const dirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
   dirtMesh.position.y = -2.6;
   diorama.add(dirtMesh);
 
   // Dark Ink Floating Base Rim Slab
-  const baseSlabGeo = new THREE.BoxGeometry(47.5, 0.6, 47.5);
+  const baseSlabGeo = new THREE.BoxGeometry(82, 0.6, 82);
   const baseSlab = new THREE.Mesh(baseSlabGeo, Mat.darkInk);
   baseSlab.position.y = -3.8;
   diorama.add(baseSlab);
 
-  // 2. Asphalt Highway Road (46 Units Full Width)
-  const roadGeo = new THREE.BoxGeometry(46, 0.06, 7.5);
+  // 2. Asphalt Highway Road (80 Units Full Width)
+  const roadGeo = new THREE.BoxGeometry(80, 0.06, 7.5);
   const roadMesh = new THREE.Mesh(roadGeo, Mat.asphalt);
   roadMesh.position.set(0, 0.03, 11.5);
   roadMesh.receiveShadow = true;
   diorama.add(roadMesh);
 
-  // Double Yellow Lines across full highway
-  for (let i = -21; i <= 21; i += 3) {
+  // Double Yellow Lines across full 80-unit highway
+  for (let i = -38; i <= 38; i += 3) {
     const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
     const line1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
     line1.position.set(i, 0.07, 11.35);
@@ -687,9 +700,10 @@ function buildDiorama() {
   birds.push(bird1, bird2);
   diorama.add(bird1, bird2);
 
-  // 12. Floating 16-Bit Voxel Sky Clouds
+  // 12. Floating 16-Bit Voxel Sky Clouds (Broad Coverage)
   const cloudPositions = [
-    [-18, 22, -14], [-6, 25, 6], [10, 21, -10], [22, 24, 12]
+    [-32, 24, -26], [-16, 26, 8], [6, 23, -20], [26, 25, 16],
+    [-8, 27, 28], [34, 24, -30], [-28, 25, 20], [20, 26, -12]
   ];
   cloudPositions.forEach(cp => {
     const cloud = createVoxelCloud();
@@ -698,11 +712,44 @@ function buildDiorama() {
     scene.add(cloud);
   });
 
-  // 13. Perimeter Trees with Wind Sway
+  // 13. Natural Rock Clusters & Low-Poly Grass Hill Mounds
+  const rockPositions = [
+    [-30, 0, -28], [-24, 0, 24], [28, 0, -26], [32, 0, 22],
+    [-32, 0, -5], [30, 0, 5], [-12, 0, 28], [14, 0, 28],
+    [-36, 0, 14], [35, 0, -12]
+  ];
+  rockPositions.forEach(rp => {
+    const rock = createRockCluster();
+    rock.position.set(...rp);
+    diorama.add(rock);
+  });
+
+  const hillPositions = [
+    [-28, 0, -22, 12, 0.9, 10],
+    [26, 0, -24, 14, 1.2, 11],
+    [-26, 0, 24, 11, 0.8, 9],
+    [28, 0, 22, 13, 1.0, 10],
+    [0, 0, -32, 16, 1.1, 8]
+  ];
+  hillPositions.forEach(hp => {
+    const hill = createGrassMound(hp[3], hp[4], hp[5]);
+    hill.position.set(hp[0], 0, hp[2]);
+    diorama.add(hill);
+  });
+
+  // 14. Expanded Perimeter Pine Trees (26 Trees with Wind Sway)
   const treePositions = [
-    [-17, 0, -14], [-12, 0, -14], [-17, 0, 3], [-17, 0, -5],
-    [16, 0, -14], [16, 0, -5], [16, 0, 3], [19, 0, -10],
-    [-20, 0, 8], [20, 0, 8]
+    // North outer & hills
+    [-34, 0, -32], [-26, 0, -34], [-18, 0, -30], [-10, 0, -33], [0, 0, -34],
+    [10, 0, -34], [18, 0, -30], [28, 0, -33], [34, 0, -28],
+    // West outer
+    [-35, 0, -20], [-34, 0, -10], [-36, 0, 0], [-34, 0, 12], [-32, 0, 22], [-35, 0, 32],
+    // East outer
+    [34, 0, -18], [35, 0, -8], [33, 0, 2], [36, 0, 14], [34, 0, 24], [35, 0, 32],
+    // South outer road sides
+    [-24, 0, 30], [-14, 0, 32], [12, 0, 31], [22, 0, 30],
+    // Inner accents
+    [-18, 0, -14], [16, 0, -14]
   ];
   treePositions.forEach((p, idx) => {
     const tree = createLowPolyTree(idx);
@@ -710,7 +757,7 @@ function buildDiorama() {
     diorama.add(tree);
   });
 
-  // 14. Initialize Background Highway Bypass Traffic
+  // 15. Initialize Background Highway Bypass Traffic
   initBypassTraffic();
 
   scene.add(diorama);
@@ -750,6 +797,33 @@ function createPumpMesh(id) {
   pump.add(lcd);
 
   return pump;
+}
+
+function createRockCluster() {
+  const rockGroup = new THREE.Group();
+  const r1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.9, 0), Mat.rockGrey);
+  r1.position.set(0, 0.45, 0);
+  r1.castShadow = true;
+  r1.receiveShadow = true;
+
+  const r2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.6, 0), Mat.rockDark);
+  r2.position.set(0.8, 0.3, 0.3);
+  r2.rotation.y = 0.6;
+  r2.castShadow = true;
+
+  const r3 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.45, 0), Mat.rockGrey);
+  r3.position.set(-0.6, 0.22, 0.4);
+  r3.castShadow = true;
+
+  rockGroup.add(r1, r2, r3);
+  return rockGroup;
+}
+
+function createGrassMound(w = 8, h = 0.8, d = 6) {
+  const mound = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), Mat.grassHill);
+  mound.position.y = h / 2;
+  mound.receiveShadow = true;
+  return mound;
 }
 
 function createStreetLamp() {
@@ -1599,22 +1673,22 @@ class BypassVehicle {
 
   reset() {
     this.speed = 10 + Math.random() * 8; // units per sec
-    this.mesh.position.set(-28 - Math.random() * 15, 0, 13.4);
+    this.mesh.position.set(-48 - Math.random() * 15, 0, 13.4);
     this.mesh.rotation.y = Math.PI / 2;
   }
 
   update(delta) {
     this.mesh.position.x += this.speed * delta;
-    if (this.mesh.position.x > 28) {
+    if (this.mesh.position.x > 48) {
       this.reset();
     }
   }
 }
 
 function initBypassTraffic() {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 4; i++) {
     const bgCar = new BypassVehicle();
-    bgCar.mesh.position.x = -24 + i * 18;
+    bgCar.mesh.position.x = -40 + i * 22;
     bgVehicles.push(bgCar);
   }
 }
@@ -1670,8 +1744,8 @@ function updateParticles(delta) {
 function updateClouds(delta) {
   clouds.forEach(c => {
     c.position.x += c.userData.speed * delta;
-    if (c.position.x > 32) {
-      c.position.x = -32;
+    if (c.position.x > 46) {
+      c.position.x = -46;
     }
   });
 }
@@ -1850,8 +1924,10 @@ function animate() {
   lastTime = now;
   const totalSeconds = now * 0.001;
 
-  // Clamp camera orbit controls target around the center to keep diorama perfectly framed
-  controls.target.set(0, 0, 0);
+  // Elastic target boundaries (Allows free pan while keeping diorama within sight)
+  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -25, 25);
+  controls.target.y = THREE.MathUtils.clamp(controls.target.y, -2, 8);
+  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -25, 25);
   controls.update();
 
   updateDayNightCycle(delta);
