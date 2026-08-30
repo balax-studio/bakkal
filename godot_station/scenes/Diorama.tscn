@@ -40,9 +40,6 @@ material = ExtResource("4_conc")
 [node name="Building" parent="." instance=ExtResource("5_bld")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11)
 
-[node name="Canopy" parent="." instance=ExtResource("6_canopy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
-
 [node name="FuelTanks" parent="." instance=ExtResource("7_tank")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -10)
 
