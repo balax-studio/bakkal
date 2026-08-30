@@ -107,6 +107,14 @@ const I18N = {
     toast_new_day: 'GÜN {0} BAŞLADI (Gece Raporu İşlendi)',
     toast_target: 'Hedef dolum: {0}',
     plot_click_prompt: '{0} inşa etmek için tıklayın (₺{1})',
+    plot_pump2: 'Pompa #2',
+    plot_pump3: 'Pompa #3',
+    plot_pump4: 'Pompa #4',
+    plot_wash: 'Oto Yıkama',
+    plot_market: 'Mini Market',
+    plot_solar: 'Çatı GES',
+    plot_turbine: 'Rüzgar Türbini',
+    plot_ev: 'EV Şarj',
     settings_title: 'Ayarlar & Sistem',
     tab_settings_audio: 'Ses & Dil',
     tab_settings_graphics: 'Grafik',
@@ -246,6 +254,14 @@ const I18N = {
     toast_new_day: 'DAY {0} HAS BEGUN (Daily summary processed)',
     toast_target: 'Target fill: {0}',
     plot_click_prompt: 'Click to build {0} (₺{1})',
+    plot_pump2: 'Pump #2',
+    plot_pump3: 'Pump #3',
+    plot_pump4: 'Pump #4',
+    plot_wash: 'Car Wash',
+    plot_market: 'Mini Market',
+    plot_solar: 'Solar Roof',
+    plot_turbine: 'Wind Turbine',
+    plot_ev: 'EV Charging',
     settings_title: 'Settings & System',
     tab_settings_audio: 'Audio & Lang',
     tab_settings_graphics: 'Graphics',
@@ -678,7 +694,12 @@ const Mat = {
   solarCell: new THREE.MeshLambertMaterial({ color: 0x243556 }),
   solarFrame: new THREE.MeshLambertMaterial({ color: 0xC6CED6 }),
   evGlow: new THREE.MeshBasicMaterial({ color: 0x4EE4EA }),
-  // Scaffolding & Plots
+  // Scaffolding & Custom Construction Plots
+  hazardCone: new THREE.MeshLambertMaterial({ color: 0xF37A20 }),
+  hazardStripe: new THREE.MeshLambertMaterial({ color: 0xF2BA36 }),
+  palletWood: new THREE.MeshLambertMaterial({ color: 0x966F48 }),
+  brickClay: new THREE.MeshLambertMaterial({ color: 0xB55239 }),
+  sandPile: new THREE.MeshLambertMaterial({ color: 0xD6B88D }),
   scaffoldWood: new THREE.MeshLambertMaterial({ color: 0xB89369 }),
   plotDashed: new THREE.MeshBasicMaterial({ color: 0xE5A93C, wireframe: true }),
   plotSignBg: new THREE.MeshLambertMaterial({ color: 0x242D35 })
@@ -982,88 +1003,382 @@ function buildDiorama() {
 // 3D Construction Plots, Signboards & Scaffolding
 // ---------------------------------------------------------
 
-function createPlotSignMesh(plot) {
+function createSafetyConeMesh() {
+  const coneGroup = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.03, 0.28), Mat.darkInk);
+  base.position.y = 0.015;
+  const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.12, 0.38, 8), Mat.hazardCone);
+  cone.position.y = 0.20;
+  cone.castShadow = true;
+  const stripe = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, 0.10, 8), Mat.roadWhite);
+  stripe.position.y = 0.18;
+  coneGroup.add(base, cone, stripe);
+  return coneGroup;
+}
+
+function drawPlotBadgeCanvas(canvas, plot) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, 256, 100);
+
+  // Rounded pill background
+  const r = 22;
+  ctx.beginPath();
+  ctx.moveTo(r + 6, 6);
+  ctx.lineTo(256 - r - 6, 6);
+  ctx.arcTo(256 - 6, 6, 256 - 6, 100 - 6, r);
+  ctx.arcTo(256 - 6, 100 - 6, 6, 100 - 6, r);
+  ctx.arcTo(6, 100 - 6, 6, 6, r);
+  ctx.arcTo(6, 6, 256 - 6, 6, r);
+  ctx.closePath();
+
+  ctx.fillStyle = 'rgba(28, 36, 43, 0.95)';
+  ctx.fill();
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = '#E5A93C';
+  ctx.stroke();
+
+  // Dynamic localized plot name
+  const localizedName = t('plot_' + plot.id, plot.name);
+
+  // Plus icon & plot name
+  ctx.fillStyle = '#E5A93C';
+  ctx.font = 'bold 22px Plus Jakarta Sans, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`+ ${localizedName}`, 128, 38);
+
+  // Price & Duration
+  ctx.fillStyle = '#FAF7EE';
+  ctx.font = 'bold 20px JetBrains Mono, monospace';
+  ctx.fillText(`₺${plot.cost.toLocaleString()}`, 96, 76);
+
+  ctx.fillStyle = '#78CADC';
+  ctx.font = 'bold 15px Plus Jakarta Sans, sans-serif';
+  ctx.fillText(`${plot.duration}s`, 198, 76);
+}
+
+function createPlotBadgeMesh(plot, floatY = 1.0) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 100;
+  drawPlotBadgeCanvas(canvas, plot);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+  const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.62), mat);
+  badge.position.set(0, floatY, 0);
+  badge.rotation.x = -Math.PI / 6;
+  badge.userData = { isPlotSign: true, isBadge: true, plotId: plot.id, plot: plot, baseY: floatY };
+  return { badge, canvas, texture };
+}
+
+function createPumpPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Subtle stone footprint paver slab on ground
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.04, 1.4), Mat.concrete);
-  slab.position.y = 0.02;
-  slab.receiveShadow = true;
-  group.add(slab);
+  // Concrete Fuel Island Base Curb
+  const curb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1.2), Mat.concrete);
+  curb.position.y = 0.06;
+  curb.receiveShadow = true;
+  curb.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  group.add(curb);
 
-  // Dashed warm border on ground
-  const outline = new THREE.Mesh(new THREE.BoxGeometry(2.48, 0.05, 1.48), Mat.plotDashed);
-  outline.position.y = 0.025;
-  group.add(outline);
+  // Steel Mounting Baseplate
+  const basePlate = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.04, 0.6), Mat.darkInk);
+  basePlate.position.y = 0.13;
+  basePlate.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  group.add(basePlate);
 
-  // Low cozy wooden sign post (0.7 unit high)
-  const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.7, 0.1), Mat.wood);
-  post.position.set(0, 0.35, 0);
-  post.castShadow = true;
-  group.add(post);
+  // Steel Conduit Stub Pipes
+  const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.22, 8), Mat.chrome);
+  p1.position.set(-0.22, 0.22, 0);
+  const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.22, 8), Mat.chrome);
+  p2.position.set(0.22, 0.22, 0);
+  group.add(p1, p2);
 
-  // Canvas billboard sign
-  const canvas = document.createElement('canvas');
-  canvas.width = 256;
-  canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#242D35';
-  ctx.fillRect(0, 0, 256, 128);
-  ctx.lineWidth = 6;
-  ctx.strokeStyle = '#E5A93C';
-  ctx.strokeRect(4, 4, 248, 120);
+  // 4 Traffic Safety Cones at corners
+  const coneOffsets = [[-0.95, -0.42], [0.95, -0.42], [-0.95, 0.42], [0.95, 0.42]];
+  coneOffsets.forEach(([cx, cz]) => {
+    const cGroup = createSafetyConeMesh();
+    cGroup.position.set(cx, 0.12, cz);
+    cGroup.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+    group.add(cGroup);
+  });
 
-  ctx.fillStyle = '#E5A93C';
-  ctx.font = 'bold 24px Plus Jakarta Sans, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(plot.name, 128, 42);
-
-  ctx.fillStyle = '#FAF7EE';
-  ctx.font = 'bold 20px JetBrains Mono, monospace';
-  ctx.fillText(`₺${plot.cost.toLocaleString()}`, 128, 78);
-
-  ctx.fillStyle = '#78CADC';
-  ctx.font = '14px Plus Jakarta Sans, sans-serif';
-  ctx.fillText(`⏱ ${plot.duration}s`, 128, 106);
-
-  const texture = new THREE.CanvasTexture(canvas);
+  // Floating Pill Badge
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.95);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
-
-  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.7, 0.08), new THREE.MeshBasicMaterial({ map: texture }));
-  signBoard.position.set(0, 0.75, 0);
-  signBoard.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  group.add(signBoard);
+  group.userData.badgeMesh = badge;
+  group.add(badge);
 
   return group;
+}
+
+function createWashPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+
+  // Concrete Wash Bay Slab
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.06, 8.4), Mat.concrete);
+  slab.position.y = 0.03;
+  slab.receiveShadow = true;
+  slab.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  group.add(slab);
+
+  // Central Drainage Steel Grating Trench
+  const trench = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.02, 7.2), Mat.darkInk);
+  trench.position.y = 0.065;
+  group.add(trench);
+  for (let z = -3.2; z <= 3.2; z += 0.8) {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.02, 0.12), Mat.rockDark);
+    bar.position.set(0, 0.075, z);
+    group.add(bar);
+  }
+
+  // 4 Corner Safety Bollards / Stanchions
+  const corners = [[-2.4, -3.8], [2.4, -3.8], [-2.4, 3.8], [2.4, 3.8]];
+  corners.forEach(([cx, cz]) => {
+    const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.65, 8), Mat.hazardStripe);
+    bollard.position.set(cx, 0.35, cz);
+    const top = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), Mat.darkInk);
+    top.position.set(cx, 0.7, cz);
+    group.add(bollard, top);
+  });
+
+  // Pallet with Coiled Hoses & Piping
+  const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.12, 1.2), Mat.palletWood);
+  pallet.position.set(1.8, 0.09, 2.8);
+  const hose = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.08, 6, 12), Mat.blueAccent);
+  hose.rotation.x = Math.PI / 2;
+  hose.position.set(1.8, 0.22, 2.8);
+  group.add(pallet, hose);
+
+  // Floating Pill Badge
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+
+  return group;
+}
+
+function createMarketPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+
+  // Concrete Foundation Floor Slab
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.08, 5.2), Mat.concrete);
+  slab.position.y = 0.04;
+  slab.receiveShadow = true;
+  slab.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  group.add(slab);
+
+  // Perimeter Concrete Foundation Footing Beams
+  const bFront = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.16, 0.24), Mat.dirt);
+  bFront.position.set(0, 0.12, 2.48);
+  const bBack = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.16, 0.24), Mat.dirt);
+  bBack.position.set(0, 0.12, -2.48);
+  const bLeft = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 4.8), Mat.dirt);
+  bLeft.position.set(-3.18, 0.12, 0);
+  const bRight = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 4.8), Mat.dirt);
+  bRight.position.set(3.18, 0.12, 0);
+  group.add(bFront, bBack, bLeft, bRight);
+
+  // 2 Wooden Pallets with Terracotta Bricks
+  const p1 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 1.1), Mat.palletWood);
+  p1.position.set(-1.8, 0.09, 0.8);
+  const bricks1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.9), Mat.brickClay);
+  bricks1.position.set(-1.8, 0.42, 0.8);
+
+  const p2 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 1.1), Mat.palletWood);
+  p2.position.set(-0.4, 0.09, 0.8);
+  const bricks2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.9), Mat.concrete);
+  bricks2.position.set(-0.4, 0.35, 0.8);
+  group.add(p1, bricks1, p2, bricks2);
+
+  // Surveying Stakes
+  const stakeGeo = new THREE.BoxGeometry(0.06, 0.55, 0.06);
+  [[-3.18, -2.48], [3.18, -2.48], [-3.18, 2.48], [3.18, 2.48]].forEach(([sx, sz]) => {
+    const stake = new THREE.Mesh(stakeGeo, Mat.wood);
+    stake.position.set(sx, 0.3, sz);
+    group.add(stake);
+  });
+
+  // Floating Pill Badge
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.4);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+
+  return group;
+}
+
+function createSolarPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+
+  // Solar Mounting Aluminum Strut Rails on Canopy Roof
+  for (let z = -1.6; z <= 1.6; z += 1.6) {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.05, 0.08), Mat.solarFrame);
+    rail.position.set(0, 0.03, z);
+    group.add(rail);
+  }
+  for (let x = -3.2; x <= 3.2; x += 1.6) {
+    const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 3.4), Mat.solarFrame);
+    bracket.position.set(x, 0.03, 0);
+    group.add(bracket);
+  }
+
+  // Industrial Weatherproof Junction / Inverter Box
+  const jBox = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.25), Mat.darkInk);
+  jBox.position.set(3.5, 0.18, 1.5);
+  const conduit = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9, 8), Mat.chrome);
+  conduit.rotation.z = Math.PI / 2;
+  conduit.position.set(2.9, 0.15, 1.5);
+  group.add(jBox, conduit);
+
+  // Floating Pill Badge on Canopy Roof
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.85);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+
+  return group;
+}
+
+function createTurbinePlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+
+  // Heavy Reinforced Circular Concrete Foundation Pedestal
+  const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.4, 0.16, 16), Mat.concrete);
+  pedestal.position.y = 0.08;
+  pedestal.receiveShadow = true;
+  pedestal.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  group.add(pedestal);
+
+  // Center Steel Flange Base Plate
+  const centerFlange = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.04, 16), Mat.darkInk);
+  centerFlange.position.y = 0.17;
+  group.add(centerFlange);
+
+  // 8 Heavy Steel Foundation Anchor Bolts / Studs
+  const boltGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.22, 6);
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const bx = Math.cos(angle) * 0.7;
+    const bz = Math.sin(angle) * 0.7;
+    const bolt = new THREE.Mesh(boltGeo, Mat.chrome);
+    bolt.position.set(bx, 0.26, bz);
+    group.add(bolt);
+  }
+
+  // Cable Trench
+  const trench = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.04, 2.4), Mat.darkInk);
+  trench.position.set(0, 0.08, 1.8);
+  group.add(trench);
+
+  // 3 Safety Cones around foundation
+  const conePositions = [[-1.8, -1.2], [1.8, -1.2], [0, 2.2]];
+  conePositions.forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.02, cz);
+    group.add(c);
+  });
+
+  // Floating Pill Badge
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.4);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+
+  return group;
+}
+
+function createEvPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+
+  // Green Painted Asphalt EV Bay Marking Pad
+  const bay = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.02, 2.4), Mat.greenAccent);
+  bay.position.y = 0.015;
+  bay.receiveShadow = true;
+  bay.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  group.add(bay);
+
+  // 2 Concrete Wheel Stops / Parking Curbs
+  const curb1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.12, 0.18), Mat.concrete);
+  curb1.position.set(-0.8, 0.07, -0.9);
+  const curb2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.12, 0.18), Mat.concrete);
+  curb2.position.set(0.8, 0.07, -0.9);
+  group.add(curb1, curb2);
+
+  // Electrical Station Mounting Baseplate
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.04, 0.5), Mat.darkInk);
+  base.position.set(0, 0.04, -1.1);
+  const cautionPlate = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.01, 0.2), Mat.hazardStripe);
+  cautionPlate.position.set(0, 0.065, -1.1);
+  group.add(base, cautionPlate);
+
+  // 2 Safety Cones
+  const c1 = createSafetyConeMesh();
+  c1.position.set(-1.4, 0.02, 0.8);
+  const c2 = createSafetyConeMesh();
+  c2.position.set(1.4, 0.02, 0.8);
+  group.add(c1, c2);
+
+  // Floating Pill Badge
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.05);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+
+  return group;
+}
+
+function createPlotSignMesh(plot) {
+  switch (plot.type) {
+    case 'pump':
+      return createPumpPlotMesh(plot);
+    case 'wash':
+      return createWashPlotMesh(plot);
+    case 'market':
+      return createMarketPlotMesh(plot);
+    case 'solar':
+      return createSolarPlotMesh(plot);
+    case 'turbine':
+      return createTurbinePlotMesh(plot);
+    case 'ev':
+      return createEvPlotMesh(plot);
+    default:
+      return createPumpPlotMesh(plot);
+  }
 }
 
 function updateAllPlotSigns() {
   Object.values(PLOTS).forEach(plot => {
     const mesh = plotSignMeshes[plot.id];
     if (mesh && mesh.userData && mesh.userData.signCanvas) {
-      const canvas = mesh.userData.signCanvas;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#242D35';
-      ctx.fillRect(0, 0, 256, 128);
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = '#E5A93C';
-      ctx.strokeRect(4, 4, 248, 120);
+      drawPlotBadgeCanvas(mesh.userData.signCanvas, plot);
+      if (mesh.userData.signTexture) {
+        mesh.userData.signTexture.needsUpdate = true;
+      }
+    }
+  });
+}
 
-      ctx.fillStyle = '#E5A93C';
-      ctx.font = 'bold 24px Plus Jakarta Sans, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(plot.name, 128, 42);
-
-      ctx.fillStyle = '#FAF7EE';
-      ctx.font = 'bold 20px JetBrains Mono, monospace';
-
-      ctx.fillStyle = '#48CAE4';
-      ctx.font = '14px Plus Jakarta Sans, sans-serif';
-      ctx.fillText(`⏱ ${plot.duration}s`, 128, 108);
-
-      mesh.userData.signTexture.needsUpdate = true;
+function updatePlotBadges(totalSeconds) {
+  Object.values(plotSignMeshes).forEach(mesh => {
+    if (mesh && mesh.userData && mesh.userData.badgeMesh) {
+      const badge = mesh.userData.badgeMesh;
+      const baseY = badge.userData.baseY || 1.0;
+      badge.position.y = baseY + Math.sin(totalSeconds * 2.5 + (badge.id || 0)) * 0.035;
     }
   });
 }
@@ -3104,6 +3419,7 @@ function animate() {
   updateBypassTraffic(delta);
   updateParticles(delta);
   updateWindAndCreatures(delta, totalSeconds);
+  updatePlotBadges(totalSeconds);
 
   for (let i = cars.length - 1; i >= 0; i--) {
     cars[i].update();
