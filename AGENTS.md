@@ -15,3 +15,8 @@
 - **STORE UYUMLULUĞU**: UI ve etkileşim tasarımı iOS ve Android mağaza yönergelerine (App Store Review Guidelines & Google Play Policy) tam uyumlu olacaktır.
 - **TOUCH TARGET & SAFE AREA**: Mobil dokunmatik hedef alanları en az 48x48px olacak, safe-area-inset desteği sağlanacak ve mobil cihazlarda yatay/dikey taşmalar önlenecektir.
 - **PERFORMANS & OPTİMİZASYON**: Mobil GPU'larda 60 FPS hedeflenecek, draw call'lar düşük tutulacaktır.
+
+## 5. Testing & Verification Protocol (User Playtesting Only)
+- **OTOMATİK OYUN TESTİ/TARAYICI BOTU KULLANILMAYACAK**: Ajan kesinlikle oyunu oynamak, butonlara tıklatmak, gameplay simülasyonu yapmak veya interaktif test etmek için browser subagent / tarayıcı otomasyonu başlatmayacaktır.
+- **KULLANICI MANUEL TEST EDER**: Tüm oyun oynanış testleri, tıklamalar, mekanik denemeleri bizzat kullanıcı tarafından manuel yapılacaktır. Ajan yalnızca kod yazımı, sözdizimi doğrulamaları, statik analiz ve dual-engine senkronizasyonunu eksiksiz tamamlayıp kullanıcıya teslim edecektir.
+

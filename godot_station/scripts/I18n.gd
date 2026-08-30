@@ -97,8 +97,9 @@ const DICTIONARY: Dictionary = {
 		"toast_loan_taken": "₺25.000 banka kredisi hesaba geçti.",
 		"toast_tender_signed": "%s ihalesi imzalandı. Günlük ödeme bağlandı.",
 		"toast_theme_applied": "%s teması başarıyla uygulandı.",
-		"toast_tanker_arrived": "%sL %s tankeri ikmal yaptı.",
-		"toast_tank_overflow": "Depo kapasitesi aşılıyor! (Boş yer: %s L)",
+		"toast_construction_started": "%s inşası başladı (%s sn).",
+		"toast_training_started": "%s eğitimi başladı (%s sn).",
+		"toast_training_finished": "%s eğitimi tamamlandı (Seviye %s).",
 		"toast_tariff_updated": "%s tarifesi güncellendi: ₺%s",
 		"toast_new_day": "GÜN %s BAŞLADI"
 	},
@@ -190,9 +191,9 @@ const DICTIONARY: Dictionary = {
 		"toast_land_expanded": "Parcel %s purchased. Station island expanded!",
 		"toast_loan_taken": "₺25,000 bank loan credited to balance.",
 		"toast_tender_signed": "%s tender signed. Daily recurring payout active.",
-		"toast_theme_applied": "%s theme applied successfully.",
-		"toast_tanker_arrived": "%sL %s tanker delivery completed.",
-		"toast_tank_overflow": "Tank capacity exceeded! (Available: %s L)",
+		"toast_construction_started": "%s construction started (%ss).",
+		"toast_training_started": "%s training started (%ss).",
+		"toast_training_finished": "%s training finished (Level %s).",
 		"toast_tariff_updated": "%s tariff updated: ₺%s",
 		"toast_new_day": "DAY %s HAS BEGUN"
 	}
