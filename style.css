@@ -513,6 +513,126 @@ body, html {
   text-align: center;
 }
 
+/* Modal Tab Bar */
+.modal-tab-bar {
+  display: flex;
+  gap: 6px;
+  border-bottom: 2px solid var(--ink-border);
+  padding-bottom: 8px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--bg-inner);
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.1s ease;
+}
+.tab-btn.active {
+  background: var(--ink-border);
+  color: #FFFFFF;
+  border-color: var(--ink-border);
+}
+
+.tab-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+/* Theme Selection Cards */
+.theme-grid, .parcel-grid, .staff-grid, .energy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.theme-card, .parcel-card, .staff-card, .energy-card, .tender-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-inner);
+}
+.theme-card.active, .parcel-card.unlocked {
+  border-color: var(--accent-green);
+  background: rgba(39, 160, 90, 0.08);
+}
+.item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.item-title {
+  font-size: 12px;
+  font-weight: 800;
+}
+.item-desc {
+  font-size: 10px;
+  color: var(--ink-muted);
+  line-height: 1.3;
+}
+.badge-chip {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--ink-border);
+  text-transform: uppercase;
+}
+.badge-chip.green { background: var(--accent-green); color: #fff; }
+.badge-chip.gold { background: var(--accent-gold); color: #000; }
+.badge-chip.blue { background: var(--accent-blue); color: #fff; }
+.badge-chip.grey { background: var(--ink-muted); color: #fff; }
+
+/* Accounting Table */
+.accounting-ledger {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.ledger-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--bg-inner);
+  border: 1px solid var(--ink-border);
+  border-radius: 4px;
+}
+.ledger-row.total {
+  background: var(--ink-border);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  border-radius: var(--radius-sm);
+}
+.val-green { color: var(--accent-green); font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.val-red { color: var(--accent-red); font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.val-gold { color: var(--accent-gold); font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+
+/* Staff Level Controls */
+.staff-level-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
 /* Toast Notifications */
 #toast-container {
   position: absolute;
