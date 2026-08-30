@@ -188,7 +188,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start")
-text = "▶ POMPAYI BAŞLAT"
+text = "POMPAYI BAŞLAT"
 
 [node name="BtnFinish" type="Button" parent="Root/Card/VBox"]
 visible = false
@@ -197,7 +197,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 15
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_start")
-text = "✓ TAMAMLA & UĞURLA"
+text = "TAMAMLA & UĞURLA"
 
 [node name="BtnWash" type="Button" parent="Root/Card/VBox"]
 custom_minimum_size = Vector2(0, 32)
@@ -205,4 +205,4 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 11
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_preset")
-text = "✨ Camları Sil (+₺25 Bahşiş)"
+text = "Camları Sil (+₺25 Bahşiş)"

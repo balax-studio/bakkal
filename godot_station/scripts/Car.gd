@@ -27,21 +27,12 @@ func _ready() -> void:
 	update_order_label()
 
 func update_order_label() -> void:
-	if not label_order:
-		return
-	var icon: String = "⛽"
-	if fuel_type == "dizel":
-		icon = "🛢️"
-	elif fuel_type == "lpg":
-		icon = "🔥"
-	elif fuel_type == "elektrik":
-		icon = "⚡"
-
-	label_order.text = "%s %s\n%d L" % [icon, fuel_type.to_upper(), int(demanded_units)]
+	var fuel_name: String = I18n.t(fuel_type).to_upper() if I18n else fuel_type.to_upper()
+	label_order.text = "[%s]\n%d L" % [fuel_name, int(demanded_units)]
 	if state == State.REFUELING:
-		label_order.text = "DOLUYOR...\n%s" % icon
+		label_order.text = "DOLUYOR...\n[%s]" % fuel_name
 	elif state == State.LEAVING:
-		label_order.text = "✓ TEŞEKKÜRLER!"
+		label_order.text = "OK! +TL"
 		label_order.modulate = Color(0.3, 1.0, 0.5)
 
 func _process(delta: float) -> void:

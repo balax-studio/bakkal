@@ -55,7 +55,7 @@ func _on_time_updated(h: int, m: int, d: int) -> void:
 
 func _on_rep_changed(r: float) -> void:
 	if label_rep:
-		label_rep.text = "★ %.1f / 5.0" % r
+		label_rep.text = "%.1f / 5.0" % r
 
 func _on_tank_updated(fuel: String, cur: float, cap: float) -> void:
 	var ratio: float = (cur / cap) * 100.0

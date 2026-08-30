@@ -174,11 +174,10 @@ func build_car_wash() -> bool:
 		return false
 	if spend_money(12000.0):
 		has_car_wash = true
-		reputation = min(5.0, reputation + 0.3)
 		EventBus.station_upgraded.emit("Oto Yıkama")
-		EventBus.show_toast.emit("Otomatik Tünel Oto Yıkama Kuruldu! ★", true)
+		EventBus.show_toast.emit(I18n.t("toast_wash_active") if I18n else "Otomatik Tünel Oto Yıkama Kuruldu!", true)
 		return true
-	EventBus.show_toast.emit("Yetersiz Bakiye!", false)
+	EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["12.000"]) if I18n else "Yetersiz Bakiye!", false)
 	return false
 
 func build_solar_panels() -> bool:

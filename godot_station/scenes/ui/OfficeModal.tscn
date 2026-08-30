@@ -78,7 +78,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 17
-text = "📊 İstasyon Ofisi & Fiyat Tarifesi"
+text = "İstasyon Ofisi & Fiyat Tarifesi"
 
 [node name="BtnClose" type="Button" parent="Root/Card/VBox/Header"]
 custom_minimum_size = Vector2(28, 28)
@@ -93,7 +93,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_stats")
 layout_mode = 2
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 11
-text = "Toplam Ciro: ₺0   |   Hizmet: 0 Araç   |   İtibar: ★ 4.8"
+text = "Toplam Ciro: ₺0   |   Hizmet: 0 Araç   |   İtibar: 4.8 / 5.0"
 horizontal_alignment = 1
 
 [node name="PriceHeader" type="Label" parent="Root/Card/VBox"]

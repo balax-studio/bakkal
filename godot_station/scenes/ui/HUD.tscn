@@ -255,7 +255,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sub")
-text = "🏗️ İnşaat"
+text = "İnşaat"
 
 [node name="BtnOrder" type="Button" parent="BottomMenu/FabSubMenu"]
 custom_minimum_size = Vector2(120, 36)
@@ -263,7 +263,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sub")
-text = "🚚 Sipariş"
+text = "Sipariş"
 
 [node name="BtnOffice" type="Button" parent="BottomMenu/FabSubMenu"]
 custom_minimum_size = Vector2(120, 36)
@@ -271,7 +271,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sub")
-text = "📊 Ofis"
+text = "Ofis"
 
 [node name="BtnFab" type="Button" parent="BottomMenu"]
 custom_minimum_size = Vector2(60, 60)
@@ -284,7 +284,7 @@ grow_vertical = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_red")
-text = "⛽"
+text = "+"
 
 [node name="ToastPanel" type="PanelContainer" parent="."]
 anchors_preset = 5

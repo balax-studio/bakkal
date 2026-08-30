@@ -78,7 +78,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
 theme_override_font_sizes/font_size = 17
-text = "🏗️ İnşaat & Tesis Yatırımları"
+text = "İnşaat & Tesis Yatırımları"
 
 [node name="BtnClose" type="Button" parent="Root/Card/VBox/Header"]
 custom_minimum_size = Vector2(28, 28)

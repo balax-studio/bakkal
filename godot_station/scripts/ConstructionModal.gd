@@ -37,28 +37,28 @@ func _refresh_ui() -> void:
 		btn_pumps.disabled = false
 
 	if GameState.has_car_wash:
-		btn_wash.text = "KURULDU ✓"
+		btn_wash.text = I18n.t("btn_bought") if I18n else "ALINDI"
 		btn_wash.disabled = true
 	else:
 		btn_wash.text = "₺12.000"
 		btn_wash.disabled = false
 
 	if GameState.has_solar_panels:
-		btn_solar.text = "KURULDU ✓"
+		btn_solar.text = I18n.t("btn_bought") if I18n else "ALINDI"
 		btn_solar.disabled = true
 	else:
 		btn_solar.text = "₺8.500"
 		btn_solar.disabled = false
 
 	if GameState.has_ev_charger:
-		btn_ev.text = "KURULDU ✓"
+		btn_ev.text = I18n.t("btn_bought") if I18n else "ALINDI"
 		btn_ev.disabled = true
 	else:
 		btn_ev.text = "₺10.000"
 		btn_ev.disabled = false
 
 	if GameState.has_manager:
-		btn_manager.text = "GÖREVDE ✓"
+		btn_manager.text = I18n.t("btn_working") if I18n else "ÇALIŞIYOR"
 		btn_manager.disabled = true
 	else:
 		btn_manager.text = "₺15.000"

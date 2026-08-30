@@ -33,7 +33,7 @@ func _adjust_price(fuel: String, delta: float) -> void:
 
 func _refresh_ui() -> void:
 	if label_stats:
-		label_stats.text = "Toplam Ciro: ₺%d   |   Hizmet Verilen: %d Araç   |   İtibar: ★ %.1f" % [
+		label_stats.text = "Toplam Ciro: ₺%d   |   Hizmet Verilen: %d Araç   |   İtibar: %.1f / 5.0" % [
 			int(GameState.total_revenue),
 			GameState.total_customers_served,
 			GameState.reputation

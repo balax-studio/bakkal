@@ -71,8 +71,8 @@ func _clean_windows() -> void:
 	if not cleaned_windows:
 		cleaned_windows = true
 		GameState.add_money(25.0)
-		btn_wash.text = "Camlar Silindi! (+₺25 Bahşiş Alındı) ✓"
-		EventBus.show_toast.emit("Cam Temizliği: +₺25 Bahşiş!", true)
+		btn_wash.text = "Camlar Silindi (+₺25)"
+		EventBus.show_toast.emit(I18n.t("toast_tip") if I18n else "Cam Temizliği: +₺25 Bahşiş!", true)
 
 func _start_pumping() -> void:
 	if is_pumping or is_finished:
