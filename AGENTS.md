@@ -20,3 +20,14 @@
 - **OTOMATİK OYUN TESTİ/TARAYICI BOTU KULLANILMAYACAK**: Ajan kesinlikle oyunu oynamak, butonlara tıklatmak, gameplay simülasyonu yapmak veya interaktif test etmek için browser subagent / tarayıcı otomasyonu başlatmayacaktır.
 - **KULLANICI MANUEL TEST EDER**: Tüm oyun oynanış testleri, tıklamalar, mekanik denemeleri bizzat kullanıcı tarafından manuel yapılacaktır. Ajan yalnızca kod yazımı, sözdizimi doğrulamaları, statik analiz ve dual-engine senkronizasyonunu eksiksiz tamamlayıp kullanıcıya teslim edecektir.
 
+## 6. Facility Construction & Upgrade Visualization Standards
+- **ASLA JENERİK TABELA/DİREK KULLANILMAYACAK**: İnşa edilmemiş veya geliştirilebilir tesis alanları (Pompalar, Yıkama, Market, Güneş Paneli, Rüzgar Türbini, EV Şarj) harita üzerine rastgele ahşap çubuk tabelalar veya devasa billboardlar dikilerek temsil edilmeyecektir.
+- **ÖZELLEŞTİRİLMİŞ 3D İNŞAAT TEMELLERİ (CUSTOM 3D PRE-BUILD DIORAMAS)**: Her tesis için kendine has mimari inşaat alanı kurgulanacaktır:
+  - Pompalar: Güvenlik konileri, beton ada temeli, zemin flanşı ve minik etkileşimli rozet.
+  - Oto Yıkama: Su gider ızgaraları, zemin drenajı ve köşe güvenlik dubaları ile su borusu paletleri.
+  - Market: Tuğla/ahşap palet istifleri ve temel beton çizgileri.
+  - Çatı GES: Kanopi üstü montaj rayları ve bağlantı buat kutusu.
+  - Rüzgar Türbini: Dairesel beton kaide ve ankraj cıvata yuvaları.
+  - EV Şarj: Yeşil zemin boyaması, tekerlek takozları ve elektrik kablo kanalları.
+- **ETKİLEŞİMLİ PROMPT & MODAL ENTEGRASYONU**: İnşaat alanına (temele veya rozete) tıklandığında ilgili tesisin inşaat/geliştirme modali doğrudan açılmalıdır.
+
