@@ -20,7 +20,11 @@
   <!-- HUD Top Bar -->
   <header id="top-bar" class="neo-panel">
     <div class="brand-chip">
-      <span class="brand-icon">⛽</span>
+      <svg class="neo-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="12" height="18" rx="2"></rect>
+        <path d="M7 8h4"></path>
+        <path d="M15 8h2a2 2 0 0 1 2 2v6a2 2 0 0 0 2 2v0"></path>
+      </svg>
       <span class="brand-name">PIXELOIL</span>
     </div>
 
@@ -36,7 +40,12 @@
 
     <div class="stat-chip rep-chip">
       <span class="chip-label">İTİBAR</span>
-      <span id="stat-rep" class="chip-val">★ 4.8</span>
+      <span class="chip-val-row">
+        <svg class="neo-icon gold" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="1.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        <span id="stat-rep" class="chip-val">4.8</span>
+      </span>
     </div>
 
     <!-- Fuel Level Gauges -->
@@ -82,19 +91,38 @@
   <!-- Quick Floating Action Buttons (FAB) -->
   <div id="fab-menu">
     <button id="btn-open-build" class="fab-btn neo-btn" title="İnşaat & Yükseltmeler">
-      <span class="fab-icon">🏗️</span>
+      <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 20h20"></path>
+        <path d="M14 4 4 14l2 2 10-10z"></path>
+        <path d="m14 4 3 3-2 2-3-3z"></path>
+      </svg>
       <span class="fab-text">İnşaat</span>
     </button>
+
     <button id="btn-open-order" class="fab-btn neo-btn" title="Yakıt Tankeri Siparişi">
-      <span class="fab-icon">🚚</span>
+      <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 3h15v13H1z"></path>
+        <path d="M16 8h4l3 3v5h-7z"></path>
+        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+      </svg>
       <span class="fab-text">Sipariş</span>
     </button>
+
     <button id="btn-open-office" class="fab-btn neo-btn" title="İstasyon Ofisi & Tarifeler">
-      <span class="fab-icon">📊</span>
+      <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
       <span class="fab-text">Ofis</span>
     </button>
+
     <button id="btn-speed-toggle" class="fab-btn neo-btn" title="Zaman Hızı">
-      <span class="fab-icon">⏩</span>
+      <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 19 22 12 13 5 13 19"></polygon>
+        <polygon points="2 19 11 12 2 5 2 19"></polygon>
+      </svg>
       <span id="speed-indicator" class="fab-text">1x</span>
     </button>
   </div>
@@ -127,13 +155,24 @@
 
       <div class="modal-actions">
         <button id="btn-start-pump" class="action-btn neo-btn success" onclick="startActivePumping()">
-          ▶ POMPAYI BAŞLAT
+          <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 6px;">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          POMPAYI BAŞLAT
         </button>
+
         <button id="btn-finish-pump" class="action-btn neo-btn success hidden" onclick="finishAndDismissCar()">
-          ✓ TAMAMLA & UĞURLA
+          <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          TAMAMLA & UĞURLA
         </button>
+
         <button id="btn-wash-tip" class="tip-btn neo-btn" onclick="applyWindshieldWash()">
-          ✨ Camları Sil (+₺25 Bahşiş)
+          <svg class="neo-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+            <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path>
+          </svg>
+          Camları Sil (+₺25 Bahşiş)
         </button>
       </div>
     </div>
@@ -143,7 +182,14 @@
   <div id="build-modal" class="modal-overlay hidden">
     <div class="modal-card neo-panel">
       <div class="modal-header">
-        <h2>🏗️ İstasyon Yatırımları</h2>
+        <div class="title-with-icon">
+          <svg class="neo-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 20h20"></path>
+            <path d="M14 4 4 14l2 2 10-10z"></path>
+            <path d="m14 4 3 3-2 2-3-3z"></path>
+          </svg>
+          <h2>İstasyon Yatırımları</h2>
+        </div>
         <button class="modal-close-btn" onclick="toggleModal('build-modal', false)">✕</button>
       </div>
 
@@ -187,7 +233,15 @@
   <div id="order-modal" class="modal-overlay hidden">
     <div class="modal-card neo-panel">
       <div class="modal-header">
-        <h2>🚚 Yakıt Siparişi (Tanker)</h2>
+        <div class="title-with-icon">
+          <svg class="neo-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 3h15v13H1z"></path>
+            <path d="M16 8h4l3 3v5h-7z"></path>
+            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+          </svg>
+          <h2>Yakıt Siparişi (Tanker)</h2>
+        </div>
         <button class="modal-close-btn" onclick="toggleModal('order-modal', false)">✕</button>
       </div>
 
@@ -244,7 +298,14 @@
   <div id="office-modal" class="modal-overlay hidden">
     <div class="modal-card neo-panel">
       <div class="modal-header">
-        <h2>📊 İstasyon Yönetim Ofisi</h2>
+        <div class="title-with-icon">
+          <svg class="neo-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <h2>İstasyon Yönetim Ofisi</h2>
+        </div>
         <button class="modal-close-btn" onclick="toggleModal('office-modal', false)">✕</button>
       </div>
 

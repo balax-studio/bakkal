@@ -362,7 +362,7 @@ function buildDiorama() {
   sctx.font = 'bold 56px Plus Jakarta Sans, sans-serif';
   sctx.textAlign = 'center';
   sctx.textBaseline = 'middle';
-  sctx.fillText('⛽ PIXELOIL', 256, 64);
+  sctx.fillText('PIXELOIL', 256, 64);
 
   const signTex = new THREE.CanvasTexture(signCanvas);
   const signMat = new THREE.MeshBasicMaterial({ map: signTex });
@@ -572,7 +572,7 @@ class Vehicle {
     ctx.font = 'bold 28px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`⛽ ${this.fuelType.toUpperCase()} ${this.reqLiters}L`, 128, 40);
+    ctx.fillText(`[ ${this.fuelType.toUpperCase()} ${this.reqLiters}L ]`, 128, 40);
 
     const texture = new THREE.CanvasTexture(canvas);
     const spriteMat = new THREE.SpriteMaterial({ map: texture });
@@ -606,7 +606,7 @@ class Vehicle {
       if (Math.abs(this.mesh.position.x - targetX) < 0.1 && Math.abs(this.mesh.position.z - targetZ) < 0.1) {
         this.state = 'WAITING';
         this.targetPumpSlot.occupiedBy = this;
-        showToast(`🚗 Araç #${this.targetPumpSlot.id + 1} pompasına yanaştı.`);
+        showToast(`Araç #${this.targetPumpSlot.id + 1} pompasına yanaştı.`);
         sfx.playHonk();
 
         // If manager is hired, auto-service
@@ -704,11 +704,11 @@ function openPumpServiceForSlot(pumpId) {
 
   if (slot.occupiedBy && slot.occupiedBy.state === 'WAITING') {
     const c = slot.occupiedBy;
-    title.textContent = `🚗 Araç · ${c.fuelType.toUpperCase()} (Pompa #${pumpId + 1})`;
+    title.textContent = `Araç · ${c.fuelType.toUpperCase()} (Pompa #${pumpId + 1})`;
     btnStart.classList.remove('hidden');
     btnFinish.classList.add('hidden');
   } else {
-    title.textContent = `⛽ Pompa #${pumpId + 1} (Bekleyen Araç Yok)`;
+    title.textContent = `Pompa #${pumpId + 1} (Bekleyen Araç Yok)`;
     btnStart.classList.add('hidden');
     btnFinish.classList.add('hidden');
   }
@@ -746,7 +746,7 @@ function startActivePumping() {
     }
 
     if (fuel.current <= 0) {
-      showToast(`⚠️ Depoda ${car.fuelType.toUpperCase()} kalmadı!`, 'error');
+      showToast(`UYARI: Depoda ${car.fuelType.toUpperCase()} kalmadı!`, 'error');
       State.isPumping = false;
       clearInterval(interval);
       document.getElementById('btn-finish-pump').classList.remove('hidden');
@@ -790,7 +790,7 @@ function finishAndDismissCar() {
     State.totalRev += 80;
   }
 
-  showToast(`💰 +₺${State.pumpedCost.toFixed(2)} tahsil edildi!`);
+  showToast(`+₺${State.pumpedCost.toFixed(2)} tahsil edildi.`);
   sfx.playCoin();
 
   car.state = 'DEPARTING';
@@ -802,7 +802,7 @@ function finishAndDismissCar() {
 
 function applyWindshieldWash() {
   State.money += 25;
-  showToast('✨ Camlar silindi! +₺25 Bahşiş kazanıldı.');
+  showToast('Camlar temizlendi (+₺25 Bahşiş).');
   sfx.playCoin();
   updateHUD();
 }
@@ -818,7 +818,7 @@ function autoServiceCar(car) {
   State.totalRev += cost;
   State.totalCars += 1;
 
-  showToast(`👔 Müdür Pompa #${car.targetPumpSlot.id + 1}'i doldurdu (+₺${cost.toFixed(0)})`);
+  showToast(`İstasyon Müdürü: Pompa #${car.targetPumpSlot.id + 1} dolduruldu (+₺${cost.toFixed(0)})`);
   sfx.playCoin();
   car.state = 'DEPARTING';
   car.targetPumpSlot.occupiedBy = null;
@@ -847,7 +847,7 @@ document.getElementById('btn-open-office').addEventListener('click', () => toggl
 document.getElementById('btn-speed-toggle').addEventListener('click', () => {
   State.timeSpeed = State.timeSpeed === 1 ? 2 : (State.timeSpeed === 2 ? 4 : 1);
   document.getElementById('speed-indicator').textContent = `${State.timeSpeed}x`;
-  showToast(`⏩ Zaman hızı: ${State.timeSpeed}x`);
+  showToast(`Zaman Hızı: ${State.timeSpeed}x`);
 });
 
 function buyPumpUpgrade() {
@@ -862,7 +862,7 @@ function buyPumpUpgrade() {
   State.money -= 6000;
   State.upgrades.pumps += 1;
   document.getElementById('upgrade-pump-count').textContent = State.upgrades.pumps;
-  showToast(`🏗️ Pompa #${State.upgrades.pumps} inşa edildi!`);
+  showToast(`Pompa #${State.upgrades.pumps} inşa edildi.`);
   sfx.playCoin();
   updateHUD();
 }
@@ -877,7 +877,7 @@ function buyWashUpgrade() {
   State.upgrades.hasCarWash = true;
   document.getElementById('btn-buy-wash').textContent = 'ALINDI';
   document.getElementById('btn-buy-wash').disabled = true;
-  showToast('✨ Otomatik Oto Yıkama aktif edildi (+₺80/araç)!');
+  showToast('Otomatik Oto Yıkama aktif edildi (+₺80/araç).');
   sfx.playCoin();
   updateHUD();
 }
@@ -892,7 +892,7 @@ function buySolarUpgrade() {
   State.upgrades.hasSolar = true;
   document.getElementById('btn-buy-solar').textContent = 'ALINDI';
   document.getElementById('btn-buy-solar').disabled = true;
-  showToast('☀️ Çatı GES kuruldu! Gündüz elektrik faturası ₺0.');
+  showToast('Çatı GES kuruldu. Gündüz elektrik faturası ₺0.');
   sfx.playCoin();
   updateHUD();
 }
@@ -907,7 +907,7 @@ function buyManagerUpgrade() {
   State.upgrades.hasManager = true;
   document.getElementById('btn-buy-manager').textContent = 'ÇALIŞIYOR';
   document.getElementById('btn-buy-manager').disabled = true;
-  showToast('👔 İstasyon Müdürü göreve başladı! Dolumlar otomatik.');
+  showToast('İstasyon Müdürü göreve başladı. Dolumlar otomatik.');
   sfx.playCoin();
   updateHUD();
 }
@@ -937,7 +937,7 @@ function orderFuelTanker(fuelKey) {
 
   State.money -= totalCost;
   fuel.current += qty;
-  showToast(`🚚 ${qty}L ${fuelKey.toUpperCase()} tankeri ikmal yaptı!`);
+  showToast(`${qty}L ${fuelKey.toUpperCase()} tankeri ikmal yaptı.`);
   sfx.playCoin();
   updateHUD();
   updateOrderModalStatus();
@@ -955,7 +955,7 @@ function adjustPrice(fuelKey, delta) {
   const f = State.tanks[fuelKey];
   f.price = Math.max(f.cost + 1, Math.min(80, f.price + delta));
   document.getElementById(`tariff-${fuelKey}`).textContent = `₺ ${f.price.toFixed(2)}`;
-  showToast(`🏷️ ${fuelKey.toUpperCase()} tarifesi güncellendi: ₺${f.price.toFixed(2)}`);
+  showToast(`${fuelKey.toUpperCase()} tarifesi güncellendi: ₺${f.price.toFixed(2)}`);
 }
 
 // =========================================================
@@ -974,7 +974,7 @@ function updateDayNightCycle(delta) {
       if (State.hour >= 24) {
         State.hour = 0;
         State.day += 1;
-        showToast(`🌅 GÜN ${State.day} BAŞLADI!`);
+        showToast(`GÜN ${State.day} BAŞLADI`);
       }
     }
     updateHUD();
@@ -1023,7 +1023,7 @@ function updateHUD() {
   const mm = State.minute.toString().padStart(2, '0');
   const hh = State.hour.toString().padStart(2, '0');
   document.getElementById('stat-clock').textContent = `${hh}:${mm}`;
-  document.getElementById('stat-rep').textContent = `★ ${State.rep.toFixed(1)}`;
+  document.getElementById('stat-rep').textContent = `${State.rep.toFixed(1)} / 5.0`;
 
   // Fuel gauges
   ['benzin', 'dizel', 'lpg', 'ev'].forEach(k => {
@@ -1084,5 +1084,5 @@ window.addEventListener('DOMContentLoaded', () => {
   initThree();
   updateHUD();
   updateOrderModalStatus();
-  showToast('⛽ PixelOil 3D İstasyonuna Hoş Geldiniz!');
+  showToast('PixelOil 3D İstasyonuna Hoş Geldiniz!');
 });
