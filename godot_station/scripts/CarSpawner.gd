@@ -16,14 +16,13 @@ var pump_positions: Array[Vector3] = [
 ]
 
 var car_colors: Array[Color] = [
-	Color(0.85, 0.25, 0.25), # Red
-	Color(0.15, 0.63, 0.35), # Green
-	Color(0.20, 0.45, 0.90), # Blue
-	Color(0.92, 0.55, 0.18), # Orange
-	Color(0.95, 0.82, 0.20), # Yellow
-	Color(0.18, 0.70, 0.80), # Cyan
-	Color(0.88, 0.88, 0.88), # Silver
-	Color(0.15, 0.18, 0.22)  # Obsidian Dark
+	Color(0.37, 0.55, 0.72), # Pastel Vintage Blue
+	Color(0.83, 0.42, 0.37), # Pastel Terracotta Coral
+	Color(0.44, 0.65, 0.49), # Pastel Sage Green
+	Color(0.92, 0.87, 0.73), # Cream Vanilla
+	Color(0.86, 0.49, 0.20), # Warm Apricot
+	Color(0.29, 0.35, 0.41), # Slate Navy
+	Color(0.79, 0.46, 0.54)  # Dusty Rose
 ]
 
 var vehicle_types: Array[Dictionary] = [

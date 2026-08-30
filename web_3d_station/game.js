@@ -628,60 +628,60 @@ const plotSignMeshes = {};
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
-// Calibrated Low-Poly Materials Palette
+// Calibrated Low-Poly Materials Palette (Cozy Warm Pastel Tycoon)
 const Mat = {
-  grass: new THREE.MeshLambertMaterial({ color: 0x6FA83B }),
-  dirt: new THREE.MeshLambertMaterial({ color: 0x8D6346 }),
-  asphalt: new THREE.MeshLambertMaterial({ color: 0x2A313A }),
-  concrete: new THREE.MeshLambertMaterial({ color: 0xDCD6C8 }),
-  roadYellow: new THREE.MeshLambertMaterial({ color: 0xF2C94C }),
-  roadWhite: new THREE.MeshLambertMaterial({ color: 0xEAEAEA }),
-  buildingWall: new THREE.MeshLambertMaterial({ color: 0xF8F4EB }),
-  buildingRoof: new THREE.MeshLambertMaterial({ color: 0x48525D }),
-  redTrim: new THREE.MeshLambertMaterial({ color: 0xD3524B }),
-  greenAccent: new THREE.MeshLambertMaterial({ color: 0x2E8B57 }),
-  orangeAccent: new THREE.MeshLambertMaterial({ color: 0xE8862E }),
-  blueAccent: new THREE.MeshLambertMaterial({ color: 0x2F6FED }),
-  darkInk: new THREE.MeshLambertMaterial({ color: 0x1C242B }),
-  glass: new THREE.MeshLambertMaterial({ color: 0x7298B3, transparent: true, opacity: 0.85 }),
-  wood: new THREE.MeshLambertMaterial({ color: 0x6E472A }),
-  foliage: new THREE.MeshLambertMaterial({ color: 0x3E7D32 }),
-  foliageDark: new THREE.MeshLambertMaterial({ color: 0x2A5A22 }),
-  metalTank: new THREE.MeshLambertMaterial({ color: 0xEDE8DC }),
-  chrome: new THREE.MeshLambertMaterial({ color: 0xA8B2BC }),
-  rockGrey: new THREE.MeshLambertMaterial({ color: 0x7E8B9B }),
-  rockDark: new THREE.MeshLambertMaterial({ color: 0x4D5866 }),
-  grassHill: new THREE.MeshLambertMaterial({ color: 0x5D9430 }),
+  grass: new THREE.MeshLambertMaterial({ color: 0x7DA468 }),
+  dirt: new THREE.MeshLambertMaterial({ color: 0xA87C58 }),
+  asphalt: new THREE.MeshLambertMaterial({ color: 0x38414B }),
+  concrete: new THREE.MeshLambertMaterial({ color: 0xE5DFD0 }),
+  roadYellow: new THREE.MeshLambertMaterial({ color: 0xE5B242 }),
+  roadWhite: new THREE.MeshLambertMaterial({ color: 0xDCD8CF }),
+  buildingWall: new THREE.MeshLambertMaterial({ color: 0xF7F2E4 }),
+  buildingRoof: new THREE.MeshLambertMaterial({ color: 0x4A5568 }),
+  redTrim: new THREE.MeshLambertMaterial({ color: 0xD45D56 }),
+  greenAccent: new THREE.MeshLambertMaterial({ color: 0x4E9B66 }),
+  orangeAccent: new THREE.MeshLambertMaterial({ color: 0xDC7E34 }),
+  blueAccent: new THREE.MeshLambertMaterial({ color: 0x4879D6 }),
+  darkInk: new THREE.MeshLambertMaterial({ color: 0x242D35 }),
+  glass: new THREE.MeshLambertMaterial({ color: 0x8CBAD6, transparent: true, opacity: 0.80 }),
+  wood: new THREE.MeshLambertMaterial({ color: 0x7E5A3D }),
+  foliage: new THREE.MeshLambertMaterial({ color: 0x5E8B4E }),
+  foliageDark: new THREE.MeshLambertMaterial({ color: 0x446B38 }),
+  metalTank: new THREE.MeshLambertMaterial({ color: 0xE8E3D7 }),
+  chrome: new THREE.MeshLambertMaterial({ color: 0xB4BDC5 }),
+  rockGrey: new THREE.MeshLambertMaterial({ color: 0x86929F }),
+  rockDark: new THREE.MeshLambertMaterial({ color: 0x586472 }),
+  grassHill: new THREE.MeshLambertMaterial({ color: 0x6E955A }),
   // Rich Flora & Fauna
-  flowerRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
-  flowerYellow: new THREE.MeshLambertMaterial({ color: 0xFFD166 }),
-  flowerPink: new THREE.MeshLambertMaterial({ color: 0xFF70A6 }),
-  flowerStem: new THREE.MeshLambertMaterial({ color: 0x4A8505 }),
-  planterWood: new THREE.MeshLambertMaterial({ color: 0x5C381E }),
-  benchWood: new THREE.MeshLambertMaterial({ color: 0x9C6644 }),
-  benchIron: new THREE.MeshLambertMaterial({ color: 0x2B2D42 }),
-  dogFur: new THREE.MeshLambertMaterial({ color: 0xCCA43B }),
-  dogMuzzle: new THREE.MeshLambertMaterial({ color: 0x3E2723 }),
-  dogCollar: new THREE.MeshLambertMaterial({ color: 0xD62828 }),
-  dogMat: new THREE.MeshLambertMaterial({ color: 0x3D5A80 }),
-  catFur: new THREE.MeshLambertMaterial({ color: 0xFAEDCD }),
-  catSpot: new THREE.MeshLambertMaterial({ color: 0xCB997E }),
-  birdBlue: new THREE.MeshLambertMaterial({ color: 0x48CAE4 }),
-  birdBeak: new THREE.MeshLambertMaterial({ color: 0xFAA307 }),
-  lampPost: new THREE.MeshLambertMaterial({ color: 0x242A35 }),
+  flowerRed: new THREE.MeshLambertMaterial({ color: 0xD85A65 }),
+  flowerYellow: new THREE.MeshLambertMaterial({ color: 0xEDC364 }),
+  flowerPink: new THREE.MeshLambertMaterial({ color: 0xEB8BA7 }),
+  flowerStem: new THREE.MeshLambertMaterial({ color: 0x5F8E3C }),
+  planterWood: new THREE.MeshLambertMaterial({ color: 0x6E4C33 }),
+  benchWood: new THREE.MeshLambertMaterial({ color: 0x936647 }),
+  benchIron: new THREE.MeshLambertMaterial({ color: 0x333C48 }),
+  dogFur: new THREE.MeshLambertMaterial({ color: 0xC8A253 }),
+  dogMuzzle: new THREE.MeshLambertMaterial({ color: 0x4A3528 }),
+  dogCollar: new THREE.MeshLambertMaterial({ color: 0xD45D56 }),
+  dogMat: new THREE.MeshLambertMaterial({ color: 0x4F6D8C }),
+  catFur: new THREE.MeshLambertMaterial({ color: 0xF4E7D0 }),
+  catSpot: new THREE.MeshLambertMaterial({ color: 0xC29577 }),
+  birdBlue: new THREE.MeshLambertMaterial({ color: 0x64B8D8 }),
+  birdBeak: new THREE.MeshLambertMaterial({ color: 0xE89E2E }),
+  lampPost: new THREE.MeshLambertMaterial({ color: 0x2D3742 }),
   lampGlow: new THREE.MeshBasicMaterial({ color: 0xFFE082 }),
-  cloud: new THREE.MeshLambertMaterial({ color: 0xFCFCFC, transparent: true, opacity: 0.95 }),
-  oilStain: new THREE.MeshLambertMaterial({ color: 0x14181E, transparent: true, opacity: 0.7 }),
-  trashGreen: new THREE.MeshLambertMaterial({ color: 0x2D6A4F }),
-  airTowerBlue: new THREE.MeshLambertMaterial({ color: 0x1D3557 }),
-  fireRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
-  solarCell: new THREE.MeshLambertMaterial({ color: 0x1B2A4A }),
-  solarFrame: new THREE.MeshLambertMaterial({ color: 0xC0C8D0 }),
-  evGlow: new THREE.MeshBasicMaterial({ color: 0x00E5FF }),
+  cloud: new THREE.MeshLambertMaterial({ color: 0xF9F9FB, transparent: true, opacity: 0.92 }),
+  oilStain: new THREE.MeshLambertMaterial({ color: 0x222A33, transparent: true, opacity: 0.55 }),
+  trashGreen: new THREE.MeshLambertMaterial({ color: 0x3B7A5C }),
+  airTowerBlue: new THREE.MeshLambertMaterial({ color: 0x355577 }),
+  fireRed: new THREE.MeshLambertMaterial({ color: 0xD45D56 }),
+  solarCell: new THREE.MeshLambertMaterial({ color: 0x243556 }),
+  solarFrame: new THREE.MeshLambertMaterial({ color: 0xC6CED6 }),
+  evGlow: new THREE.MeshBasicMaterial({ color: 0x4EE4EA }),
   // Scaffolding & Plots
-  scaffoldWood: new THREE.MeshLambertMaterial({ color: 0xC49A6C }),
-  plotDashed: new THREE.MeshBasicMaterial({ color: 0xF2C94C, wireframe: true }),
-  plotSignBg: new THREE.MeshLambertMaterial({ color: 0x1C242B })
+  scaffoldWood: new THREE.MeshLambertMaterial({ color: 0xB89369 }),
+  plotDashed: new THREE.MeshBasicMaterial({ color: 0xE5A93C, wireframe: true }),
+  plotSignBg: new THREE.MeshLambertMaterial({ color: 0x242D35 })
 };
 
 function initThree() {
@@ -691,7 +691,7 @@ function initThree() {
 
   // Scene
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xBFD8E3);
+  scene.background = new THREE.Color(0xCCE0ED);
 
   // Orthographic Camera (Isometric 2:1)
   const aspect = width / height;
@@ -731,11 +731,11 @@ function initThree() {
     TWO: THREE.TOUCH.DOLLY_PAN  // Mobil iki parmak: yakınlaştır ve kaydır
   };
 
-  // Lights
-  ambientLight = new THREE.AmbientLight(0xEAECEF, 0.72);
+  // Lights - Warm Soft Sunlight & Balanced Pastel Ambient
+  ambientLight = new THREE.AmbientLight(0xE4EBF2, 0.65);
   scene.add(ambientLight);
 
-  sunLight = new THREE.DirectionalLight(0xFFFBF0, 1.15);
+  sunLight = new THREE.DirectionalLight(0xFFF6E8, 0.95);
   sunLight.position.set(18, 30, 18);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.width = 2048;
@@ -894,14 +894,14 @@ function buildDiorama() {
     diorama.add(plotSign);
   });
 
-  // 7. Underground Storage Manhole Hatches
+  // 7. Underground Storage Manhole Hatches (Neatly positioned behind the shop service area)
   const hatchGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.04, 12);
   const hatchBenzin = new THREE.Mesh(hatchGeo, Mat.redTrim);
-  hatchBenzin.position.set(-8, 0.08, -5);
+  hatchBenzin.position.set(-8.5, 0.08, -8);
   const hatchDizel = new THREE.Mesh(hatchGeo, Mat.greenAccent);
-  hatchDizel.position.set(-8, 0.08, -3.5);
+  hatchDizel.position.set(-7.0, 0.08, -8);
   const hatchLpg = new THREE.Mesh(hatchGeo, Mat.orangeAccent);
-  hatchLpg.position.set(-8, 0.08, -2);
+  hatchLpg.position.set(-5.5, 0.08, -8);
   diorama.add(hatchBenzin, hatchDizel, hatchLpg);
 
   // 8. Highway LED Price Totem Sign
@@ -986,14 +986,20 @@ function createPlotSignMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Dashed footprint outline on ground
-  const outline = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.04, 2.0), Mat.plotDashed);
-  outline.position.y = 0.02;
+  // Subtle stone footprint paver slab on ground
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.04, 1.4), Mat.concrete);
+  slab.position.y = 0.02;
+  slab.receiveShadow = true;
+  group.add(slab);
+
+  // Dashed warm border on ground
+  const outline = new THREE.Mesh(new THREE.BoxGeometry(2.48, 0.05, 1.48), Mat.plotDashed);
+  outline.position.y = 0.025;
   group.add(outline);
 
-  // Wooden stake post
-  const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.4, 0.12), Mat.wood);
-  post.position.set(0, 0.7, 0);
+  // Low cozy wooden sign post (0.7 unit high)
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.7, 0.1), Mat.wood);
+  post.position.set(0, 0.35, 0);
   post.castShadow = true;
   group.add(post);
 
@@ -1002,31 +1008,31 @@ function createPlotSignMesh(plot) {
   canvas.width = 256;
   canvas.height = 128;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#1C242B';
+  ctx.fillStyle = '#242D35';
   ctx.fillRect(0, 0, 256, 128);
   ctx.lineWidth = 6;
-  ctx.strokeStyle = '#F2C94C';
+  ctx.strokeStyle = '#E5A93C';
   ctx.strokeRect(4, 4, 248, 120);
 
-  ctx.fillStyle = '#F2C94C';
+  ctx.fillStyle = '#E5A93C';
   ctx.font = 'bold 24px Plus Jakarta Sans, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(plot.name, 128, 44);
+  ctx.fillText(plot.name, 128, 42);
 
-  ctx.fillStyle = '#FAF6EC';
+  ctx.fillStyle = '#FAF7EE';
   ctx.font = 'bold 20px JetBrains Mono, monospace';
-  ctx.fillText(`₺${plot.cost.toLocaleString()}`, 128, 80);
+  ctx.fillText(`₺${plot.cost.toLocaleString()}`, 128, 78);
 
-  ctx.fillStyle = '#48CAE4';
+  ctx.fillStyle = '#78CADC';
   ctx.font = '14px Plus Jakarta Sans, sans-serif';
-  ctx.fillText(`⏱ ${plot.duration}s`, 128, 108);
+  ctx.fillText(`⏱ ${plot.duration}s`, 128, 106);
 
   const texture = new THREE.CanvasTexture(canvas);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
 
-  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.8, 0.08), new THREE.MeshBasicMaterial({ map: texture }));
-  signBoard.position.set(0, 1.4, 0);
+  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.7, 0.08), new THREE.MeshBasicMaterial({ map: texture }));
+  signBoard.position.set(0, 0.75, 0);
   signBoard.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
   group.add(signBoard);
 
@@ -1039,20 +1045,19 @@ function updateAllPlotSigns() {
     if (mesh && mesh.userData && mesh.userData.signCanvas) {
       const canvas = mesh.userData.signCanvas;
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#1C242B';
+      ctx.fillStyle = '#242D35';
       ctx.fillRect(0, 0, 256, 128);
       ctx.lineWidth = 6;
-      ctx.strokeStyle = '#F2C94C';
+      ctx.strokeStyle = '#E5A93C';
       ctx.strokeRect(4, 4, 248, 120);
 
-      ctx.fillStyle = '#F2C94C';
+      ctx.fillStyle = '#E5A93C';
       ctx.font = 'bold 24px Plus Jakarta Sans, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(plot.name, 128, 44);
+      ctx.fillText(plot.name, 128, 42);
 
-      ctx.fillStyle = '#FAF6EC';
+      ctx.fillStyle = '#FAF7EE';
       ctx.font = 'bold 20px JetBrains Mono, monospace';
-      ctx.fillText(`₺${plot.cost.toLocaleString()}`, 128, 80);
 
       ctx.fillStyle = '#48CAE4';
       ctx.font = '14px Plus Jakarta Sans, sans-serif';
@@ -1650,7 +1655,7 @@ function spawnEvChargerMesh() {
 // 6. PROCEDURAL CAR VEHICLE GENERATOR & PHYSICS
 // =========================================================
 
-const CAR_COLORS = [0xD64545, 0x2F6FED, 0x27A05A, 0xE8862E, 0xF5EFE0, 0x1C242B];
+const CAR_COLORS = [0x5E8CB8, 0xD46A5E, 0x6FA57D, 0xEADEBA, 0xDC7E34, 0x4A5868, 0xC97589];
 const FUEL_TYPES = ['benzin', 'dizel', 'lpg', 'ev'];
 
 class Vehicle {
@@ -1708,13 +1713,13 @@ class Vehicle {
     canvas.width = 256;
     canvas.height = 80;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#FAF6EC';
+    ctx.fillStyle = '#FAF7EE';
     ctx.fillRect(0, 0, 256, 80);
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = '#1C242B';
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#242D35';
     ctx.strokeRect(3, 3, 250, 74);
-    ctx.fillStyle = '#1C242B';
-    ctx.font = 'bold 28px Plus Jakarta Sans, sans-serif';
+    ctx.fillStyle = '#242D35';
+    ctx.font = 'bold 26px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`[ ${this.fuelType.toUpperCase()} ${this.reqLiters}L ]`, 128, 40);
@@ -1723,7 +1728,7 @@ class Vehicle {
     const spriteMat = new THREE.SpriteMaterial({ map: texture });
     const sprite = new THREE.Sprite(spriteMat);
     sprite.scale.set(2.4, 0.75, 1);
-    sprite.position.set(0, 2.4, 0);
+    sprite.position.set(0, 2.2, 0);
     car.add(sprite);
 
     car.position.set(-28, 0, 11.5);
@@ -3009,28 +3014,28 @@ function updateSkyLighting() {
   let nightAlpha = 0.0;
 
   if (h >= 21 || h < 5) {
-    skyColor = new THREE.Color(0x111722);
-    sunColor = new THREE.Color(0x5A6B8C);
-    sunEnergy = 0.3;
-    ambientLight.intensity = 0.35;
+    skyColor = new THREE.Color(0x131B26);
+    sunColor = new THREE.Color(0x647696);
+    sunEnergy = 0.28;
+    ambientLight.intensity = 0.38;
     nightAlpha = 1.0;
   } else if (h >= 5 && h < 8) {
-    skyColor = new THREE.Color(0xF4B991);
-    sunColor = new THREE.Color(0xFFA07A);
-    sunEnergy = 0.9;
-    ambientLight.intensity = 0.6;
-    nightAlpha = 0.2;
-  } else if (h >= 8 && h < 18) {
-    skyColor = new THREE.Color(0xBFD8E3);
-    sunColor = new THREE.Color(0xFFFBF0);
-    sunEnergy = 1.2;
-    ambientLight.intensity = 0.75;
-    nightAlpha = 0.0;
-  } else {
-    skyColor = new THREE.Color(0xDE7A52);
-    sunColor = new THREE.Color(0xF77F00);
+    skyColor = new THREE.Color(0xF0BE9D);
+    sunColor = new THREE.Color(0xF7A884);
     sunEnergy = 0.75;
     ambientLight.intensity = 0.55;
+    nightAlpha = 0.2;
+  } else if (h >= 8 && h < 18) {
+    skyColor = new THREE.Color(0xCCE0ED); // Soft pastel daylight sky
+    sunColor = new THREE.Color(0xFFF6E8); // Warm gentle sunlight
+    sunEnergy = 0.95;
+    ambientLight.intensity = 0.65;
+    nightAlpha = 0.0;
+  } else {
+    skyColor = new THREE.Color(0xDE8B68);
+    sunColor = new THREE.Color(0xEE8E3B);
+    sunEnergy = 0.70;
+    ambientLight.intensity = 0.50;
     nightAlpha = (h - 18) / 3.0;
   }
 

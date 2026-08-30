@@ -405,13 +405,13 @@ func sign_contract(key: String, collateral: float) -> bool:
 
 func get_sky_color() -> Color:
 	if hour >= 22 or hour < 5:
-		return Color(0.12, 0.14, 0.22)
+		return Color(0.075, 0.106, 0.149) # Night
 	elif hour >= 5 and hour < 8:
-		return Color(0.88, 0.62, 0.48)
+		return Color(0.941, 0.745, 0.616) # Morning
 	elif hour >= 8 and hour < 18:
-		return Color(0.749, 0.878, 0.933)
+		return Color(0.800, 0.878, 0.929) # Soft Pastel Daytime
 	else:
-		return Color(0.85, 0.48, 0.38)
+		return Color(0.871, 0.545, 0.408) # Sunset
 
 # =========================================================
 # DEVELOPER & DEBUG METHODS (Dual-Engine Synchronized)

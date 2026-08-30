@@ -20,94 +20,98 @@
 
   <!-- HUD Top Bar -->
   <header id="top-bar" class="neo-panel">
-    <div class="brand-chip">
-      <svg class="neo-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="12" height="18" rx="2"></rect>
-        <path d="M7 8h4"></path>
-        <path d="M15 8h2a2 2 0 0 1 2 2v6a2 2 0 0 0 2 2v0"></path>
-      </svg>
-      <span class="brand-name">PIXELOIL</span>
-    </div>
-
-    <button id="btn-lang-toggle" class="stat-chip lang-chip neo-btn" title="Dili Değiştir / Switch Language" onclick="toggleLanguage()">
-      <span id="lang-indicator" class="chip-val">TR</span>
-    </button>
-
-    <div class="stat-chip money-chip">
-      <span class="chip-label" data-i18n="cash">KASA</span>
-      <span id="stat-money" class="chip-val">₺ 12.500</span>
-    </div>
-
-    <div class="stat-chip time-chip">
-      <span class="chip-label"><span data-i18n="day">GÜN</span> <span id="stat-day">1</span></span>
-      <span id="stat-clock" class="chip-val">09:00</span>
-    </div>
-
-    <div class="stat-chip rep-chip">
-      <span class="chip-label" data-i18n="reputation">İTİBAR</span>
-      <span class="chip-val-row">
-        <svg class="neo-icon gold" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="1.5">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+    <div class="top-bar-left">
+      <div class="brand-chip">
+        <svg class="neo-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="12" height="18" rx="2"></rect>
+          <path d="M7 8h4"></path>
+          <path d="M15 8h2a2 2 0 0 1 2 2v6a2 2 0 0 0 2 2v0"></path>
         </svg>
-        <span id="stat-rep" class="chip-val">4.8 / 5.0</span>
-      </span>
-    </div>
-
-    <!-- Fuel Level Gauges -->
-    <div class="fuel-gauges">
-      <div class="gauge-item">
-        <div class="gauge-head">
-          <span class="dot benzin"></span>
-          <span class="gauge-name" data-i18n="gasoline">BENZİN</span>
-          <span id="gauge-val-benzin" class="gauge-pct">70%</span>
-        </div>
-        <div class="gauge-bar"><div id="bar-benzin" class="gauge-fill benzin" style="width: 70%;"></div></div>
+        <span class="brand-name">PIXELOIL</span>
       </div>
 
-      <div class="gauge-item">
-        <div class="gauge-head">
-          <span class="dot dizel"></span>
-          <span class="gauge-name" data-i18n="diesel">DİZEL</span>
-          <span id="gauge-val-dizel" class="gauge-pct">70%</span>
-        </div>
-        <div class="gauge-bar"><div id="bar-dizel" class="gauge-fill dizel" style="width: 70%;"></div></div>
-      </div>
-
-      <div class="gauge-item">
-        <div class="gauge-head">
-          <span class="dot lpg"></span>
-          <span class="gauge-name" data-i18n="lpg">LPG</span>
-          <span id="gauge-val-lpg" class="gauge-pct">70%</span>
-        </div>
-        <div class="gauge-bar"><div id="bar-lpg" class="gauge-fill lpg" style="width: 70%;"></div></div>
-      </div>
-
-      <div class="gauge-item">
-        <div class="gauge-head">
-          <span class="dot ev"></span>
-          <span class="gauge-name" data-i18n="electric">ELEKTRİK</span>
-          <span id="gauge-val-ev" class="gauge-pct">100%</span>
-        </div>
-        <div class="gauge-bar"><div id="bar-ev" class="gauge-fill ev" style="width: 100%;"></div></div>
-      </div>
-    </div>
-
-    <!-- Top Right Settings & Web Debug Controls -->
-    <div class="top-bar-right-controls">
-      <button id="btn-open-debug" class="neo-btn debug-chip-btn" title="Geliştirici & Test Paneli" onclick="openDebugModal()">
-        <svg class="neo-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="16 18 22 12 16 6"></polyline>
-          <polyline points="8 6 2 12 8 18"></polyline>
-        </svg>
-        <span class="debug-badge-text">DEBUG</span>
+      <button id="btn-lang-toggle" class="stat-chip lang-chip neo-btn" title="Dili Değiştir / Switch Language" onclick="toggleLanguage()">
+        <span id="lang-indicator" class="chip-val">TR</span>
       </button>
 
-      <button id="btn-open-settings" class="neo-btn settings-chip-btn" title="Ayarlar & Mağaza Uyumluluğu" onclick="openSettingsModal()">
-        <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </button>
+      <div class="stat-chip money-chip">
+        <span class="chip-label" data-i18n="cash">KASA</span>
+        <span id="stat-money" class="chip-val">₺ 12.500</span>
+      </div>
+
+      <div class="stat-chip time-chip">
+        <span class="chip-label"><span data-i18n="day">GÜN</span> <span id="stat-day">1</span></span>
+        <span id="stat-clock" class="chip-val">09:00</span>
+      </div>
+
+      <div class="stat-chip rep-chip">
+        <span class="chip-label" data-i18n="reputation">İTİBAR</span>
+        <span class="chip-val-row">
+          <svg class="neo-icon gold" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="1.5">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          <span id="stat-rep" class="chip-val">4.8 / 5.0</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="top-bar-right">
+      <!-- Fuel Level Gauges -->
+      <div class="fuel-gauges">
+        <div class="gauge-item">
+          <div class="gauge-head">
+            <span class="dot benzin"></span>
+            <span class="gauge-name" data-i18n="gasoline">BENZİN</span>
+            <span id="gauge-val-benzin" class="gauge-pct">70%</span>
+          </div>
+          <div class="gauge-bar"><div id="bar-benzin" class="gauge-fill benzin" style="width: 70%;"></div></div>
+        </div>
+
+        <div class="gauge-item">
+          <div class="gauge-head">
+            <span class="dot dizel"></span>
+            <span class="gauge-name" data-i18n="diesel">DİZEL</span>
+            <span id="gauge-val-dizel" class="gauge-pct">70%</span>
+          </div>
+          <div class="gauge-bar"><div id="bar-dizel" class="gauge-fill dizel" style="width: 70%;"></div></div>
+        </div>
+
+        <div class="gauge-item">
+          <div class="gauge-head">
+            <span class="dot lpg"></span>
+            <span class="gauge-name" data-i18n="lpg">LPG</span>
+            <span id="gauge-val-lpg" class="gauge-pct">70%</span>
+          </div>
+          <div class="gauge-bar"><div id="bar-lpg" class="gauge-fill lpg" style="width: 70%;"></div></div>
+        </div>
+
+        <div class="gauge-item">
+          <div class="gauge-head">
+            <span class="dot ev"></span>
+            <span class="gauge-name" data-i18n="electric">ELEKTRİK</span>
+            <span id="gauge-val-ev" class="gauge-pct">100%</span>
+          </div>
+          <div class="gauge-bar"><div id="bar-ev" class="gauge-fill ev" style="width: 100%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Top Right Settings & Web Debug Controls -->
+      <div class="top-bar-right-controls">
+        <button id="btn-open-debug" class="neo-btn debug-chip-btn" title="Geliştirici & Test Paneli" onclick="openDebugModal()">
+          <svg class="neo-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <span class="debug-badge-text">DEBUG</span>
+        </button>
+
+        <button id="btn-open-settings" class="neo-btn settings-chip-btn" title="Ayarlar & Mağaza Uyumluluğu" onclick="openSettingsModal()">
+          <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
