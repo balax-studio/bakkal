@@ -2,7 +2,7 @@ extends Node
 
 ## GameState: Core Tycoon Economy, Fuel Tanks, Upgrades and 24h Simulation
 
-var money: float = 14500.0
+var money: float = 12500.0
 var reputation: float = 4.8
 var total_revenue: float = 0.0
 var total_customers_served: int = 0

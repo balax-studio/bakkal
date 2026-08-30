@@ -27,6 +27,8 @@ func _ready() -> void:
 	EventBus.reputation_changed.connect(_on_rep_changed)
 	EventBus.tank_updated.connect(_on_tank_updated)
 	EventBus.show_toast.connect(_show_toast)
+	if I18n:
+		I18n.locale_changed.connect(func(_l): _on_time_updated(GameState.hour, GameState.minute, GameState.day))
 
 	btn_fab.pressed.connect(_toggle_fab_menu)
 	$BottomMenu/FabSubMenu/BtnBuild.pressed.connect(func(): EventBus.open_construction_modal.emit())
@@ -48,11 +50,12 @@ func _on_money_changed(new_money: float, _delta: float) -> void:
 
 func _on_time_updated(h: int, m: int, d: int) -> void:
 	if label_time:
-		label_time.text = "GÜN %d · %02d:%02d" % [d, h, m]
+		var day_word = I18n.t("day") if I18n else "GÜN"
+		label_time.text = "%s %d · %02d:%02d" % [day_word, d, h, m]
 
 func _on_rep_changed(r: float) -> void:
 	if label_rep:
-		label_rep.text = "★ %.1f" % r
+		label_rep.text = "★ %.1f / 5.0" % r
 
 func _on_tank_updated(fuel: String, cur: float, cap: float) -> void:
 	var ratio: float = (cur / cap) * 100.0

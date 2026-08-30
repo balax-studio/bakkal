@@ -136,9 +136,11 @@ function t(key, ...args) {
 function toggleLanguage() {
   currentLang = currentLang === 'tr' ? 'en' : 'tr';
   localStorage.setItem('pixeloil_lang', currentLang);
-  document.getElementById('lang-indicator').textContent = currentLang.toUpperCase();
+  const ind = document.getElementById('lang-indicator');
+  if (ind) ind.textContent = currentLang.toUpperCase();
   document.documentElement.lang = currentLang;
   updateI18nDOM();
+  updateTotemSign();
 }
 
 function updateI18nDOM() {
@@ -146,6 +148,8 @@ function updateI18nDOM() {
     const key = el.getAttribute('data-i18n');
     el.textContent = t(key);
   });
+  const ind = document.getElementById('lang-indicator');
+  if (ind) ind.textContent = currentLang.toUpperCase();
   updateHUD();
   updateOrderModalStatus();
 }
@@ -472,32 +476,9 @@ function buildDiorama() {
   totemPost.castShadow = true;
   totem.add(totemPost);
 
-  const signCanvas = document.createElement('canvas');
-  signCanvas.width = 256;
-  signCanvas.height = 256;
-  const sctx = signCanvas.getContext('2d');
-  sctx.fillStyle = '#D64545';
-  sctx.fillRect(0, 0, 256, 256);
-  sctx.lineWidth = 8;
-  sctx.strokeStyle = '#1C242B';
-  sctx.strokeRect(4, 4, 248, 248);
-  sctx.fillStyle = '#FAF6EC';
-  sctx.font = 'bold 36px Plus Jakarta Sans, sans-serif';
-  sctx.textAlign = 'center';
-  sctx.textBaseline = 'middle';
-  sctx.fillText('PIXELOIL', 128, 60);
-
-  sctx.fillStyle = '#1C242B';
-  sctx.fillRect(16, 95, 224, 4);
-
-  sctx.font = 'bold 22px JetBrains Mono, monospace';
-  sctx.fillStyle = '#FAF6EC';
-  sctx.fillText('B ₺42.50', 128, 130);
-  sctx.fillText('D ₺44.10', 128, 170);
-  sctx.fillText('L ₺22.80', 128, 210);
-
-  const signTex = new THREE.CanvasTexture(signCanvas);
-  const signMat = new THREE.MeshBasicMaterial({ map: signTex });
+  const initialCanvas = updateTotemSign();
+  totemSignTex = new THREE.CanvasTexture(initialCanvas);
+  const signMat = new THREE.MeshBasicMaterial({ map: totemSignTex });
   const signBoard = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.4, 0.3), signMat);
   signBoard.position.set(0, 4.0, 0);
   signBoard.castShadow = true;
@@ -815,6 +796,45 @@ function onCanvasClick(event) {
   }
 }
 
+let totemSignTex = null;
+function updateTotemSign() {
+  const signCanvas = document.createElement('canvas');
+  signCanvas.width = 256;
+  signCanvas.height = 256;
+  const sctx = signCanvas.getContext('2d');
+  sctx.fillStyle = '#D64545';
+  sctx.fillRect(0, 0, 256, 256);
+  sctx.lineWidth = 8;
+  sctx.strokeStyle = '#1C242B';
+  sctx.strokeRect(4, 4, 248, 248);
+  sctx.fillStyle = '#FAF6EC';
+  sctx.font = 'bold 36px Plus Jakarta Sans, sans-serif';
+  sctx.textAlign = 'center';
+  sctx.textBaseline = 'middle';
+  sctx.fillText('PIXELOIL', 128, 60);
+
+  sctx.fillStyle = '#1C242B';
+  sctx.fillRect(16, 95, 224, 4);
+
+  sctx.font = 'bold 22px JetBrains Mono, monospace';
+  sctx.fillStyle = '#FAF6EC';
+  const bP = State.tanks.benzin.price.toFixed(2);
+  const dP = State.tanks.dizel.price.toFixed(2);
+  const lP = State.tanks.lpg.price.toFixed(2);
+  const bPfx = currentLang === 'en' ? 'G' : 'B';
+  const dPfx = 'D';
+  const lPfx = 'L';
+  sctx.fillText(`${bPfx} ₺${bP}`, 128, 130);
+  sctx.fillText(`${dPfx} ₺${dP}`, 128, 170);
+  sctx.fillText(`${lPfx} ₺${lP}`, 128, 210);
+
+  if (totemSignTex) {
+    totemSignTex.image = signCanvas;
+    totemSignTex.needsUpdate = true;
+  }
+  return signCanvas;
+}
+
 function openPumpServiceForSlot(pumpId) {
   const slot = pumpSlots[pumpId];
   if (!slot) return;
@@ -828,11 +848,11 @@ function openPumpServiceForSlot(pumpId) {
 
   if (slot.occupiedBy && slot.occupiedBy.state === 'WAITING') {
     const c = slot.occupiedBy;
-    title.textContent = `Araç · ${c.fuelType.toUpperCase()} (Pompa #${pumpId + 1})`;
+    title.textContent = `${t(c.fuelType)} · (Pompa #${pumpId + 1})`;
     btnStart.classList.remove('hidden');
     btnFinish.classList.add('hidden');
   } else {
-    title.textContent = `Pompa #${pumpId + 1} (Bekleyen Araç Yok)`;
+    title.textContent = `Pompa #${pumpId + 1} ${t('no_waiting_car')}`;
     btnStart.classList.add('hidden');
     btnFinish.classList.add('hidden');
   }
@@ -851,7 +871,7 @@ function closePumpModal() {
 
 function setRefuelTarget(target) {
   State.targetCost = target;
-  showToast(`Hedef dolum: ${target === 'FULL' ? 'FULLE' : target + ' ₺'}`);
+  showToast(t('toast_target', target === 'FULL' ? t('fill_full') : target + ' ₺'));
 }
 
 function startActivePumping() {
@@ -870,7 +890,7 @@ function startActivePumping() {
     }
 
     if (fuel.current <= 0) {
-      showToast(`UYARI: Depoda ${car.fuelType.toUpperCase()} kalmadı!`, 'error');
+      showToast(t('toast_fuel_empty', t(car.fuelType)), 'error');
       State.isPumping = false;
       clearInterval(interval);
       document.getElementById('btn-finish-pump').classList.remove('hidden');
@@ -914,7 +934,7 @@ function finishAndDismissCar() {
     State.totalRev += 80;
   }
 
-  showToast(`+₺${State.pumpedCost.toFixed(2)} tahsil edildi.`);
+  showToast(t('toast_collected', State.pumpedCost.toFixed(2)));
   sfx.playCoin();
 
   car.state = 'DEPARTING';
@@ -926,7 +946,7 @@ function finishAndDismissCar() {
 
 function applyWindshieldWash() {
   State.money += 25;
-  showToast('Camlar temizlendi (+₺25 Bahşiş).');
+  showToast(t('toast_tip'));
   sfx.playCoin();
   updateHUD();
 }
@@ -942,7 +962,7 @@ function autoServiceCar(car) {
   State.totalRev += cost;
   State.totalCars += 1;
 
-  showToast(`İstasyon Müdürü: Pompa #${car.targetPumpSlot.id + 1} dolduruldu (+₺${cost.toFixed(0)})`);
+  showToast(t('toast_mgr', car.targetPumpSlot.id + 1, cost.toFixed(0)));
   sfx.playCoin();
   car.state = 'DEPARTING';
   car.targetPumpSlot.occupiedBy = null;
@@ -971,22 +991,22 @@ document.getElementById('btn-open-office').addEventListener('click', () => toggl
 document.getElementById('btn-speed-toggle').addEventListener('click', () => {
   State.timeSpeed = State.timeSpeed === 1 ? 2 : (State.timeSpeed === 2 ? 4 : 1);
   document.getElementById('speed-indicator').textContent = `${State.timeSpeed}x`;
-  showToast(`Zaman Hızı: ${State.timeSpeed}x`);
+  showToast(t('toast_speed', State.timeSpeed));
 });
 
 function buyPumpUpgrade() {
   if (State.upgrades.pumps >= 4) {
-    showToast('Maksimum pompa sayısına ulaşıldı (4).');
+    showToast(t('toast_max_pumps'));
     return;
   }
   if (State.money < 6000) {
-    showToast('Yetersiz bakiye! (Gereken: ₺6.000)', 'error');
+    showToast(t('toast_insufficient_funds', '6.000'), 'error');
     return;
   }
   State.money -= 6000;
   State.upgrades.pumps += 1;
   document.getElementById('upgrade-pump-count').textContent = State.upgrades.pumps;
-  showToast(`Pompa #${State.upgrades.pumps} inşa edildi.`);
+  showToast(t('toast_pump_built', State.upgrades.pumps));
   sfx.playCoin();
   updateHUD();
 }
@@ -994,14 +1014,14 @@ function buyPumpUpgrade() {
 function buyWashUpgrade() {
   if (State.upgrades.hasCarWash) return;
   if (State.money < 12000) {
-    showToast('Yetersiz bakiye! (Gereken: ₺12.000)', 'error');
+    showToast(t('toast_insufficient_funds', '12.000'), 'error');
     return;
   }
   State.money -= 12000;
   State.upgrades.hasCarWash = true;
-  document.getElementById('btn-buy-wash').textContent = 'ALINDI';
+  document.getElementById('btn-buy-wash').textContent = t('btn_bought');
   document.getElementById('btn-buy-wash').disabled = true;
-  showToast('Otomatik Oto Yıkama aktif edildi (+₺80/araç).');
+  showToast(t('toast_wash_active'));
   sfx.playCoin();
   updateHUD();
 }
@@ -1009,14 +1029,14 @@ function buyWashUpgrade() {
 function buySolarUpgrade() {
   if (State.upgrades.hasSolar) return;
   if (State.money < 8500) {
-    showToast('Yetersiz bakiye! (Gereken: ₺8.500)', 'error');
+    showToast(t('toast_insufficient_funds', '8.500'), 'error');
     return;
   }
   State.money -= 8500;
   State.upgrades.hasSolar = true;
-  document.getElementById('btn-buy-solar').textContent = 'ALINDI';
+  document.getElementById('btn-buy-solar').textContent = t('btn_bought');
   document.getElementById('btn-buy-solar').disabled = true;
-  showToast('Çatı GES kuruldu. Gündüz elektrik faturası ₺0.');
+  showToast(t('toast_solar_built'));
   sfx.playCoin();
   updateHUD();
 }
@@ -1024,14 +1044,14 @@ function buySolarUpgrade() {
 function buyManagerUpgrade() {
   if (State.upgrades.hasManager) return;
   if (State.money < 15000) {
-    showToast('Yetersiz bakiye! (Gereken: ₺15.000)', 'error');
+    showToast(t('toast_insufficient_funds', '15.000'), 'error');
     return;
   }
   State.money -= 15000;
   State.upgrades.hasManager = true;
-  document.getElementById('btn-buy-manager').textContent = 'ÇALIŞIYOR';
+  document.getElementById('btn-buy-manager').textContent = t('btn_working');
   document.getElementById('btn-buy-manager').disabled = true;
-  showToast('İstasyon Müdürü göreve başladı. Dolumlar otomatik.');
+  showToast(t('toast_mgr_hired'));
   sfx.playCoin();
   updateHUD();
 }
@@ -1051,17 +1071,17 @@ function orderFuelTanker(fuelKey) {
   const totalCost = qty * fuel.cost;
 
   if (State.money < totalCost) {
-    showToast(`Yetersiz bakiye! (Gereken: ₺${totalCost.toLocaleString()})`, 'error');
+    showToast(t('toast_insufficient_funds', totalCost.toLocaleString()), 'error');
     return;
   }
   if (fuel.current + qty > fuel.max) {
-    showToast(`Depo kapasitesi aşılıyor! (Boş yer: ${fuel.max - fuel.current} L)`);
+    showToast(t('toast_tank_overflow', fuel.max - fuel.current));
     return;
   }
 
   State.money -= totalCost;
   fuel.current += qty;
-  showToast(`${qty}L ${fuelKey.toUpperCase()} tankeri ikmal yaptı.`);
+  showToast(t('toast_tanker_arrived', qty, t(fuelKey)));
   sfx.playCoin();
   updateHUD();
   updateOrderModalStatus();
@@ -1071,7 +1091,7 @@ function updateOrderModalStatus() {
   ['benzin', 'dizel', 'lpg'].forEach(k => {
     const f = State.tanks[k];
     const el = document.getElementById(`order-tank-${k}`);
-    if (el) el.textContent = `Depo: ${f.current.toFixed(0)}/${f.max} L`;
+    if (el) el.textContent = `${t('tank_status')}: ${f.current.toFixed(0)}/${f.max} L`;
   });
 }
 
@@ -1079,7 +1099,8 @@ function adjustPrice(fuelKey, delta) {
   const f = State.tanks[fuelKey];
   f.price = Math.max(f.cost + 1, Math.min(80, f.price + delta));
   document.getElementById(`tariff-${fuelKey}`).textContent = `₺ ${f.price.toFixed(2)}`;
-  showToast(`${fuelKey.toUpperCase()} tarifesi güncellendi: ₺${f.price.toFixed(2)}`);
+  showToast(t('toast_tariff_updated', t(fuelKey), f.price.toFixed(2)));
+  updateTotemSign();
 }
 
 // =========================================================
@@ -1098,9 +1119,13 @@ function updateDayNightCycle(delta) {
       if (State.hour >= 24) {
         State.hour = 0;
         State.day += 1;
-        showToast(`GÜN ${State.day} BAŞLADI`);
+        showToast(t('toast_new_day', State.day));
       }
     }
+    updateHUD();
+    updateSkyLighting();
+  }
+}
     updateHUD();
     updateSkyLighting();
   }
@@ -1206,7 +1231,8 @@ function animate() {
 // Start Game on Page Load
 window.addEventListener('DOMContentLoaded', () => {
   initThree();
+  updateI18nDOM();
   updateHUD();
   updateOrderModalStatus();
-  showToast('PixelOil 3D İstasyonuna Hoş Geldiniz!');
+  showToast(t('toast_welcome'));
 });

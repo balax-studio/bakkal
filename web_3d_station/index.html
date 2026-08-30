@@ -142,11 +142,11 @@
 
       <div class="digital-lcd-box">
         <div class="lcd-metric">
-          <div class="lcd-sub">LİTRE (L)</div>
+          <div class="lcd-sub" data-i18n="liters_label">LİTRE (L)</div>
           <div id="lcd-liters" class="lcd-num">0.0 L</div>
         </div>
         <div class="lcd-metric">
-          <div class="lcd-sub">TUTAR (TL)</div>
+          <div class="lcd-sub" data-i18n="cost_label">TUTAR (TL)</div>
           <div id="lcd-cost" class="lcd-num gold">₺ 0.00</div>
         </div>
       </div>
@@ -155,7 +155,7 @@
         <button class="preset-btn neo-btn" onclick="setRefuelTarget(50)">50 ₺</button>
         <button class="preset-btn neo-btn" onclick="setRefuelTarget(100)">100 ₺</button>
         <button class="preset-btn neo-btn" onclick="setRefuelTarget(250)">250 ₺</button>
-        <button class="preset-btn neo-btn accent" onclick="setRefuelTarget('FULL')">FULLE</button>
+        <button class="preset-btn neo-btn accent" data-i18n="fill_full" onclick="setRefuelTarget('FULL')">FULLE</button>
       </div>
 
       <div class="modal-actions">
@@ -163,21 +163,21 @@
           <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="margin-right: 6px;">
             <polygon points="5 3 19 12 5 21 5 3"></polygon>
           </svg>
-          POMPAYI BAŞLAT
+          <span data-i18n="btn_start_pump">POMPAYI BAŞLAT</span>
         </button>
 
         <button id="btn-finish-pump" class="action-btn neo-btn success hidden" onclick="finishAndDismissCar()">
           <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
-          TAMAMLA & UĞURLA
+          <span data-i18n="btn_finish_pump">TAMAMLA & UĞURLA</span>
         </button>
 
         <button id="btn-wash-tip" class="tip-btn neo-btn" onclick="applyWindshieldWash()">
           <svg class="neo-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
             <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3z"></path>
           </svg>
-          Camları Sil (+₺25 Bahşiş)
+          <span data-i18n="btn_wash_tip">Camları Sil (+₺25 Bahşiş)</span>
         </button>
       </div>
     </div>
@@ -193,7 +193,7 @@
             <path d="M14 4 4 14l2 2 10-10z"></path>
             <path d="m14 4 3 3-2 2-3-3z"></path>
           </svg>
-          <h2>İstasyon Yatırımları</h2>
+          <h2 data-i18n="build_title">İstasyon Yatırımları</h2>
         </div>
         <button class="modal-close-btn" onclick="toggleModal('build-modal', false)">✕</button>
       </div>
@@ -201,32 +201,32 @@
       <div class="upgrade-list">
         <div class="upgrade-card neo-panel-inner">
           <div class="upgrade-info">
-            <h3>Pompa Adası Ekle (<span id="upgrade-pump-count">1</span>/4)</h3>
-            <p>Aynı anda daha fazla araca dolum yapın.</p>
+            <h3><span data-i18n="upgrade_pump_title">Pompa Adası Ekle</span> (<span id="upgrade-pump-count">1</span>/4)</h3>
+            <p data-i18n="upgrade_pump_desc">Aynı anda daha fazla araca dolum yapın.</p>
           </div>
           <button id="btn-buy-pump" class="buy-btn neo-btn danger" onclick="buyPumpUpgrade()">₺ 6.000</button>
         </div>
 
         <div class="upgrade-card neo-panel-inner">
           <div class="upgrade-info">
-            <h3>Otomatik Tünel Oto Yıkama</h3>
-            <p>Gelen araçlardan otomatik yıkama ücreti tahsil eder.</p>
+            <h3 data-i18n="upgrade_wash_title">Otomatik Tünel Oto Yıkama</h3>
+            <p data-i18n="upgrade_wash_desc">Gelen araçlardan otomatik yıkama ücreti tahsil eder.</p>
           </div>
           <button id="btn-buy-wash" class="buy-btn neo-btn danger" onclick="buyWashUpgrade()">₺ 12.000</button>
         </div>
 
         <div class="upgrade-card neo-panel-inner">
           <div class="upgrade-info">
-            <h3>Çatı Güneş Enerjisi (GES)</h3>
-            <p>Gündüz istasyonun elektrik faturasını sıfırlar.</p>
+            <h3 data-i18n="upgrade_solar_title">Çatı Güneş Enerjisi (GES)</h3>
+            <p data-i18n="upgrade_solar_desc">Gündüz istasyonun elektrik faturasını sıfırlar.</p>
           </div>
           <button id="btn-buy-solar" class="buy-btn neo-btn danger" onclick="buySolarUpgrade()">₺ 8.500</button>
         </div>
 
         <div class="upgrade-card neo-panel-inner">
           <div class="upgrade-info">
-            <h3>İstasyon Müdürü İşe Al</h3>
-            <p>Dolum ve tanker siparişlerini otomatik yönetir.</p>
+            <h3 data-i18n="upgrade_mgr_title">İstasyon Müdürü İşe Al</h3>
+            <p data-i18n="upgrade_mgr_desc">Dolum ve tanker siparişlerini otomatik yönetir.</p>
           </div>
           <button id="btn-buy-manager" class="buy-btn neo-btn danger" onclick="buyManagerUpgrade()">₺ 15.000</button>
         </div>
@@ -245,7 +245,7 @@
             <circle cx="5.5" cy="18.5" r="2.5"></circle>
             <circle cx="18.5" cy="18.5" r="2.5"></circle>
           </svg>
-          <h2>Yakıt Siparişi (Tanker)</h2>
+          <h2 data-i18n="order_title">Yakıt Siparişi (Tanker)</h2>
         </div>
         <button class="modal-close-btn" onclick="toggleModal('order-modal', false)">✕</button>
       </div>
@@ -253,7 +253,7 @@
       <div class="order-list">
         <div class="order-row neo-panel-inner">
           <div class="fuel-spec benzin">
-            <span class="fuel-title">BENZİN</span>
+            <span class="fuel-title" data-i18n="gasoline">BENZİN</span>
             <span id="order-tank-benzin" class="tank-status">Depo: 3500/5000 L</span>
           </div>
           <div class="qty-selector">
@@ -268,7 +268,7 @@
 
         <div class="order-row neo-panel-inner">
           <div class="fuel-spec dizel">
-            <span class="fuel-title">DİZEL</span>
+            <span class="fuel-title" data-i18n="diesel">DİZEL</span>
             <span id="order-tank-dizel" class="tank-status">Depo: 4200/5000 L</span>
           </div>
           <div class="qty-selector">
@@ -283,7 +283,7 @@
 
         <div class="order-row neo-panel-inner">
           <div class="fuel-spec lpg">
-            <span class="fuel-title">LPG</span>
+            <span class="fuel-title" data-i18n="lpg">LPG</span>
             <span id="order-tank-lpg" class="tank-status">Depo: 2100/3000 L</span>
           </div>
           <div class="qty-selector">
@@ -309,21 +309,21 @@
             <line x1="12" y1="20" x2="12" y2="4"></line>
             <line x1="6" y1="20" x2="6" y2="14"></line>
           </svg>
-          <h2>İstasyon Yönetim Ofisi</h2>
+          <h2 data-i18n="office_title">İstasyon Yönetim Ofisi</h2>
         </div>
         <button class="modal-close-btn" onclick="toggleModal('office-modal', false)">✕</button>
       </div>
 
       <div class="office-stats neo-panel-inner">
-        <div class="stat-row"><span>Toplam Ciro:</span> <strong id="stat-total-rev">₺ 0</strong></div>
-        <div class="stat-row"><span>Hizmet Verilen Araç:</span> <strong id="stat-total-cars">0</strong></div>
-        <div class="stat-row"><span>Genel Memnuniyet:</span> <strong id="stat-satisfaction">98%</strong></div>
+        <div class="stat-row"><span data-i18n="stat_total_rev">Toplam Ciro:</span> <strong id="stat-total-rev">₺ 0</strong></div>
+        <div class="stat-row"><span data-i18n="stat_total_cars">Hizmet Verilen Araç:</span> <strong id="stat-total-cars">0</strong></div>
+        <div class="stat-row"><span data-i18n="stat_satisfaction">Genel Memnuniyet:</span> <strong id="stat-satisfaction">98%</strong></div>
       </div>
 
-      <h3 class="section-title">Litre / Birim Satış Tarifesi</h3>
+      <h3 class="section-title" data-i18n="tariff_title">Litre / Birim Satış Tarifesi</h3>
       <div class="price-editor-list">
         <div class="price-edit-row">
-          <span class="tariff-name benzin">Benzin (Maliyet: ₺38.50)</span>
+          <span class="tariff-name benzin"><span data-i18n="gasoline">Benzin</span> (<span data-i18n="cost_prefix">Maliyet</span>: ₺38.50)</span>
           <div class="price-controls">
             <button class="tariff-btn" onclick="adjustPrice('benzin', -0.50)">−</button>
             <span id="tariff-benzin" class="tariff-val">₺ 44.90</span>
@@ -332,7 +332,7 @@
         </div>
 
         <div class="price-edit-row">
-          <span class="tariff-name dizel">Dizel (Maliyet: ₺39.20)</span>
+          <span class="tariff-name dizel"><span data-i18n="diesel">Dizel</span> (<span data-i18n="cost_prefix">Maliyet</span>: ₺39.20)</span>
           <div class="price-controls">
             <button class="tariff-btn" onclick="adjustPrice('dizel', -0.50)">−</button>
             <span id="tariff-dizel" class="tariff-val">₺ 45.40</span>
@@ -341,7 +341,7 @@
         </div>
 
         <div class="price-edit-row">
-          <span class="tariff-name lpg">LPG (Maliyet: ₺21.80)</span>
+          <span class="tariff-name lpg"><span data-i18n="lpg">LPG</span> (<span data-i18n="cost_prefix">Maliyet</span>: ₺21.80)</span>
           <div class="price-controls">
             <button class="tariff-btn" onclick="adjustPrice('lpg', -0.50)">−</button>
             <span id="tariff-lpg" class="tariff-val">₺ 26.20</span>
