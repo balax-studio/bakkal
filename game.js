@@ -348,8 +348,25 @@ function buildDiorama() {
   canopyTrim.position.y = 4.7;
   canopy.add(canopyTrim);
 
-  // 3D "BENELOIL" Front Billboard
-  const signBack = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 0.2), Mat.redTrim);
+  // 3D "PIXELOIL" Front Billboard
+  const signCanvas = document.createElement('canvas');
+  signCanvas.width = 512;
+  signCanvas.height = 128;
+  const sctx = signCanvas.getContext('2d');
+  sctx.fillStyle = '#D64545';
+  sctx.fillRect(0, 0, 512, 128);
+  sctx.lineWidth = 6;
+  sctx.strokeStyle = '#1C242B';
+  sctx.strokeRect(4, 4, 504, 120);
+  sctx.fillStyle = '#FAF6EC';
+  sctx.font = 'bold 56px Plus Jakarta Sans, sans-serif';
+  sctx.textAlign = 'center';
+  sctx.textBaseline = 'middle';
+  sctx.fillText('⛽ PIXELOIL', 256, 64);
+
+  const signTex = new THREE.CanvasTexture(signCanvas);
+  const signMat = new THREE.MeshBasicMaterial({ map: signTex });
+  const signBack = new THREE.Mesh(new THREE.BoxGeometry(6.5, 1.3, 0.2), signMat);
   signBack.position.set(0, 5.5, 5.7);
   signBack.castShadow = true;
   canopy.add(signBack);
@@ -1067,5 +1084,5 @@ window.addEventListener('DOMContentLoaded', () => {
   initThree();
   updateHUD();
   updateOrderModalStatus();
-  showToast('⛽ BenelOil 3D İstasyonuna Hoş Geldiniz!');
+  showToast('⛽ PixelOil 3D İstasyonuna Hoş Geldiniz!');
 });
