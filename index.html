@@ -29,23 +29,27 @@
       <span class="brand-name">PIXELOIL</span>
     </div>
 
+    <button id="btn-lang-toggle" class="stat-chip lang-chip neo-btn" title="Dili Değiştir / Switch Language" onclick="toggleLanguage()">
+      <span id="lang-indicator" class="chip-val">TR</span>
+    </button>
+
     <div class="stat-chip money-chip">
-      <span class="chip-label">KASA</span>
+      <span class="chip-label" data-i18n="cash">KASA</span>
       <span id="stat-money" class="chip-val">₺ 12.500</span>
     </div>
 
     <div class="stat-chip time-chip">
-      <span class="chip-label">GÜN <span id="stat-day">1</span></span>
+      <span class="chip-label"><span data-i18n="day">GÜN</span> <span id="stat-day">1</span></span>
       <span id="stat-clock" class="chip-val">09:00</span>
     </div>
 
     <div class="stat-chip rep-chip">
-      <span class="chip-label">İTİBAR</span>
+      <span class="chip-label" data-i18n="reputation">İTİBAR</span>
       <span class="chip-val-row">
         <svg class="neo-icon gold" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="currentColor" stroke-width="1.5">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
         </svg>
-        <span id="stat-rep" class="chip-val">4.8</span>
+        <span id="stat-rep" class="chip-val">4.8 / 5.0</span>
       </span>
     </div>
 
@@ -54,7 +58,7 @@
       <div class="gauge-item">
         <div class="gauge-head">
           <span class="dot benzin"></span>
-          <span class="gauge-name">BENZİN</span>
+          <span class="gauge-name" data-i18n="gasoline">BENZİN</span>
           <span id="gauge-val-benzin" class="gauge-pct">70%</span>
         </div>
         <div class="gauge-bar"><div id="bar-benzin" class="gauge-fill benzin" style="width: 70%;"></div></div>
@@ -63,16 +67,16 @@
       <div class="gauge-item">
         <div class="gauge-head">
           <span class="dot dizel"></span>
-          <span class="gauge-name">DİZEL</span>
-          <span id="gauge-val-dizel" class="gauge-pct">84%</span>
+          <span class="gauge-name" data-i18n="diesel">DİZEL</span>
+          <span id="gauge-val-dizel" class="gauge-pct">70%</span>
         </div>
-        <div class="gauge-bar"><div id="bar-dizel" class="gauge-fill dizel" style="width: 84%;"></div></div>
+        <div class="gauge-bar"><div id="bar-dizel" class="gauge-fill dizel" style="width: 70%;"></div></div>
       </div>
 
       <div class="gauge-item">
         <div class="gauge-head">
           <span class="dot lpg"></span>
-          <span class="gauge-name">LPG</span>
+          <span class="gauge-name" data-i18n="lpg">LPG</span>
           <span id="gauge-val-lpg" class="gauge-pct">70%</span>
         </div>
         <div class="gauge-bar"><div id="bar-lpg" class="gauge-fill lpg" style="width: 70%;"></div></div>
@@ -81,7 +85,7 @@
       <div class="gauge-item">
         <div class="gauge-head">
           <span class="dot ev"></span>
-          <span class="gauge-name">ELEKTRİK</span>
+          <span class="gauge-name" data-i18n="electric">ELEKTRİK</span>
           <span id="gauge-val-ev" class="gauge-pct">100%</span>
         </div>
         <div class="gauge-bar"><div id="bar-ev" class="gauge-fill ev" style="width: 100%;"></div></div>
@@ -97,7 +101,7 @@
         <path d="M14 4 4 14l2 2 10-10z"></path>
         <path d="m14 4 3 3-2 2-3-3z"></path>
       </svg>
-      <span class="fab-text">İnşaat</span>
+      <span class="fab-text" data-i18n="fab_build">İnşaat</span>
     </button>
 
     <button id="btn-open-order" class="fab-btn neo-btn" title="Yakıt Tankeri Siparişi">
@@ -107,7 +111,7 @@
         <circle cx="5.5" cy="18.5" r="2.5"></circle>
         <circle cx="18.5" cy="18.5" r="2.5"></circle>
       </svg>
-      <span class="fab-text">Sipariş</span>
+      <span class="fab-text" data-i18n="fab_order">Sipariş</span>
     </button>
 
     <button id="btn-open-office" class="fab-btn neo-btn" title="İstasyon Ofisi & Tarifeler">
@@ -116,7 +120,7 @@
         <line x1="12" y1="20" x2="12" y2="4"></line>
         <line x1="6" y1="20" x2="6" y2="14"></line>
       </svg>
-      <span class="fab-text">Ofis</span>
+      <span class="fab-text" data-i18n="fab_office">Ofis</span>
     </button>
 
     <button id="btn-speed-toggle" class="fab-btn neo-btn" title="Zaman Hızı">
