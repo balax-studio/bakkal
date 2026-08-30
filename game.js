@@ -316,70 +316,47 @@ function buildDiorama() {
   diorama.add(building);
 
   // 5. Large Steel Canopy (Over Pump Island)
-  const canopy = new THREE.Group();
-  canopy.position.set(0, 0, 1);
+  // 5. Open-Air Roadside Price Totem Sign (Canopy removed so pumps are 100% visible)
+  const totem = new THREE.Group();
+  totem.position.set(-10, 0, 8);
 
-  // 4 Pillars
-  const pillarGeo = new THREE.BoxGeometry(0.5, 4.5, 0.5);
-  const pillarPositions = [
-    [-6, 2.25, -3], [6, 2.25, -3],
-    [-6, 2.25, 4.5], [6, 2.25, 4.5]
-  ];
-  pillarPositions.forEach(p => {
-    const pillar = new THREE.Mesh(pillarGeo, Mat.concrete);
-    pillar.position.set(...p);
-    pillar.castShadow = true;
-    canopy.add(pillar);
+  const totemPost = new THREE.Mesh(new THREE.BoxGeometry(0.8, 5.2, 0.8), Mat.darkInk);
+  totemPost.position.y = 2.6;
+  totemPost.castShadow = true;
+  totem.add(totemPost);
 
-    // Pillar red base
-    const base = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.8), Mat.redTrim);
-    base.position.set(p[0], 0.3, p[2]);
-    canopy.add(base);
-  });
-
-  // Canopy Roof Deck
-  const canopyRoof = new THREE.Mesh(new THREE.BoxGeometry(15, 0.6, 11), Mat.buildingWall);
-  canopyRoof.position.y = 4.6;
-  canopyRoof.castShadow = true;
-  canopy.add(canopyRoof);
-
-  // Canopy Red Fascia Band
-  const canopyTrim = new THREE.Mesh(new THREE.BoxGeometry(15.4, 0.5, 11.4), Mat.redTrim);
-  canopyTrim.position.y = 4.7;
-  canopy.add(canopyTrim);
-
-  // 3D "PIXELOIL" Front Billboard
   const signCanvas = document.createElement('canvas');
-  signCanvas.width = 512;
-  signCanvas.height = 128;
+  signCanvas.width = 256;
+  signCanvas.height = 256;
   const sctx = signCanvas.getContext('2d');
   sctx.fillStyle = '#D64545';
-  sctx.fillRect(0, 0, 512, 128);
-  sctx.lineWidth = 6;
+  sctx.fillRect(0, 0, 256, 256);
+  sctx.lineWidth = 8;
   sctx.strokeStyle = '#1C242B';
-  sctx.strokeRect(4, 4, 504, 120);
+  sctx.strokeRect(4, 4, 248, 248);
   sctx.fillStyle = '#FAF6EC';
-  sctx.font = 'bold 56px Plus Jakarta Sans, sans-serif';
+  sctx.font = 'bold 36px Plus Jakarta Sans, sans-serif';
   sctx.textAlign = 'center';
   sctx.textBaseline = 'middle';
-  sctx.fillText('PIXELOIL', 256, 64);
+  sctx.fillText('PIXELOIL', 128, 60);
+
+  sctx.fillStyle = '#1C242B';
+  sctx.fillRect(16, 95, 224, 4);
+
+  sctx.font = 'bold 22px JetBrains Mono, monospace';
+  sctx.fillStyle = '#FAF6EC';
+  sctx.fillText('B ₺42.50', 128, 130);
+  sctx.fillText('D ₺44.10', 128, 170);
+  sctx.fillText('L ₺22.80', 128, 210);
 
   const signTex = new THREE.CanvasTexture(signCanvas);
   const signMat = new THREE.MeshBasicMaterial({ map: signTex });
-  const signBack = new THREE.Mesh(new THREE.BoxGeometry(6.5, 1.3, 0.2), signMat);
-  signBack.position.set(0, 5.5, 5.7);
-  signBack.castShadow = true;
-  canopy.add(signBack);
+  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.4, 0.3), signMat);
+  signBoard.position.set(0, 4.0, 0);
+  signBoard.castShadow = true;
+  totem.add(signBoard);
 
-  // Station Canopy Under-Lights
-  const lightGeo = new THREE.BoxGeometry(2, 0.1, 1);
-  const uLight1 = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({ color: 0xFFFFF0 }));
-  uLight1.position.set(-3.5, 4.25, 1);
-  const uLight2 = new THREE.Mesh(lightGeo, new THREE.MeshBasicMaterial({ color: 0xFFFFF0 }));
-  uLight2.position.set(3.5, 4.25, 1);
-  canopy.add(uLight1, uLight2);
-
-  diorama.add(canopy);
+  diorama.add(totem);
 
   // 6. Fuel Storage Tanks (Vertical Cylinders)
   const tankGroup = new THREE.Group();
