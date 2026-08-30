@@ -1,10 +1,157 @@
 /**
- * BENELOIL 3D - 16-BIT LOW-POLY NEO-BRUTALIST WEBGL ENGINE
+ * PIXELOIL 3D - 16-BIT LOW-POLY NEO-BRUTALIST WEBGL ENGINE
  * Powered by Three.js & Web Audio API
  */
 
 // =========================================================
-// 1. GAME STATE & SIMULATION CONSTANTS
+// 1. I18N DYNAMIC MULTI-LANGUAGE SYSTEM (TR / EN)
+// =========================================================
+
+const I18N = {
+  tr: {
+    cash: 'KASA',
+    day: 'GÜN',
+    reputation: 'İTİBAR',
+    gasoline: 'BENZİN',
+    diesel: 'DİZEL',
+    lpg: 'LPG',
+    electric: 'ELEKTRİK',
+    fab_build: 'İnşaat',
+    fab_order: 'Sipariş',
+    fab_office: 'Ofis',
+    liters_label: 'LİTRE (L)',
+    cost_label: 'TUTAR (TL)',
+    fill_full: 'FULLE',
+    btn_start_pump: 'POMPAYI BAŞLAT',
+    btn_finish_pump: 'TAMAMLA & UĞURLA',
+    btn_wash_tip: 'Camları Sil (+₺25 Bahşiş)',
+    build_title: 'İstasyon Yatırımları',
+    upgrade_pump_title: 'Pompa Adası Ekle',
+    upgrade_pump_desc: 'Aynı anda daha fazla araca dolum yapın.',
+    upgrade_wash_title: 'Otomatik Tünel Oto Yıkama',
+    upgrade_wash_desc: 'Gelen araçlardan otomatik yıkama ücreti tahsil eder.',
+    upgrade_solar_title: 'Çatı Güneş Enerjisi (GES)',
+    upgrade_solar_desc: 'Gündüz istasyonun elektrik faturasını sıfırlar.',
+    upgrade_mgr_title: 'İstasyon Müdürü İşe Al',
+    upgrade_mgr_desc: 'Dolum ve tanker siparişlerini otomatik yönetir.',
+    btn_bought: 'ALINDI',
+    btn_working: 'ÇALIŞIYOR',
+    order_title: 'Yakıt Siparişi (Tanker)',
+    tank_status: 'Depo',
+    office_title: 'İstasyon Yönetim Ofisi',
+    stat_total_rev: 'Toplam Ciro:',
+    stat_total_cars: 'Hizmet Verilen Araç:',
+    stat_satisfaction: 'Genel Memnuniyet:',
+    tariff_title: 'Litre / Birim Satış Tarifesi',
+    cost_prefix: 'Maliyet',
+    no_waiting_car: '(Bekleyen Araç Yok)',
+    toast_welcome: 'PixelOil 3D İstasyonuna Hoş Geldiniz!',
+    toast_car_docked: 'Araç #{0} pompasına yanaştı.',
+    toast_fuel_empty: 'UYARI: Depoda {0} kalmadı!',
+    toast_collected: '+₺{0} tahsil edildi.',
+    toast_tip: 'Camlar temizlendi (+₺25 Bahşiş).',
+    toast_mgr: 'İstasyon Müdürü: Pompa #{0} dolduruldu (+₺{1})',
+    toast_speed: 'Zaman Hızı: {0}x',
+    toast_max_pumps: 'Maksimum pompa sayısına ulaşıldı (4).',
+    toast_insufficient_funds: 'Yetersiz bakiye! (Gereken: ₺{0})',
+    toast_pump_built: 'Pompa #{0} inşa edildi.',
+    toast_wash_active: 'Otomatik Oto Yıkama aktif edildi (+₺80/araç).',
+    toast_solar_built: 'Çatı GES kuruldu. Gündüz elektrik faturası ₺0.',
+    toast_mgr_hired: 'İstasyon Müdürü göreve başladı. Dolumlar otomatik.',
+    toast_tanker_arrived: '{0}L {1} tankeri ikmal yaptı.',
+    toast_tank_overflow: 'Depo kapasitesi aşılıyor! (Boş yer: {0} L)',
+    toast_tariff_updated: '{0} tarifesi güncellendi: ₺{1}',
+    toast_new_day: 'GÜN {0} BAŞLADI',
+    toast_target: 'Hedef dolum: {0}'
+  },
+  en: {
+    cash: 'CASH',
+    day: 'DAY',
+    reputation: 'RATING',
+    gasoline: 'GASOLINE',
+    diesel: 'DIESEL',
+    lpg: 'LPG',
+    electric: 'ELECTRIC',
+    fab_build: 'Build',
+    fab_order: 'Order',
+    fab_office: 'Office',
+    liters_label: 'LITERS (L)',
+    cost_label: 'COST (TL)',
+    fill_full: 'FILL UP',
+    btn_start_pump: 'START PUMP',
+    btn_finish_pump: 'COMPLETE & DISMISS',
+    btn_wash_tip: 'Wash Windshield (+₺25 Tip)',
+    build_title: 'Station Investments',
+    upgrade_pump_title: 'Add Pump Island',
+    upgrade_pump_desc: 'Serve more vehicles simultaneously.',
+    upgrade_wash_title: 'Automatic Tunnel Car Wash',
+    upgrade_wash_desc: 'Automatically charges incoming vehicles for wash.',
+    upgrade_solar_title: 'Rooftop Solar (PV)',
+    upgrade_solar_desc: 'Eliminates daytime station power bills.',
+    upgrade_mgr_title: 'Hire Station Manager',
+    upgrade_mgr_desc: 'Automates car refueling and tanker orders.',
+    btn_bought: 'OWNED',
+    btn_working: 'ACTIVE',
+    order_title: 'Fuel Tanker Order',
+    tank_status: 'Tank',
+    office_title: 'Station Management Office',
+    stat_total_rev: 'Total Revenue:',
+    stat_total_cars: 'Vehicles Served:',
+    stat_satisfaction: 'Satisfaction:',
+    tariff_title: 'Fuel Unit Price Tariff',
+    cost_prefix: 'Cost',
+    no_waiting_car: '(No Waiting Vehicle)',
+    toast_welcome: 'Welcome to PixelOil 3D Station!',
+    toast_car_docked: 'Vehicle docked at Pump #{0}.',
+    toast_fuel_empty: 'WARNING: Out of {0} fuel in storage!',
+    toast_collected: '+₺{0} collected.',
+    toast_tip: 'Windshield cleaned (+₺25 Tip).',
+    toast_mgr: 'Station Manager: Filled Pump #{0} (+₺{1})',
+    toast_speed: 'Time Speed: {0}x',
+    toast_max_pumps: 'Maximum pump count reached (4).',
+    toast_insufficient_funds: 'Insufficient funds! (Required: ₺{0})',
+    toast_pump_built: 'Pump #{0} constructed.',
+    toast_wash_active: 'Automatic Car Wash activated (+₺80/car).',
+    toast_solar_built: 'Solar panels installed. Daytime power cost ₺0.',
+    toast_mgr_hired: 'Station Manager hired. Refueling automated.',
+    toast_tanker_arrived: '{0}L {1} tanker delivery completed.',
+    toast_tank_overflow: 'Tank capacity exceeded! (Available: {0} L)',
+    toast_tariff_updated: '{0} tariff updated: ₺{1}',
+    toast_new_day: 'DAY {0} HAS BEGUN',
+    toast_target: 'Target fill: {0}'
+  }
+};
+
+let currentLang = localStorage.getItem('pixeloil_lang') || 'tr';
+
+function t(key, ...args) {
+  const dict = I18N[currentLang] || I18N.tr;
+  let str = dict[key] || key;
+  args.forEach((val, idx) => {
+    str = str.replace(`{${idx}}`, val);
+  });
+  return str;
+}
+
+function toggleLanguage() {
+  currentLang = currentLang === 'tr' ? 'en' : 'tr';
+  localStorage.setItem('pixeloil_lang', currentLang);
+  document.getElementById('lang-indicator').textContent = currentLang.toUpperCase();
+  document.documentElement.lang = currentLang;
+  updateI18nDOM();
+}
+
+function updateI18nDOM() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  updateHUD();
+  updateOrderModalStatus();
+}
+
+// =========================================================
+// 2. GAME STATE & SIMULATION CONSTANTS
 // =========================================================
 
 const State = {
