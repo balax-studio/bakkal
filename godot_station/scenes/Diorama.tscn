@@ -13,32 +13,32 @@
 
 [node name="GrassBase" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
-size = Vector3(46, 1.5, 46)
+size = Vector3(80, 1.5, 80)
 material = ExtResource("1_grass")
 
 [node name="DirtBase" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.6, 0)
-size = Vector3(46, 2.2, 46)
+size = Vector3(80, 2.2, 80)
 material = ExtResource("4_conc")
 
 [node name="RimSlab" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.8, 0)
-size = Vector3(47.5, 0.6, 47.5)
+size = Vector3(82, 0.6, 82)
 material = ExtResource("2_asphalt")
 
 [node name="AsphaltRoad" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 11.5)
-size = Vector3(46, 0.06, 7.5)
+size = Vector3(80, 0.06, 7.5)
 material = ExtResource("2_asphalt")
 
 [node name="YellowLine1" type="CSGBox3D" parent="AsphaltRoad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, -0.15)
-size = Vector3(46, 0.02, 0.15)
+size = Vector3(80, 0.02, 0.15)
 material = ExtResource("3_yellow")
 
 [node name="YellowLine2" type="CSGBox3D" parent="AsphaltRoad"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0.15)
-size = Vector3(46, 0.02, 0.15)
+size = Vector3(80, 0.02, 0.15)
 material = ExtResource("3_yellow")
 
 [node name="ForecourtConcrete" type="CSGBox3D" parent="."]
