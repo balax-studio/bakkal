@@ -1,0 +1,538 @@
+/* =========================================================
+   BENELOIL 3D - NEO-BRUTALIST DESIGN SYSTEM (16-BIT LOW-POLY)
+   ========================================================= */
+
+:root {
+  --bg-paper: #FAF6EC;
+  --bg-card: #FFFFFF;
+  --bg-inner: #F3EEDB;
+  --ink-border: #1C242B;
+  --ink-text: #1C242B;
+  --ink-muted: #5F6B76;
+  
+  --accent-red: #D64545;
+  --accent-green: #27A05A;
+  --accent-orange: #E8862E;
+  --accent-blue: #2F6FED;
+  --accent-gold: #F1A316;
+  --accent-purple: #7C4DFF;
+
+  --lcd-bg: #0C1610;
+  --lcd-border: #1A2E22;
+  --lcd-glow: #38E585;
+  --lcd-gold: #FDBA36;
+
+  --shadow-sm: 2px 2px 0px var(--ink-border);
+  --shadow-md: 4px 4px 0px var(--ink-border);
+  --shadow-lg: 6px 6px 0px var(--ink-border);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #BFD8E3;
+  color: var(--ink-text);
+}
+
+/* 3D Canvas */
+#canvas-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  cursor: grab;
+}
+#canvas-container:active {
+  cursor: grabbing;
+}
+
+/* Neo-Brutalist Reusable Components */
+.neo-panel {
+  background: var(--bg-paper);
+  border: 2.5px solid var(--ink-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.neo-panel-inner {
+  background: var(--bg-inner);
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: 10px;
+}
+
+.neo-btn {
+  background: var(--bg-paper);
+  border: 2px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  color: var(--ink-text);
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.neo-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-md);
+}
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px var(--ink-border);
+}
+
+.neo-btn.success {
+  background: var(--accent-green);
+  color: #FFFFFF;
+}
+.neo-btn.danger {
+  background: var(--accent-red);
+  color: #FFFFFF;
+}
+.neo-btn.warning {
+  background: var(--accent-orange);
+  color: #FFFFFF;
+}
+.neo-btn.accent {
+  background: var(--accent-red);
+  color: #FFFFFF;
+}
+
+/* =========================================================
+   TOP HUD BAR
+   ========================================================= */
+#top-bar {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  flex-wrap: wrap;
+}
+
+.brand-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-red);
+  color: #FFFFFF;
+  padding: 6px 12px;
+  border: 2px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.stat-chip {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-inner);
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+}
+.stat-chip .chip-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--ink-muted);
+  letter-spacing: 0.5px;
+}
+.stat-chip .chip-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink-text);
+}
+.money-chip .chip-val {
+  color: #157E42;
+}
+
+/* Fuel Gauge Rail */
+.fuel-gauges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.gauge-item {
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.gauge-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-weight: 800;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  border: 1px solid var(--ink-border);
+}
+.dot.benzin, .gauge-fill.benzin { background: var(--accent-red); }
+.dot.dizel, .gauge-fill.dizel { background: var(--accent-green); }
+.dot.lpg, .gauge-fill.lpg { background: var(--accent-orange); }
+.dot.ev, .gauge-fill.ev { background: var(--accent-blue); }
+
+.gauge-pct {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+}
+.gauge-bar {
+  width: 100%;
+  height: 8px;
+  background: #E2DBCA;
+  border: 1.5px solid var(--ink-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.gauge-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* =========================================================
+   BOTTOM-LEFT FAB MENU
+   ========================================================= */
+#fab-menu {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+}
+.fab-btn {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.fab-icon {
+  font-size: 16px;
+}
+
+/* =========================================================
+   MODAL DIALOGS
+   ========================================================= */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(28, 36, 43, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-card {
+  width: 90%;
+  max-width: 440px;
+  background: var(--bg-paper);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: modalPop 0.15s ease-out;
+}
+@keyframes modalPop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h2 {
+  font-size: 16px;
+  font-weight: 800;
+}
+.modal-close-btn {
+  background: var(--bg-inner);
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Digital LED Box */
+.digital-lcd-box {
+  background: var(--lcd-bg);
+  border: 2px solid var(--lcd-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+}
+.lcd-metric {
+  text-align: center;
+}
+.lcd-sub {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(56, 229, 133, 0.6);
+  letter-spacing: 0.8px;
+  margin-bottom: 2px;
+}
+.lcd-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--lcd-glow);
+  text-shadow: 0 0 10px rgba(56, 229, 133, 0.4);
+}
+.lcd-num.gold {
+  color: var(--lcd-gold);
+  text-shadow: 0 0 10px rgba(253, 186, 54, 0.4);
+}
+
+.preset-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.preset-btn {
+  padding: 8px 0;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.action-btn {
+  padding: 12px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+.tip-btn {
+  padding: 8px;
+  font-size: 11px;
+}
+
+/* Upgrades / Investment list */
+.upgrade-list, .order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.upgrade-card, .order-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.upgrade-info h3 {
+  font-size: 13px;
+  font-weight: 800;
+}
+.upgrade-info p {
+  font-size: 10px;
+  color: var(--ink-muted);
+}
+.buy-btn, .order-submit-btn {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+
+.fuel-spec {
+  display: flex;
+  flex-direction: column;
+  width: 90px;
+}
+.fuel-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+.fuel-spec.benzin .fuel-title { color: var(--accent-red); }
+.fuel-spec.dizel .fuel-title { color: var(--accent-green); }
+.fuel-spec.lpg .fuel-title { color: var(--accent-orange); }
+
+.tank-status {
+  font-size: 9px;
+  color: var(--ink-muted);
+}
+
+.qty-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.qty-btn {
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--ink-border);
+  background: var(--bg-paper);
+  border-radius: 4px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.qty-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  width: 55px;
+  text-align: center;
+}
+
+/* Office & Tariff editor */
+.office-stats {
+  display: flex;
+  justify-content: space-around;
+  font-size: 11px;
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.price-editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.price-edit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-inner);
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+}
+.tariff-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+.price-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tariff-btn {
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid var(--ink-border);
+  background: var(--bg-paper);
+  border-radius: 4px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.tariff-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 800;
+  width: 65px;
+  text-align: center;
+}
+
+/* Toast Notifications */
+#toast-container {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast-item {
+  background: var(--bg-paper);
+  border: 2px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toastSlide 0.2s ease-out;
+}
+@keyframes toastSlide {
+  0% { transform: translateX(40px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+.hidden { display: none !important; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #top-bar {
+    gap: 6px;
+    padding: 6px 10px;
+  }
+  .fuel-gauges {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+  .gauge-item {
+    width: 22%;
+  }
+  #fab-menu {
+    bottom: 12px;
+    left: 12px;
+    gap: 6px;
+  }
+  .fab-btn {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  .fab-text { display: none; }
+}

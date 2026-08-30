@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BenelOil 3D — 16-Bit Tycoon İstasyonu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js & Controls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- 3D Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- HUD Top Bar -->
+  <header id="top-bar" class="neo-panel">
+    <div class="brand-chip">
+      <span class="brand-icon">⛽</span>
+      <span class="brand-name">BENELOIL</span>
+    </div>
+
+    <div class="stat-chip money-chip">
+      <span class="chip-label">KASA</span>
+      <span id="stat-money" class="chip-val">₺ 12.500</span>
+    </div>
+
+    <div class="stat-chip time-chip">
+      <span class="chip-label">GÜN <span id="stat-day">1</span></span>
+      <span id="stat-clock" class="chip-val">09:00</span>
+    </div>
+
+    <div class="stat-chip rep-chip">
+      <span class="chip-label">İTİBAR</span>
+      <span id="stat-rep" class="chip-val">★ 4.8</span>
+    </div>
+
+    <!-- Fuel Level Gauges -->
+    <div class="fuel-gauges">
+      <div class="gauge-item">
+        <div class="gauge-head">
+          <span class="dot benzin"></span>
+          <span class="gauge-name">BENZİN</span>
+          <span id="gauge-val-benzin" class="gauge-pct">70%</span>
+        </div>
+        <div class="gauge-bar"><div id="bar-benzin" class="gauge-fill benzin" style="width: 70%;"></div></div>
+      </div>
+
+      <div class="gauge-item">
+        <div class="gauge-head">
+          <span class="dot dizel"></span>
+          <span class="gauge-name">DİZEL</span>
+          <span id="gauge-val-dizel" class="gauge-pct">84%</span>
+        </div>
+        <div class="gauge-bar"><div id="bar-dizel" class="gauge-fill dizel" style="width: 84%;"></div></div>
+      </div>
+
+      <div class="gauge-item">
+        <div class="gauge-head">
+          <span class="dot lpg"></span>
+          <span class="gauge-name">LPG</span>
+          <span id="gauge-val-lpg" class="gauge-pct">70%</span>
+        </div>
+        <div class="gauge-bar"><div id="bar-lpg" class="gauge-fill lpg" style="width: 70%;"></div></div>
+      </div>
+
+      <div class="gauge-item">
+        <div class="gauge-head">
+          <span class="dot ev"></span>
+          <span class="gauge-name">ELEKTRİK</span>
+          <span id="gauge-val-ev" class="gauge-pct">100%</span>
+        </div>
+        <div class="gauge-bar"><div id="bar-ev" class="gauge-fill ev" style="width: 100%;"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quick Floating Action Buttons (FAB) -->
+  <div id="fab-menu">
+    <button id="btn-open-build" class="fab-btn neo-btn" title="İnşaat & Yükseltmeler">
+      <span class="fab-icon">🏗️</span>
+      <span class="fab-text">İnşaat</span>
+    </button>
+    <button id="btn-open-order" class="fab-btn neo-btn" title="Yakıt Tankeri Siparişi">
+      <span class="fab-icon">🚚</span>
+      <span class="fab-text">Sipariş</span>
+    </button>
+    <button id="btn-open-office" class="fab-btn neo-btn" title="İstasyon Ofisi & Tarifeler">
+      <span class="fab-icon">📊</span>
+      <span class="fab-text">Ofis</span>
+    </button>
+    <button id="btn-speed-toggle" class="fab-btn neo-btn" title="Zaman Hızı">
+      <span class="fab-icon">⏩</span>
+      <span id="speed-indicator" class="fab-text">1x</span>
+    </button>
+  </div>
+
+  <!-- Interactive 3D Pump Service Modal -->
+  <div id="pump-modal" class="modal-overlay hidden">
+    <div class="modal-card neo-panel">
+      <div class="modal-header">
+        <h2 id="pump-modal-title">Sedan · BENZİN (Pompa #1)</h2>
+        <button class="modal-close-btn" onclick="closePumpModal()">✕</button>
+      </div>
+
+      <div class="digital-lcd-box">
+        <div class="lcd-metric">
+          <div class="lcd-sub">LİTRE (L)</div>
+          <div id="lcd-liters" class="lcd-num">0.0 L</div>
+        </div>
+        <div class="lcd-metric">
+          <div class="lcd-sub">TUTAR (TL)</div>
+          <div id="lcd-cost" class="lcd-num gold">₺ 0.00</div>
+        </div>
+      </div>
+
+      <div class="preset-buttons">
+        <button class="preset-btn neo-btn" onclick="setRefuelTarget(50)">50 ₺</button>
+        <button class="preset-btn neo-btn" onclick="setRefuelTarget(100)">100 ₺</button>
+        <button class="preset-btn neo-btn" onclick="setRefuelTarget(250)">250 ₺</button>
+        <button class="preset-btn neo-btn accent" onclick="setRefuelTarget('FULL')">FULLE</button>
+      </div>
+
+      <div class="modal-actions">
+        <button id="btn-start-pump" class="action-btn neo-btn success" onclick="startActivePumping()">
+          ▶ POMPAYI BAŞLAT
+        </button>
+        <button id="btn-finish-pump" class="action-btn neo-btn success hidden" onclick="finishAndDismissCar()">
+          ✓ TAMAMLA & UĞURLA
+        </button>
+        <button id="btn-wash-tip" class="tip-btn neo-btn" onclick="applyWindshieldWash()">
+          ✨ Camları Sil (+₺25 Bahşiş)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Construction & Upgrades Modal -->
+  <div id="build-modal" class="modal-overlay hidden">
+    <div class="modal-card neo-panel">
+      <div class="modal-header">
+        <h2>🏗️ İstasyon Yatırımları</h2>
+        <button class="modal-close-btn" onclick="toggleModal('build-modal', false)">✕</button>
+      </div>
+
+      <div class="upgrade-list">
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Pompa Adası Ekle (<span id="upgrade-pump-count">1</span>/4)</h3>
+            <p>Aynı anda daha fazla araca dolum yapın.</p>
+          </div>
+          <button id="btn-buy-pump" class="buy-btn neo-btn danger" onclick="buyPumpUpgrade()">₺ 6.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Otomatik Tünel Oto Yıkama</h3>
+            <p>Gelen araçlardan otomatik yıkama ücreti tahsil eder.</p>
+          </div>
+          <button id="btn-buy-wash" class="buy-btn neo-btn danger" onclick="buyWashUpgrade()">₺ 12.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Çatı Güneş Enerjisi (GES)</h3>
+            <p>Gündüz istasyonun elektrik faturasını sıfırlar.</p>
+          </div>
+          <button id="btn-buy-solar" class="buy-btn neo-btn danger" onclick="buySolarUpgrade()">₺ 8.500</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>İstasyon Müdürü İşe Al</h3>
+            <p>Dolum ve tanker siparişlerini otomatik yönetir.</p>
+          </div>
+          <button id="btn-buy-manager" class="buy-btn neo-btn danger" onclick="buyManagerUpgrade()">₺ 15.000</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fuel Tanker Order Modal -->
+  <div id="order-modal" class="modal-overlay hidden">
+    <div class="modal-card neo-panel">
+      <div class="modal-header">
+        <h2>🚚 Yakıt Siparişi (Tanker)</h2>
+        <button class="modal-close-btn" onclick="toggleModal('order-modal', false)">✕</button>
+      </div>
+
+      <div class="order-list">
+        <div class="order-row neo-panel-inner">
+          <div class="fuel-spec benzin">
+            <span class="fuel-title">BENZİN</span>
+            <span id="order-tank-benzin" class="tank-status">Depo: 3500/5000 L</span>
+          </div>
+          <div class="qty-selector">
+            <button class="qty-btn" onclick="adjustOrderQty('benzin', -500)">−</button>
+            <span id="order-qty-benzin" class="qty-val">1000 L</span>
+            <button class="qty-btn" onclick="adjustOrderQty('benzin', 500)">+</button>
+          </div>
+          <button id="btn-order-benzin" class="order-submit-btn neo-btn warning" onclick="orderFuelTanker('benzin')">
+            ₺ 38.500
+          </button>
+        </div>
+
+        <div class="order-row neo-panel-inner">
+          <div class="fuel-spec dizel">
+            <span class="fuel-title">DİZEL</span>
+            <span id="order-tank-dizel" class="tank-status">Depo: 4200/5000 L</span>
+          </div>
+          <div class="qty-selector">
+            <button class="qty-btn" onclick="adjustOrderQty('dizel', -500)">−</button>
+            <span id="order-qty-dizel" class="qty-val">1500 L</span>
+            <button class="qty-btn" onclick="adjustOrderQty('dizel', 500)">+</button>
+          </div>
+          <button id="btn-order-dizel" class="order-submit-btn neo-btn warning" onclick="orderFuelTanker('dizel')">
+            ₺ 58.800
+          </button>
+        </div>
+
+        <div class="order-row neo-panel-inner">
+          <div class="fuel-spec lpg">
+            <span class="fuel-title">LPG</span>
+            <span id="order-tank-lpg" class="tank-status">Depo: 2100/3000 L</span>
+          </div>
+          <div class="qty-selector">
+            <button class="qty-btn" onclick="adjustOrderQty('lpg', -500)">−</button>
+            <span id="order-qty-lpg" class="qty-val">800 L</span>
+            <button class="qty-btn" onclick="adjustOrderQty('lpg', 500)">+</button>
+          </div>
+          <button id="btn-order-lpg" class="order-submit-btn neo-btn warning" onclick="orderFuelTanker('lpg')">
+            ₺ 17.440
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Office & Price Tariff Modal -->
+  <div id="office-modal" class="modal-overlay hidden">
+    <div class="modal-card neo-panel">
+      <div class="modal-header">
+        <h2>📊 İstasyon Yönetim Ofisi</h2>
+        <button class="modal-close-btn" onclick="toggleModal('office-modal', false)">✕</button>
+      </div>
+
+      <div class="office-stats neo-panel-inner">
+        <div class="stat-row"><span>Toplam Ciro:</span> <strong id="stat-total-rev">₺ 0</strong></div>
+        <div class="stat-row"><span>Hizmet Verilen Araç:</span> <strong id="stat-total-cars">0</strong></div>
+        <div class="stat-row"><span>Genel Memnuniyet:</span> <strong id="stat-satisfaction">98%</strong></div>
+      </div>
+
+      <h3 class="section-title">Litre / Birim Satış Tarifesi</h3>
+      <div class="price-editor-list">
+        <div class="price-edit-row">
+          <span class="tariff-name benzin">Benzin (Maliyet: ₺38.50)</span>
+          <div class="price-controls">
+            <button class="tariff-btn" onclick="adjustPrice('benzin', -0.50)">−</button>
+            <span id="tariff-benzin" class="tariff-val">₺ 44.90</span>
+            <button class="tariff-btn" onclick="adjustPrice('benzin', 0.50)">+</button>
+          </div>
+        </div>
+
+        <div class="price-edit-row">
+          <span class="tariff-name dizel">Dizel (Maliyet: ₺39.20)</span>
+          <div class="price-controls">
+            <button class="tariff-btn" onclick="adjustPrice('dizel', -0.50)">−</button>
+            <span id="tariff-dizel" class="tariff-val">₺ 45.40</span>
+            <button class="tariff-btn" onclick="adjustPrice('dizel', 0.50)">+</button>
+          </div>
+        </div>
+
+        <div class="price-edit-row">
+          <span class="tariff-name lpg">LPG (Maliyet: ₺21.80)</span>
+          <div class="price-controls">
+            <button class="tariff-btn" onclick="adjustPrice('lpg', -0.50)">−</button>
+            <span id="tariff-lpg" class="tariff-val">₺ 26.20</span>
+            <button class="tariff-btn" onclick="adjustPrice('lpg', 0.50)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div id="toast-container"></div>
+
+  <!-- Main Game Script -->
+  <script src="game.js"></script>
+</body>
+</html>
