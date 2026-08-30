@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://dtank16bit"]
+
+[ext_resource type="Material" path="res://materials/mat_concrete.tres" id="1_conc"]
+[ext_resource type="Material" path="res://materials/mat_red.tres" id="2_red"]
+[ext_resource type="Material" path="res://materials/mat_green.tres" id="3_green"]
+[ext_resource type="Material" path="res://materials/mat_orange.tres" id="4_orange"]
+
+[node name="FuelTanks" type="Node3D"]
+
+[node name="TankBenzin" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.8, 0)
+radius = 0.9
+height = 3.6
+material = ExtResource("1_conc")
+
+[node name="Stripe1" type="CSGCylinder3D" parent="TankBenzin"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+radius = 0.92
+height = 0.5
+material = ExtResource("2_red")
+
+[node name="TankDizel" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 1.8, 0)
+radius = 0.9
+height = 3.6
+material = ExtResource("1_conc")
+
+[node name="Stripe2" type="CSGCylinder3D" parent="TankDizel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+radius = 0.92
+height = 0.5
+material = ExtResource("3_green")
+
+[node name="TankLpg" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 1.8, 0)
+radius = 0.9
+height = 3.6
+material = ExtResource("1_conc")
+
+[node name="Stripe3" type="CSGCylinder3D" parent="TankLpg"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+radius = 0.92
+height = 0.5
+material = ExtResource("4_orange")

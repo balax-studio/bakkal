@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://ddiorama16bit"]
+
+[ext_resource type="Material" path="res://materials/mat_grass.tres" id="1_grass"]
+[ext_resource type="Material" path="res://materials/mat_asphalt.tres" id="2_asphalt"]
+[ext_resource type="Material" path="res://materials/mat_road_yellow.tres" id="3_yellow"]
+[ext_resource type="Material" path="res://materials/mat_concrete.tres" id="4_conc"]
+[ext_resource type="PackedScene" path="res://scenes/Building.tscn" id="5_bld"]
+[ext_resource type="PackedScene" path="res://scenes/Canopy.tscn" id="6_canopy"]
+[ext_resource type="PackedScene" path="res://scenes/Tank.tscn" id="7_tank"]
+[ext_resource type="PackedScene" path="res://scenes/Pump.tscn" id="8_pump"]
+[ext_resource type="PackedScene" path="res://scenes/Tree.tscn" id="9_tree"]
+
+[node name="Diorama" type="Node3D"]
+
+[node name="GrassBase" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+size = Vector3(80, 0.5, 60)
+material = ExtResource("1_grass")
+
+[node name="AsphaltRoad" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 14)
+size = Vector3(80, 0.52, 9)
+material = ExtResource("2_asphalt")
+
+[node name="YellowLine1" type="CSGBox3D" parent="AsphaltRoad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, -0.15)
+size = Vector3(80, 0.05, 0.15)
+material = ExtResource("3_yellow")
+
+[node name="YellowLine2" type="CSGBox3D" parent="AsphaltRoad"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28, 0.15)
+size = Vector3(80, 0.05, 0.15)
+material = ExtResource("3_yellow")
+
+[node name="ForecourtConcrete" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, -2)
+size = Vector3(38, 0.54, 25)
+material = ExtResource("4_conc")
+
+[node name="Building" parent="." instance=ExtResource("5_bld")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11)
+
+[node name="Canopy" parent="." instance=ExtResource("6_canopy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
+
+[node name="FuelTanks" parent="." instance=ExtResource("7_tank")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13, 0, -10)
+
+[node name="Pumps" type="Node3D" parent="."]
+
+[node name="Pump1" parent="Pumps" instance=ExtResource("8_pump")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, -0.5)
+
+[node name="Pump2" parent="Pumps" instance=ExtResource("8_pump")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, -0.5)
+pump_index = 2
+
+[node name="Pump3" parent="Pumps" instance=ExtResource("8_pump")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 0, 4)
+pump_index = 3
+
+[node name="Pump4" parent="Pumps" instance=ExtResource("8_pump")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 0, 4)
+pump_index = 4
+
+[node name="Trees" type="Node3D" parent="."]
+
+[node name="Tree1" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 2)
+
+[node name="Tree2" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0, 10)
+
+[node name="Tree3" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, -6)
+
+[node name="Tree4" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0, 3)
+
+[node name="Tree5" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 10)
+
+[node name="Tree6" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -18)
+
+[node name="Tree7" parent="Trees" instance=ExtResource("9_tree")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -18)

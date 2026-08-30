@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://dpump16bit01"]
+
+[ext_resource type="Script" path="res://scripts/Pump.gd" id="1_script"]
+[ext_resource type="Material" path="res://materials/mat_concrete.tres" id="2_conc"]
+[ext_resource type="Material" path="res://materials/mat_red.tres" id="3_red"]
+[ext_resource type="Material" path="res://materials/mat_dark_ink.tres" id="4_ink"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pump"]
+size = Vector3(2.2, 2.5, 3.5)
+
+[node name="Pump" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="BaseIsland" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+size = Vector3(1.8, 0.25, 3.2)
+material = ExtResource("2_conc")
+
+[node name="Dispenser" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+size = Vector3(0.8, 1.8, 1.2)
+material = ExtResource("3_red")
+
+[node name="LcdScreen" type="CSGBox3D" parent="Dispenser"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+size = Vector3(0.85, 0.45, 0.8)
+material = ExtResource("4_ink")
+
+[node name="LabelNum" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+billboard = 1
+double_sided = false
+text = "P-1"
+font_size = 28
+outline_size = 6
+
+[node name="LabelStatus" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
+billboard = 1
+double_sided = false
+text = "BOŞ"
+font_size = 20
+outline_size = 4
+modulate = Color(0.3, 1, 0.5, 1)
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+shape = SubResource("BoxShape3D_pump")
+
+[connection signal="input_event" from="Area3D" to="." method="_on_area_3d_input_event"]

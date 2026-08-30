@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://dmainstation01"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/Diorama.tscn" id="2_diorama"]
+[ext_resource type="Script" path="res://scripts/CarSpawner.gd" id="3_spawner"]
+[ext_resource type="PackedScene" path="res://scenes/ui/HUD.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PumpServicePanel.tscn" id="5_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ConstructionModal.tscn" id="6_build"]
+[ext_resource type="PackedScene" path="res://scenes/ui/FuelOrderModal.tscn" id="7_order"]
+[ext_resource type="PackedScene" path="res://scenes/ui/OfficeModal.tscn" id="8_office"]
+
+[sub_resource type="Environment" id="Environment_station"]
+background_mode = 1
+background_color = Color(0.749, 0.878, 0.933, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.85, 0.88, 0.92, 1)
+ambient_light_energy = 0.65
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_station")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 15, 25, 15)
+shadow_enabled = true
+directional_shadow_max_distance = 60.0
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.40558, 0.579228, 0, 0.819152, 0.573576, -0.707107, -0.40558, 0.579228, 24, 26, 24)
+projection = 1
+size = 32.0
+current = true
+
+[node name="Diorama" parent="." instance=ExtResource("2_diorama")]
+
+[node name="CarSpawner" type="Node3D" parent="."]
+script = ExtResource("3_spawner")
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
+
+[node name="PumpServicePanel" parent="." instance=ExtResource("5_panel")]
+
+[node name="ConstructionModal" parent="." instance=ExtResource("6_build")]
+
+[node name="FuelOrderModal" parent="." instance=ExtResource("7_order")]
+
+[node name="OfficeModal" parent="." instance=ExtResource("8_office")]

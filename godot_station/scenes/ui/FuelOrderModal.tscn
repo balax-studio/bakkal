@@ -1,0 +1,267 @@
+[gd_scene format=3 uid="uid://dfuelordermodal01"]
+
+[ext_resource type="Script" path="res://scripts/FuelOrderModal.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.98, 0.965, 0.925, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 5
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_row_bg"]
+bg_color = Color(0.945, 0.922, 0.859, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pm"]
+bg_color = Color(0.98, 0.965, 0.925, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_order"]
+bg_color = Color(0.91, 0.525, 0.18, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 3
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="FuelOrderModal" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(440, 360)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -180.0
+offset_right = 220.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="Root/Card"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Root/Card/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Root/Card/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 17
+text = "🚚 Yakıt Siparişi (Tanker İkmali)"
+
+[node name="BtnClose" type="Button" parent="Root/Card/VBox/Header"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="Rows" type="VBoxContainer" parent="Root/Card/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RowBenzin" type="PanelContainer" parent="Root/Card/VBox/Rows"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_bg")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/Rows/RowBenzin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Name" type="Label" parent="Root/Card/VBox/Rows/RowBenzin/HBox"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.839, 0.271, 0.271, 1)
+theme_override_font_sizes/font_size = 13
+text = "BENZİN"
+
+[node name="LabelTank" type="Label" parent="Root/Card/VBox/Rows/RowBenzin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Depo: 3500 / 5000 L"
+
+[node name="BtnMinus" type="Button" parent="Root/Card/VBox/Rows/RowBenzin"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pm")
+text = "−"
+
+[node name="LabelQty" type="Label" parent="Root/Card/VBox/Rows/RowBenzin"]
+custom_minimum_size = Vector2(65, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "1000 L"
+horizontal_alignment = 1
+
+[node name="BtnPlus" type="Button" parent="Root/Card/VBox/Rows/RowBenzin"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pm")
+text = "+"
+
+[node name="BtnOrder" type="Button" parent="Root/Card/VBox/Rows/RowBenzin"]
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_order")
+text = "Sipariş: ₺38.500"
+
+[node name="RowDizel" type="PanelContainer" parent="Root/Card/VBox/Rows"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_bg")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/Rows/RowDizel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Name" type="Label" parent="Root/Card/VBox/Rows/RowDizel/HBox"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.153, 0.627, 0.353, 1)
+theme_override_font_sizes/font_size = 13
+text = "DİZEL"
+
+[node name="LabelTank" type="Label" parent="Root/Card/VBox/Rows/RowDizel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Depo: 4200 / 5000 L"
+
+[node name="BtnMinus" type="Button" parent="Root/Card/VBox/Rows/RowDizel"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pm")
+text = "−"
+
+[node name="LabelQty" type="Label" parent="Root/Card/VBox/Rows/RowDizel"]
+custom_minimum_size = Vector2(65, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "1500 L"
+horizontal_alignment = 1
+
+[node name="BtnPlus" type="Button" parent="Root/Card/VBox/Rows/RowDizel"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pm")
+text = "+"
+
+[node name="BtnOrder" type="Button" parent="Root/Card/VBox/Rows/RowDizel"]
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_order")
+text = "Sipariş: ₺58.800"
+
+[node name="RowLpg" type="PanelContainer" parent="Root/Card/VBox/Rows"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_row_bg")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/Rows/RowLpg"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Name" type="Label" parent="Root/Card/VBox/Rows/RowLpg/HBox"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.525, 0.18, 1)
+theme_override_font_sizes/font_size = 13
+text = "LPG"
+
+[node name="LabelTank" type="Label" parent="Root/Card/VBox/Rows/RowLpg"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Depo: 2100 / 3000 L"
+
+[node name="BtnMinus" type="Button" parent="Root/Card/VBox/Rows/RowLpg"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pm")
+text = "−"
+
+[node name="LabelQty" type="Label" parent="Root/Card/VBox/Rows/RowLpg"]
+custom_minimum_size = Vector2(65, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "800 L"
+horizontal_alignment = 1
+
+[node name="BtnPlus" type="Button" parent="Root/Card/VBox/Rows/RowLpg"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_pm")
+text = "+"
+
+[node name="BtnOrder" type="Button" parent="Root/Card/VBox/Rows/RowLpg"]
+custom_minimum_size = Vector2(130, 32)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_order")
+text = "Sipariş: ₺17.440"

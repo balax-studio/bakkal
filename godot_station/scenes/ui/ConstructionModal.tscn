@@ -1,0 +1,256 @@
+[gd_scene format=3 uid="uid://dconstructionmodal01"]
+
+[ext_resource type="Script" path="res://scripts/ConstructionModal.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
+bg_color = Color(0.98, 0.965, 0.925, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 5
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card_item"]
+bg_color = Color(0.945, 0.922, 0.859, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_buy_btn"]
+bg_color = Color(0.839, 0.271, 0.271, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="ConstructionModal" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(460, 480)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -240.0
+offset_right = 230.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+
+[node name="VBox" type="VBoxContainer" parent="Root/Card"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Root/Card/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Root/Card/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 17
+text = "🏗️ İnşaat & Tesis Yatırımları"
+
+[node name="BtnClose" type="Button" parent="Root/Card/VBox/Header"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "✕"
+
+[node name="UpgradesList" type="VBoxContainer" parent="Root/Card/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CardPumps" type="PanelContainer" parent="Root/Card/VBox/UpgradesList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_item")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/UpgradesList/CardPumps"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Info" type="VBoxContainer" parent="Root/Card/VBox/UpgradesList/CardPumps/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Root/Card/VBox/UpgradesList/CardPumps/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "Pompa Adası Ekle (Maks 4)"
+
+[node name="Sub" type="Label" parent="Root/Card/VBox/UpgradesList/CardPumps/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Yeni araç dolum peronu ekler."
+
+[node name="BtnBuy" type="Button" parent="Root/Card/VBox/UpgradesList/CardPumps"]
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_buy_btn")
+text = "₺6.000"
+
+[node name="CardWash" type="PanelContainer" parent="Root/Card/VBox/UpgradesList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_item")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/UpgradesList/CardWash"]
+layout_mode = 2
+
+[node name="Info" type="VBoxContainer" parent="Root/Card/VBox/UpgradesList/CardWash/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Root/Card/VBox/UpgradesList/CardWash/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "Otomatik Tünel Oto Yıkama"
+
+[node name="Sub" type="Label" parent="Root/Card/VBox/UpgradesList/CardWash/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Müşterilerden ek yıkama ücreti alır."
+
+[node name="BtnBuy" type="Button" parent="Root/Card/VBox/UpgradesList/CardWash"]
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_buy_btn")
+text = "₺12.000"
+
+[node name="CardSolar" type="PanelContainer" parent="Root/Card/VBox/UpgradesList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_item")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/UpgradesList/CardSolar"]
+layout_mode = 2
+
+[node name="Info" type="VBoxContainer" parent="Root/Card/VBox/UpgradesList/CardSolar/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Root/Card/VBox/UpgradesList/CardSolar/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "Çatı Güneş Santrali"
+
+[node name="Sub" type="Label" parent="Root/Card/VBox/UpgradesList/CardSolar/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Gündüz elektrik maliyetini ₺0 yapar."
+
+[node name="BtnBuy" type="Button" parent="Root/Card/VBox/UpgradesList/CardSolar"]
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_buy_btn")
+text = "₺8.500"
+
+[node name="CardEv" type="PanelContainer" parent="Root/Card/VBox/UpgradesList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_item")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/UpgradesList/CardEv"]
+layout_mode = 2
+
+[node name="Info" type="VBoxContainer" parent="Root/Card/VBox/UpgradesList/CardEv/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Root/Card/VBox/UpgradesList/CardEv/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "Hızlı EV Şarj İstasyonu"
+
+[node name="Sub" type="Label" parent="Root/Card/VBox/UpgradesList/CardEv/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Elektrikli araç trafiğini açar."
+
+[node name="BtnBuy" type="Button" parent="Root/Card/VBox/UpgradesList/CardEv"]
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_buy_btn")
+text = "₺10.000"
+
+[node name="CardManager" type="PanelContainer" parent="Root/Card/VBox/UpgradesList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card_item")
+
+[node name="HBox" type="HBoxContainer" parent="Root/Card/VBox/UpgradesList/CardManager"]
+layout_mode = 2
+
+[node name="Info" type="VBoxContainer" parent="Root/Card/VBox/UpgradesList/CardManager/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="Root/Card/VBox/UpgradesList/CardManager/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+text = "İstasyon Müdürü İşe Al"
+
+[node name="Sub" type="Label" parent="Root/Card/VBox/UpgradesList/CardManager/HBox/Info"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.51, 0.56, 1)
+theme_override_font_sizes/font_size = 10
+text = "Otomatik tanker siparişi ve yönetim."
+
+[node name="BtnBuy" type="Button" parent="Root/Card/VBox/UpgradesList/CardManager"]
+custom_minimum_size = Vector2(100, 34)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_buy_btn")
+text = "₺15.000"

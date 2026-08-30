@@ -1,0 +1,306 @@
+[gd_scene format=3 uid="uid://dhud16bit01"]
+
+[ext_resource type="Script" path="res://scripts/HUD.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chip"]
+bg_color = Color(0.98, 0.965, 0.925, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.133, 0.188, 0.235, 0.25)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_red"]
+bg_color = Color(0.839, 0.271, 0.271, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 4
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0.133, 0.188, 0.235, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_sub"]
+bg_color = Color(0.98, 0.965, 0.925, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.133, 0.188, 0.235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_bg"]
+bg_color = Color(0.133, 0.188, 0.235, 0.2)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_red"]
+bg_color = Color(0.839, 0.271, 0.271, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_green"]
+bg_color = Color(0.153, 0.627, 0.353, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_orange"]
+bg_color = Color(0.91, 0.525, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toast"]
+bg_color = Color(0.133, 0.188, 0.235, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.839, 0.271, 0.271, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_size = 6
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="TopBar" type="MarginContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 60.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+
+[node name="HBox" type="HBoxContainer" parent="TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PanelTime" type="PanelContainer" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="LabelTime" type="Label" parent="TopBar/HBox/PanelTime"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 14
+text = "GÜN 1 · 08:30"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelMoney" type="PanelContainer" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(180, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="HBox" type="HBoxContainer" parent="TopBar/HBox/PanelMoney"]
+layout_mode = 2
+alignment = 1
+
+[node name="LabelMoney" type="Label" parent="TopBar/HBox/PanelMoney/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 18
+text = "₺ 14,500"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelRep" type="PanelContainer" parent="TopBar/HBox"]
+custom_minimum_size = Vector2(90, 42)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="LabelRep" type="Label" parent="TopBar/HBox/PanelRep"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.6, 0.1, 1)
+theme_override_font_sizes/font_size = 16
+text = "★ 4.8"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FuelRail" type="HBoxContainer" parent="."]
+offset_left = 16.0
+offset_top = 70.0
+offset_right = 520.0
+offset_bottom = 106.0
+theme_override_constants/separation = 8
+
+[node name="BenzinChip" type="PanelContainer" parent="FuelRail"]
+custom_minimum_size = Vector2(130, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="HBox" type="HBoxContainer" parent="FuelRail/BenzinChip"]
+layout_mode = 2
+alignment = 1
+
+[node name="LabelName" type="Label" parent="FuelRail/BenzinChip/HBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.839, 0.271, 0.271, 1)
+theme_override_font_sizes/font_size = 11
+text = "BNZ"
+
+[node name="Bar" type="ProgressBar" parent="FuelRail/BenzinChip"]
+custom_minimum_size = Vector2(50, 8)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_red")
+value = 70.0
+show_percentage = false
+
+[node name="LabelVal" type="Label" parent="FuelRail/BenzinChip"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 10
+text = "3500 L"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DizelChip" type="PanelContainer" parent="FuelRail"]
+custom_minimum_size = Vector2(130, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="Bar" type="ProgressBar" parent="FuelRail/DizelChip"]
+custom_minimum_size = Vector2(50, 8)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_green")
+value = 84.0
+show_percentage = false
+
+[node name="LabelVal" type="Label" parent="FuelRail/DizelChip"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 10
+text = "4200 L"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="LpgChip" type="PanelContainer" parent="FuelRail"]
+custom_minimum_size = Vector2(130, 36)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_chip")
+
+[node name="Bar" type="ProgressBar" parent="FuelRail/LpgChip"]
+custom_minimum_size = Vector2(50, 8)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_bar_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bar_orange")
+value = 70.0
+show_percentage = false
+
+[node name="LabelVal" type="Label" parent="FuelRail/LpgChip"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 10
+text = "2100 L"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BottomMenu" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -80.0
+offset_right = 90.0
+offset_bottom = -16.0
+grow_vertical = 0
+
+[node name="FabSubMenu" type="VBoxContainer" parent="BottomMenu"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -170.0
+offset_right = 130.0
+offset_bottom = -70.0
+grow_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="BtnBuild" type="Button" parent="BottomMenu/FabSubMenu"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sub")
+text = "🏗️ İnşaat"
+
+[node name="BtnOrder" type="Button" parent="BottomMenu/FabSubMenu"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sub")
+text = "🚚 Sipariş"
+
+[node name="BtnOffice" type="Button" parent="BottomMenu/FabSubMenu"]
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.133, 0.188, 0.235, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_sub")
+text = "📊 Ofis"
+
+[node name="BtnFab" type="Button" parent="BottomMenu"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_red")
+text = "⛽"
+
+[node name="ToastPanel" type="PanelContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 18.0
+offset_right = 160.0
+offset_bottom = 58.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_toast")
+
+[node name="LabelToast" type="Label" parent="ToastPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Yeni Gün Başladı!"
+horizontal_alignment = 1
+vertical_alignment = 1

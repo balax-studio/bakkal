@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dcanopy16bit"]
+
+[ext_resource type="Material" path="res://materials/mat_concrete.tres" id="1_conc"]
+[ext_resource type="Material" path="res://materials/mat_building.tres" id="2_bld"]
+[ext_resource type="Material" path="res://materials/mat_red.tres" id="3_red"]
+
+[node name="Canopy" type="Node3D"]
+
+[node name="Pillar1" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.1, -2.5)
+radius = 0.2
+height = 4.2
+material = ExtResource("1_conc")
+
+[node name="Pillar2" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.1, -2.5)
+radius = 0.2
+height = 4.2
+material = ExtResource("1_conc")
+
+[node name="Pillar3" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.1, 2.5)
+radius = 0.2
+height = 4.2
+material = ExtResource("1_conc")
+
+[node name="Pillar4" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.1, 2.5)
+radius = 0.2
+height = 4.2
+material = ExtResource("1_conc")
+
+[node name="RoofStructure" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 0)
+size = Vector3(13.5, 0.5, 8.5)
+material = ExtResource("2_bld")
+
+[node name="RedFasciaBand" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 0)
+size = Vector3(13.7, 0.25, 8.7)
+material = ExtResource("3_red")
