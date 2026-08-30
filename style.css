@@ -45,6 +45,8 @@ body, html {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: #BFD8E3;
   color: var(--ink-text);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* 3D Canvas */
@@ -86,6 +88,8 @@ body, html {
   font-weight: 700;
   color: var(--ink-text);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
   display: inline-flex;
   align-items: center;
@@ -122,14 +126,14 @@ body, html {
    ========================================================= */
 #top-bar {
   position: absolute;
-  top: 14px;
-  left: 14px;
-  right: 14px;
+  top: max(12px, env(safe-area-inset-top, 12px));
+  left: max(12px, env(safe-area-inset-left, 12px));
+  right: max(12px, env(safe-area-inset-right, 12px));
   z-index: 10;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 14px;
+  gap: 10px;
+  padding: 8px 12px;
   flex-wrap: wrap;
 }
 
@@ -145,6 +149,25 @@ body, html {
   font-weight: 800;
   font-size: 14px;
   letter-spacing: 0.5px;
+}
+
+.lang-chip {
+  background: var(--bg-paper);
+  border: 2px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  min-height: 38px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.lang-chip:hover {
+  background: var(--accent-gold);
+  color: #1C242B;
 }
 
 .stat-chip {
@@ -225,21 +248,24 @@ body, html {
    ========================================================= */
 #fab-menu {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
+  bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  left: max(16px, env(safe-area-inset-left, 16px));
   z-index: 10;
   display: flex;
   gap: 10px;
 }
 .fab-btn {
-  padding: 10px 14px;
+  min-height: 48px;
+  min-width: 48px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
 }
 .fab-icon {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 /* =========================================================
@@ -257,14 +283,18 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 16px;
 }
 .modal-overlay.hidden {
   display: none;
 }
 
 .modal-card {
-  width: 90%;
+  width: 100%;
   max-width: 440px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: var(--bg-paper);
   padding: 18px;
   display: flex;
@@ -290,13 +320,17 @@ body, html {
   background: var(--bg-inner);
   border: 1.5px solid var(--ink-border);
   border-radius: var(--radius-sm);
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   cursor: pointer;
   font-weight: 800;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: manipulation;
 }
 
 /* Digital LED Box */
