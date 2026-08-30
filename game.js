@@ -261,6 +261,40 @@ class SoundFX {
     osc.start();
     osc.stop(this.ctx.currentTime + 0.2);
   }
+
+  playBirdChirp() {
+    this.init();
+    if (!this.ctx || this.ctx.state !== 'running') return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(2400, now);
+    osc.frequency.exponentialRampToValueAtTime(3200, now + 0.05);
+    osc.frequency.exponentialRampToValueAtTime(2200, now + 0.12);
+    gain.gain.setValueAtTime(0.03, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.15);
+  }
+
+  playCricket() {
+    this.init();
+    if (!this.ctx || this.ctx.state !== 'running') return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(4500, now);
+    gain.gain.setValueAtTime(0.015, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.07);
+  }
 }
 const sfx = new SoundFX();
 
@@ -270,7 +304,18 @@ const sfx = new SoundFX();
 
 let scene, camera, renderer, controls;
 let sunLight, ambientLight;
+let shopInteriorLight = null;
+let totemGlowLight = null;
 const cars = [];
+const animatedTrees = [];
+const clouds = [];
+const nightLights = [];
+const bgVehicles = [];
+const particles = [];
+const birds = [];
+let dogMesh = null;
+let catMesh = null;
+
 const pumpSlots = [
   { id: 0, pos: new THREE.Vector3(-4, 0, -2), occupiedBy: null, mesh: null },
   { id: 1, pos: new THREE.Vector3(4, 0, -2),  occupiedBy: null, mesh: null },
@@ -291,9 +336,9 @@ function initThree() {
 
   // Orthographic Camera (True Isometric 2:1)
   const aspect = width / height;
-  const d = 16;
+  const d = 18;
   camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
-  camera.position.set(24, 22, 24);
+  camera.position.set(26, 24, 26);
   camera.lookAt(0, 0, 0);
 
   // Renderer
@@ -304,33 +349,36 @@ function initThree() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  // Controls
+  // Controls with Strict Bounds (Prevents drifting out of diorama)
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableRotate = true;
-  controls.maxPolarAngle = Math.PI / 2.1;
+  controls.maxPolarAngle = Math.PI / 2.15;
   controls.minPolarAngle = Math.PI / 6;
+  controls.minDistance = 12;
+  controls.maxDistance = 42;
   controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
+  controls.dampingFactor = 0.06;
+  controls.target.set(0, 0, 0);
 
   // Lights
   ambientLight = new THREE.AmbientLight(0xEAECEF, 0.7);
   scene.add(ambientLight);
 
-  sunLight = new THREE.DirectionalLight(0xFFFBF0, 1.1);
-  sunLight.position.set(16, 28, 16);
+  sunLight = new THREE.DirectionalLight(0xFFFBF0, 1.15);
+  sunLight.position.set(18, 30, 18);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.width = 2048;
   sunLight.shadow.mapSize.height = 2048;
   sunLight.shadow.camera.near = 0.5;
-  sunLight.shadow.camera.far = 100;
-  const shadowDist = 22;
+  sunLight.shadow.camera.far = 120;
+  const shadowDist = 26;
   sunLight.shadow.camera.left = -shadowDist;
   sunLight.shadow.camera.right = shadowDist;
   sunLight.shadow.camera.top = shadowDist;
   sunLight.shadow.camera.bottom = -shadowDist;
   scene.add(sunLight);
 
-  // Build Environment
+  // Build Living Environment
   buildDiorama();
 
   // Events
@@ -345,7 +393,7 @@ function onWindowResize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
   const aspect = width / height;
-  const d = 16;
+  const d = 18;
   camera.left = -d * aspect;
   camera.right = d * aspect;
   camera.top = d;
@@ -355,10 +403,10 @@ function onWindowResize() {
 }
 
 // =========================================================
-// 4. 16-BIT LOW-POLY DIORAMA BUILDER
+// 4. 16-BIT LOW-POLY LIVING DIORAMA BUILDER
 // =========================================================
 
-// Shared Flat Materials
+// Shared Flat & Emissive Materials
 const Mat = {
   grass: new THREE.MeshLambertMaterial({ color: 0x76B041 }),
   dirt: new THREE.MeshLambertMaterial({ color: 0x8D6346 }),
@@ -378,48 +426,91 @@ const Mat = {
   foliage: new THREE.MeshLambertMaterial({ color: 0x3E7D32 }),
   foliageDark: new THREE.MeshLambertMaterial({ color: 0x2A5A22 }),
   metalTank: new THREE.MeshLambertMaterial({ color: 0xEDE8DC }),
-  chrome: new THREE.MeshLambertMaterial({ color: 0xA8B2BC })
+  chrome: new THREE.MeshLambertMaterial({ color: 0xA8B2BC }),
+  // Rich Flora & Props
+  flowerRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
+  flowerYellow: new THREE.MeshLambertMaterial({ color: 0xFFD166 }),
+  flowerPink: new THREE.MeshLambertMaterial({ color: 0xFF70A6 }),
+  flowerStem: new THREE.MeshLambertMaterial({ color: 0x4A8505 }),
+  planterWood: new THREE.MeshLambertMaterial({ color: 0x5C381E }),
+  benchWood: new THREE.MeshLambertMaterial({ color: 0x9C6644 }),
+  benchIron: new THREE.MeshLambertMaterial({ color: 0x2B2D42 }),
+  dogFur: new THREE.MeshLambertMaterial({ color: 0xCCA43B }),
+  dogMuzzle: new THREE.MeshLambertMaterial({ color: 0x3E2723 }),
+  dogCollar: new THREE.MeshLambertMaterial({ color: 0xD62828 }),
+  dogMat: new THREE.MeshLambertMaterial({ color: 0x3D5A80 }),
+  catFur: new THREE.MeshLambertMaterial({ color: 0xFAEDCD }),
+  catSpot: new THREE.MeshLambertMaterial({ color: 0xCB997E }),
+  birdBlue: new THREE.MeshLambertMaterial({ color: 0x48CAE4 }),
+  birdBeak: new THREE.MeshLambertMaterial({ color: 0xFAA307 }),
+  lampPost: new THREE.MeshLambertMaterial({ color: 0x242A35 }),
+  lampGlow: new THREE.MeshBasicMaterial({ color: 0xFFE082 }),
+  cloud: new THREE.MeshLambertMaterial({ color: 0xFCFCFC, transparent: true, opacity: 0.95 }),
+  oilStain: new THREE.MeshLambertMaterial({ color: 0x14181E, transparent: true, opacity: 0.7 }),
+  trashGreen: new THREE.MeshLambertMaterial({ color: 0x2D6A4F }),
+  airTowerBlue: new THREE.MeshLambertMaterial({ color: 0x1D3557 }),
+  fireRed: new THREE.MeshLambertMaterial({ color: 0xE63946 })
 };
 
 function buildDiorama() {
   const diorama = new THREE.Group();
 
-  // 1. Base Terrain Grass
-  const grassGeo = new THREE.BoxGeometry(34, 1.5, 34);
+  // 1. Extended Island Ground Base (46x46 Floating Neo-Brutalist Diorama)
+  const grassGeo = new THREE.BoxGeometry(46, 1.5, 46);
   const grassMesh = new THREE.Mesh(grassGeo, Mat.grass);
   grassMesh.position.y = -0.75;
   grassMesh.receiveShadow = true;
   diorama.add(grassMesh);
 
-  // Dirt base underneath
-  const dirtGeo = new THREE.BoxGeometry(34, 2, 34);
+  // Stepped Earth Soil Layer
+  const dirtGeo = new THREE.BoxGeometry(46, 2.2, 46);
   const dirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
-  dirtMesh.position.y = -2.5;
+  dirtMesh.position.y = -2.6;
   diorama.add(dirtMesh);
 
-  // 2. Asphalt Highway Road (Forefront)
-  const roadGeo = new THREE.BoxGeometry(34, 0.05, 7);
+  // Dark Ink Floating Base Rim Slab
+  const baseSlabGeo = new THREE.BoxGeometry(47.5, 0.6, 47.5);
+  const baseSlab = new THREE.Mesh(baseSlabGeo, Mat.darkInk);
+  baseSlab.position.y = -3.8;
+  diorama.add(baseSlab);
+
+  // 2. Asphalt Highway Road (46 Units Full Width)
+  const roadGeo = new THREE.BoxGeometry(46, 0.06, 7.5);
   const roadMesh = new THREE.Mesh(roadGeo, Mat.asphalt);
   roadMesh.position.set(0, 0.03, 11.5);
   roadMesh.receiveShadow = true;
   diorama.add(roadMesh);
 
-  // Double Yellow Lines on Highway
-  for (let i = -15; i <= 15; i += 3) {
+  // Double Yellow Lines across full highway
+  for (let i = -21; i <= 21; i += 3) {
     const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
     const line1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    line1.position.set(i, 0.06, 11.35);
+    line1.position.set(i, 0.07, 11.35);
     const line2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    line2.position.set(i, 0.06, 11.65);
+    line2.position.set(i, 0.07, 11.65);
     diorama.add(line1, line2);
   }
 
-  // 3. Station Concrete Forecourt
-  const forecourtGeo = new THREE.BoxGeometry(26, 0.08, 16);
+  // White Pedestrian Crosswalk (Zebra Stripes)
+  for (let z = 8.4; z <= 14.6; z += 1.1) {
+    const stripe = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.02, 0.6), Mat.roadWhite);
+    stripe.position.set(-2, 0.07, z);
+    diorama.add(stripe);
+  }
+
+  // 3. Station Concrete Forecourt (Spacious 30x18)
+  const forecourtGeo = new THREE.BoxGeometry(30, 0.08, 18);
   const forecourt = new THREE.Mesh(forecourtGeo, Mat.concrete);
   forecourt.position.set(0, 0.04, 1);
   forecourt.receiveShadow = true;
   diorama.add(forecourt);
+
+  // Asphalt Oil Drop / Tire Mark Decals under each pump slot
+  pumpSlots.forEach(slot => {
+    const oil = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.01, 2.2), Mat.oilStain);
+    oil.position.set(slot.pos.x, 0.09, slot.pos.z);
+    diorama.add(oil);
+  });
 
   // 4. BenelOil 2-Story Main Building (Shop & Office)
   const building = new THREE.Group();
@@ -432,7 +523,7 @@ function buildDiorama() {
   bldgBase.receiveShadow = true;
   building.add(bldgBase);
 
-  // Top Floor / Roof parapet
+  // Top Floor / Roof Parapet
   const bldgRoof = new THREE.Mesh(new THREE.BoxGeometry(10.4, 0.4, 7.4), Mat.buildingRoof);
   bldgRoof.position.y = 3.3;
   bldgRoof.castShadow = true;
@@ -464,10 +555,15 @@ function buildDiorama() {
   ac2.castShadow = true;
   building.add(ac1, ac2);
 
+  // Shop Interior Warm Glow Light (Night)
+  shopInteriorLight = new THREE.PointLight(0xFFE5A0, 0, 12);
+  shopInteriorLight.position.set(0, 2.0, 1.5);
+  building.add(shopInteriorLight);
+  nightLights.push({ light: shopInteriorLight, targetIntensity: 1.2 });
+
   diorama.add(building);
 
-  // 5. Large Steel Canopy (Over Pump Island)
-  // 5. Open-Air Roadside Price Totem Sign (Canopy removed so pumps are 100% visible)
+  // 5. Open-Air Roadside Price Totem Sign
   const totem = new THREE.Group();
   totem.position.set(-10, 0, 8);
 
@@ -484,6 +580,11 @@ function buildDiorama() {
   signBoard.castShadow = true;
   totem.add(signBoard);
 
+  totemGlowLight = new THREE.PointLight(0xFF4545, 0, 8);
+  totemGlowLight.position.set(0, 4.0, 1.0);
+  totem.add(totemGlowLight);
+  nightLights.push({ light: totemGlowLight, targetIntensity: 0.8 });
+
   diorama.add(totem);
 
   // 6. Fuel Storage Tanks (Vertical Cylinders)
@@ -497,18 +598,15 @@ function buildDiorama() {
   ];
 
   tankSpecs.forEach(t => {
-    // Tank Body
     const cylGeo = new THREE.CylinderGeometry(0.9, 0.9, 3.6, 16);
     const cyl = new THREE.Mesh(cylGeo, Mat.metalTank);
     cyl.position.set(t.x, 2.0, 0);
     cyl.castShadow = true;
 
-    // Colored Band
     const bandGeo = new THREE.CylinderGeometry(0.92, 0.92, 0.5, 16);
     const band = new THREE.Mesh(bandGeo, t.color);
     band.position.set(t.x, 2.8, 0);
 
-    // Tank Roof Dome
     const domeGeo = new THREE.SphereGeometry(0.9, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
     const dome = new THREE.Mesh(domeGeo, Mat.metalTank);
     dome.position.set(t.x, 3.8, 0);
@@ -516,7 +614,6 @@ function buildDiorama() {
     tankGroup.add(cyl, band, dome);
   });
 
-  // Connecting Pipe
   const pipe = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.2, 0.2), Mat.chrome);
   pipe.position.set(0, 3.2, 1.1);
   tankGroup.add(pipe);
@@ -531,74 +628,377 @@ function buildDiorama() {
     diorama.add(pumpMesh);
   });
 
-  // 8. Perimeter Trees (Low-Poly 16-Bit Voxel)
-  const treePositions = [
-    [-13, 0, -13], [-9, 0, -13], [-14, 0, 4], [-14, 0, -4],
-    [13, 0, -13], [13, 0, -5], [13, 0, 4]
+  // 8. 16-Bit Street Lamps with Night Emissive Glow
+  const lamp1 = createStreetLamp();
+  lamp1.position.set(-14, 0, 7.5);
+  const lamp2 = createStreetLamp();
+  lamp2.position.set(14, 0, 7.5);
+  diorama.add(lamp1, lamp2);
+
+  // 9. Flora: Voxel Flower Planters & Decorative Bushes
+  const planter1 = createFlowerBox(3.6);
+  planter1.position.set(-3.5, 0, -4.8);
+  const planter2 = createFlowerBox(3.6);
+  planter2.position.set(-9.5, 0, -4.8);
+  diorama.add(planter1, planter2);
+
+  // Perimeter Hedge Bushes
+  const bushPositions = [
+    [-18, 0, -18], [-12, 0, -18], [12, 0, -18], [18, 0, -18],
+    [-19, 0, 14], [19, 0, 14], [-20, 0, -2], [20, 0, -2]
   ];
-  treePositions.forEach(p => {
-    const tree = createLowPolyTree();
+  bushPositions.forEach(bp => {
+    const bush = createVoxelBush();
+    bush.position.set(...bp);
+    diorama.add(bush);
+  });
+
+  // 10. Station Furniture: Bench, Trash Can, Air/Water Tower, Fire Safety
+  const bench = createParkBench();
+  bench.position.set(11.5, 0, -5.5);
+  bench.rotation.y = -Math.PI / 6;
+
+  const trash = createTrashBin();
+  trash.position.set(-11.5, 0, -4.8);
+
+  const airWater = createAirWaterStation();
+  airWater.position.set(-12.5, 0, 3.0);
+  airWater.rotation.y = Math.PI / 4;
+
+  const fireBox = createFireCabinet();
+  fireBox.position.set(9.0, 0, -4.5);
+
+  diorama.add(bench, trash, airWater, fireBox);
+
+  // 11. Fauna: Sleeping Dog (Karabaş), Cat, Perched Birds
+  dogMesh = createDogMesh();
+  dogMesh.position.set(-2.0, 0.05, -4.8);
+  diorama.add(dogMesh);
+
+  catMesh = createCatMesh();
+  catMesh.position.set(13.0, 0.05, -9.0);
+  catMesh.rotation.y = -Math.PI / 4;
+  diorama.add(catMesh);
+
+  const bird1 = createBirdMesh();
+  bird1.position.set(-10.5, 3.5, -5.2);
+  const bird2 = createBirdMesh();
+  bird2.position.set(15.0, 4.8, -5.5);
+  birds.push(bird1, bird2);
+  diorama.add(bird1, bird2);
+
+  // 12. Floating 16-Bit Voxel Sky Clouds
+  const cloudPositions = [
+    [-18, 22, -14], [-6, 25, 6], [10, 21, -10], [22, 24, 12]
+  ];
+  cloudPositions.forEach(cp => {
+    const cloud = createVoxelCloud();
+    cloud.position.set(...cp);
+    clouds.push(cloud);
+    scene.add(cloud);
+  });
+
+  // 13. Perimeter Trees with Wind Sway
+  const treePositions = [
+    [-17, 0, -14], [-12, 0, -14], [-17, 0, 3], [-17, 0, -5],
+    [16, 0, -14], [16, 0, -5], [16, 0, 3], [19, 0, -10],
+    [-20, 0, 8], [20, 0, 8]
+  ];
+  treePositions.forEach((p, idx) => {
+    const tree = createLowPolyTree(idx);
     tree.position.set(...p);
     diorama.add(tree);
   });
 
+  // 14. Initialize Background Highway Bypass Traffic
+  initBypassTraffic();
+
   scene.add(diorama);
 }
 
-function createPumpMesh(id) {
-  const pump = new THREE.Group();
-  pump.userData = { isPump: true, pumpId: id };
+// ---------------------------------------------------------
+// Helper Creators for Props, Flora, Fauna & Street Furniture
+// ---------------------------------------------------------
 
-  // Concrete Island Base
-  const base = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.25, 4.2), Mat.concrete);
-  base.position.y = 0.125;
-  base.receiveShadow = true;
-  pump.add(base);
+function createStreetLamp() {
+  const lamp = new THREE.Group();
 
-  // Dispenser Body
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 1.4), Mat.buildingWall);
-  body.position.y = 1.05;
-  body.castShadow = true;
-  body.userData = { isPump: true, pumpId: id };
-  pump.add(body);
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 4.6, 8), Mat.lampPost);
+  post.position.y = 2.3;
+  post.castShadow = true;
+  lamp.add(post);
 
-  // Red Side Trim
-  const side1 = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.2), Mat.redTrim);
-  side1.position.set(0, 1.05, -0.65);
-  const side2 = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.2), Mat.redTrim);
-  side2.position.set(0, 1.05, 0.65);
-  pump.add(side1, side2);
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.12, 0.12), Mat.lampPost);
+  arm.position.set(0.45, 4.4, 0);
+  lamp.add(arm);
 
-  // Glowing LCD Screen
-  const lcd = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.45, 0.7), new THREE.MeshBasicMaterial({ color: 0x0C1610 }));
-  lcd.position.set(0, 1.3, 0);
-  pump.add(lcd);
+  const head = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.3, 8), Mat.lampPost);
+  head.position.set(0.95, 4.25, 0);
+  lamp.add(head);
 
-  return pump;
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), Mat.lampGlow);
+  bulb.position.set(0.95, 4.15, 0);
+  lamp.add(bulb);
+
+  const light = new THREE.PointLight(0xFFE082, 0, 14);
+  light.position.set(0.95, 4.0, 0);
+  light.castShadow = false;
+  lamp.add(light);
+
+  nightLights.push({ light, bulb, targetIntensity: 1.4 });
+  return lamp;
 }
 
-function createLowPolyTree() {
+function createFlowerBox(length = 3.6) {
+  const box = new THREE.Group();
+
+  const planter = new THREE.Mesh(new THREE.BoxGeometry(length, 0.4, 0.6), Mat.planterWood);
+  planter.position.y = 0.2;
+  planter.castShadow = true;
+  box.add(planter);
+
+  const soil = new THREE.Mesh(new THREE.BoxGeometry(length - 0.1, 0.1, 0.5), Mat.dirt);
+  soil.position.y = 0.38;
+  box.add(soil);
+
+  const colors = [Mat.flowerRed, Mat.flowerYellow, Mat.flowerPink];
+  const count = Math.floor(length * 2.5);
+  for (let i = 0; i < count; i++) {
+    const x = -length / 2 + 0.3 + (i / count) * (length - 0.6) + (Math.random() * 0.1 - 0.05);
+    const z = (Math.random() * 0.3 - 0.15);
+
+    const stem = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.25, 0.04), Mat.flowerStem);
+    stem.position.set(x, 0.5, z);
+
+    const bloom = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.16), colors[i % colors.length]);
+    bloom.position.set(x, 0.65, z);
+    bloom.castShadow = true;
+
+    box.add(stem, bloom);
+  }
+  return box;
+}
+
+function createVoxelBush() {
+  const bush = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), Mat.foliage);
+  base.position.y = 0.6;
+  base.castShadow = true;
+
+  const top = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.8, 1.2), Mat.foliageDark);
+  top.position.y = 1.2;
+  top.castShadow = true;
+
+  bush.add(base, top);
+  return bush;
+}
+
+function createParkBench() {
+  const bench = new THREE.Group();
+
+  // Iron legs
+  const leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.8), Mat.benchIron);
+  leg1.position.set(-0.8, 0.3, 0);
+  const leg2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.8), Mat.benchIron);
+  leg2.position.set(0.8, 0.3, 0);
+  bench.add(leg1, leg2);
+
+  // Wooden seat slats
+  for (let z = -0.3; z <= 0.3; z += 0.2) {
+    const slat = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.06, 0.14), Mat.benchWood);
+    slat.position.set(0, 0.6, z);
+    slat.castShadow = true;
+    bench.add(slat);
+  }
+
+  // Wooden backrest slats
+  for (let y = 0.8; y <= 1.2; y += 0.2) {
+    const back = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.14, 0.06), Mat.benchWood);
+    back.position.set(0, y, -0.35);
+    back.castShadow = true;
+    bench.add(back);
+  }
+  return bench;
+}
+
+function createTrashBin() {
+  const bin = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.3, 0.9, 10), Mat.trashGreen);
+  body.position.y = 0.45;
+  body.castShadow = true;
+
+  const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.15, 10), Mat.darkInk);
+  lid.position.y = 0.95;
+  bin.add(body, lid);
+  return bin;
+}
+
+function createAirWaterStation() {
+  const station = new THREE.Group();
+
+  const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.5), Mat.airTowerBlue);
+  pillar.position.y = 0.9;
+  pillar.castShadow = true;
+
+  const dial = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.1, 12), Mat.roadWhite);
+  dial.rotation.x = Math.PI / 2;
+  dial.position.set(0, 1.3, 0.28);
+
+  const needle = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.16, 0.02), Mat.redTrim);
+  needle.position.set(0, 1.3, 0.34);
+
+  const hose = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.04, 6, 12), Mat.darkInk);
+  hose.position.set(0.32, 0.8, 0);
+  hose.rotation.y = Math.PI / 2;
+
+  station.add(pillar, dial, needle, hose);
+  return station;
+}
+
+function createFireCabinet() {
+  const cab = new THREE.Group();
+
+  const box = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.2, 0.45), Mat.fireRed);
+  box.position.y = 0.6;
+  box.castShadow = true;
+
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.05), Mat.glass);
+  glass.position.set(0, 0.6, 0.23);
+
+  const ext = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.5, 8), Mat.redTrim);
+  ext.position.set(0, 0.5, 0.08);
+
+  cab.add(box, glass, ext);
+  return cab;
+}
+
+function createDogMesh() {
+  const dog = new THREE.Group();
+
+  const rug = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.04, 1.2), Mat.dogMat);
+  rug.position.y = 0.02;
+  dog.add(rug);
+
+  // Sleeping body
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.6), Mat.dogFur);
+  body.position.set(0, 0.25, 0);
+  body.castShadow = true;
+  dog.add(body);
+
+  // Head resting
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 0.4), Mat.dogFur);
+  head.position.set(0.5, 0.22, 0.1);
+  head.castShadow = true;
+
+  const muzzle = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.2, 0.25), Mat.dogMuzzle);
+  muzzle.position.set(0.7, 0.15, 0.1);
+
+  const ear1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.2, 0.1), Mat.dogMuzzle);
+  ear1.position.set(0.45, 0.35, -0.1);
+  const ear2 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.2, 0.1), Mat.dogMuzzle);
+  ear2.position.set(0.45, 0.35, 0.3);
+
+  const collar = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.36, 0.42), Mat.dogCollar);
+  collar.position.set(0.35, 0.22, 0.1);
+
+  dog.add(head, muzzle, ear1, ear2, collar);
+  return dog;
+}
+
+function createCatMesh() {
+  const cat = new THREE.Group();
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 0.5), Mat.catFur);
+  body.position.y = 0.2;
+  body.castShadow = true;
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.28, 0.28), Mat.catFur);
+  head.position.set(0, 0.38, 0.26);
+
+  const ear1 = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.14, 4), Mat.catSpot);
+  ear1.position.set(-0.1, 0.56, 0.26);
+  const ear2 = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.14, 4), Mat.catSpot);
+  ear2.position.set(0.1, 0.56, 0.26);
+
+  const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.45, 6), Mat.catSpot);
+  tail.position.set(0, 0.25, -0.35);
+  tail.rotation.x = -0.6;
+  cat.userData = { tail };
+
+  cat.add(body, head, ear1, ear2, tail);
+  return cat;
+}
+
+function createBirdMesh() {
+  const bird = new THREE.Group();
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.18, 0.3), Mat.birdBlue);
+  body.position.y = 0.12;
+  body.castShadow = true;
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.16), Mat.birdBlue);
+  head.position.set(0, 0.22, 0.12);
+
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.12, 4), Mat.birdBeak);
+  beak.rotation.x = Math.PI / 2;
+  beak.position.set(0, 0.22, 0.24);
+
+  bird.userData = { head };
+  bird.add(body, head, beak);
+  return bird;
+}
+
+function createVoxelCloud() {
+  const cloud = new THREE.Group();
+  const count = 5 + Math.floor(Math.random() * 4);
+
+  for (let i = 0; i < count; i++) {
+    const sx = 2.0 + Math.random() * 2.5;
+    const sy = 1.2 + Math.random() * 1.0;
+    const sz = 1.8 + Math.random() * 2.0;
+    const box = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), Mat.cloud);
+    box.position.set(
+      (Math.random() - 0.5) * 4,
+      (Math.random() - 0.5) * 1.2,
+      (Math.random() - 0.5) * 3
+    );
+    cloud.add(box);
+  }
+  cloud.userData = { speed: 0.4 + Math.random() * 0.4 };
+  return cloud;
+}
+
+function createLowPolyTree(id = 0) {
   const tree = new THREE.Group();
+  tree.userData = { treeId: id };
+
   // Trunk
-  const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.6), Mat.wood);
-  trunk.position.y = 0.9;
+  const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.0, 0.7), Mat.wood);
+  trunk.position.y = 1.0;
   trunk.castShadow = true;
   tree.add(trunk);
 
-  // Foliage Stepped Cones
-  const l1 = new THREE.Mesh(new THREE.ConeGeometry(2.0, 1.8, 5), Mat.foliage);
-  l1.position.y = 2.0;
+  // Foliage Crown Group for Wind Sway
+  const crown = new THREE.Group();
+  crown.position.y = 2.0;
+
+  const l1 = new THREE.Mesh(new THREE.ConeGeometry(2.2, 2.0, 6), Mat.foliage);
+  l1.position.y = 0.2;
   l1.castShadow = true;
 
-  const l2 = new THREE.Mesh(new THREE.ConeGeometry(1.6, 1.6, 5), Mat.foliageDark);
-  l2.position.y = 3.0;
+  const l2 = new THREE.Mesh(new THREE.ConeGeometry(1.8, 1.8, 6), Mat.foliageDark);
+  l2.position.y = 1.3;
   l2.castShadow = true;
 
-  const l3 = new THREE.Mesh(new THREE.ConeGeometry(1.1, 1.3, 5), Mat.foliage);
-  l3.position.y = 4.0;
+  const l3 = new THREE.Mesh(new THREE.ConeGeometry(1.2, 1.4, 6), Mat.foliage);
+  l3.position.y = 2.3;
   l3.castShadow = true;
 
-  tree.add(l1, l2, l3);
+  crown.add(l1, l2, l3);
+  tree.add(crown);
+  tree.userData.crown = crown;
+  animatedTrees.push(tree);
+
   return tree;
 }
 
@@ -1104,7 +1504,194 @@ function adjustPrice(fuelKey, delta) {
 }
 
 // =========================================================
-// 8. DAY/NIGHT SIMULATION & HUD UPDATE
+// 8. BACKGROUND HIGHWAY TRAFFIC & 16-BIT PARTICLES
+// =========================================================
+
+class BypassVehicle {
+  constructor() {
+    this.mesh = this.buildMesh();
+    this.reset();
+    scene.add(this.mesh);
+  }
+
+  buildMesh() {
+    const group = new THREE.Group();
+    const types = ['beetle', 'van', 'bus'];
+    const chosen = types[Math.floor(Math.random() * types.length)];
+    const colors = [0xD64545, 0x2F6FED, 0x27A05A, 0xE8862E, 0xF2C94C, 0x5C381E];
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const bodyMat = new THREE.MeshLambertMaterial({ color });
+
+    if (chosen === 'beetle') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.6, 2.6), bodyMat);
+      body.position.y = 0.5;
+      body.castShadow = true;
+      const roof = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.5, 1.4), Mat.glass);
+      roof.position.set(0, 0.95, -0.2);
+      group.add(body, roof);
+    } else if (chosen === 'van') {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 3.4), bodyMat);
+      body.position.y = 0.8;
+      body.castShadow = true;
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.6, 1.0), Mat.glass);
+      cabin.position.set(0, 0.9, 0.9);
+      group.add(body, cabin);
+    } else {
+      // Commuter Bus
+      const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.5, 5.0), bodyMat);
+      body.position.y = 1.0;
+      body.castShadow = true;
+      const win = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.4, 4.4), Mat.glass);
+      win.position.set(0, 1.3, 0);
+      group.add(body, win);
+    }
+
+    // Wheels
+    const wMat = Mat.darkInk;
+    const w1 = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.2, 8), wMat);
+    w1.rotation.z = Math.PI / 2;
+    w1.position.set(-0.9, 0.28, -0.9);
+    const w2 = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.2, 8), wMat);
+    w2.rotation.z = Math.PI / 2;
+    w2.position.set(0.9, 0.28, -0.9);
+    const w3 = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.2, 8), wMat);
+    w3.rotation.z = Math.PI / 2;
+    w3.position.set(-0.9, 0.28, 0.9);
+    const w4 = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.2, 8), wMat);
+    w4.rotation.z = Math.PI / 2;
+    w4.position.set(0.9, 0.28, 0.9);
+    group.add(w1, w2, w3, w4);
+
+    return group;
+  }
+
+  reset() {
+    this.speed = 10 + Math.random() * 8; // units per sec
+    this.mesh.position.set(-28 - Math.random() * 15, 0, 13.4);
+    this.mesh.rotation.y = Math.PI / 2;
+  }
+
+  update(delta) {
+    this.mesh.position.x += this.speed * delta;
+    if (this.mesh.position.x > 28) {
+      this.reset();
+    }
+  }
+}
+
+function initBypassTraffic() {
+  for (let i = 0; i < 3; i++) {
+    const bgCar = new BypassVehicle();
+    bgCar.mesh.position.x = -24 + i * 18;
+    bgVehicles.push(bgCar);
+  }
+}
+
+function updateBypassTraffic(delta) {
+  bgVehicles.forEach(v => v.update(delta));
+}
+
+// 16-Bit Smoke & Vapor Particle System
+function spawnParticle(pos, colorHex = 0xDCD6C8, scale = 0.25) {
+  if (particles.length > 40) return; // budget limit
+  const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.85 });
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(scale, scale, scale), mat);
+  mesh.position.copy(pos);
+  mesh.position.x += (Math.random() - 0.5) * 0.2;
+  mesh.position.z += (Math.random() - 0.5) * 0.2;
+
+  scene.add(mesh);
+  particles.push({
+    mesh,
+    mat,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: 0.6 + Math.random() * 0.6,
+    vz: (Math.random() - 0.5) * 0.3,
+    life: 1.0,
+    maxLife: 1.0 + Math.random() * 0.5
+  });
+}
+
+function updateParticles(delta) {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.life -= delta;
+    p.mesh.position.x += p.vx * delta;
+    p.mesh.position.y += p.vy * delta;
+    p.mesh.position.z += p.vz * delta;
+    p.mesh.rotation.x += delta;
+    p.mesh.rotation.y += delta;
+    const progress = p.life / p.maxLife;
+    p.mat.opacity = Math.max(0, progress * 0.85);
+    p.mesh.scale.setScalar(1 + (1 - progress) * 0.8);
+
+    if (p.life <= 0) {
+      scene.remove(p.mesh);
+      p.mesh.geometry.dispose();
+      p.mat.dispose();
+      particles.splice(i, 1);
+    }
+  }
+}
+
+// Cloud Drift Animation
+function updateClouds(delta) {
+  clouds.forEach(c => {
+    c.position.x += c.userData.speed * delta;
+    if (c.position.x > 32) {
+      c.position.x = -32;
+    }
+  });
+}
+
+// Wind Foliage Sway & Animal Micro-Animations
+let lastBirdSoundTime = 0;
+let lastCricketSoundTime = 0;
+
+function updateWindAndCreatures(delta, time) {
+  // Tree Foliage Wind Sway
+  animatedTrees.forEach(t => {
+    if (t.userData.crown) {
+      t.userData.crown.rotation.z = Math.sin(time * 2.2 + t.userData.treeId) * 0.035;
+      t.userData.crown.rotation.x = Math.cos(time * 1.8 + t.userData.treeId) * 0.025;
+    }
+  });
+
+  // Sleeping Dog Breathing
+  if (dogMesh) {
+    const breath = 1.0 + Math.sin(time * 2.8) * 0.04;
+    dogMesh.scale.set(1.0, breath, 1.0);
+  }
+
+  // Cat Tail Sway
+  if (catMesh && catMesh.userData.tail) {
+    catMesh.userData.tail.rotation.z = Math.sin(time * 4.0) * 0.15;
+  }
+
+  // Perched Birds subtle head twist
+  birds.forEach((b, idx) => {
+    if (b.userData.head && Math.sin(time * 0.8 + idx * 3.0) > 0.85) {
+      b.userData.head.rotation.y = (Math.sin(time * 6.0) > 0 ? 0.3 : -0.3);
+    }
+  });
+
+  // Ambient Web Audio Chimes
+  const h = State.hour;
+  if (h >= 6 && h <= 19) {
+    if (time - lastBirdSoundTime > 12 + Math.random() * 8) {
+      lastBirdSoundTime = time;
+      sfx.playBirdChirp();
+    }
+  } else {
+    if (time - lastCricketSoundTime > 6 + Math.random() * 4) {
+      lastCricketSoundTime = time;
+      sfx.playCricket();
+    }
+  }
+}
+
+// =========================================================
+// 9. DAY/NIGHT SIMULATION & ADVANCED 4-PHASE LIGHTING
 // =========================================================
 
 let clockAccum = 0;
@@ -1126,44 +1713,58 @@ function updateDayNightCycle(delta) {
     updateSkyLighting();
   }
 }
-    updateHUD();
-    updateSkyLighting();
-  }
-}
 
 function updateSkyLighting() {
   const h = State.hour;
   let skyColor, sunColor, sunEnergy;
+  let nightAlpha = 0.0; // 0 = day, 1 = full night
 
   if (h >= 21 || h < 5) {
-    // Night
-    skyColor = new THREE.Color(0x131B24);
+    // Phase 4: Night (21:00 - 05:00)
+    skyColor = new THREE.Color(0x111722);
     sunColor = new THREE.Color(0x5A6B8C);
-    sunEnergy = 0.35;
-    ambientLight.intensity = 0.4;
+    sunEnergy = 0.3;
+    ambientLight.intensity = 0.35;
+    nightAlpha = 1.0;
   } else if (h >= 5 && h < 8) {
-    // Sunrise
-    skyColor = new THREE.Color(0xF0BE88);
+    // Phase 1: Dawn / Sunrise (05:00 - 08:00)
+    skyColor = new THREE.Color(0xF4B991);
     sunColor = new THREE.Color(0xFFA07A);
-    sunEnergy = 0.85;
+    sunEnergy = 0.9;
     ambientLight.intensity = 0.6;
+    nightAlpha = 0.2;
   } else if (h >= 8 && h < 18) {
-    // Daytime
+    // Phase 2: High Daytime (08:00 - 18:00)
     skyColor = new THREE.Color(0xBFD8E3);
     sunColor = new THREE.Color(0xFFFBF0);
-    sunEnergy = 1.15;
-    ambientLight.intensity = 0.7;
+    sunEnergy = 1.2;
+    ambientLight.intensity = 0.75;
+    nightAlpha = 0.0;
   } else {
-    // Sunset
-    skyColor = new THREE.Color(0xDE8255);
+    // Phase 3: Sunset / Dusk (18:00 - 21:00)
+    skyColor = new THREE.Color(0xDE7A52);
     sunColor = new THREE.Color(0xF77F00);
     sunEnergy = 0.75;
     ambientLight.intensity = 0.55;
+    nightAlpha = (h - 18) / 3.0;
   }
 
-  scene.background.lerp(skyColor, 0.1);
-  sunLight.color.lerp(sunColor, 0.1);
-  sunLight.intensity = THREE.MathUtils.lerp(sunLight.intensity, sunEnergy, 0.1);
+  scene.background.lerp(skyColor, 0.08);
+  sunLight.color.lerp(sunColor, 0.08);
+  sunLight.intensity = THREE.MathUtils.lerp(sunLight.intensity, sunEnergy, 0.08);
+
+  // Smoothly fade Street Lamps and Shop Glow
+  nightLights.forEach(nl => {
+    const target = nightAlpha * nl.targetIntensity;
+    nl.light.intensity = THREE.MathUtils.lerp(nl.light.intensity, target, 0.08);
+    if (nl.bulb && nl.bulb.material) {
+      if (nightAlpha > 0.4) {
+        nl.bulb.material.color.setHex(0xFFE580);
+      } else {
+        nl.bulb.material.color.setHex(0x555544);
+      }
+    }
+  });
 }
 
 function updateHUD() {
@@ -1205,7 +1806,7 @@ function showToast(msg, type = 'normal') {
 }
 
 // =========================================================
-// 9. ANIMATION & RENDER LOOP
+// 10. ANIMATION & RENDER LOOP
 // =========================================================
 
 let lastTime = performance.now();
@@ -1215,14 +1816,28 @@ function animate() {
   const now = performance.now();
   const delta = (now - lastTime) / 1000;
   lastTime = now;
+  const totalSeconds = now * 0.001;
 
+  // Clamp camera orbit controls target around the center to keep diorama perfectly framed
+  controls.target.set(0, 0, 0);
   controls.update();
+
   updateDayNightCycle(delta);
   updateSpawner(delta);
+  updateClouds(delta);
+  updateBypassTraffic(delta);
+  updateParticles(delta);
+  updateWindAndCreatures(delta, totalSeconds);
 
-  // Update all vehicles
+  // Update all station vehicles
   for (let i = cars.length - 1; i >= 0; i--) {
     cars[i].update();
+    // Spawn subtle exhaust puff when car is moving
+    if (cars[i].state === 'APPROACHING' || cars[i].state === 'DEPARTING') {
+      if (Math.random() < 0.15) {
+        spawnParticle(cars[i].mesh.position, 0xB0B8C0, 0.2);
+      }
+    }
   }
 
   renderer.render(scene, camera);
