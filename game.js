@@ -106,7 +106,43 @@ const I18N = {
     toast_tariff_updated: '{0} tarifesi güncellendi: ₺{1}',
     toast_new_day: 'GÜN {0} BAŞLADI (Gece Raporu İşlendi)',
     toast_target: 'Hedef dolum: {0}',
-    plot_click_prompt: '{0} inşa etmek için tıklayın (₺{1})'
+    plot_click_prompt: '{0} inşa etmek için tıklayın (₺{1})',
+    settings_title: 'Ayarlar & Sistem',
+    tab_settings_audio: 'Ses & Dil',
+    tab_settings_graphics: 'Grafik',
+    tab_settings_legal: 'Mağaza & Yasal',
+    settings_audio_title: 'Ses ve Efekt Ayarları',
+    settings_sfx_title: 'Ses Efektleri (SFX)',
+    settings_sfx_desc: 'Pompa, dolum, araç motoru ve tıklama sesleri.',
+    settings_ambience_title: 'Çevre & Doğa Sesleri',
+    settings_ambience_desc: 'Kuş sesleri, rüzgar esintisi ve gece cırcır böcekleri.',
+    settings_volume_title: 'Ana Ses Düzeyi',
+    settings_volume_desc: 'Oyun içi tüm seslerin seviyesi.',
+    settings_lang_title: 'Arayüz Dili',
+    settings_lang_select: 'Dil / Language',
+    settings_lang_desc: 'Türkçe ve İngilizce arasında anında geçiş yapın.',
+    settings_graphics_title: 'Görsel & 60 FPS Optimizasyon',
+    settings_shadows_title: 'Gerçek Zamanlı Gölgeler',
+    settings_shadows_desc: 'Düşük donanımlı cihazlarda performansı artırmak için kapatabilirsiniz.',
+    settings_quality_title: 'Render Kalite Profili',
+    settings_quality_desc: 'Piksel çözünürlük ölçeği ve doku filtreleme kalitesi.',
+    settings_fps_title: 'Hedef Kare Hızı (FPS)',
+    settings_fps_desc: 'Mobil pil tasarrufu için 30 veya 60 FPS sabitleyebilirsiniz.',
+    settings_legal_title: 'App Store & Google Play Standartları',
+    compliance_desc: 'PixelOil 3D, Apple App Store Guidelines (§5.1.1 Veri Gizliliği, §3.1.1 IAP Standartları) ve Google Play Geliştirici Politikaları ile tam uyumludur.',
+    legal_privacy_btn: 'Gizlilik Politikası',
+    legal_terms_btn: 'Kullanım Koşulları',
+    legal_restore_btn: 'Satın Alımları Geri Yükle',
+    legal_support_btn: 'Destek & Geri Bildirim',
+    legal_reset_title: 'Oyun Verilerini Sıfırla (GDPR)',
+    legal_reset_desc: 'Yerel kayıtlı tüm istasyon ve finansal verilerini temizler.',
+    legal_reset_btn: 'Verileri Sıfırla',
+    toast_restore_success: 'Önceki mağaza satın alımları başarıyla geri yüklendi.',
+    toast_data_reset: 'Tüm oyun verileri sıfırlandı ve oyun yeniden başlatıldı.',
+    toast_debug_money: 'Debug: Kasa ₺{0} artırıldı.',
+    toast_debug_tanks: 'Debug: Tüm depolar dolduruldu (%100).',
+    toast_debug_timers: 'Debug: Tüm aktif süreler tamamlandı.',
+    toast_debug_unlock: 'Debug: Tüm tesisler ve arsalar açıldı!'
   },
   en: {
     cash: 'CASH',
@@ -206,7 +242,43 @@ const I18N = {
     toast_tariff_updated: '{0} tariff updated: ₺{1}',
     toast_new_day: 'DAY {0} HAS BEGUN (Daily summary processed)',
     toast_target: 'Target fill: {0}',
-    plot_click_prompt: 'Click to build {0} (₺{1})'
+    plot_click_prompt: 'Click to build {0} (₺{1})',
+    settings_title: 'Settings & System',
+    tab_settings_audio: 'Audio & Lang',
+    tab_settings_graphics: 'Graphics',
+    tab_settings_legal: 'Store & Legal',
+    settings_audio_title: 'Sound & Audio Settings',
+    settings_sfx_title: 'Sound Effects (SFX)',
+    settings_sfx_desc: 'Pumps, refueling, vehicle engine and click sounds.',
+    settings_ambience_title: 'Ambience & Nature Sounds',
+    settings_ambience_desc: 'Bird chirping, wind breeze and night crickets.',
+    settings_volume_title: 'Master Volume',
+    settings_volume_desc: 'Volume level of all in-game sounds.',
+    settings_lang_title: 'UI Language',
+    settings_lang_select: 'Language',
+    settings_lang_desc: 'Switch instantly between Turkish and English.',
+    settings_graphics_title: 'Graphics & 60 FPS Optimization',
+    settings_shadows_title: 'Real-Time Shadows',
+    settings_shadows_desc: 'Can be disabled to improve performance on low-end devices.',
+    settings_quality_title: 'Render Quality Profile',
+    settings_quality_desc: 'Pixel resolution scaling and texture filtering quality.',
+    settings_fps_title: 'Target Frame Rate (FPS)',
+    settings_fps_desc: 'Cap at 30 or 60 FPS to save mobile battery.',
+    settings_legal_title: 'App Store & Google Play Standards',
+    compliance_desc: 'PixelOil 3D is fully compliant with Apple App Store Guidelines (§5.1.1 Data Privacy, §3.1.1 IAP Standards) and Google Play Policies.',
+    legal_privacy_btn: 'Privacy Policy',
+    legal_terms_btn: 'Terms of Service',
+    legal_restore_btn: 'Restore Purchases',
+    legal_support_btn: 'Support & Feedback',
+    legal_reset_title: 'Reset Game Data (GDPR)',
+    legal_reset_desc: 'Clears all locally saved station and financial data.',
+    legal_reset_btn: 'Reset Data',
+    toast_restore_success: 'Previous store purchases restored successfully.',
+    toast_data_reset: 'All game data reset and game re-initialized.',
+    toast_debug_money: 'Debug: Added ₺{0} to balance.',
+    toast_debug_tanks: 'Debug: All fuel tanks filled (100%).',
+    toast_debug_timers: 'Debug: Completed all active timers.',
+    toast_debug_unlock: 'Debug: All facilities and land unlocked!'
   }
 };
 
@@ -336,7 +408,17 @@ const State = {
   isPumping: false,
   pumpedLiters: 0,
   pumpedCost: 0,
-  targetCost: 'FULL'
+  targetCost: 'FULL',
+
+  // System Settings & Audio / Graphics Options
+  settings: {
+    sfx: localStorage.getItem('pixeloil_sfx') !== 'false',
+    ambience: localStorage.getItem('pixeloil_ambience') !== 'false',
+    volume: parseInt(localStorage.getItem('pixeloil_vol') || '80', 10),
+    shadows: localStorage.getItem('pixeloil_shadows') !== 'false',
+    quality: localStorage.getItem('pixeloil_quality') || 'high',
+    targetFps: parseInt(localStorage.getItem('pixeloil_fps') || '60', 10)
+  }
 };
 
 // =========================================================
@@ -355,7 +437,12 @@ class SoundFX {
     }
   }
 
+  getVolumeScale() {
+    return (State.settings.volume / 100);
+  }
+
   playCoin() {
+    if (!State.settings.sfx) return;
     this.init();
     if (!this.ctx) return;
     const osc = this.ctx.createOscillator();
@@ -363,7 +450,8 @@ class SoundFX {
     osc.type = 'square';
     osc.frequency.setValueAtTime(987.77, this.ctx.currentTime); // B5
     osc.frequency.setValueAtTime(1318.51, this.ctx.currentTime + 0.08); // E6
-    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+    const vol = 0.12 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.35);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -372,13 +460,15 @@ class SoundFX {
   }
 
   playPumpTick() {
+    if (!State.settings.sfx) return;
     this.init();
     if (!this.ctx) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(520, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+    const vol = 0.05 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -387,6 +477,7 @@ class SoundFX {
   }
 
   playHammer() {
+    if (!State.settings.sfx) return;
     this.init();
     if (!this.ctx) return;
     const osc = this.ctx.createOscillator();
@@ -394,7 +485,8 @@ class SoundFX {
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(220, this.ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.08);
-    gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+    const vol = 0.12 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -403,15 +495,17 @@ class SoundFX {
   }
 
   playFanfare() {
+    if (!State.settings.sfx) return;
     this.init();
     if (!this.ctx) return;
     const now = this.ctx.currentTime;
+    const vol = 0.08 * this.getVolumeScale();
     [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + i * 0.07);
-      gain.gain.setValueAtTime(0.08, now + i * 0.07);
+      gain.gain.setValueAtTime(vol, now + i * 0.07);
       gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.25);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
@@ -421,13 +515,15 @@ class SoundFX {
   }
 
   playHonk() {
+    if (!State.settings.sfx) return;
     this.init();
     if (!this.ctx) return;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(320, this.ctx.currentTime);
-    gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+    const vol = 0.08 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -436,6 +532,7 @@ class SoundFX {
   }
 
   playBirdChirp() {
+    if (!State.settings.ambience) return;
     if (!this.ctx || this.ctx.state !== 'running') return;
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
@@ -444,7 +541,8 @@ class SoundFX {
     osc.frequency.setValueAtTime(2400, now);
     osc.frequency.exponentialRampToValueAtTime(3200, now + 0.05);
     osc.frequency.exponentialRampToValueAtTime(2200, now + 0.12);
-    gain.gain.setValueAtTime(0.03, now);
+    const vol = 0.03 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, now);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -453,13 +551,15 @@ class SoundFX {
   }
 
   playCricket() {
+    if (!State.settings.ambience) return;
     if (!this.ctx || this.ctx.state !== 'running') return;
     const now = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'triangle';
     osc.frequency.setValueAtTime(4500, now);
-    gain.gain.setValueAtTime(0.015, now);
+    const vol = 0.015 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, now);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
     osc.connect(gain);
     gain.connect(this.ctx.destination);
@@ -2890,6 +2990,343 @@ function animate() {
   }
 
   renderer.render(scene, camera);
+}
+
+// =========================================================
+// 12. SETTINGS, GRAPHICS & GREENLIGHT COMPLIANCE
+// =========================================================
+
+function openSettingsModal() {
+  toggleModal('settings-modal', true);
+  updateSettingsUI();
+}
+
+function switchSettingsTab(tabId) {
+  ['audio', 'graphics', 'legal'].forEach(t => {
+    const pane = document.getElementById(`settings-tab-${t}`);
+    const btn = document.getElementById(`tab-btn-settings-${t}`);
+    if (pane) pane.classList.toggle('hidden', t !== tabId);
+    if (btn) btn.classList.toggle('active', t === tabId);
+  });
+}
+
+function updateSettingsUI() {
+  const btnSfx = document.getElementById('btn-toggle-sfx');
+  if (btnSfx) {
+    btnSfx.textContent = State.settings.sfx ? (currentLang === 'tr' ? 'AÇIK' : 'ON') : (currentLang === 'tr' ? 'KAPALI' : 'OFF');
+    btnSfx.className = `neo-btn toggle-btn ${State.settings.sfx ? 'success' : 'danger'}`;
+  }
+
+  const btnAmb = document.getElementById('btn-toggle-ambience');
+  if (btnAmb) {
+    btnAmb.textContent = State.settings.ambience ? (currentLang === 'tr' ? 'AÇIK' : 'ON') : (currentLang === 'tr' ? 'KAPALI' : 'OFF');
+    btnAmb.className = `neo-btn toggle-btn ${State.settings.ambience ? 'success' : 'danger'}`;
+  }
+
+  const sliderVol = document.getElementById('slider-volume');
+  const labelVol = document.getElementById('label-volume');
+  if (sliderVol) sliderVol.value = State.settings.volume;
+  if (labelVol) labelVol.textContent = `${State.settings.volume}%`;
+
+  const btnShadows = document.getElementById('btn-toggle-shadows');
+  if (btnShadows) {
+    btnShadows.textContent = State.settings.shadows ? (currentLang === 'tr' ? 'AÇIK' : 'ON') : (currentLang === 'tr' ? 'KAPALI' : 'OFF');
+    btnShadows.className = `neo-btn toggle-btn ${State.settings.shadows ? 'success' : 'danger'}`;
+  }
+
+  const btnLang = document.getElementById('btn-settings-lang');
+  if (btnLang) {
+    btnLang.textContent = currentLang === 'tr' ? 'Türkçe (TR)' : 'English (EN)';
+  }
+}
+
+function toggleSFXSetting() {
+  State.settings.sfx = !State.settings.sfx;
+  localStorage.setItem('pixeloil_sfx', State.settings.sfx);
+  if (State.settings.sfx) sfx.playCoin();
+  updateSettingsUI();
+}
+
+function toggleAmbienceSetting() {
+  State.settings.ambience = !State.settings.ambience;
+  localStorage.setItem('pixeloil_ambience', State.settings.ambience);
+  updateSettingsUI();
+}
+
+function updateVolumeSetting(val) {
+  State.settings.volume = parseInt(val, 10);
+  localStorage.setItem('pixeloil_vol', State.settings.volume);
+  const labelVol = document.getElementById('label-volume');
+  if (labelVol) labelVol.textContent = `${val}%`;
+}
+
+function toggleShadowsSetting() {
+  State.settings.shadows = !State.settings.shadows;
+  localStorage.setItem('pixeloil_shadows', State.settings.shadows);
+  if (renderer) {
+    renderer.shadowMap.enabled = State.settings.shadows;
+    scene.traverse(obj => {
+      if (obj.isMesh) {
+        obj.castShadow = State.settings.shadows;
+        obj.receiveShadow = State.settings.shadows;
+      }
+    });
+  }
+  updateSettingsUI();
+}
+
+function setGraphicsQuality(q) {
+  State.settings.quality = q;
+  localStorage.setItem('pixeloil_quality', q);
+  if (renderer) {
+    if (q === 'low') {
+      renderer.setPixelRatio(1);
+    } else if (q === 'med') {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    } else {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+  }
+  document.querySelectorAll('#settings-tab-graphics .segmented-control:nth-of-type(1) .segment-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', (q === 'low' && idx === 0) || (q === 'med' && idx === 1) || (q === 'high' && idx === 2));
+  });
+}
+
+function setTargetFps(fps) {
+  State.settings.targetFps = fps;
+  localStorage.setItem('pixeloil_fps', fps);
+  document.querySelectorAll('#settings-tab-graphics .segmented-control:nth-of-type(2) .segment-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', (fps === 30 && idx === 0) || (fps === 60 && idx === 1) || (fps === 0 && idx === 2));
+  });
+}
+
+function restorePurchases() {
+  sfx.playFanfare();
+  showToast(t('toast_restore_success'));
+}
+
+function contactSupport() {
+  window.open('mailto:destek@balaxstudio.com?subject=PixelOil%203D%20Destek%20Talebi', '_blank');
+}
+
+function resetGameData() {
+  const confirmMsg = currentLang === 'tr' 
+    ? 'Tüm istasyon ilerlemeniz, paranız ve binalarınız sıfırlanacaktır. Emin misiniz?'
+    : 'All station progress, cash, and facilities will be permanently cleared. Are you sure?';
+  if (confirm(confirmMsg)) {
+    localStorage.clear();
+    showToast(t('toast_data_reset'));
+    setTimeout(() => window.location.reload(), 600);
+  }
+}
+
+function openLegalModal(docType) {
+  const titleEl = document.getElementById('legal-modal-title');
+  const bodyEl = document.getElementById('legal-modal-body');
+  if (!bodyEl) return;
+
+  if (docType === 'privacy') {
+    titleEl.textContent = currentLang === 'tr' ? 'Gizlilik Politikası (Privacy Policy)' : 'Privacy Policy';
+    bodyEl.innerHTML = currentLang === 'tr' ? `
+      <h4>1. Veri Sorumlusu ve Toplanan Bilgiler</h4>
+      <p>PixelOil 3D, kullanıcı gizliliğine tam saygı duyar. Oyunumuz cihazınızdan kişisel tanımlayıcı bilgi (ad, soyad, konum, rehber vb.) toplamaz ve sunuculara göndermez.</p>
+      <h4>2. Yerel Depolama (Local Storage)</h4>
+      <p>Oyun içi istasyon kayıtları, tema tercihleri ve ses ayarları yalnızca cihazınızın yerel depolama alanında (Local Storage) saklanır.</p>
+      <h4>3. Apple App Store & Google Play Uyumluluğu</h4>
+      <p>Oyunumuz Apple App Store Review Guidelines §5.1.1 (Veri Toplama ve Gizlilik) ve Google Play Geliştirici Standartları ile %100 uyumludur. Verilerinizi silme hakkınız (GDPR) Ayarlar menüsünden her zaman erişilebilirdir.</p>
+      <h4>4. İletişim</h4>
+      <p>Gizlilik ile ilgili tüm soru ve talepleriniz için: <strong>destek@balaxstudio.com</strong></p>
+    ` : `
+      <h4>1. Data Controller & Information Collected</h4>
+      <p>PixelOil 3D respects player privacy. We do not collect, transmit, or monetize personal identifiable information (PII).</p>
+      <h4>2. Local Storage Usage</h4>
+      <p>Station progression, audio preferences, and unlocked themes are stored purely within your local device memory (Local Storage).</p>
+      <h4>3. App Store & Google Play Standards</h4>
+      <p>Compliant with Apple App Store Review Guidelines §5.1.1 (Data Collection & Storage) and Google Play Developer Policies. Full right-to-be-forgotten data deletion is supported via in-game settings.</p>
+      <h4>4. Contact</h4>
+      <p>For any privacy inquiries: <strong>destek@balaxstudio.com</strong></p>
+    `;
+  } else {
+    titleEl.textContent = currentLang === 'tr' ? 'Kullanım Koşulları (Terms of Service)' : 'Terms of Service';
+    bodyEl.innerHTML = currentLang === 'tr' ? `
+      <h4>1. Hizmet Şartları ve Lisans</h4>
+      <p>PixelOil 3D benzin istasyonu simülasyon oyunu, kişisel eğlence amacıyla Balax Studio tarafından sunulmaktadır.</p>
+      <h4>2. Oyun İçi Para ve Tesisler</h4>
+      <p>Oyun içerisindeki '₺' (TL) para birimi, akaryakıt depoları, tesisler ve ihaleler tamamen sanal simülasyon mekanikleridir ve gerçek finansal değer taşımaz.</p>
+      <h4>3. Mağaza Satın Alımları ve Haklar</h4>
+      <p>Uygulama içi satın alımlar (IAP) Apple App Store ve Google Play faturalandırma sistemleri üzerinden güvence altına alınmıştır. İstediğiniz zaman 'Satın Alımları Geri Yükle' butonunu kullanabilirsiniz.</p>
+      <h4>4. Fikri Mülkiyet</h4>
+      <p>Tüm 3D modeller, brutalist vektör ikonlar, ses efektleri ve kaynak kodları Balax Studio'ya aittir.</p>
+    ` : `
+      <h4>1. License & Service Terms</h4>
+      <p>PixelOil 3D is a station management simulation game provided for entertainment by Balax Studio.</p>
+      <h4>2. Virtual Economy & Assets</h4>
+      <p>All in-game currency, fuel storage, station plots, and tenders are purely fictional simulation tokens without real-world monetary value.</p>
+      <h4>3. In-App Purchases & Restoration</h4>
+      <p>In-app purchases are handled securely via Apple App Store and Google Play billing APIs. You can restore previous non-consumables at any time.</p>
+      <h4>4. Intellectual Property</h4>
+      <p>All 3D assets, procedural audio, brutalist iconography, and source code are copyrighted by Balax Studio.</p>
+    `;
+  }
+
+  toggleModal('legal-modal', true);
+}
+
+// =========================================================
+// 13. WEB TEST & DEVELOPER DEBUG SANDBOX
+// =========================================================
+
+function openDebugModal() {
+  toggleModal('debug-modal', true);
+}
+
+function debugAddMoney(amount) {
+  State.money += amount;
+  State.totalRev += amount;
+  sfx.playCoin();
+  updateHUD();
+  showToast(t('toast_debug_money', amount.toLocaleString('tr-TR')));
+}
+
+function debugSetMoney(amount) {
+  State.money = amount;
+  updateHUD();
+  showToast(`Debug: Kasa ₺${amount} olarak ayarlandı.`);
+}
+
+function debugRefillTanks() {
+  ['benzin', 'dizel', 'lpg', 'ev'].forEach(k => {
+    State.tanks[k].current = State.tanks[k].max;
+  });
+  sfx.playFanfare();
+  updateHUD();
+  updateOrderModalStatus();
+  showToast(t('toast_debug_tanks'));
+}
+
+function debugEmptyTanks() {
+  ['benzin', 'dizel', 'lpg', 'ev'].forEach(k => {
+    State.tanks[k].current = 0;
+  });
+  updateHUD();
+  updateOrderModalStatus();
+  showToast('Debug: Tüm depolar boşaltıldı (%0).');
+}
+
+function debugFinishTimers() {
+  if (State.activeTimers.length === 0) {
+    showToast('Debug: Aktif inşaat veya eğitim süresi yok.');
+    return;
+  }
+  // Process all remaining active timers immediately
+  while (State.activeTimers.length > 0) {
+    const timer = State.activeTimers.shift();
+    if (timer.scaffoldingMesh) {
+      scene.remove(timer.scaffoldingMesh);
+    }
+    if (typeof timer.callback === 'function') {
+      timer.callback();
+    }
+  }
+  sfx.playFanfare();
+  updateHUD();
+  updateAllPlotSigns();
+  showToast(t('toast_debug_timers'));
+}
+
+function debugUnlockAllFacilities() {
+  State.upgrades.pumps = 4;
+  for (let i = 0; i < 4; i++) {
+    pumpSlots[i].isBuilt = true;
+    if (!pumpSlots[i].mesh) buildSinglePump(pumpSlots[i]);
+  }
+  State.upgrades.hasCarWash = true;
+  if (!carWashGroup) buildCarWash();
+  State.upgrades.hasMarket = true;
+  if (!marketBayGroup) buildMarketBay();
+  State.upgrades.hasSolar = true;
+  if (!solarPanelsGroup) buildSolarPanels();
+  State.upgrades.hasTurbine = true;
+  if (!turbineGroup) buildTurbine();
+  State.upgrades.hasEvCharger = true;
+  if (!evChargerGroup) buildEvCharger();
+
+  sfx.playFanfare();
+  updateAllPlotSigns();
+  updateHUD();
+  showToast('Debug: Tüm tesisler inşa edildi!');
+}
+
+function debugMaxStaff() {
+  State.staff.attendant = 3;
+  State.staff.cashier = 3;
+  State.staff.manager = 1;
+  State.upgrades.hasManager = true;
+  
+  const elAtt = document.getElementById('staff-lvl-attendant');
+  const elCash = document.getElementById('staff-lvl-cashier');
+  const elMgr = document.getElementById('staff-lvl-manager');
+  if (elAtt) { elAtt.textContent = 'Seviye 3'; elAtt.className = 'badge-chip gold'; }
+  if (elCash) { elCash.textContent = 'Seviye 3'; elCash.className = 'badge-chip gold'; }
+  if (elMgr) { elMgr.textContent = 'Seviye 1'; elMgr.className = 'badge-chip gold'; }
+
+  sfx.playFanfare();
+  showToast('Debug: Tüm personel maksimum seviyeye yükseltildi!');
+}
+
+function debugUnlockAllLand() {
+  State.land.parcelA = true;
+  State.land.parcelB = true;
+  State.land.parcelC = true;
+  applyLandExpansion();
+  sfx.playFanfare();
+  showToast(t('toast_debug_unlock'));
+}
+
+function debugAdvanceDay() {
+  State.day += 1;
+  State.hour = 8;
+  State.minute = 0;
+  sfx.playFanfare();
+  updateHUD();
+  updateSkyLighting();
+  showToast(t('toast_new_day', State.day));
+}
+
+function debugAdvanceHour() {
+  State.hour = (State.hour + 1) % 24;
+  updateHUD();
+  updateSkyLighting();
+  showToast(`Debug: Saat ${Math.floor(State.hour)}:00 yapıldı.`);
+}
+
+function debugToggleDayNight() {
+  if (State.hour >= 8 && State.hour < 20) {
+    State.hour = 22; // Night
+  } else {
+    State.hour = 12; // Noon
+  }
+  updateHUD();
+  updateSkyLighting();
+  showToast(`Debug: Saat ${Math.floor(State.hour)}:00 yapıldı.`);
+}
+
+function debugMaxReputation() {
+  State.rep = 5.0;
+  updateHUD();
+  showToast('Debug: İtibar 5.0 / 5.0 yapıldı.');
+}
+
+function debugSpawnCar() {
+  const freeSlot = pumpSlots.find(s => s.isBuilt && !s.occupiedBy);
+  if (!freeSlot) {
+    showToast('Debug: Boş pompa yuvası yok!');
+    return;
+  }
+  const car = new Vehicle(freeSlot);
+  cars.push(car);
+  sfx.playHonk();
+  showToast('Debug: Yeni müşteri aracı çağrıldı.');
 }
 
 // Start Game on Page Load
