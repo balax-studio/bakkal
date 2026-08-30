@@ -25,23 +25,55 @@ const I18N = {
     btn_start_pump: 'POMPAYI BAŞLAT',
     btn_finish_pump: 'TAMAMLA & UĞURLA',
     btn_wash_tip: 'Camları Sil (+₺25 Bahşiş)',
-    build_title: 'İstasyon Yatırımları',
+    build_title: 'İstasyon Yatırımları & Geliştirme',
+    tab_custom: 'Özelleştirme',
+    tab_fac: 'Tesis & Personel',
+    tab_energy: 'Yeşil Enerji & EV',
+    tab_land: 'Arsa Genişletme',
+    themes_title: 'İstasyon Teması',
+    visual_addons_title: 'Görsel Eklentiler',
+    addon_totem_title: 'LED Dijital Fiyat Totemi',
+    addon_totem_desc: 'Yoldan geçen araçların istasyona sapma oranını artırır.',
+    addon_garden_title: 'Peyzaj & Çiçek Bahçeleri',
+    addon_garden_desc: 'Müşteri memnuniyetini ve bahşiş miktarını yükseltir.',
+    fac_title: 'Yan Gelir Tesisleri',
     upgrade_pump_title: 'Pompa Adası Ekle',
     upgrade_pump_desc: 'Aynı anda daha fazla araca dolum yapın.',
     upgrade_wash_title: 'Otomatik Tünel Oto Yıkama',
-    upgrade_wash_desc: 'Gelen araçlardan otomatik yıkama ücreti tahsil eder.',
-    upgrade_solar_title: 'Çatı Güneş Enerjisi (GES)',
-    upgrade_solar_desc: 'Gündüz istasyonun elektrik faturasını sıfırlar.',
-    upgrade_mgr_title: 'İstasyon Müdürü İşe Al',
-    upgrade_mgr_desc: 'Dolum ve tanker siparişlerini otomatik yönetir.',
+    upgrade_wash_desc: 'Her araçtan otomatik ₺45 yıkama ücreti tahsil eder.',
+    upgrade_market_title: '7/24 Mini Market & Kahve',
+    upgrade_market_desc: 'Akaryakıt alan sürücülere atıştırmalık ve kahve satar (+₺35/araç).',
+    staff_title: 'Personel İstihdamı & Eğitimi',
+    staff_attendant: 'Pompacı',
+    staff_attendant_desc: 'Dolum hızını %25 artırır ve bahşiş toplar.',
+    staff_cashier: 'Kasiyer',
+    staff_cashier_desc: 'Market ve kasa işlem hızını ikiye katlar.',
+    staff_manager: 'Vardiya Müdürü',
+    staff_manager_desc: 'Dolum ve tanker siparişlerini tamamen otomatikleştirir.',
+    energy_title: 'Yeşil Enerji Altyapısı',
+    ev_title: 'EV Ultra Şarj Ağı',
+    ev_charger_title: '350kW DC Ultra Hızlı EV Şarj Yuvası',
+    ev_charger_desc: 'Elektrikli araçları 15 saniyede doldurur (+₺120 şarj ücreti).',
+    land_title: 'İmar İzinleri & Parsel Alımı',
     btn_bought: 'ALINDI',
+    btn_active: 'AKTİF',
     btn_working: 'ÇALIŞIYOR',
     order_title: 'Yakıt Siparişi (Tanker)',
     tank_status: 'Depo',
-    office_title: 'İstasyon Yönetim Ofisi',
-    stat_total_rev: 'Toplam Ciro:',
-    stat_total_cars: 'Hizmet Verilen Araç:',
-    stat_satisfaction: 'Genel Memnuniyet:',
+    office_title: 'İstasyon Yönetim & Finans',
+    tab_finance: 'Muhasebe & Kar/Zarar',
+    tab_tenders: 'B2B Filo İhaleleri',
+    tab_tariffs: 'Satış Tarifesi',
+    daily_ledger_title: 'Günlük Mali Durum Tablosu',
+    ledger_fuel_rev: 'Akaryakıt Brüt Satış:',
+    ledger_fuel_cost: 'Akaryakıt Toptan Alım:',
+    ledger_fac_rev: 'Tesis & Market Gelirleri:',
+    ledger_salaries: 'Personel Maaş Giderleri:',
+    ledger_energy: 'Güneş Enerjisi Şebeke Katkısı:',
+    ledger_net_profit: 'GÜNLÜK NET KAR:',
+    bank_loan_title: 'Banka İthalat Kredisi (₺25.000)',
+    bank_loan_desc: 'Acil nakit akışı sağlar (Günlük %2 faiz kesilir).',
+    tenders_title: 'Kurumsal Akaryakıt İhaleleri',
     tariff_title: 'Litre / Birim Satış Tarifesi',
     cost_prefix: 'Maliyet',
     no_waiting_car: '(Bekleyen Araç Yok)',
@@ -55,9 +87,16 @@ const I18N = {
     toast_max_pumps: 'Maksimum pompa sayısına ulaşıldı (4).',
     toast_insufficient_funds: 'Yetersiz bakiye! (Gereken: ₺{0})',
     toast_pump_built: 'Pompa #{0} inşa edildi.',
-    toast_wash_active: 'Otomatik Oto Yıkama aktif edildi (+₺80/araç).',
-    toast_solar_built: 'Çatı GES kuruldu. Gündüz elektrik faturası ₺0.',
-    toast_mgr_hired: 'İstasyon Müdürü göreve başladı. Dolumlar otomatik.',
+    toast_wash_active: 'Otomatik Oto Yıkama kuruldu (+₺45/araç).',
+    toast_market_active: '7/24 Mini Market ve Cafe açıldı (+₺35/araç).',
+    toast_solar_built: 'Çatı GES panelleri kuruldu. Elektrik faturası ₺0.',
+    toast_turbine_built: 'Mikro Rüzgar Türbini kuruldu (+₺180/saat).',
+    toast_ev_built: '350kW DC EV Ultra Şarj istasyonu kuruldu.',
+    toast_staff_trained: '{0} eğitimi tamamlandı (Seviye {1}).',
+    toast_land_expanded: 'Parsel {0} satın alındı. İstasyon arazisi genişletildi!',
+    toast_loan_taken: '₺25.000 banka kredisi hesaba geçti.',
+    toast_tender_signed: '{0} ihalesi imzalandı. Günlük ödeme bağlandı.',
+    toast_theme_applied: '{0} teması başarıyla uygulandı.',
     toast_tanker_arrived: '{0}L {1} tankeri ikmal yaptı.',
     toast_tank_overflow: 'Depo kapasitesi aşılıyor! (Boş yer: {0} L)',
     toast_tariff_updated: '{0} tarifesi güncellendi: ₺{1}',
@@ -81,23 +120,55 @@ const I18N = {
     btn_start_pump: 'START PUMP',
     btn_finish_pump: 'COMPLETE & DISMISS',
     btn_wash_tip: 'Wash Windshield (+₺25 Tip)',
-    build_title: 'Station Investments',
+    build_title: 'Station Investments & Upgrades',
+    tab_custom: 'Customization',
+    tab_fac: 'Facility & Staff',
+    tab_energy: 'Green Energy & EV',
+    tab_land: 'Land Expansion',
+    themes_title: 'Station Theme',
+    visual_addons_title: 'Visual Addons',
+    addon_totem_title: 'LED Digital Price Totem',
+    addon_totem_desc: 'Increases bypass vehicle turn-in rate.',
+    addon_garden_title: 'Landscape & Flower Gardens',
+    addon_garden_desc: 'Boosts customer satisfaction and tip rate.',
+    fac_title: 'Ancillary Facilities',
     upgrade_pump_title: 'Add Pump Island',
     upgrade_pump_desc: 'Serve more vehicles simultaneously.',
     upgrade_wash_title: 'Automatic Tunnel Car Wash',
-    upgrade_wash_desc: 'Automatically charges incoming vehicles for wash.',
-    upgrade_solar_title: 'Rooftop Solar (PV)',
-    upgrade_solar_desc: 'Eliminates daytime station power bills.',
-    upgrade_mgr_title: 'Hire Station Manager',
-    upgrade_mgr_desc: 'Automates car refueling and tanker orders.',
+    upgrade_wash_desc: 'Collects ₺45 automatic wash fee per car.',
+    upgrade_market_title: '24/7 Mini Market & Cafe',
+    upgrade_market_desc: 'Sells snacks and coffee to fueling drivers (+₺35/car).',
+    staff_title: 'Staff Hiring & Training',
+    staff_attendant: 'Pump Attendant',
+    staff_attendant_desc: 'Increases pumping speed by 25% and collects tips.',
+    staff_cashier: 'Cashier',
+    staff_cashier_desc: 'Doubles market and checkout transaction speed.',
+    staff_manager: 'Shift Manager',
+    staff_manager_desc: 'Fully automates car refueling and tanker orders.',
+    energy_title: 'Green Energy Grid',
+    ev_title: 'EV Supercharger Hub',
+    ev_charger_title: '350kW DC Ultra Fast EV Bay',
+    ev_charger_desc: 'Charges electric vehicles in 15 seconds (+₺120 fee).',
+    land_title: 'Zoning Permits & Land Parcels',
     btn_bought: 'OWNED',
+    btn_active: 'ACTIVE',
     btn_working: 'ACTIVE',
     order_title: 'Fuel Tanker Order',
     tank_status: 'Tank',
-    office_title: 'Station Management Office',
-    stat_total_rev: 'Total Revenue:',
-    stat_total_cars: 'Vehicles Served:',
-    stat_satisfaction: 'Satisfaction:',
+    office_title: 'Station Management & Finance',
+    tab_finance: 'Accounting & P/L',
+    tab_tenders: 'B2B Fleet Tenders',
+    tab_tariffs: 'Price Tariffs',
+    daily_ledger_title: 'Daily Financial Balance Sheet',
+    ledger_fuel_rev: 'Gross Fuel Revenue:',
+    ledger_fuel_cost: 'Wholesale Fuel Cost:',
+    ledger_fac_rev: 'Facility & Market Revenue:',
+    ledger_salaries: 'Staff Payroll Expenses:',
+    ledger_energy: 'Solar Grid Contribution:',
+    ledger_net_profit: 'DAILY NET PROFIT:',
+    bank_loan_title: 'Bank Commercial Loan (₺25,000)',
+    bank_loan_desc: 'Provides immediate liquidity (Daily 2% interest).',
+    tenders_title: 'Corporate Fuel Tenders',
     tariff_title: 'Fuel Unit Price Tariff',
     cost_prefix: 'Cost',
     no_waiting_car: '(No Waiting Vehicle)',
@@ -111,9 +182,16 @@ const I18N = {
     toast_max_pumps: 'Maximum pump count reached (4).',
     toast_insufficient_funds: 'Insufficient funds! (Required: ₺{0})',
     toast_pump_built: 'Pump #{0} constructed.',
-    toast_wash_active: 'Automatic Car Wash activated (+₺80/car).',
-    toast_solar_built: 'Solar panels installed. Daytime power cost ₺0.',
-    toast_mgr_hired: 'Station Manager hired. Refueling automated.',
+    toast_wash_active: 'Automatic Car Wash installed (+₺45/car).',
+    toast_market_active: '24/7 Mini Market & Cafe opened (+₺35/car).',
+    toast_solar_built: 'Solar panels installed. Power cost ₺0.',
+    toast_turbine_built: 'Micro Wind Turbine installed (+₺180/hr).',
+    toast_ev_built: '350kW DC EV Ultra Charger installed.',
+    toast_staff_trained: '{0} training complete (Level {1}).',
+    toast_land_expanded: 'Parcel {0} purchased. Station island expanded!',
+    toast_loan_taken: '₺25,000 bank loan credited to balance.',
+    toast_tender_signed: '{0} tender signed. Daily recurring payout active.',
+    toast_theme_applied: '{0} theme applied successfully.',
     toast_tanker_arrived: '{0}L {1} tanker delivery completed.',
     toast_tank_overflow: 'Tank capacity exceeded! (Available: {0} L)',
     toast_tariff_updated: '{0} tariff updated: ₺{1}',
@@ -152,6 +230,7 @@ function updateI18nDOM() {
   if (ind) ind.textContent = currentLang.toUpperCase();
   updateHUD();
   updateOrderModalStatus();
+  updateDailyLedger();
 }
 
 // =========================================================
@@ -159,7 +238,7 @@ function updateI18nDOM() {
 // =========================================================
 
 const State = {
-  money: 12500,
+  money: 16500,
   day: 1,
   hour: 9,
   minute: 0,
@@ -176,12 +255,58 @@ const State = {
     ev:     { current: 100,  max: 100,  cost: 4.50,  price: 9.80,  color: 0x2F6FED }
   },
 
-  // Upgrades
+  // Upgrades & Facilities
   upgrades: {
     pumps: 2, // 1 to 4
     hasCarWash: false,
+    hasMarket: false,
     hasSolar: false,
+    hasTurbine: false,
+    hasEvCharger: false,
     hasManager: false
+  },
+
+  // Themes
+  theme: 'standard',
+  unlockedThemes: ['standard'],
+
+  // Visual Addons
+  addons: {
+    totem: false,
+    garden: false
+  },
+
+  // Staff levels (1..5)
+  staff: {
+    attendant: 1,
+    cashier: 1,
+    manager: 0
+  },
+
+  // Land Parcels
+  land: {
+    size: 80,
+    parcelA: false,
+    parcelB: false,
+    parcelC: false
+  },
+
+  // Finance & Ledger
+  finance: {
+    fuelRev: 0,
+    fuelCost: 0,
+    facRev: 0,
+    salaries: 0,
+    energyNet: 0,
+    netProfit: 0,
+    loan: 0
+  },
+
+  // Contracts & B2B Tenders
+  contracts: {
+    bus: false,
+    courier: false,
+    taxi: false
   },
 
   // Order quantities for tanker modal
@@ -201,7 +326,7 @@ const State = {
 };
 
 // =========================================================
-// 2. WEB AUDIO 16-BIT SYNTHESIZER
+// 3. WEB AUDIO 16-BIT SYNTHESIZER
 // =========================================================
 
 class SoundFX {
@@ -299,7 +424,7 @@ class SoundFX {
 const sfx = new SoundFX();
 
 // =========================================================
-// 3. THREE.JS 3D SCENE SETUP
+// 4. THREE.JS 3D SCENE SETUP & LIVING DIORAMA
 // =========================================================
 
 let scene, camera, renderer, controls;
@@ -313,8 +438,20 @@ const nightLights = [];
 const bgVehicles = [];
 const particles = [];
 const birds = [];
+const sheepList = [];
 let dogMesh = null;
 let catMesh = null;
+
+// Dynamic Building Mesh References
+let carWashGroup = null;
+let marketBayGroup = null;
+let solarPanelsGroup = null;
+let turbineGroup = null;
+let turbineRotor = null;
+let evChargerGroup = null;
+let islandGrassMesh = null;
+let islandDirtMesh = null;
+let islandSlabMesh = null;
 
 const pumpSlots = [
   { id: 0, pos: new THREE.Vector3(-4, 0, -2), occupiedBy: null, mesh: null },
@@ -325,6 +462,58 @@ const pumpSlots = [
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
+// Calibrated Low-Poly Materials Palette
+const Mat = {
+  grass: new THREE.MeshLambertMaterial({ color: 0x6FA83B }),
+  dirt: new THREE.MeshLambertMaterial({ color: 0x8D6346 }),
+  asphalt: new THREE.MeshLambertMaterial({ color: 0x2A313A }),
+  concrete: new THREE.MeshLambertMaterial({ color: 0xDCD6C8 }),
+  roadYellow: new THREE.MeshLambertMaterial({ color: 0xF2C94C }),
+  roadWhite: new THREE.MeshLambertMaterial({ color: 0xEAEAEA }),
+  buildingWall: new THREE.MeshLambertMaterial({ color: 0xF8F4EB }),
+  buildingRoof: new THREE.MeshLambertMaterial({ color: 0x48525D }),
+  redTrim: new THREE.MeshLambertMaterial({ color: 0xD3524B }),
+  greenAccent: new THREE.MeshLambertMaterial({ color: 0x2E8B57 }),
+  orangeAccent: new THREE.MeshLambertMaterial({ color: 0xE8862E }),
+  blueAccent: new THREE.MeshLambertMaterial({ color: 0x2F6FED }),
+  darkInk: new THREE.MeshLambertMaterial({ color: 0x1C242B }),
+  glass: new THREE.MeshLambertMaterial({ color: 0x7298B3, transparent: true, opacity: 0.85 }),
+  wood: new THREE.MeshLambertMaterial({ color: 0x6E472A }),
+  foliage: new THREE.MeshLambertMaterial({ color: 0x3E7D32 }),
+  foliageDark: new THREE.MeshLambertMaterial({ color: 0x2A5A22 }),
+  metalTank: new THREE.MeshLambertMaterial({ color: 0xEDE8DC }),
+  chrome: new THREE.MeshLambertMaterial({ color: 0xA8B2BC }),
+  rockGrey: new THREE.MeshLambertMaterial({ color: 0x7E8B9B }),
+  rockDark: new THREE.MeshLambertMaterial({ color: 0x4D5866 }),
+  grassHill: new THREE.MeshLambertMaterial({ color: 0x5D9430 }),
+  // Rich Flora & Fauna
+  flowerRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
+  flowerYellow: new THREE.MeshLambertMaterial({ color: 0xFFD166 }),
+  flowerPink: new THREE.MeshLambertMaterial({ color: 0xFF70A6 }),
+  flowerStem: new THREE.MeshLambertMaterial({ color: 0x4A8505 }),
+  planterWood: new THREE.MeshLambertMaterial({ color: 0x5C381E }),
+  benchWood: new THREE.MeshLambertMaterial({ color: 0x9C6644 }),
+  benchIron: new THREE.MeshLambertMaterial({ color: 0x2B2D42 }),
+  dogFur: new THREE.MeshLambertMaterial({ color: 0xCCA43B }),
+  dogMuzzle: new THREE.MeshLambertMaterial({ color: 0x3E2723 }),
+  dogCollar: new THREE.MeshLambertMaterial({ color: 0xD62828 }),
+  dogMat: new THREE.MeshLambertMaterial({ color: 0x3D5A80 }),
+  catFur: new THREE.MeshLambertMaterial({ color: 0xFAEDCD }),
+  catSpot: new THREE.MeshLambertMaterial({ color: 0xCB997E }),
+  birdBlue: new THREE.MeshLambertMaterial({ color: 0x48CAE4 }),
+  birdBeak: new THREE.MeshLambertMaterial({ color: 0xFAA307 }),
+  lampPost: new THREE.MeshLambertMaterial({ color: 0x242A35 }),
+  lampGlow: new THREE.MeshBasicMaterial({ color: 0xFFE082 }),
+  cloud: new THREE.MeshLambertMaterial({ color: 0xFCFCFC, transparent: true, opacity: 0.95 }),
+  oilStain: new THREE.MeshLambertMaterial({ color: 0x14181E, transparent: true, opacity: 0.7 }),
+  trashGreen: new THREE.MeshLambertMaterial({ color: 0x2D6A4F }),
+  airTowerBlue: new THREE.MeshLambertMaterial({ color: 0x1D3557 }),
+  fireRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
+  solarCell: new THREE.MeshLambertMaterial({ color: 0x1B2A4A }),
+  solarFrame: new THREE.MeshLambertMaterial({ color: 0xC0C8D0 }),
+  evGlow: new THREE.MeshBasicMaterial({ color: 0x00E5FF })
+};
+
 function initThree() {
   const container = document.getElementById('canvas-container');
   const width = window.innerWidth;
@@ -334,7 +523,7 @@ function initThree() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xBFD8E3);
 
-  // Orthographic Camera (True Isometric 2:1)
+  // Orthographic Camera (Isometric 2:1)
   const aspect = width / height;
   const d = 18;
   camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
@@ -349,7 +538,7 @@ function initThree() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
 
-  // Controls with Elastic Bounds & Free Pan (Allows free exploration while keeping scene in frame)
+  // Controls with Elastic Free Pan
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableRotate = true;
   controls.enablePan = true;
@@ -371,7 +560,7 @@ function initThree() {
   };
 
   // Lights
-  ambientLight = new THREE.AmbientLight(0xEAECEF, 0.7);
+  ambientLight = new THREE.AmbientLight(0xEAECEF, 0.72);
   scene.add(ambientLight);
 
   sunLight = new THREE.DirectionalLight(0xFFFBF0, 1.15);
@@ -381,7 +570,7 @@ function initThree() {
   sunLight.shadow.mapSize.height = 2048;
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 120;
-  const shadowDist = 26;
+  const shadowDist = 30;
   sunLight.shadow.camera.left = -shadowDist;
   sunLight.shadow.camera.right = shadowDist;
   sunLight.shadow.camera.top = shadowDist;
@@ -413,79 +602,30 @@ function onWindowResize() {
 }
 
 // =========================================================
-// 4. 16-BIT LOW-POLY LIVING DIORAMA BUILDER
+// 5. LIVING 3D DIORAMA MESH BUILDERS
 // =========================================================
-
-// Shared Flat & Emissive Materials
-const Mat = {
-  grass: new THREE.MeshLambertMaterial({ color: 0x76B041 }),
-  dirt: new THREE.MeshLambertMaterial({ color: 0x8D6346 }),
-  asphalt: new THREE.MeshLambertMaterial({ color: 0x2A313A }),
-  concrete: new THREE.MeshLambertMaterial({ color: 0xDCD6C8 }),
-  roadYellow: new THREE.MeshLambertMaterial({ color: 0xF2C94C }),
-  roadWhite: new THREE.MeshLambertMaterial({ color: 0xEAEAEA }),
-  buildingWall: new THREE.MeshLambertMaterial({ color: 0xF5EFE0 }),
-  buildingRoof: new THREE.MeshLambertMaterial({ color: 0x48525D }),
-  redTrim: new THREE.MeshLambertMaterial({ color: 0xD64545 }),
-  greenAccent: new THREE.MeshLambertMaterial({ color: 0x27A05A }),
-  orangeAccent: new THREE.MeshLambertMaterial({ color: 0xE8862E }),
-  blueAccent: new THREE.MeshLambertMaterial({ color: 0x2F6FED }),
-  darkInk: new THREE.MeshLambertMaterial({ color: 0x1C242B }),
-  glass: new THREE.MeshLambertMaterial({ color: 0x7298B3, transparent: true, opacity: 0.85 }),
-  wood: new THREE.MeshLambertMaterial({ color: 0x6E472A }),
-  foliage: new THREE.MeshLambertMaterial({ color: 0x3E7D32 }),
-  foliageDark: new THREE.MeshLambertMaterial({ color: 0x2A5A22 }),
-  metalTank: new THREE.MeshLambertMaterial({ color: 0xEDE8DC }),
-  chrome: new THREE.MeshLambertMaterial({ color: 0xA8B2BC }),
-  rockGrey: new THREE.MeshLambertMaterial({ color: 0x7E8B9B }),
-  rockDark: new THREE.MeshLambertMaterial({ color: 0x4D5866 }),
-  grassHill: new THREE.MeshLambertMaterial({ color: 0x649B35 }),
-  // Rich Flora & Props
-  flowerRed: new THREE.MeshLambertMaterial({ color: 0xE63946 }),
-  flowerYellow: new THREE.MeshLambertMaterial({ color: 0xFFD166 }),
-  flowerPink: new THREE.MeshLambertMaterial({ color: 0xFF70A6 }),
-  flowerStem: new THREE.MeshLambertMaterial({ color: 0x4A8505 }),
-  planterWood: new THREE.MeshLambertMaterial({ color: 0x5C381E }),
-  benchWood: new THREE.MeshLambertMaterial({ color: 0x9C6644 }),
-  benchIron: new THREE.MeshLambertMaterial({ color: 0x2B2D42 }),
-  dogFur: new THREE.MeshLambertMaterial({ color: 0xCCA43B }),
-  dogMuzzle: new THREE.MeshLambertMaterial({ color: 0x3E2723 }),
-  dogCollar: new THREE.MeshLambertMaterial({ color: 0xD62828 }),
-  dogMat: new THREE.MeshLambertMaterial({ color: 0x3D5A80 }),
-  catFur: new THREE.MeshLambertMaterial({ color: 0xFAEDCD }),
-  catSpot: new THREE.MeshLambertMaterial({ color: 0xCB997E }),
-  birdBlue: new THREE.MeshLambertMaterial({ color: 0x48CAE4 }),
-  birdBeak: new THREE.MeshLambertMaterial({ color: 0xFAA307 }),
-  lampPost: new THREE.MeshLambertMaterial({ color: 0x242A35 }),
-  lampGlow: new THREE.MeshBasicMaterial({ color: 0xFFE082 }),
-  cloud: new THREE.MeshLambertMaterial({ color: 0xFCFCFC, transparent: true, opacity: 0.95 }),
-  oilStain: new THREE.MeshLambertMaterial({ color: 0x14181E, transparent: true, opacity: 0.7 }),
-  trashGreen: new THREE.MeshLambertMaterial({ color: 0x2D6A4F }),
-  airTowerBlue: new THREE.MeshLambertMaterial({ color: 0x1D3557 }),
-  fireRed: new THREE.MeshLambertMaterial({ color: 0xE63946 })
-};
 
 function buildDiorama() {
   const diorama = new THREE.Group();
 
   // 1. Extended Island Ground Base (80x80 Floating Neo-Brutalist Diorama)
   const grassGeo = new THREE.BoxGeometry(80, 1.5, 80);
-  const grassMesh = new THREE.Mesh(grassGeo, Mat.grass);
-  grassMesh.position.y = -0.75;
-  grassMesh.receiveShadow = true;
-  diorama.add(grassMesh);
+  islandGrassMesh = new THREE.Mesh(grassGeo, Mat.grass);
+  islandGrassMesh.position.y = -0.75;
+  islandGrassMesh.receiveShadow = true;
+  diorama.add(islandGrassMesh);
 
   // Stepped Earth Soil Layer
   const dirtGeo = new THREE.BoxGeometry(80, 2.2, 80);
-  const dirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
-  dirtMesh.position.y = -2.6;
-  diorama.add(dirtMesh);
+  islandDirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
+  islandDirtMesh.position.y = -2.6;
+  diorama.add(islandDirtMesh);
 
   // Dark Ink Floating Base Rim Slab
   const baseSlabGeo = new THREE.BoxGeometry(82, 0.6, 82);
-  const baseSlab = new THREE.Mesh(baseSlabGeo, Mat.darkInk);
-  baseSlab.position.y = -3.8;
-  diorama.add(baseSlab);
+  islandSlabMesh = new THREE.Mesh(baseSlabGeo, Mat.darkInk);
+  islandSlabMesh.position.y = -3.8;
+  diorama.add(islandSlabMesh);
 
   // 2. Asphalt Highway Road (80 Units Full Width)
   const roadGeo = new THREE.BoxGeometry(80, 0.06, 7.5);
@@ -504,136 +644,73 @@ function buildDiorama() {
     diorama.add(line1, line2);
   }
 
-  // White Pedestrian Crosswalk (Zebra Stripes)
-  for (let z = 8.4; z <= 14.6; z += 1.1) {
-    const stripe = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.02, 0.6), Mat.roadWhite);
-    stripe.position.set(-2, 0.07, z);
-    diorama.add(stripe);
-  }
+  // 3. Station Concrete Forecourt Apron
+  const apronGeo = new THREE.BoxGeometry(22, 0.08, 18);
+  const apronMesh = new THREE.Mesh(apronGeo, Mat.concrete);
+  apronMesh.position.set(0, 0.04, 0);
+  apronMesh.receiveShadow = true;
+  diorama.add(apronMesh);
 
-  // 3. Station Concrete Forecourt (Spacious 30x18)
-  const forecourtGeo = new THREE.BoxGeometry(30, 0.08, 18);
-  const forecourt = new THREE.Mesh(forecourtGeo, Mat.concrete);
-  forecourt.position.set(0, 0.04, 1);
-  forecourt.receiveShadow = true;
-  diorama.add(forecourt);
+  // Forecourt Driveway Curb Trim
+  const curbGeo = new THREE.BoxGeometry(22.4, 0.14, 0.3);
+  const curbFront = new THREE.Mesh(curbGeo, Mat.darkInk);
+  curbFront.position.set(0, 0.07, 7.8);
+  diorama.add(curbFront);
 
-  // Asphalt Oil Drop / Tire Mark Decals under each pump slot
-  pumpSlots.forEach(slot => {
-    const oil = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.01, 2.2), Mat.oilStain);
-    oil.position.set(slot.pos.x, 0.09, slot.pos.z);
-    diorama.add(oil);
-  });
+  // Oil Stains on Station Forecourt
+  const stain1 = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.01, 8), Mat.oilStain);
+  stain1.position.set(-4, 0.09, -2);
+  const stain2 = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.01, 8), Mat.oilStain);
+  stain2.position.set(4, 0.09, 4);
+  diorama.add(stain1, stain2);
 
-  // 4. BenelOil 2-Story Main Building (Shop & Office)
-  const building = new THREE.Group();
-  building.position.set(-6.5, 0, -8.5);
+  // 4. Main Minimarket Building
+  const shopGroup = new THREE.Group();
+  const shopBody = new THREE.Mesh(new THREE.BoxGeometry(10, 4.2, 5.5), Mat.buildingWall);
+  shopBody.position.set(0, 2.1, -9.5);
+  shopBody.castShadow = true;
+  shopBody.receiveShadow = true;
+  shopGroup.add(shopBody);
 
-  // Ground Floor
-  const bldgBase = new THREE.Mesh(new THREE.BoxGeometry(10, 3.2, 7), Mat.buildingWall);
-  bldgBase.position.y = 1.6;
-  bldgBase.castShadow = true;
-  bldgBase.receiveShadow = true;
-  building.add(bldgBase);
+  // Shop Flat Roof Trim
+  const shopRoof = new THREE.Mesh(new THREE.BoxGeometry(10.6, 0.4, 6.1), Mat.buildingRoof);
+  shopRoof.position.set(0, 4.3, -9.5);
+  shopRoof.castShadow = true;
+  shopGroup.add(shopRoof);
 
-  // Top Floor / Roof Parapet
-  const bldgRoof = new THREE.Mesh(new THREE.BoxGeometry(10.4, 0.4, 7.4), Mat.buildingRoof);
-  bldgRoof.position.y = 3.3;
-  bldgRoof.castShadow = true;
-  building.add(bldgRoof);
+  // Red Parapet Accent Strip
+  const shopTrim = new THREE.Mesh(new THREE.BoxGeometry(10.4, 0.25, 0.1), Mat.redTrim);
+  shopTrim.position.set(0, 4.0, -6.4);
+  shopGroup.add(shopTrim);
 
-  // Shop Glass Windows & Door
-  const winGeo = new THREE.BoxGeometry(2.4, 1.8, 0.2);
-  const win1 = new THREE.Mesh(winGeo, Mat.glass);
-  win1.position.set(-2.5, 1.4, 3.52);
-  const win2 = new THREE.Mesh(winGeo, Mat.glass);
-  win2.position.set(2.5, 1.4, 3.52);
-  const door = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.4, 0.2), Mat.glass);
-  door.position.set(0, 1.2, 3.52);
-  building.add(win1, win2, door);
+  // Large Front Showcase Windows
+  const win1 = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.6, 0.1), Mat.glass);
+  win1.position.set(-2.5, 1.8, -6.7);
+  const win2 = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.6, 0.1), Mat.glass);
+  win2.position.set(2.5, 1.8, -6.7);
+  shopGroup.add(win1, win2);
 
-  // Red Shop Awning
-  const awning = new THREE.Mesh(new THREE.BoxGeometry(9.6, 0.3, 1.8), Mat.redTrim);
-  awning.position.set(0, 2.5, 4.3);
-  awning.rotation.x = 0.15;
-  awning.castShadow = true;
-  building.add(awning);
+  // Entrance Double Sliding Doors
+  const doorGeo = new THREE.BoxGeometry(1.6, 2.6, 0.12);
+  const doorMesh = new THREE.Mesh(doorGeo, Mat.darkInk);
+  doorMesh.position.set(0, 1.8, -6.68);
+  shopGroup.add(doorMesh);
 
-  // Rooftop AC Compressors & Ducts
-  const ac1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 1.2), Mat.concrete);
-  ac1.position.set(-2, 3.9, -1);
-  ac1.castShadow = true;
-  const ac2 = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.7, 1.8), Mat.darkInk);
-  ac2.position.set(2, 3.8, 1);
-  ac2.castShadow = true;
-  building.add(ac1, ac2);
+  // Minimarket Roof Signboard
+  const signGeo = new THREE.BoxGeometry(5.2, 1.1, 0.2);
+  const signMesh = new THREE.Mesh(signGeo, Mat.redTrim);
+  signMesh.position.set(0, 4.9, -6.4);
+  shopGroup.add(signMesh);
 
-  // Shop Interior Warm Glow Light (Night)
-  shopInteriorLight = new THREE.PointLight(0xFFE5A0, 0, 12);
-  shopInteriorLight.position.set(0, 2.0, 1.5);
-  building.add(shopInteriorLight);
-  nightLights.push({ light: shopInteriorLight, targetIntensity: 1.2 });
+  // Warm Shop Interior Glow Light
+  shopInteriorLight = new THREE.PointLight(0xFFE082, 0.9, 14);
+  shopInteriorLight.position.set(0, 2.5, -8);
+  nightLights.push({ light: shopInteriorLight, targetIntensity: 0.9 });
+  shopGroup.add(shopInteriorLight);
 
-  diorama.add(building);
+  diorama.add(shopGroup);
 
-  // 5. Open-Air Roadside Price Totem Sign
-  const totem = new THREE.Group();
-  totem.position.set(-10, 0, 8);
-
-  const totemPost = new THREE.Mesh(new THREE.BoxGeometry(0.8, 5.2, 0.8), Mat.darkInk);
-  totemPost.position.y = 2.6;
-  totemPost.castShadow = true;
-  totem.add(totemPost);
-
-  const initialCanvas = updateTotemSign();
-  totemSignTex = new THREE.CanvasTexture(initialCanvas);
-  const signMat = new THREE.MeshBasicMaterial({ map: totemSignTex });
-  const signBoard = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.4, 0.3), signMat);
-  signBoard.position.set(0, 4.0, 0);
-  signBoard.castShadow = true;
-  totem.add(signBoard);
-
-  totemGlowLight = new THREE.PointLight(0xFF4545, 0, 8);
-  totemGlowLight.position.set(0, 4.0, 1.0);
-  totem.add(totemGlowLight);
-  nightLights.push({ light: totemGlowLight, targetIntensity: 0.8 });
-
-  diorama.add(totem);
-
-  // 6. Fuel Storage Tanks (Vertical Cylinders)
-  const tankGroup = new THREE.Group();
-  tankGroup.position.set(8.5, 0, -8.5);
-
-  const tankSpecs = [
-    { name: 'Benzin', x: -2.2, color: Mat.redTrim },
-    { name: 'Dizel',  x: 0,    color: Mat.greenAccent },
-    { name: 'LPG',    x: 2.2,  color: Mat.orangeAccent }
-  ];
-
-  tankSpecs.forEach(t => {
-    const cylGeo = new THREE.CylinderGeometry(0.9, 0.9, 3.6, 16);
-    const cyl = new THREE.Mesh(cylGeo, Mat.metalTank);
-    cyl.position.set(t.x, 2.0, 0);
-    cyl.castShadow = true;
-
-    const bandGeo = new THREE.CylinderGeometry(0.92, 0.92, 0.5, 16);
-    const band = new THREE.Mesh(bandGeo, t.color);
-    band.position.set(t.x, 2.8, 0);
-
-    const domeGeo = new THREE.SphereGeometry(0.9, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-    const dome = new THREE.Mesh(domeGeo, Mat.metalTank);
-    dome.position.set(t.x, 3.8, 0);
-
-    tankGroup.add(cyl, band, dome);
-  });
-
-  const pipe = new THREE.Mesh(new THREE.BoxGeometry(5.5, 0.2, 0.2), Mat.chrome);
-  pipe.position.set(0, 3.2, 1.1);
-  tankGroup.add(pipe);
-
-  diorama.add(tankGroup);
-
-  // 7. Interactive Pump Islands
+  // 5. Fuel Pump Islands (Initial 2 Pumps)
   pumpSlots.forEach(slot => {
     const pumpMesh = createPumpMesh(slot.id);
     pumpMesh.position.copy(slot.pos);
@@ -641,283 +718,287 @@ function buildDiorama() {
     diorama.add(pumpMesh);
   });
 
-  // 8. 16-Bit Street Lamps with Night Emissive Glow
-  const lamp1 = createStreetLamp();
-  lamp1.position.set(-14, 0, 7.5);
-  const lamp2 = createStreetLamp();
-  lamp2.position.set(14, 0, 7.5);
-  diorama.add(lamp1, lamp2);
+  // 6. Underground Storage Manhole Hatches
+  const hatchGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.04, 12);
+  const hatchBenzin = new THREE.Mesh(hatchGeo, Mat.redTrim);
+  hatchBenzin.position.set(-8, 0.08, -5);
+  const hatchDizel = new THREE.Mesh(hatchGeo, Mat.greenAccent);
+  hatchDizel.position.set(-8, 0.08, -3.5);
+  const hatchLpg = new THREE.Mesh(hatchGeo, Mat.orangeAccent);
+  hatchLpg.position.set(-8, 0.08, -2);
+  diorama.add(hatchBenzin, hatchDizel, hatchLpg);
 
-  // 9. Flora: Voxel Flower Planters & Decorative Bushes
-  const planter1 = createFlowerBox(3.6);
-  planter1.position.set(-3.5, 0, -4.8);
-  const planter2 = createFlowerBox(3.6);
-  planter2.position.set(-9.5, 0, -4.8);
-  diorama.add(planter1, planter2);
+  // 7. Highway LED Price Totem Sign
+  const totem = createTotemMesh();
+  totem.position.set(-10, 0, 8.5);
+  diorama.add(totem);
 
-  // Perimeter Hedge Bushes
-  const bushPositions = [
-    [-18, 0, -18], [-12, 0, -18], [12, 0, -18], [18, 0, -18],
-    [-19, 0, 14], [19, 0, 14], [-20, 0, -2], [20, 0, -2]
-  ];
-  bushPositions.forEach(bp => {
-    const bush = createVoxelBush();
-    bush.position.set(...bp);
-    diorama.add(bush);
-  });
+  // 8. Station Perimeters, Rocks, Hills & Pine Trees
+  buildPerimeterFloraAndTerrain(diorama);
 
-  // 10. Station Furniture: Bench, Trash Can, Air/Water Tower, Fire Safety
+  // 9. Foreground Living Props & Animals
   const bench = createParkBench();
-  bench.position.set(11.5, 0, -5.5);
-  bench.rotation.y = -Math.PI / 6;
+  bench.position.set(-6.5, 0.04, -7.5);
+  bench.rotation.y = Math.PI / 4;
+  diorama.add(bench);
 
-  const trash = createTrashBin();
-  trash.position.set(-11.5, 0, -4.8);
+  const bin = createTrashBin();
+  bin.position.set(-4.8, 0.04, -7.2);
+  diorama.add(bin);
 
-  const airWater = createAirWaterStation();
-  airWater.position.set(-12.5, 0, 3.0);
-  airWater.rotation.y = Math.PI / 4;
+  const airTower = createAirWaterStation();
+  airTower.position.set(8.5, 0.04, -5);
+  diorama.add(airTower);
 
-  const fireBox = createFireCabinet();
-  fireBox.position.set(9.0, 0, -4.5);
+  const fireCab = createFireCabinet();
+  fireCab.position.set(8.5, 0.04, -8);
+  diorama.add(fireCab);
 
-  diorama.add(bench, trash, airWater, fireBox);
-
-  // 11. Fauna: Sleeping Dog (Karabaş), Cat, Perched Birds
+  // Cozy Fauna
   dogMesh = createDogMesh();
-  dogMesh.position.set(-2.0, 0.05, -4.8);
+  dogMesh.position.set(5.5, 0.04, -7.2);
   diorama.add(dogMesh);
 
   catMesh = createCatMesh();
-  catMesh.position.set(13.0, 0.05, -9.0);
-  catMesh.rotation.y = -Math.PI / 4;
+  catMesh.position.set(0.2, 4.5, -9.5); // Resting on shop roof
   diorama.add(catMesh);
 
-  const bird1 = createBirdMesh();
-  bird1.position.set(-10.5, 3.5, -5.2);
-  const bird2 = createBirdMesh();
-  bird2.position.set(15.0, 4.8, -5.5);
-  birds.push(bird1, bird2);
-  diorama.add(bird1, bird2);
-
-  // 12. Floating 16-Bit Voxel Sky Clouds (Broad Coverage)
-  const cloudPositions = [
-    [-32, 24, -26], [-16, 26, 8], [6, 23, -20], [26, 25, 16],
-    [-8, 27, 28], [34, 24, -30], [-28, 25, 20], [20, 26, -12]
+  // Roaming Sheep in Grassy Meadow
+  const sheepPos = [
+    new THREE.Vector3(-22, 0.04, -18),
+    new THREE.Vector3(-26, 0.04, -12),
+    new THREE.Vector3(24, 0.04, -20),
+    new THREE.Vector3(28, 0.04, -14)
   ];
-  cloudPositions.forEach(cp => {
+  sheepPos.forEach(sp => {
+    const s = new Sheep(sp);
+    sheepList.push(s);
+    diorama.add(s.mesh);
+  });
+
+  // Perched Bluebirds
+  for (let i = 0; i < 4; i++) {
+    const bird = createBirdMesh();
+    bird.position.set(-7 + i * 4.5, 4.5, -6.4);
+    birds.push(bird);
+    diorama.add(bird);
+  }
+
+  // 10. Drifting Low-Poly Clouds
+  for (let c = 0; c < 8; c++) {
     const cloud = createVoxelCloud();
-    cloud.position.set(...cp);
+    cloud.position.set(
+      -36 + Math.random() * 72,
+      18 + Math.random() * 8,
+      -36 + Math.random() * 72
+    );
     clouds.push(cloud);
     scene.add(cloud);
-  });
+  }
 
-  // 13. Natural Rock Clusters & Low-Poly Grass Hill Mounds
-  const rockPositions = [
-    [-30, 0, -28], [-24, 0, 24], [28, 0, -26], [32, 0, 22],
-    [-32, 0, -5], [30, 0, 5], [-12, 0, 28], [14, 0, 28],
-    [-36, 0, 14], [35, 0, -12]
-  ];
-  rockPositions.forEach(rp => {
-    const rock = createRockCluster();
-    rock.position.set(...rp);
-    diorama.add(rock);
-  });
-
-  const hillPositions = [
-    [-28, 0, -22, 12, 0.9, 10],
-    [26, 0, -24, 14, 1.2, 11],
-    [-26, 0, 24, 11, 0.8, 9],
-    [28, 0, 22, 13, 1.0, 10],
-    [0, 0, -32, 16, 1.1, 8]
-  ];
-  hillPositions.forEach(hp => {
-    const hill = createGrassMound(hp[3], hp[4], hp[5]);
-    hill.position.set(hp[0], 0, hp[2]);
-    diorama.add(hill);
-  });
-
-  // 14. Expanded Perimeter Pine Trees (26 Trees with Wind Sway)
-  const treePositions = [
-    // North outer & hills
-    [-34, 0, -32], [-26, 0, -34], [-18, 0, -30], [-10, 0, -33], [0, 0, -34],
-    [10, 0, -34], [18, 0, -30], [28, 0, -33], [34, 0, -28],
-    // West outer
-    [-35, 0, -20], [-34, 0, -10], [-36, 0, 0], [-34, 0, 12], [-32, 0, 22], [-35, 0, 32],
-    // East outer
-    [34, 0, -18], [35, 0, -8], [33, 0, 2], [36, 0, 14], [34, 0, 24], [35, 0, 32],
-    // South outer road sides
-    [-24, 0, 30], [-14, 0, 32], [12, 0, 31], [22, 0, 30],
-    // Inner accents
-    [-18, 0, -14], [16, 0, -14]
-  ];
-  treePositions.forEach((p, idx) => {
-    const tree = createLowPolyTree(idx);
-    tree.position.set(...p);
-    diorama.add(tree);
-  });
-
-  // 15. Initialize Background Highway Bypass Traffic
+  // Initialize Background Traffic
   initBypassTraffic();
 
   scene.add(diorama);
 }
 
 // ---------------------------------------------------------
-// Helper Creators for Props, Flora, Fauna & Street Furniture
+// Procedural Props, Plants & Rocks
 // ---------------------------------------------------------
 
 function createPumpMesh(id) {
-  const pump = new THREE.Group();
-  pump.userData = { isPump: true, pumpId: id };
+  const pumpGroup = new THREE.Group();
+  pumpGroup.userData = { isPump: true, pumpId: id };
 
-  // Concrete Island Base
-  const base = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.25, 4.2), Mat.concrete);
-  base.position.y = 0.125;
-  base.receiveShadow = true;
-  pump.add(base);
+  // Concrete Island Curb Slab
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 1.4), Mat.concrete);
+  slab.position.y = 0.175;
+  slab.castShadow = true;
+  slab.receiveShadow = true;
+  slab.userData = { isPump: true, pumpId: id };
+  pumpGroup.add(slab);
 
-  // Dispenser Body
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.8, 1.4), Mat.buildingWall);
-  body.position.y = 1.05;
+  // Dual Yellow Protective Bollards
+  const bollardGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.8, 8);
+  const b1 = new THREE.Mesh(bollardGeo, Mat.roadYellow);
+  b1.position.set(-1.0, 0.4, 0);
+  const b2 = new THREE.Mesh(bollardGeo, Mat.roadYellow);
+  b2.position.set(1.0, 0.4, 0);
+  pumpGroup.add(b1, b2);
+
+  // Pump Main Pillar Body
+  const body = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.9, 0.7), Mat.buildingWall);
+  body.position.y = 1.1;
   body.castShadow = true;
   body.userData = { isPump: true, pumpId: id };
-  pump.add(body);
+  pumpGroup.add(body);
 
-  // Red Side Trim
-  const side1 = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.2), Mat.redTrim);
-  side1.position.set(0, 1.05, -0.65);
-  const side2 = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.85, 0.2), Mat.redTrim);
-  side2.position.set(0, 1.05, 0.65);
-  pump.add(side1, side2);
+  // Red Header Trim
+  const header = new THREE.Mesh(new THREE.BoxGeometry(1.24, 0.35, 0.74), Mat.redTrim);
+  header.position.y = 1.9;
+  header.userData = { isPump: true, pumpId: id };
+  pumpGroup.add(header);
 
-  // Glowing LCD Screen
-  const lcd = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.45, 0.7), new THREE.MeshBasicMaterial({ color: 0x0C1610 }));
-  lcd.position.set(0, 1.3, 0);
-  pump.add(lcd);
+  // Digital LCD Dispenser Screen
+  const lcd = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.4, 0.05), Mat.darkInk);
+  lcd.position.set(0, 1.35, 0.36);
+  pumpGroup.add(lcd);
 
-  return pump;
+  // Fuel Hose and Nozzle Holster
+  const hoseGeo = new THREE.TorusGeometry(0.28, 0.04, 6, 12);
+  const hose = new THREE.Mesh(hoseGeo, Mat.darkInk);
+  hose.position.set(0.62, 1.0, 0);
+  hose.rotation.y = Math.PI / 2;
+  pumpGroup.add(hose);
+
+  return pumpGroup;
 }
 
-function createRockCluster() {
-  const rockGroup = new THREE.Group();
-  const r1 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.9, 0), Mat.rockGrey);
-  r1.position.set(0, 0.45, 0);
-  r1.castShadow = true;
-  r1.receiveShadow = true;
+function createTotemMesh() {
+  const totem = new THREE.Group();
 
-  const r2 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.6, 0), Mat.rockDark);
-  r2.position.set(0.8, 0.3, 0.3);
-  r2.rotation.y = 0.6;
-  r2.castShadow = true;
+  // Steel Support Pillar
+  const pole = new THREE.Mesh(new THREE.BoxGeometry(0.6, 7.0, 0.6), Mat.darkInk);
+  pole.position.y = 3.5;
+  pole.castShadow = true;
+  totem.add(pole);
 
-  const r3 = new THREE.Mesh(new THREE.DodecahedronGeometry(0.45, 0), Mat.rockGrey);
-  r3.position.set(-0.6, 0.22, 0.4);
-  r3.castShadow = true;
+  // Double Sided Billboard Box
+  const box = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.2, 0.6), Mat.redTrim);
+  box.position.y = 6.2;
+  box.castShadow = true;
+  totem.add(box);
 
-  rockGroup.add(r1, r2, r3);
-  return rockGroup;
+  // Canvas Texture for Dynamic Price Display
+  const canvas = updateTotemSign();
+  totemSignTex = new THREE.CanvasTexture(canvas);
+  const faceMat = new THREE.MeshBasicMaterial({ map: totemSignTex });
+
+  const faceFront = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 3.0), faceMat);
+  faceFront.position.set(0, 6.2, 0.31);
+  const faceBack = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 3.0), faceMat);
+  faceBack.position.set(0, 6.2, -0.31);
+  faceBack.rotation.y = Math.PI;
+  totem.add(faceFront, faceBack);
+
+  // Night Glow PointLight
+  totemGlowLight = new THREE.PointLight(0xFFE580, 0.8, 12);
+  totemGlowLight.position.set(0, 6.2, 0.8);
+  nightLights.push({ light: totemGlowLight, targetIntensity: 0.8 });
+  totem.add(totemGlowLight);
+
+  return totem;
 }
 
-function createGrassMound(w = 8, h = 0.8, d = 6) {
-  const mound = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), Mat.grassHill);
-  mound.position.y = h / 2;
+function buildPerimeterFloraAndTerrain(diorama) {
+  // Grassy Mounds & Low-Poly Terrain Hills
+  const hillPositions = [
+    [-24, 0, -22, 12, 3.0, 12],
+    [24, 0, -22, 14, 3.5, 12],
+    [-28, 0, 4, 10, 2.5, 10],
+    [28, 0, 4, 10, 2.5, 10],
+    [-20, 0, 24, 12, 2.8, 8],
+    [20, 0, 24, 12, 2.8, 8]
+  ];
+  hillPositions.forEach(([x, y, z, sx, sy, sz]) => {
+    const hill = createGrassMound(sx, sy, sz);
+    hill.position.set(x, y, z);
+    diorama.add(hill);
+  });
+
+  // Low-Poly Rock Clusters
+  const rockPositions = [
+    [-18, 0.3, -12], [-14, 0.3, 18], [16, 0.3, 18],
+    [20, 0.3, -14], [-28, 0.4, -6], [28, 0.4, -6]
+  ];
+  rockPositions.forEach(p => {
+    const rocks = createRockCluster();
+    rocks.position.set(...p);
+    diorama.add(rocks);
+  });
+
+  // Pine Trees along Island Perimeter (28 Trees)
+  const treeCoords = [
+    [-32, -30], [-26, -32], [-20, -31], [-14, -33], [-8, -32], [0, -34],
+    [8, -32], [14, -33], [20, -31], [26, -32], [32, -30],
+    [-34, -20], [-33, -10], [-34, 0], [-33, 10], [-34, 20], [-32, 28],
+    [34, -20], [33, -10], [34, 0], [33, 10], [34, 20], [32, 28],
+    [-26, 29], [-16, 28], [16, 28], [26, 29]
+  ];
+  treeCoords.forEach(([x, z], idx) => {
+    const tree = createLowPolyTree(idx);
+    tree.position.set(x, 0.04, z);
+    const scale = 0.85 + Math.random() * 0.45;
+    tree.scale.set(scale, scale, scale);
+    diorama.add(tree);
+  });
+
+  // Flower Planter Boxes around Store
+  const planter1 = createFlowerPlanter();
+  planter1.position.set(-6, 0.04, -5.8);
+  const planter2 = createFlowerPlanter();
+  planter2.position.set(6, 0.04, -5.8);
+  diorama.add(planter1, planter2);
+}
+
+function createGrassMound(sx, sy, sz) {
+  const mound = new THREE.Mesh(new THREE.ConeGeometry(sx * 0.5, sy, 7), Mat.grassHill);
+  mound.position.y = sy * 0.5;
+  mound.castShadow = true;
   mound.receiveShadow = true;
   return mound;
 }
 
-function createStreetLamp() {
-  const lamp = new THREE.Group();
-
-  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.16, 4.6, 8), Mat.lampPost);
-  post.position.y = 2.3;
-  post.castShadow = true;
-  lamp.add(post);
-
-  const arm = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.12, 0.12), Mat.lampPost);
-  arm.position.set(0.45, 4.4, 0);
-  lamp.add(arm);
-
-  const head = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.3, 8), Mat.lampPost);
-  head.position.set(0.95, 4.25, 0);
-  lamp.add(head);
-
-  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 8), Mat.lampGlow);
-  bulb.position.set(0.95, 4.15, 0);
-  lamp.add(bulb);
-
-  const light = new THREE.PointLight(0xFFE082, 0, 14);
-  light.position.set(0.95, 4.0, 0);
-  light.castShadow = false;
-  lamp.add(light);
-
-  nightLights.push({ light, bulb, targetIntensity: 1.4 });
-  return lamp;
+function createRockCluster() {
+  const group = new THREE.Group();
+  const count = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < count; i++) {
+    const rGeo = new THREE.DodecahedronGeometry(0.4 + Math.random() * 0.5, 0);
+    const rMesh = new THREE.Mesh(rGeo, Math.random() > 0.5 ? Mat.rockGrey : Mat.rockDark);
+    rMesh.position.set(
+      (Math.random() - 0.5) * 1.5,
+      0.3,
+      (Math.random() - 0.5) * 1.5
+    );
+    rMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+    rMesh.castShadow = true;
+    group.add(rMesh);
+  }
+  return group;
 }
 
-function createFlowerBox(length = 3.6) {
-  const box = new THREE.Group();
-
-  const planter = new THREE.Mesh(new THREE.BoxGeometry(length, 0.4, 0.6), Mat.planterWood);
-  planter.position.y = 0.2;
-  planter.castShadow = true;
-  box.add(planter);
-
-  const soil = new THREE.Mesh(new THREE.BoxGeometry(length - 0.1, 0.1, 0.5), Mat.dirt);
-  soil.position.y = 0.38;
-  box.add(soil);
+function createFlowerPlanter() {
+  const group = new THREE.Group();
+  const box = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.45, 0.7), Mat.planterWood);
+  box.position.y = 0.225;
+  box.castShadow = true;
+  group.add(box);
 
   const colors = [Mat.flowerRed, Mat.flowerYellow, Mat.flowerPink];
-  const count = Math.floor(length * 2.5);
-  for (let i = 0; i < count; i++) {
-    const x = -length / 2 + 0.3 + (i / count) * (length - 0.6) + (Math.random() * 0.1 - 0.05);
-    const z = (Math.random() * 0.3 - 0.15);
-
-    const stem = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.25, 0.04), Mat.flowerStem);
-    stem.position.set(x, 0.5, z);
-
-    const bloom = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.16), colors[i % colors.length]);
-    bloom.position.set(x, 0.65, z);
-    bloom.castShadow = true;
-
-    box.add(stem, bloom);
+  for (let i = -0.9; i <= 0.9; i += 0.45) {
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.35, 5), Mat.flowerStem);
+    stem.position.set(i, 0.55, 0);
+    const blossom = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.18), colors[Math.floor(Math.random() * colors.length)]);
+    blossom.position.set(i, 0.75, 0);
+    group.add(stem, blossom);
   }
-  return box;
-}
-
-function createVoxelBush() {
-  const bush = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.2, 1.6), Mat.foliage);
-  base.position.y = 0.6;
-  base.castShadow = true;
-
-  const top = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.8, 1.2), Mat.foliageDark);
-  top.position.y = 1.2;
-  top.castShadow = true;
-
-  bush.add(base, top);
-  return bush;
+  return group;
 }
 
 function createParkBench() {
   const bench = new THREE.Group();
-
-  // Iron legs
   const leg1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.8), Mat.benchIron);
   leg1.position.set(-0.8, 0.3, 0);
   const leg2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.6, 0.8), Mat.benchIron);
   leg2.position.set(0.8, 0.3, 0);
   bench.add(leg1, leg2);
 
-  // Wooden seat slats
   for (let z = -0.3; z <= 0.3; z += 0.2) {
     const slat = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.06, 0.14), Mat.benchWood);
     slat.position.set(0, 0.6, z);
     slat.castShadow = true;
     bench.add(slat);
   }
-
-  // Wooden backrest slats
   for (let y = 0.8; y <= 1.2; y += 0.2) {
     const back = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.14, 0.06), Mat.benchWood);
     back.position.set(0, y, -0.35);
@@ -932,7 +1013,6 @@ function createTrashBin() {
   const body = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.3, 0.9, 10), Mat.trashGreen);
   body.position.y = 0.45;
   body.castShadow = true;
-
   const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.15, 10), Mat.darkInk);
   lid.position.y = 0.95;
   bin.add(body, lid);
@@ -941,7 +1021,6 @@ function createTrashBin() {
 
 function createAirWaterStation() {
   const station = new THREE.Group();
-
   const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.5), Mat.airTowerBlue);
   pillar.position.y = 0.9;
   pillar.castShadow = true;
@@ -963,7 +1042,6 @@ function createAirWaterStation() {
 
 function createFireCabinet() {
   const cab = new THREE.Group();
-
   const box = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.2, 0.45), Mat.fireRed);
   box.position.y = 0.6;
   box.castShadow = true;
@@ -980,18 +1058,15 @@ function createFireCabinet() {
 
 function createDogMesh() {
   const dog = new THREE.Group();
-
   const rug = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.04, 1.2), Mat.dogMat);
   rug.position.y = 0.02;
   dog.add(rug);
 
-  // Sleeping body
   const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.6), Mat.dogFur);
   body.position.set(0, 0.25, 0);
   body.castShadow = true;
   dog.add(body);
 
-  // Head resting
   const head = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 0.4), Mat.dogFur);
   head.position.set(0.5, 0.22, 0.1);
   head.castShadow = true;
@@ -1013,7 +1088,6 @@ function createDogMesh() {
 
 function createCatMesh() {
   const cat = new THREE.Group();
-
   const body = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.35, 0.5), Mat.catFur);
   body.position.y = 0.2;
   body.castShadow = true;
@@ -1037,7 +1111,6 @@ function createCatMesh() {
 
 function createBirdMesh() {
   const bird = new THREE.Group();
-
   const body = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.18, 0.3), Mat.birdBlue);
   body.position.y = 0.12;
   body.castShadow = true;
@@ -1054,10 +1127,64 @@ function createBirdMesh() {
   return bird;
 }
 
+class Sheep {
+  constructor(pos) {
+    this.pos = pos;
+    this.mesh = this.buildMesh();
+    this.mesh.position.copy(pos);
+    this.targetPos = pos.clone();
+    this.walkTimer = 0;
+    this.grazeTimer = 2 + Math.random() * 4;
+    this.isWalking = false;
+  }
+
+  buildMesh() {
+    const sheep = new THREE.Group();
+    const wool = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 1.4), new THREE.MeshLambertMaterial({ color: 0xF8F9FA }));
+    wool.position.y = 0.65;
+    wool.castShadow = true;
+    sheep.add(wool);
+
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.6), Mat.darkInk);
+    head.position.set(0, 0.9, 0.85);
+    head.castShadow = true;
+    sheep.add(head);
+
+    const legGeo = new THREE.BoxGeometry(0.18, 0.45, 0.18);
+    [[-0.35, 0.22, -0.4], [0.35, 0.22, -0.4], [-0.35, 0.22, 0.4], [0.35, 0.22, 0.4]].forEach(lp => {
+      const leg = new THREE.Mesh(legGeo, Mat.darkInk);
+      leg.position.set(...lp);
+      sheep.add(leg);
+    });
+    return sheep;
+  }
+
+  update(delta, time) {
+    this.grazeTimer -= delta;
+    if (this.grazeTimer <= 0) {
+      this.grazeTimer = 5 + Math.random() * 7;
+      this.isWalking = Math.random() > 0.4;
+      if (this.isWalking) {
+        this.targetPos.set(
+          this.pos.x + (Math.random() - 0.5) * 8,
+          0.04,
+          this.pos.z + (Math.random() - 0.5) * 8
+        );
+      }
+    }
+    if (this.isWalking) {
+      this.mesh.position.lerp(this.targetPos, 0.02);
+      const angle = Math.atan2(this.targetPos.x - this.mesh.position.x, this.targetPos.z - this.mesh.position.z);
+      this.mesh.rotation.y = angle;
+    } else {
+      this.mesh.rotation.x = Math.sin(time * 2.5) * 0.06;
+    }
+  }
+}
+
 function createVoxelCloud() {
   const cloud = new THREE.Group();
   const count = 5 + Math.floor(Math.random() * 4);
-
   for (let i = 0; i < count; i++) {
     const sx = 2.0 + Math.random() * 2.5;
     const sy = 1.2 + Math.random() * 1.0;
@@ -1070,7 +1197,7 @@ function createVoxelCloud() {
     );
     cloud.add(box);
   }
-  cloud.userData = { speed: 0.4 + Math.random() * 0.4 };
+  cloud.userData = { speed: 0.35 + Math.random() * 0.35 };
   return cloud;
 }
 
@@ -1078,13 +1205,11 @@ function createLowPolyTree(id = 0) {
   const tree = new THREE.Group();
   tree.userData = { treeId: id };
 
-  // Trunk
   const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.0, 0.7), Mat.wood);
   trunk.position.y = 1.0;
   trunk.castShadow = true;
   tree.add(trunk);
 
-  // Foliage Crown Group for Wind Sway
   const crown = new THREE.Group();
   crown.position.y = 2.0;
 
@@ -1108,8 +1233,131 @@ function createLowPolyTree(id = 0) {
   return tree;
 }
 
+// ---------------------------------------------------------
+// Dynamic 3D Upgrades (Car Wash, Market, Solar, Turbine, EV)
+// ---------------------------------------------------------
+
+function spawnCarWashMesh() {
+  if (carWashGroup) return;
+  carWashGroup = new THREE.Group();
+  carWashGroup.position.set(16, 0.04, -2);
+
+  // Tunnel Frame
+  const arch = new THREE.Mesh(new THREE.BoxGeometry(5.0, 3.8, 8.0), Mat.blueAccent);
+  arch.position.y = 1.9;
+  arch.castShadow = true;
+  carWashGroup.add(arch);
+
+  // Hollow Tunnel Cutout
+  const tunnelHole = new THREE.Mesh(new THREE.BoxGeometry(3.6, 3.2, 8.2), Mat.darkInk);
+  tunnelHole.position.y = 1.6;
+  carWashGroup.add(tunnelHole);
+
+  // Rotating Washing Brushes
+  const brushGeo = new THREE.CylinderGeometry(0.7, 0.7, 3.2, 8);
+  const brushMat = new THREE.MeshLambertMaterial({ color: 0x00E5FF });
+  const b1 = new THREE.Mesh(brushGeo, brushMat);
+  b1.position.set(-1.2, 1.6, 0);
+  const b2 = new THREE.Mesh(brushGeo, brushMat);
+  b2.position.set(1.2, 1.6, 0);
+  carWashGroup.add(b1, b2);
+
+  scene.add(carWashGroup);
+}
+
+function spawnMarketBayMesh() {
+  if (marketBayGroup) return;
+  marketBayGroup = new THREE.Group();
+  marketBayGroup.position.set(-14, 0.04, -8);
+
+  const bay = new THREE.Mesh(new THREE.BoxGeometry(6.5, 3.6, 5.0), Mat.buildingWall);
+  bay.position.y = 1.8;
+  bay.castShadow = true;
+  marketBayGroup.add(bay);
+
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.35, 5.4), Mat.greenAccent);
+  roof.position.y = 3.75;
+  marketBayGroup.add(roof);
+
+  const glassFront = new THREE.Mesh(new THREE.BoxGeometry(5.8, 2.2, 0.1), Mat.glass);
+  glassFront.position.set(0, 1.6, 2.52);
+  marketBayGroup.add(glassFront);
+
+  scene.add(marketBayGroup);
+}
+
+function spawnSolarPanelsMesh() {
+  if (solarPanelsGroup) return;
+  solarPanelsGroup = new THREE.Group();
+  solarPanelsGroup.position.set(0, 4.55, -9.5);
+
+  for (let x = -3.6; x <= 3.6; x += 1.8) {
+    for (let z = -1.6; z <= 1.6; z += 1.6) {
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.08, 1.2), Mat.solarCell);
+      panel.position.set(x, 0.05, z);
+      panel.rotation.x = -0.15;
+      solarPanelsGroup.add(panel);
+    }
+  }
+  scene.add(solarPanelsGroup);
+}
+
+function spawnTurbineMesh() {
+  if (turbineGroup) return;
+  turbineGroup = new THREE.Group();
+  turbineGroup.position.set(-22, 0.04, -8);
+
+  // Mast
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 12, 8), Mat.solarFrame);
+  mast.position.y = 6.0;
+  mast.castShadow = true;
+  turbineGroup.add(mast);
+
+  // Nacelle Generator Box
+  const nacelle = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 2.2), Mat.darkInk);
+  nacelle.position.set(0, 12.2, 0);
+  turbineGroup.add(nacelle);
+
+  // 3-Blade Rotor
+  turbineRotor = new THREE.Group();
+  turbineRotor.position.set(0, 12.2, 1.2);
+  for (let i = 0; i < 3; i++) {
+    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.25, 4.2, 0.08), Mat.roadWhite);
+    blade.position.y = 2.1;
+    const holder = new THREE.Group();
+    holder.rotation.z = (i * 2 * Math.PI) / 3;
+    holder.add(blade);
+    turbineRotor.add(holder);
+  }
+  turbineGroup.add(turbineRotor);
+
+  scene.add(turbineGroup);
+}
+
+function spawnEvChargerMesh() {
+  if (evChargerGroup) return;
+  evChargerGroup = new THREE.Group();
+  evChargerGroup.position.set(-8, 0.04, 4);
+
+  // Concrete pad
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.2, 2.0), Mat.concrete);
+  pad.position.y = 0.1;
+  evChargerGroup.add(pad);
+
+  // Dual Ultra-Fast Totems
+  [-0.8, 0.8].forEach(x => {
+    const totem = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.4), Mat.darkInk);
+    totem.position.set(x, 1.0, 0);
+    const led = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.05), Mat.evGlow);
+    led.position.set(x, 1.1, 0.22);
+    evChargerGroup.add(totem, led);
+  });
+
+  scene.add(evChargerGroup);
+}
+
 // =========================================================
-// 5. PROCEDURAL CAR VEHICLE GENERATOR & AI
+// 6. PROCEDURAL CAR VEHICLE GENERATOR & PHYSICS
 // =========================================================
 
 const CAR_COLORS = [0xD64545, 0x2F6FED, 0x27A05A, 0xE8862E, 0xF5EFE0, 0x1C242B];
@@ -1125,8 +1373,9 @@ class Vehicle {
     this.state = 'APPROACHING'; // APPROACHING, PARKING, WAITING, REFUELING, DEPARTING, DONE
     this.mesh = this.buildMesh();
     this.mesh.userData = { vehicle: this };
-    this.speed = 0.18;
+    this.speed = 0.14; // Chill cruising speed
     this.progress = 0;
+    this.bounceTime = 0;
   }
 
   buildMesh() {
@@ -1193,7 +1442,7 @@ class Vehicle {
     car.add(sprite);
 
     // Start Position on highway
-    car.position.set(-18, 0, 12);
+    car.position.set(-28, 0, 11.5);
     car.rotation.y = Math.PI / 2;
     return car;
   }
@@ -1201,36 +1450,42 @@ class Vehicle {
   update() {
     if (this.state === 'APPROACHING') {
       this.mesh.position.x += this.speed * State.timeSpeed;
-      // Turn into pump area if slot available
-      if (this.targetPumpSlot && this.mesh.position.x >= this.targetPumpSlot.pos.x - 2.5) {
+      if (this.targetPumpSlot && this.mesh.position.x >= this.targetPumpSlot.pos.x - 3.2) {
         this.state = 'PARKING';
-      } else if (this.mesh.position.x > 18) {
+        this.bounceTime = 0;
+      } else if (this.mesh.position.x > 38) {
         this.destroy();
       }
     } else if (this.state === 'PARKING') {
       const targetZ = this.targetPumpSlot.pos.z + 1.8;
       const targetX = this.targetPumpSlot.pos.x;
-      this.mesh.position.x = THREE.MathUtils.lerp(this.mesh.position.x, targetX, 0.08 * State.timeSpeed);
-      this.mesh.position.z = THREE.MathUtils.lerp(this.mesh.position.z, targetZ, 0.08 * State.timeSpeed);
-      this.mesh.rotation.y = THREE.MathUtils.lerp(this.mesh.rotation.y, 0, 0.08 * State.timeSpeed);
+      this.mesh.position.x = THREE.MathUtils.lerp(this.mesh.position.x, targetX, 0.06 * State.timeSpeed);
+      this.mesh.position.z = THREE.MathUtils.lerp(this.mesh.position.z, targetZ, 0.06 * State.timeSpeed);
+      this.mesh.rotation.y = THREE.MathUtils.lerp(this.mesh.rotation.y, 0, 0.07 * State.timeSpeed);
 
-      if (Math.abs(this.mesh.position.x - targetX) < 0.1 && Math.abs(this.mesh.position.z - targetZ) < 0.1) {
+      // Soft Suspension Spring Dampening
+      this.bounceTime += 0.05 * State.timeSpeed;
+      const spring = Math.sin(this.bounceTime * 8) * Math.exp(-this.bounceTime * 3) * 0.08;
+      this.mesh.position.y = spring;
+
+      if (Math.abs(this.mesh.position.x - targetX) < 0.12 && Math.abs(this.mesh.position.z - targetZ) < 0.12) {
+        this.mesh.position.y = 0;
         this.state = 'WAITING';
         this.targetPumpSlot.occupiedBy = this;
-        showToast(`Araç #${this.targetPumpSlot.id + 1} pompasına yanaştı.`);
+        showToast(t('toast_car_docked', this.targetPumpSlot.id + 1));
         sfx.playHonk();
 
-        // If manager is hired, auto-service
+        // If manager is hired, auto-service car
         if (State.upgrades.hasManager) {
-          setTimeout(() => autoServiceCar(this), 1200 / State.timeSpeed);
+          setTimeout(() => autoServiceCar(this), 1000 / State.timeSpeed);
         }
       }
     } else if (this.state === 'DEPARTING') {
-      this.mesh.position.z = THREE.MathUtils.lerp(this.mesh.position.z, 12, 0.06 * State.timeSpeed);
-      this.mesh.position.x += this.speed * 1.2 * State.timeSpeed;
-      this.mesh.rotation.y = THREE.MathUtils.lerp(this.mesh.rotation.y, Math.PI / 2, 0.08 * State.timeSpeed);
+      this.mesh.position.z = THREE.MathUtils.lerp(this.mesh.position.z, 11.5, 0.05 * State.timeSpeed);
+      this.mesh.position.x += this.speed * 1.15 * State.timeSpeed;
+      this.mesh.rotation.y = THREE.MathUtils.lerp(this.mesh.rotation.y, Math.PI / 2, 0.07 * State.timeSpeed);
 
-      if (this.mesh.position.x > 19) {
+      if (this.mesh.position.x > 38) {
         this.destroy();
       }
     }
@@ -1247,7 +1502,6 @@ class Vehicle {
 }
 
 function spawnCar() {
-  // Find open pump
   const availableSlots = pumpSlots.slice(0, State.upgrades.pumps).filter(s => !s.occupiedBy);
   const randomFuel = FUEL_TYPES[Math.floor(Math.random() * FUEL_TYPES.length)];
   const randomColor = CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)];
@@ -1255,7 +1509,7 @@ function spawnCar() {
   const car = new Vehicle('sedan', randomFuel, randomColor);
   if (availableSlots.length > 0) {
     car.targetPumpSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
-    car.targetPumpSlot.occupiedBy = car; // reserve
+    car.targetPumpSlot.occupiedBy = car;
   }
   cars.push(car);
   scene.add(car.mesh);
@@ -1274,7 +1528,7 @@ function updateSpawner(delta) {
 }
 
 // =========================================================
-// 6. INTERACTIVE RAYCASTING & CLICK HANDLERS
+// 7. INTERACTIVE RAYCASTING & CLICK HANDLERS
 // =========================================================
 
 function onCanvasClick(event) {
@@ -1328,11 +1582,9 @@ function updateTotemSign() {
   const dP = State.tanks.dizel.price.toFixed(2);
   const lP = State.tanks.lpg.price.toFixed(2);
   const bPfx = currentLang === 'en' ? 'G' : 'B';
-  const dPfx = 'D';
-  const lPfx = 'L';
   sctx.fillText(`${bPfx} ₺${bP}`, 128, 130);
-  sctx.fillText(`${dPfx} ₺${dP}`, 128, 170);
-  sctx.fillText(`${lPfx} ₺${lP}`, 128, 210);
+  sctx.fillText(`D ₺${dP}`, 128, 170);
+  sctx.fillText(`L ₺${lP}`, 128, 210);
 
   if (totemSignTex) {
     totemSignTex.image = signCanvas;
@@ -1389,6 +1641,9 @@ function startActivePumping() {
   const fuel = State.tanks[car.fuelType];
   const unitPrice = fuel.price;
 
+  // Staff attendant speed multiplier
+  const fillRate = 1.5 * (1 + (State.staff.attendant - 1) * 0.25);
+
   const interval = setInterval(() => {
     if (!State.isPumping || !State.activeCar) {
       clearInterval(interval);
@@ -1403,14 +1658,13 @@ function startActivePumping() {
       return;
     }
 
-    State.pumpedLiters += 1.5;
-    fuel.current = Math.max(0, fuel.current - 1.5);
+    State.pumpedLiters += fillRate;
+    fuel.current = Math.max(0, fuel.current - fillRate);
     State.pumpedCost = State.pumpedLiters * unitPrice;
     sfx.playPumpTick();
     updatePumpModalLCD();
     updateHUD();
 
-    // Check stop condition
     const reachedTarget = State.targetCost === 'FULL'
       ? State.pumpedLiters >= car.reqLiters
       : State.pumpedCost >= State.targetCost;
@@ -1430,17 +1684,26 @@ function finishAndDismissCar() {
     return;
   }
   const car = State.activeCar;
-  State.money += State.pumpedCost;
-  State.totalRev += State.pumpedCost;
-  State.totalCars += 1;
+  let revenue = State.pumpedCost;
+  State.finance.fuelRev += State.pumpedCost;
+  State.finance.fuelCost += State.pumpedLiters * State.tanks[car.fuelType].cost;
 
-  // Car wash bonus if unlocked
+  // Facility additions: Car Wash (+₺45), Mini Market (+₺35)
   if (State.upgrades.hasCarWash) {
-    State.money += 80;
-    State.totalRev += 80;
+    revenue += 45;
+    State.finance.facRev += 45;
+  }
+  if (State.upgrades.hasMarket) {
+    const marketGain = 35 * State.staff.cashier;
+    revenue += marketGain;
+    State.finance.facRev += marketGain;
   }
 
-  showToast(t('toast_collected', State.pumpedCost.toFixed(2)));
+  State.money += revenue;
+  State.totalRev += revenue;
+  State.totalCars += 1;
+
+  showToast(t('toast_collected', revenue.toFixed(2)));
   sfx.playCoin();
 
   car.state = 'DEPARTING';
@@ -1448,22 +1711,37 @@ function finishAndDismissCar() {
   State.activeCar = null;
   closePumpModal();
   updateHUD();
+  updateDailyLedger();
 }
 
 function applyWindshieldWash() {
   State.money += 25;
+  State.finance.facRev += 25;
   showToast(t('toast_tip'));
   sfx.playCoin();
   updateHUD();
+  updateDailyLedger();
 }
 
 function autoServiceCar(car) {
   if (car.state !== 'WAITING') return;
   const fuel = State.tanks[car.fuelType];
   const liters = Math.min(car.reqLiters, fuel.current);
-  const cost = liters * fuel.price;
+  let cost = liters * fuel.price;
 
   fuel.current = Math.max(0, fuel.current - liters);
+  State.finance.fuelRev += cost;
+  State.finance.fuelCost += liters * fuel.cost;
+
+  if (State.upgrades.hasCarWash) {
+    cost += 45;
+    State.finance.facRev += 45;
+  }
+  if (State.upgrades.hasMarket) {
+    cost += 35 * State.staff.cashier;
+    State.finance.facRev += 35 * State.staff.cashier;
+  }
+
   State.money += cost;
   State.totalRev += cost;
   State.totalCars += 1;
@@ -1473,6 +1751,7 @@ function autoServiceCar(car) {
   car.state = 'DEPARTING';
   car.targetPumpSlot.occupiedBy = null;
   updateHUD();
+  updateDailyLedger();
 }
 
 function updatePumpModalLCD() {
@@ -1481,13 +1760,48 @@ function updatePumpModalLCD() {
 }
 
 // =========================================================
-// 7. UPGRADES, TANKER ORDERS & OFFICE LOGIC
+// 8. UPGRADES, HUBS, TABS & FINANCE
 // =========================================================
 
 function toggleModal(modalId, open) {
   const m = document.getElementById(modalId);
   if (open) m.classList.remove('hidden');
   else m.classList.add('hidden');
+}
+
+// Tab Switching (Construction Hub)
+function switchBuildTab(tabKey) {
+  const tabs = ['custom', 'fac', 'energy', 'land'];
+  tabs.forEach(tKey => {
+    const pane = document.getElementById(`build-tab-${tKey}`);
+    const btn = document.getElementById(`tab-btn-build-${tKey}`);
+    if (pane) {
+      if (tKey === tabKey) pane.classList.remove('hidden');
+      else pane.classList.add('hidden');
+    }
+    if (btn) {
+      if (tKey === tabKey) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+}
+
+// Tab Switching (Office Management Hub)
+function switchOfficeTab(tabKey) {
+  const tabs = ['finance', 'tenders', 'tariffs'];
+  tabs.forEach(tKey => {
+    const pane = document.getElementById(`office-tab-${tKey}`);
+    const btn = document.getElementById(`tab-btn-off-${tKey}`);
+    if (pane) {
+      if (tKey === tabKey) pane.classList.remove('hidden');
+      else pane.classList.add('hidden');
+    }
+    if (btn) {
+      if (tKey === tabKey) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+  updateDailyLedger();
 }
 
 // FAB Button Event Listeners
@@ -1500,6 +1814,85 @@ document.getElementById('btn-speed-toggle').addEventListener('click', () => {
   showToast(t('toast_speed', State.timeSpeed));
 });
 
+// Theme System
+function applyTheme(themeKey) {
+  State.theme = themeKey;
+  if (themeKey === 'retro') {
+    Mat.grass.color.setHex(0x8FA852);
+    Mat.buildingWall.color.setHex(0xEBD8B8);
+    Mat.redTrim.color.setHex(0xE8862E);
+    Mat.buildingRoof.color.setHex(0x735738);
+  } else if (themeKey === 'eco') {
+    Mat.grass.color.setHex(0x5B8C3E);
+    Mat.buildingWall.color.setHex(0xD5C7A3);
+    Mat.redTrim.color.setHex(0x2D6A4F);
+    Mat.buildingRoof.color.setHex(0x3C4A3E);
+  } else if (themeKey === 'cyber') {
+    Mat.grass.color.setHex(0x1E3A34);
+    Mat.buildingWall.color.setHex(0x2A313A);
+    Mat.redTrim.color.setHex(0x2F6FED);
+    Mat.buildingRoof.color.setHex(0x14181E);
+  } else {
+    // Standard Neo-Brutalist
+    Mat.grass.color.setHex(0x6FA83B);
+    Mat.buildingWall.color.setHex(0xF8F4EB);
+    Mat.redTrim.color.setHex(0xD3524B);
+    Mat.buildingRoof.color.setHex(0x48525D);
+  }
+
+  // Update badge UI
+  ['standard', 'retro', 'eco', 'cyber'].forEach(k => {
+    const badge = document.getElementById(`badge-theme-${k}`);
+    if (badge) {
+      if (k === themeKey) {
+        badge.textContent = t('btn_active');
+        badge.className = 'badge-chip green';
+      }
+    }
+  });
+  showToast(t('toast_theme_applied', themeKey.toUpperCase()));
+}
+
+function unlockOrApplyTheme(themeKey, cost) {
+  if (State.unlockedThemes.includes(themeKey)) {
+    applyTheme(themeKey);
+    return;
+  }
+  if (State.money < cost) {
+    showToast(t('toast_insufficient_funds', cost.toLocaleString()), 'error');
+    return;
+  }
+  State.money -= cost;
+  State.unlockedThemes.push(themeKey);
+  const btn = document.getElementById(`btn-theme-${themeKey}`);
+  if (btn) {
+    btn.textContent = currentLang === 'tr' ? 'Seç' : 'Select';
+    btn.className = 'neo-btn';
+  }
+  applyTheme(themeKey);
+  sfx.playCoin();
+  updateHUD();
+}
+
+function buyVisualAddon(addonKey, cost) {
+  if (State.addons[addonKey]) return;
+  if (State.money < cost) {
+    showToast(t('toast_insufficient_funds', cost.toLocaleString()), 'error');
+    return;
+  }
+  State.money -= cost;
+  State.addons[addonKey] = true;
+  State.rep = Math.min(5.0, State.rep + 0.1);
+  const btn = document.getElementById(`btn-buy-${addonKey}-addon`);
+  if (btn) {
+    btn.textContent = t('btn_bought');
+    btn.disabled = true;
+  }
+  sfx.playCoin();
+  updateHUD();
+}
+
+// Facility Purchases
 function buyPumpUpgrade() {
   if (State.upgrades.pumps >= 4) {
     showToast(t('toast_max_pumps'));
@@ -1525,6 +1918,7 @@ function buyWashUpgrade() {
   }
   State.money -= 12000;
   State.upgrades.hasCarWash = true;
+  spawnCarWashMesh();
   document.getElementById('btn-buy-wash').textContent = t('btn_bought');
   document.getElementById('btn-buy-wash').disabled = true;
   showToast(t('toast_wash_active'));
@@ -1532,6 +1926,46 @@ function buyWashUpgrade() {
   updateHUD();
 }
 
+function buyMarketUpgrade() {
+  if (State.upgrades.hasMarket) return;
+  if (State.money < 14000) {
+    showToast(t('toast_insufficient_funds', '14.000'), 'error');
+    return;
+  }
+  State.money -= 14000;
+  State.upgrades.hasMarket = true;
+  spawnMarketBayMesh();
+  document.getElementById('btn-buy-market').textContent = t('btn_bought');
+  document.getElementById('btn-buy-market').disabled = true;
+  showToast(t('toast_market_active'));
+  sfx.playCoin();
+  updateHUD();
+}
+
+// Staff Training
+function trainStaff(staffType, cost) {
+  if (State.money < cost) {
+    showToast(t('toast_insufficient_funds', cost.toLocaleString()), 'error');
+    return;
+  }
+  State.money -= cost;
+  State.staff[staffType] += 1;
+
+  if (staffType === 'manager') {
+    State.upgrades.hasManager = true;
+    showToast(t('toast_mgr_hired'));
+  } else {
+    showToast(t('toast_staff_trained', t(`staff_${staffType}`), State.staff[staffType]));
+  }
+
+  const lvlBadge = document.getElementById(`staff-lvl-${staffType}`);
+  if (lvlBadge) lvlBadge.textContent = `${currentLang === 'tr' ? 'Seviye' : 'Level'} ${State.staff[staffType]}`;
+
+  sfx.playCoin();
+  updateHUD();
+}
+
+// Energy Infrastructure
 function buySolarUpgrade() {
   if (State.upgrades.hasSolar) return;
   if (State.money < 8500) {
@@ -1540,28 +1974,146 @@ function buySolarUpgrade() {
   }
   State.money -= 8500;
   State.upgrades.hasSolar = true;
+  spawnSolarPanelsMesh();
   document.getElementById('btn-buy-solar').textContent = t('btn_bought');
   document.getElementById('btn-buy-solar').disabled = true;
+  const status = document.getElementById('energy-solar-status');
+  if (status) {
+    status.textContent = t('btn_active');
+    status.className = 'badge-chip green';
+  }
   showToast(t('toast_solar_built'));
   sfx.playCoin();
   updateHUD();
 }
 
-function buyManagerUpgrade() {
-  if (State.upgrades.hasManager) return;
-  if (State.money < 15000) {
-    showToast(t('toast_insufficient_funds', '15.000'), 'error');
+function buyTurbineUpgrade() {
+  if (State.upgrades.hasTurbine) return;
+  if (State.money < 11000) {
+    showToast(t('toast_insufficient_funds', '11.000'), 'error');
     return;
   }
-  State.money -= 15000;
-  State.upgrades.hasManager = true;
-  document.getElementById('btn-buy-manager').textContent = t('btn_working');
-  document.getElementById('btn-buy-manager').disabled = true;
-  showToast(t('toast_mgr_hired'));
+  State.money -= 11000;
+  State.upgrades.hasTurbine = true;
+  spawnTurbineMesh();
+  document.getElementById('btn-buy-turbine').textContent = t('btn_bought');
+  document.getElementById('btn-buy-turbine').disabled = true;
+  const status = document.getElementById('energy-turbine-status');
+  if (status) {
+    status.textContent = t('btn_active');
+    status.className = 'badge-chip green';
+  }
+  showToast(t('toast_turbine_built'));
   sfx.playCoin();
   updateHUD();
 }
 
+function buyEvChargerUpgrade() {
+  if (State.upgrades.hasEvCharger) return;
+  if (State.money < 18000) {
+    showToast(t('toast_insufficient_funds', '18.000'), 'error');
+    return;
+  }
+  State.money -= 18000;
+  State.upgrades.hasEvCharger = true;
+  spawnEvChargerMesh();
+  document.getElementById('btn-buy-ev-charger').textContent = t('btn_bought');
+  document.getElementById('btn-buy-ev-charger').disabled = true;
+  showToast(t('toast_ev_built'));
+  sfx.playCoin();
+  updateHUD();
+}
+
+// Land Parcel Alımı (Dinamik 3D Ada Büyütme)
+function buyLandParcel(letter, cost) {
+  const pKey = `parcel${letter}`;
+  if (State.land[pKey]) return;
+  if (State.money < cost) {
+    showToast(t('toast_insufficient_funds', cost.toLocaleString()), 'error');
+    return;
+  }
+  State.money -= cost;
+  State.land[pKey] = true;
+
+  if (letter === 'A') State.land.size = 100;
+  else if (letter === 'B') State.land.size = 115;
+  else if (letter === 'C') State.land.size = 130;
+
+  // Resize Island 3D Base Meshes
+  const s = State.land.size / 80;
+  if (islandGrassMesh) islandGrassMesh.scale.set(s, 1, s);
+  if (islandDirtMesh) islandDirtMesh.scale.set(s, 1, s);
+  if (islandSlabMesh) islandSlabMesh.scale.set(s, 1, s);
+
+  const badge = document.getElementById(`badge-parcel-${letter.toLowerCase()}`);
+  if (badge) {
+    badge.textContent = t('btn_bought');
+    badge.className = 'badge-chip green';
+  }
+  const btn = document.getElementById(`btn-buy-parcel-${letter.toLowerCase()}`);
+  if (btn) btn.disabled = true;
+
+  showToast(t('toast_land_expanded', letter));
+  sfx.playCoin();
+  updateHUD();
+}
+
+// Finance & Tenders
+function takeBankLoan() {
+  State.money += 25000;
+  State.finance.loan += 25000;
+  showToast(t('toast_loan_taken'));
+  sfx.playCoin();
+  updateHUD();
+  updateDailyLedger();
+}
+
+function signContract(tenderKey, collateral) {
+  if (State.contracts[tenderKey]) return;
+  if (State.money < collateral) {
+    showToast(t('toast_insufficient_funds', collateral.toLocaleString()), 'error');
+    return;
+  }
+  State.money -= collateral;
+  State.contracts[tenderKey] = true;
+  const badge = document.getElementById(`badge-tender-${tenderKey}`);
+  if (badge) {
+    badge.textContent = t('btn_active');
+    badge.className = 'badge-chip green';
+  }
+  const btn = document.getElementById(`btn-sign-${tenderKey}`);
+  if (btn) btn.disabled = true;
+
+  showToast(t('toast_tender_signed', tenderKey.toUpperCase()));
+  sfx.playCoin();
+  updateHUD();
+  updateDailyLedger();
+}
+
+function updateDailyLedger() {
+  const fRev = document.getElementById('ledger-fuel-rev');
+  const fCost = document.getElementById('ledger-fuel-cost');
+  const facRev = document.getElementById('ledger-fac-rev');
+  const sal = document.getElementById('ledger-salaries');
+  const enrg = document.getElementById('ledger-energy');
+  const net = document.getElementById('ledger-net-profit');
+
+  // Compute daily salaries
+  State.finance.salaries = (State.staff.attendant * 120) + (State.staff.cashier * 140) + (State.staff.manager * 250);
+  if (State.upgrades.hasTurbine) State.finance.energyNet = 180 * 24;
+
+  const netVal = (State.finance.fuelRev + State.finance.facRev + State.finance.energyNet) - (State.finance.fuelCost + State.finance.salaries);
+  State.finance.netProfit = netVal;
+
+  if (fRev) fRev.textContent = `+ ₺ ${State.finance.fuelRev.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
+  if (fCost) fCost.textContent = `- ₺ ${State.finance.fuelCost.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
+  if (facRev) facRev.textContent = `+ ₺ ${State.finance.facRev.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
+  if (sal) sal.textContent = `- ₺ ${State.finance.salaries.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
+  if (enrg) enrg.textContent = `+ ₺ ${State.finance.energyNet.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
+  if (net) net.textContent = `₺ ${netVal.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
+}
+
+// Tanker Orders
 function adjustOrderQty(fuelKey, delta) {
   const qty = State.orderQtys[fuelKey] + delta;
   if (qty < 500 || qty > 4000) return;
@@ -1610,7 +2162,7 @@ function adjustPrice(fuelKey, delta) {
 }
 
 // =========================================================
-// 8. BACKGROUND HIGHWAY TRAFFIC & 16-BIT PARTICLES
+// 9. BACKGROUND HIGHWAY TRAFFIC & 16-BIT PARTICLES
 // =========================================================
 
 class BypassVehicle {
@@ -1643,7 +2195,6 @@ class BypassVehicle {
       cabin.position.set(0, 0.9, 0.9);
       group.add(body, cabin);
     } else {
-      // Commuter Bus
       const body = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.5, 5.0), bodyMat);
       body.position.y = 1.0;
       body.castShadow = true;
@@ -1652,7 +2203,6 @@ class BypassVehicle {
       group.add(body, win);
     }
 
-    // Wheels
     const wMat = Mat.darkInk;
     const w1 = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.2, 8), wMat);
     w1.rotation.z = Math.PI / 2;
@@ -1672,7 +2222,7 @@ class BypassVehicle {
   }
 
   reset() {
-    this.speed = 10 + Math.random() * 8; // units per sec
+    this.speed = 10 + Math.random() * 8;
     this.mesh.position.set(-48 - Math.random() * 15, 0, 13.4);
     this.mesh.rotation.y = Math.PI / 2;
   }
@@ -1697,9 +2247,8 @@ function updateBypassTraffic(delta) {
   bgVehicles.forEach(v => v.update(delta));
 }
 
-// 16-Bit Smoke & Vapor Particle System
 function spawnParticle(pos, colorHex = 0xDCD6C8, scale = 0.25) {
-  if (particles.length > 40) return; // budget limit
+  if (particles.length > 40) return;
   const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.85 });
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(scale, scale, scale), mat);
   mesh.position.copy(pos);
@@ -1740,7 +2289,6 @@ function updateParticles(delta) {
   }
 }
 
-// Cloud Drift Animation
 function updateClouds(delta) {
   clouds.forEach(c => {
     c.position.x += c.userData.speed * delta;
@@ -1750,7 +2298,6 @@ function updateClouds(delta) {
   });
 }
 
-// Wind Foliage Sway & Animal Micro-Animations
 let lastBirdSoundTime = 0;
 let lastCricketSoundTime = 0;
 
@@ -1781,6 +2328,14 @@ function updateWindAndCreatures(delta, time) {
     }
   });
 
+  // Roaming Sheep
+  sheepList.forEach(s => s.update(delta, time));
+
+  // Turbine Blade Rotation
+  if (turbineRotor) {
+    turbineRotor.rotation.z += 2.5 * delta * State.timeSpeed;
+  }
+
   // Ambient Web Audio Chimes
   const h = State.hour;
   if (h >= 6 && h <= 19) {
@@ -1797,22 +2352,40 @@ function updateWindAndCreatures(delta, time) {
 }
 
 // =========================================================
-// 9. DAY/NIGHT SIMULATION & ADVANCED 4-PHASE LIGHTING
+// 10. DAY/NIGHT SIMULATION & ADVANCED 4-PHASE LIGHTING
 // =========================================================
 
 let clockAccum = 0;
 function updateDayNightCycle(delta) {
   clockAccum += delta * State.timeSpeed;
-  if (clockAccum >= 1.0) { // 1 sec = 1 min
+  if (clockAccum >= 1.0) {
     clockAccum = 0;
     State.minute += 1;
     if (State.minute >= 60) {
       State.minute = 0;
       State.hour += 1;
+
+      // Hourly turbine income (+₺180)
+      if (State.upgrades.hasTurbine) {
+        State.money += 180;
+        State.totalRev += 180;
+      }
+
       if (State.hour >= 24) {
         State.hour = 0;
         State.day += 1;
         showToast(t('toast_new_day', State.day));
+
+        // Daily Contract Payouts
+        if (State.contracts.bus) { State.money += 5500; State.totalRev += 5500; }
+        if (State.contracts.courier) { State.money += 3800; State.totalRev += 3800; }
+        if (State.contracts.taxi) { State.money += 2900; State.totalRev += 2900; }
+
+        // Daily Loan Interest (%2)
+        if (State.finance.loan > 0) {
+          const interest = State.finance.loan * 0.02;
+          State.money = Math.max(0, State.money - interest);
+        }
       }
     }
     updateHUD();
@@ -1823,31 +2396,27 @@ function updateDayNightCycle(delta) {
 function updateSkyLighting() {
   const h = State.hour;
   let skyColor, sunColor, sunEnergy;
-  let nightAlpha = 0.0; // 0 = day, 1 = full night
+  let nightAlpha = 0.0;
 
   if (h >= 21 || h < 5) {
-    // Phase 4: Night (21:00 - 05:00)
     skyColor = new THREE.Color(0x111722);
     sunColor = new THREE.Color(0x5A6B8C);
     sunEnergy = 0.3;
     ambientLight.intensity = 0.35;
     nightAlpha = 1.0;
   } else if (h >= 5 && h < 8) {
-    // Phase 1: Dawn / Sunrise (05:00 - 08:00)
     skyColor = new THREE.Color(0xF4B991);
     sunColor = new THREE.Color(0xFFA07A);
     sunEnergy = 0.9;
     ambientLight.intensity = 0.6;
     nightAlpha = 0.2;
   } else if (h >= 8 && h < 18) {
-    // Phase 2: High Daytime (08:00 - 18:00)
     skyColor = new THREE.Color(0xBFD8E3);
     sunColor = new THREE.Color(0xFFFBF0);
     sunEnergy = 1.2;
     ambientLight.intensity = 0.75;
     nightAlpha = 0.0;
   } else {
-    // Phase 3: Sunset / Dusk (18:00 - 21:00)
     skyColor = new THREE.Color(0xDE7A52);
     sunColor = new THREE.Color(0xF77F00);
     sunEnergy = 0.75;
@@ -1859,17 +2428,9 @@ function updateSkyLighting() {
   sunLight.color.lerp(sunColor, 0.08);
   sunLight.intensity = THREE.MathUtils.lerp(sunLight.intensity, sunEnergy, 0.08);
 
-  // Smoothly fade Street Lamps and Shop Glow
   nightLights.forEach(nl => {
     const target = nightAlpha * nl.targetIntensity;
     nl.light.intensity = THREE.MathUtils.lerp(nl.light.intensity, target, 0.08);
-    if (nl.bulb && nl.bulb.material) {
-      if (nightAlpha > 0.4) {
-        nl.bulb.material.color.setHex(0xFFE580);
-      } else {
-        nl.bulb.material.color.setHex(0x555544);
-      }
-    }
   });
 }
 
@@ -1881,7 +2442,6 @@ function updateHUD() {
   document.getElementById('stat-clock').textContent = `${hh}:${mm}`;
   document.getElementById('stat-rep').textContent = `${State.rep.toFixed(1)} / 5.0`;
 
-  // Fuel gauges
   ['benzin', 'dizel', 'lpg', 'ev'].forEach(k => {
     const f = State.tanks[k];
     const pct = Math.round((f.current / f.max) * 100);
@@ -1890,12 +2450,6 @@ function updateHUD() {
     if (bar) bar.style.width = `${pct}%`;
     if (lbl) lbl.textContent = `${pct}%`;
   });
-
-  // Office stats
-  const revEl = document.getElementById('stat-total-rev');
-  if (revEl) revEl.textContent = `₺ ${State.totalRev.toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`;
-  const carEl = document.getElementById('stat-total-cars');
-  if (carEl) carEl.textContent = State.totalCars;
 }
 
 function showToast(msg, type = 'normal') {
@@ -1912,7 +2466,7 @@ function showToast(msg, type = 'normal') {
 }
 
 // =========================================================
-// 10. ANIMATION & RENDER LOOP
+// 11. ANIMATION & RENDER LOOP
 // =========================================================
 
 let lastTime = performance.now();
@@ -1924,10 +2478,11 @@ function animate() {
   lastTime = now;
   const totalSeconds = now * 0.001;
 
-  // Elastic target boundaries (Allows free pan while keeping diorama within sight)
-  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -25, 25);
-  controls.target.y = THREE.MathUtils.clamp(controls.target.y, -2, 8);
-  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -25, 25);
+  // Elastic target boundaries for free camera exploration
+  const maxPan = State.land.size * 0.35;
+  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -maxPan, maxPan);
+  controls.target.y = THREE.MathUtils.clamp(controls.target.y, -2, 10);
+  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -maxPan, maxPan);
   controls.update();
 
   updateDayNightCycle(delta);
@@ -1937,10 +2492,8 @@ function animate() {
   updateParticles(delta);
   updateWindAndCreatures(delta, totalSeconds);
 
-  // Update all station vehicles
   for (let i = cars.length - 1; i >= 0; i--) {
     cars[i].update();
-    // Spawn subtle exhaust puff when car is moving
     if (cars[i].state === 'APPROACHING' || cars[i].state === 'DEPARTING') {
       if (Math.random() < 0.15) {
         spawnParticle(cars[i].mesh.position, 0xB0B8C0, 0.2);
@@ -1957,5 +2510,6 @@ window.addEventListener('DOMContentLoaded', () => {
   updateI18nDOM();
   updateHUD();
   updateOrderModalStatus();
+  updateDailyLedger();
   showToast(t('toast_welcome'));
 });
