@@ -665,6 +665,192 @@ body, html {
 
 .hidden { display: none !important; }
 
+/* =========================================================
+   SETTINGS, DEBUG & GREENLIGHT COMPLIANCE STYLES
+   ========================================================= */
+.top-bar-right-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.debug-chip-btn {
+  background: #FFF0F0;
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+  padding: 6px 10px;
+  font-size: 11px;
+  min-height: 38px;
+  gap: 4px;
+}
+.debug-chip-btn:hover {
+  background: var(--accent-red);
+  color: #FFFFFF;
+}
+
+.settings-chip-btn {
+  background: var(--bg-paper);
+  padding: 6px 10px;
+  min-height: 38px;
+  min-width: 40px;
+}
+.settings-chip-btn:hover {
+  background: var(--accent-gold);
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.setting-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink-text);
+}
+.setting-desc {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.toggle-btn {
+  min-width: 75px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.slider-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+}
+.slider-control input[type="range"] {
+  accent-color: var(--accent-red);
+  cursor: pointer;
+  flex: 1;
+}
+.slider-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 800;
+  min-width: 36px;
+  text-align: right;
+}
+
+.segmented-control {
+  display: flex;
+  background: #E4DDD0;
+  border: 1.5px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+.segment-btn {
+  background: transparent;
+  border: none;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--ink-muted);
+  transition: all 0.1s ease;
+}
+.segment-btn.active {
+  background: var(--bg-paper);
+  color: var(--ink-text);
+  border: 1px solid var(--ink-border);
+  box-shadow: 1px 1px 0px var(--ink-border);
+}
+
+/* Compliance Card */
+.compliance-badge-card {
+  margin-bottom: 10px;
+  background: #EEF8F1;
+  border-color: #27A05A;
+}
+.compliance-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.build-ver {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-muted);
+}
+.compliance-text {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-text);
+}
+
+.legal-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.legal-btn {
+  padding: 10px 12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+/* Debug Modal */
+.debug-panel {
+  max-width: 540px;
+}
+.debug-content-scroll {
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.debug-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.debug-grid .neo-btn {
+  padding: 8px 10px;
+  font-size: 11px;
+}
+
+/* Legal Viewer Content */
+.legal-doc-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-text);
+  padding: 14px;
+}
+.legal-doc-content h4 {
+  font-size: 13px;
+  margin: 10px 0 4px 0;
+  color: var(--ink-text);
+}
+.legal-doc-content p {
+  margin-bottom: 8px;
+  color: var(--ink-muted);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   #top-bar {
@@ -679,6 +865,12 @@ body, html {
   .gauge-item {
     width: 22%;
   }
+  .top-bar-right-controls {
+    margin-left: auto;
+  }
+  .debug-badge-text {
+    display: none;
+  }
   #fab-menu {
     bottom: 12px;
     left: 12px;
@@ -689,4 +881,7 @@ body, html {
     font-size: 11px;
   }
   .fab-text { display: none; }
+  .legal-action-grid {
+    grid-template-columns: 1fr;
+  }
 }

@@ -412,3 +412,64 @@ func get_sky_color() -> Color:
 		return Color(0.749, 0.878, 0.933)
 	else:
 		return Color(0.85, 0.48, 0.38)
+
+# =========================================================
+# DEVELOPER & DEBUG METHODS (Dual-Engine Synchronized)
+# =========================================================
+
+func debug_add_money(amount: float) -> void:
+	add_money(amount)
+	EventBus.show_toast.emit(I18n.t("toast_debug_money", [int(amount)]), true)
+
+func debug_refill_tanks() -> void:
+	for fuel in tanks.keys():
+		tanks[fuel] = capacities[fuel]
+		EventBus.tank_updated.emit(fuel, tanks[fuel], capacities[fuel])
+	EventBus.show_toast.emit(I18n.t("toast_debug_tanks"), true)
+
+func debug_empty_tanks() -> void:
+	for fuel in tanks.keys():
+		tanks[fuel] = 0.0
+		EventBus.tank_updated.emit(fuel, tanks[fuel], capacities[fuel])
+	EventBus.show_toast.emit("Debug: Depolar boşaltıldı (%0).", false)
+
+func debug_finish_timers() -> void:
+	while active_timers.size() > 0:
+		var timer = active_timers.pop_front()
+		if timer.has("callback") and timer.callback.is_valid():
+			timer.callback.call()
+	EventBus.show_toast.emit(I18n.t("toast_debug_timers"), true)
+
+func debug_unlock_all() -> void:
+	pumps_count = 4
+	has_car_wash = true
+	has_market = true
+	has_solar_panels = true
+	has_turbine = true
+	has_ev_charger = true
+	parcel_a = true
+	parcel_b = true
+	parcel_c = true
+	land_size = 130.0
+	EventBus.station_upgraded.emit("Tüm Tesisler Açıldı")
+	EventBus.show_toast.emit(I18n.t("toast_debug_unlock"), true)
+
+func debug_max_staff() -> void:
+	staff_attendant = 3
+	staff_cashier = 3
+	staff_manager = 1
+	has_manager = true
+	EventBus.show_toast.emit("Debug: Tüm personel Seviye 3 yapıldı.", true)
+
+func debug_advance_day() -> void:
+	day += 1
+	hour = 8
+	minute = 0.0
+	_daily_summary()
+	EventBus.time_updated.emit(hour, 0, day)
+
+func debug_max_reputation() -> void:
+	reputation = 5.0
+	EventBus.reputation_changed.emit(reputation)
+	EventBus.show_toast.emit("Debug: İtibar 5.0 / 5.0 yapıldı.", true)
+
