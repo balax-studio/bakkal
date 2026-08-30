@@ -47,6 +47,7 @@ app.*.map.json
 # Godot related
 .godot/
 *.import
+*.uid
 
 # Temporary media
 *.mp4

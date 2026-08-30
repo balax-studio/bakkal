@@ -1,15 +1,23 @@
 ; Engine configuration file.
 ; It's best edited using the editor UI and not directly,
-; but it can also be modified with a text editor.
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
 config/name="BenelOil Türkiye - 3D İstasyon Tycoon"
 config/description="16-Bit Low-Poly Neo-Brutalist BenelOil İstasyon Oyunu"
 run/main_scene="res://scenes/Main.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
@@ -20,13 +28,10 @@ GameState="*res://scripts/GameState.gd"
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/size/mode=0
-window/size/resizable=true
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
 [rendering]
 
-renderer/rendering_method="forward_plus"
 textures/canvas_textures/default_texture_filter=0
 environment/defaults/default_clear_color=Color(0.749, 0.878, 0.933, 1)
