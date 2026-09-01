@@ -99,6 +99,7 @@ func _process(delta: float) -> void:
 
 func _arrive_at_pump() -> void:
 	state = State.AT_PUMP
+	rotation.y = PI / 2.0 # Exact parallel side-docking facing +X alongside pump
 	if is_instance_valid(assigned_pump_node):
 		assigned_pump_node.is_occupied = true
 		assigned_pump_node.current_car = self
@@ -120,12 +121,13 @@ func finish_refueling(earned_money: float) -> void:
 		assigned_pump_node.current_car = null
 		assigned_pump_node.update_status_display()
 
-	# Generate smooth curved exit waypoints to main road and East Portal
+	# Generate smooth straight roll -> Outbound Apron -> Merge Ramp -> East Portal
 	waypoints = [
-		global_position + Vector3(1.2, 0, 2.2),
-		Vector3(global_position.x + 3.8, 0, 8.5),
-		Vector3(global_position.x + 7.5, 0, 14.0),
-		Vector3(56, 0, 14.0)
+		Vector3(global_position.x + 3.0, 0, global_position.z),
+		Vector3(8.5, 0, 7.4),
+		Vector3(11.5, 0, 8.8),
+		Vector3(14.5, 0, 9.8),
+		Vector3(56.0, 0, 9.8)
 	]
 	current_wp = 0
 
