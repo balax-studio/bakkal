@@ -36,6 +36,8 @@ func update_order_label() -> void:
 		label_order.text = "OK! +TL"
 		label_order.modulate = Color(0.3, 1.0, 0.5)
 
+var stall_time: float = 0.0
+
 func _get_forward_obstacle_distance() -> float:
 	var min_dist: float = 999.0
 	var all_cars: Array[Node] = get_tree().get_nodes_in_group("cars")
@@ -48,7 +50,7 @@ func _get_forward_obstacle_distance() -> float:
 		if current_wp < waypoints.size():
 			var to_wp: Vector3 = (waypoints[current_wp] - global_position)
 			to_wp.y = 0
-			if to_wp.dot(to_other) > 0 and d < 5.0 and d < min_dist:
+			if to_wp.dot(to_other) > 0.1 and d < 4.2 and d < min_dist:
 				min_dist = d
 	return min_dist
 
@@ -68,17 +70,21 @@ func _process(delta: float) -> void:
 				elif state == State.LEAVING:
 					current_speed = speed * 1.15
 
-				# Safe Distance / Anti-Ghosting Proximity Check
+				# Safe Distance & Anti-Deadlock Stall Safeguard
 				var ahead_dist: float = _get_forward_obstacle_distance()
 				var obstacle_mult: float = 1.0
-				if ahead_dist < 2.5:
-					obstacle_mult = 0.0
-				elif ahead_dist < 4.8:
-					obstacle_mult = (ahead_dist - 2.5) / 2.3
+				if ahead_dist < 2.2:
+					stall_time += delta
+					obstacle_mult = 0.35 if stall_time > 1.8 else 0.0
+				elif ahead_dist < 4.2:
+					stall_time = 0.0
+					obstacle_mult = (ahead_dist - 2.2) / 2.0
+				else:
+					stall_time = 0.0
 
 				current_speed *= obstacle_mult
 
-				if obstacle_mult > 0.01:
+				if current_speed > 0.01:
 					global_position += move_dir * current_speed * delta
 				# Smooth face rotation using shortest angle
 				var target_rot_y: float = atan2(move_dir.x, move_dir.z)

@@ -3571,7 +3571,7 @@ function lerpAngle(current, target, factor) {
 const CAR_COLORS = [0x4A7BB0, 0xC44D3F, 0x4E9B66, 0x2A3E59, 0xD47631, 0x546E7A, 0x8E44AD, 0x34495E, 0xBE8C3D];
 const FUEL_TYPES = ['benzin', 'dizel', 'lpg', 'ev'];
 
-// Kinematic Forward Proximity & Collision Sensor (Anti-Ghosting & Safe Following)
+// Kinematic Forward Proximity & Collision Sensor (Lane-Separated & Anti-Deadlock)
 function getForwardObstacleDistance(me, isBypass = false) {
   let minDistance = 999;
   const myPos = me.mesh.position;
@@ -3579,35 +3579,22 @@ function getForwardObstacleDistance(me, isBypass = false) {
   const myZ = myPos.z;
 
   if (isBypass) {
-    // 1. Check other bypass vehicles ahead in the highway lane corridor
+    // 1. Bypass vehicles ONLY track other bypass vehicles in their express lane (Z ~ 13.4)
     if (typeof bgVehicles !== 'undefined' && Array.isArray(bgVehicles)) {
       for (let i = 0; i < bgVehicles.length; i++) {
         const other = bgVehicles[i];
         if (other === me) continue;
         const ox = other.mesh.position.x;
         const oz = other.mesh.position.z;
-        if (Math.abs(oz - myZ) < 2.0 && ox > myX) {
+        if (Math.abs(oz - myZ) < 1.4 && ox > myX) {
           const d = ox - myX;
           if (d < minDistance) minDistance = d;
         }
       }
     }
-    // 2. Also check if any customer car is currently departing/merging into highway ahead
-    if (typeof cars !== 'undefined' && Array.isArray(cars)) {
-      for (let i = 0; i < cars.length; i++) {
-        const c = cars[i];
-        if (c.state === 'DEPARTING' && c.mesh.position.z > 9.0) {
-          const ox = c.mesh.position.x;
-          if (ox > myX && (ox - myX) < minDistance && Math.abs(c.mesh.position.z - myZ) < 2.4) {
-            minDistance = ox - myX;
-          }
-        }
-      }
-    }
   } else {
-    // Customer car (Vehicle)
+    // 2. Customer cars ONLY track other customer cars in their current queue / apron corridor
     if (me.state === 'APPROACHING' || me.state === 'DEPARTING') {
-      // Check other customer cars ahead in same queue/path
       if (typeof cars !== 'undefined' && Array.isArray(cars)) {
         for (let i = 0; i < cars.length; i++) {
           const other = cars[i];
@@ -3623,22 +3610,9 @@ function getForwardObstacleDistance(me, isBypass = false) {
             const toOtherX = ox - myX;
             const toOtherZ = oz - myZ;
             const dot = toWpX * toOtherX + toWpZ * toOtherZ;
-            // If other car is in our travel heading and within proximity
-            if (dot > 0 && dist < 5.2 && dist < minDistance) {
+            // Only consider vehicles ahead in our travel trajectory
+            if (dot > 0.1 && dist < 4.2 && dist < minDistance) {
               minDistance = dist;
-            }
-          }
-        }
-      }
-
-      // If DEPARTING and approaching highway merge (Z > 9.0), yield to fast bypass traffic!
-      if (me.state === 'DEPARTING' && myZ > 9.0) {
-        if (typeof bgVehicles !== 'undefined' && Array.isArray(bgVehicles)) {
-          for (let i = 0; i < bgVehicles.length; i++) {
-            const bg = bgVehicles[i];
-            const bgX = bg.mesh.position.x;
-            if (bgX < myX + 2.5 && bgX > myX - 8.5) {
-              minDistance = Math.min(minDistance, 2.0); // Force yield stop
             }
           }
         }
@@ -3668,6 +3642,7 @@ class Vehicle {
     this.waypoints = [];
     this.wpIndex = 0;
     this.bounceTime = 0;
+    this.stallTime = 0;
   }
 
   buildMesh() {
@@ -3766,8 +3741,8 @@ class Vehicle {
     sprite.position.set(0, 2.3, 0);
     car.add(sprite);
 
-    // Initial position inside West Cloud Viaduct, facing +X (Math.PI / 2)
-    car.position.set(-52, 0, 11.5);
+    // Initial position inside West Cloud Viaduct on Inner Lane (Z: 9.8), facing +X
+    car.position.set(-52, 0, 9.8);
     car.rotation.y = Math.PI / 2;
     return car;
   }
@@ -3780,20 +3755,20 @@ class Vehicle {
     const parkX = slotPos.x;
 
     if (isFrontRow) {
-      // Front Row Pumps (#3 and #4): Smooth entry directly into front bay corridor
+      // Front Row Pumps (#3 and #4): Smooth entry from inner highway lane into front bay
       this.waypoints = [
-        new THREE.Vector3(slotPos.x - 7.5, 0, 11.5),             // 1. Highway deceleration
-        new THREE.Vector3(slotPos.x - 4.2, 0, 9.2),              // 2. Apron entrance curb curve
+        new THREE.Vector3(slotPos.x - 7.5, 0, 9.8),              // 1. Inner highway lane deceleration
+        new THREE.Vector3(slotPos.x - 4.2, 0, 8.2),              // 2. Apron entrance curb curve
         new THREE.Vector3(slotPos.x - 1.2, 0, parkZ + 1.8),      // 3. Front bay corridor alignment
         new THREE.Vector3(parkX, 0, parkZ + 0.8),                // 4. Pump entry straight
         new THREE.Vector3(parkX, 0, parkZ)                       // 5. Final pump docking stop
       ];
     } else {
-      // Back Row Pumps (#1 and #2): Drive through dedicated open outer aisle without clipping front islands
+      // Back Row Pumps (#1 and #2): Dedicated outer driveway without clipping front islands
       this.waypoints = [
-        new THREE.Vector3(slotPos.x - 8.5, 0, 11.5),             // 1. Highway deceleration
-        new THREE.Vector3(slotPos.x - 5.5, 0, 9.0),              // 2. Apron entrance curb curve
-        new THREE.Vector3(slotPos.x - 2.8, 0, 5.2),              // 3. Clear bypass aisle around front island
+        new THREE.Vector3(slotPos.x - 8.5, 0, 9.8),              // 1. Inner highway lane deceleration
+        new THREE.Vector3(slotPos.x - 5.5, 0, 8.2),              // 2. Apron entrance curb curve
+        new THREE.Vector3(slotPos.x - 2.8, 0, 4.8),              // 3. Clear bypass aisle around front island
         new THREE.Vector3(slotPos.x - 0.8, 0, 1.8),              // 4. Inner aisle alignment
         new THREE.Vector3(parkX, 0, parkZ + 0.8),                // 5. Back bay straight alignment
         new THREE.Vector3(parkX, 0, parkZ)                       // 6. Final pump docking stop
@@ -3809,9 +3784,9 @@ class Vehicle {
 
     this.waypoints = [
       new THREE.Vector3(startX + 1.0, 0, startZ + 1.8),  // 1. Forward roll out of bay
-      new THREE.Vector3(startX + 3.8, 0, 8.6),           // 2. Apron exit curve
-      new THREE.Vector3(startX + 7.5, 0, 11.5),          // 3. Highway merge lane
-      new THREE.Vector3(56, 0, 11.5)                     // 4. Drive off through East Hyper-Ring Portal
+      new THREE.Vector3(startX + 3.8, 0, 8.0),           // 2. Apron exit curve
+      new THREE.Vector3(startX + 7.5, 0, 9.8),           // 3. Inner highway lane merge
+      new THREE.Vector3(56, 0, 9.8)                      // 4. Drive off smoothly through East Hyper-Ring Portal
     ];
     this.wpIndex = 0;
     this.state = 'DEPARTING';
@@ -3838,15 +3813,20 @@ class Vehicle {
           fw.rotation.y = lerpAngle(fw.rotation.y, steerAngle, 0.15 * State.timeSpeed);
         });
 
-        // Forward Obstacle Proximity & Safe Following Check (Anti-Ghosting Physics)
+        // Forward Obstacle Proximity with Anti-Deadlock Safeguard
         const aheadDist = getForwardObstacleDistance(this, false);
         let obstacleBrakeFactor = 1.0;
         if (aheadDist !== null) {
-          if (aheadDist < 2.8) {
-            obstacleBrakeFactor = 0.0; // Complete stop behind leading vehicle!
-          } else if (aheadDist < 4.8) {
-            obstacleBrakeFactor = (aheadDist - 2.8) / 2.0; // Smooth deceleration
+          if (aheadDist < 2.2) {
+            this.stallTime += delta;
+            // If stopped for more than 1.8 seconds, creep forward to avoid permanent queue stalls
+            obstacleBrakeFactor = (this.stallTime > 1.8) ? 0.35 : 0.0;
+          } else if (aheadDist < 4.2) {
+            this.stallTime = 0;
+            obstacleBrakeFactor = (aheadDist - 2.2) / 2.0;
           }
+        } else {
+          this.stallTime = 0;
         }
 
         // Acceleration & Deceleration curves
@@ -3863,7 +3843,7 @@ class Vehicle {
         this.currentSpeed = THREE.MathUtils.lerp(this.currentSpeed, targetSpeed, 0.08 * State.timeSpeed);
         const stepDist = this.currentSpeed * State.timeSpeed;
 
-        if (dist > 0.01 && obstacleBrakeFactor > 0.01) {
+        if (dist > 0.01 && this.currentSpeed > 0.001) {
           const moveStep = Math.min(stepDist, dist);
           this.mesh.position.x += (dx / dist) * moveStep;
           this.mesh.position.z += (dz / dist) * moveStep;
