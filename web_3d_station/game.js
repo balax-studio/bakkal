@@ -130,6 +130,10 @@ const I18N = {
     settings_lang_select: 'Dil / Language',
     settings_lang_desc: 'Türkçe ve İngilizce arasında anında geçiş yapın.',
     settings_graphics_title: 'Görsel & 60 FPS Optimizasyon',
+    settings_canopy_title: 'Kanopi / Çatı Görünürlüğü',
+    settings_canopy_desc: 'Pompaların üstündeki çatıyı gizler veya gösterir.',
+    toast_canopy_toggled: 'Kanopi görünürlüğü güncellendi.',
+    btn_canopy_short: 'Çatı',
     settings_shadows_title: 'Gerçek Zamanlı Gölgeler',
     settings_shadows_desc: 'Düşük donanımlı cihazlarda performansı artırmak için kapatabilirsiniz.',
     settings_quality_title: 'Render Kalite Profili',
@@ -277,6 +281,10 @@ const I18N = {
     settings_lang_select: 'Language',
     settings_lang_desc: 'Switch instantly between Turkish and English.',
     settings_graphics_title: 'Graphics & 60 FPS Optimization',
+    settings_canopy_title: 'Canopy Roof Visibility',
+    settings_canopy_desc: 'Show or hide the roof canopy above the pumps.',
+    toast_canopy_toggled: 'Canopy visibility toggled.',
+    btn_canopy_short: 'Canopy',
     settings_shadows_title: 'Real-time Shadows',
     settings_shadows_desc: 'Turn off to maximize performance on lower-end devices.',
     settings_quality_title: 'Render Quality Profile',
@@ -445,7 +453,8 @@ const State = {
     volume: parseInt(localStorage.getItem('pixeloil_vol') || '80', 10),
     shadows: localStorage.getItem('pixeloil_shadows') !== 'false',
     quality: localStorage.getItem('pixeloil_quality') || 'high',
-    targetFps: parseInt(localStorage.getItem('pixeloil_fps') || '60', 10)
+    targetFps: parseInt(localStorage.getItem('pixeloil_fps') || '60', 10),
+    showCanopy: localStorage.getItem('pixeloil_canopy_vis') !== 'false'
   }
 };
 
@@ -594,6 +603,27 @@ class SoundFX {
     osc.start(now);
     osc.stop(now + 0.07);
   }
+
+  playCanopyMove(isOpening) {
+    if (!State.settings.sfx) return;
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    const startFreq = isOpening ? 180 : 380;
+    const endFreq = isOpening ? 380 : 180;
+    osc.frequency.setValueAtTime(startFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(endFreq, now + 0.35);
+    const vol = 0.08 * this.getVolumeScale();
+    gain.gain.setValueAtTime(vol, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.40);
+  }
 }
 const sfx = new SoundFX();
 
@@ -616,8 +646,28 @@ const sheepList = [];
 let dogMesh = null;
 let catMesh = null;
 
+// Living World & Environmental Storytelling Collections
+const roadPuddles = [];
+const manholeSteamEmitters = [];
+const skyFlockBirds = [];
+const perchedPigeons = [];
+const nightMoths = [];
+const cafePatrons = [];
+let acFanMesh = null;
+let acDripTimer = 0;
+let windowTVLight = null;
+let faultyLamp = null;
+let faultyLampTimer = 0;
+let skyJetMesh = null;
+let skyJetTrail = [];
+let rollingCanMesh = null;
+let rollingCanVelocity = 0;
+
 // Dynamic Building Mesh References
 let canopyGroup = null;
+let canopyRoofMesh = null;
+let canopyAnimProgress = localStorage.getItem('pixeloil_canopy_vis') !== 'false' ? 1.0 : 0.0;
+let canopyTargetProgress = canopyAnimProgress;
 let carWashGroup = null;
 let marketBayGroup = null;
 let solarPanelsGroup = null;
@@ -862,7 +912,35 @@ const Mat = {
   sandPile: new THREE.MeshLambertMaterial({ color: 0xD6B88D }),
   scaffoldWood: new THREE.MeshLambertMaterial({ color: 0xB89369 }),
   plotDashed: new THREE.MeshBasicMaterial({ color: 0xE5A93C, wireframe: true }),
-  plotSignBg: new THREE.MeshLambertMaterial({ color: 0x242D35 })
+  plotSignBg: new THREE.MeshLambertMaterial({ color: 0x242D35 }),
+  // Living World, Weather & Urban Storytelling Materials
+  puddle: new THREE.MeshLambertMaterial({ color: 0x303E4C, transparent: true, opacity: 0.88 }),
+  steam: new THREE.MeshLambertMaterial({ color: 0xF0F4F8, transparent: true, opacity: 0.40 }),
+  asphaltPatch: new THREE.MeshLambertMaterial({ color: 0x1A2027 }),
+  palmTrunk: new THREE.MeshLambertMaterial({ color: 0x6E5037 }),
+  palmLeaf: new THREE.MeshLambertMaterial({ color: 0x48963D }),
+  pineFoliage: new THREE.MeshLambertMaterial({ color: 0x2C4D26 }),
+  oakFoliage: new THREE.MeshLambertMaterial({ color: 0x588C3C }),
+  oakFoliageLight: new THREE.MeshLambertMaterial({ color: 0x72A84E }),
+  windowTV: new THREE.MeshBasicMaterial({ color: 0x64B5F6 }),
+  windowWarm: new THREE.MeshBasicMaterial({ color: 0xFFD54F }),
+  tinCan: new THREE.MeshLambertMaterial({ color: 0xCAD2D8 }),
+  paperTrash: new THREE.MeshLambertMaterial({ color: 0xE6E2D8 }),
+  posterRed: new THREE.MeshLambertMaterial({ color: 0xC8433A }),
+  posterCyan: new THREE.MeshLambertMaterial({ color: 0x2E96A5 }),
+  posterYellow: new THREE.MeshLambertMaterial({ color: 0xE8B838 }),
+  acGrey: new THREE.MeshLambertMaterial({ color: 0xD0D6DC }),
+  pigeonGrey: new THREE.MeshLambertMaterial({ color: 0x6C7680 }),
+  pigeonNeck: new THREE.MeshLambertMaterial({ color: 0x4A806C }),
+  npcSkin: new THREE.MeshLambertMaterial({ color: 0xEAB994 }),
+  npcHairDark: new THREE.MeshLambertMaterial({ color: 0x2B241E }),
+  npcHairBlonde: new THREE.MeshLambertMaterial({ color: 0xD4A759 }),
+  npcClothes1: new THREE.MeshLambertMaterial({ color: 0x3E6388 }),
+  npcClothes2: new THREE.MeshLambertMaterial({ color: 0xB5463D }),
+  npcClothes3: new THREE.MeshLambertMaterial({ color: 0x56824B }),
+  coffeeCup: new THREE.MeshLambertMaterial({ color: 0xFDFBF7 }),
+  // Modern Translucent Glass & Steel Canopy
+  canopyGlass: new THREE.MeshLambertMaterial({ color: 0x9FD8F6, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide })
 };
 
 function initThree() {
@@ -997,6 +1075,12 @@ function buildDiorama() {
     diorama.add(line1, line2);
   }
 
+  // 2b. West Cloud Viaduct (Sol Sınır - Bulutlara Uzanan Asma Viyadük Köprüsü)
+  buildWestCloudViaduct(diorama);
+
+  // 2c. East Hyper-Ring Speedway Portal (Sağ Sınır - Fütüristik Aerodinamik Hızlandırma Kemeri)
+  buildEastHyperRingPortal(diorama);
+
   // 3. Station Concrete Forecourt Apron (Procedural High-Precision Industrial Grid)
   const apronGeo = new THREE.BoxGeometry(22, 0.08, 18);
   const apronMesh = new THREE.Mesh(apronGeo, Mat.apronGrid);
@@ -1088,10 +1172,21 @@ function buildDiorama() {
   totem.position.set(-10, 0, 8.5);
   diorama.add(totem);
 
-  // 10. Station Perimeters, Rocks, Hills & Pine Trees
+  // 10. Station Perimeters, Rocks, Hills & Diverse Trees (Oak, Pine, Palm, Saplings)
   buildPerimeterFloraAndTerrain(diorama);
 
-  // 10. Foreground Living Props & Animals
+  // 11. Living World Systems, Puddles, Steam, Urban Storytelling & Fauna
+  createRoadPuddles(diorama);
+  createManholeSteamSystem(diorama);
+  createSkyFlockBirds(diorama);
+  createPerchedPigeons(diorama);
+  createNightMoths(diorama);
+  createAirConditionerUnit(diorama);
+  createUrbanWearDetails(diorama);
+  createHighAltitudeJet(diorama);
+  updateCafePatrons(diorama);
+
+  // 12. Foreground Living Props & Animals
   const bench = createParkBench();
   bench.position.set(-6.5, 0.04, -7.5);
   bench.rotation.y = Math.PI / 4;
@@ -1594,7 +1689,7 @@ function createCanopyMesh() {
   const canopy = new THREE.Group();
   canopy.position.set(0, 0, 1.0); // Covers the 4 pump bays perfectly
 
-  // 4 Heavy Industrial Steel Tubular Pillars with Reinforced Concrete Pedestals
+  // 4 Heavy Industrial Steel Tubular Pillars with Reinforced Concrete Pedestals (Remain stationary)
   const pillarCoords = [
     [-6.8, -3.8],
     [6.8, -3.8],
@@ -1622,35 +1717,59 @@ function createCanopyMesh() {
     canopy.add(br);
   });
 
-  // Cantilevered Fascia Box Roof (16.8m wide x 0.65m high x 12.5m deep)
-  const roof = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.65, 12.5), Mat.buildingRoof);
-  roof.position.set(0, 4.65, 0.7);
-  roof.castShadow = true;
-  roof.receiveShadow = true;
-  canopy.add(roof);
+  // Retractable Folding Overhead Roof Assembly (Folds and retracts towards the market building)
+  canopyRoofMesh = new THREE.Group();
 
-  // Red & White PixelOil Brand Fascia Perimeter Ribbon
-  const fascia = new THREE.Mesh(new THREE.BoxGeometry(17.1, 0.35, 12.8), Mat.redTrim);
-  fascia.position.set(0, 4.65, 0.7);
-  canopy.add(fascia);
+  // 1. Perimeter Frame Beams (Open Interior for Transparency)
+  const beamFront = new THREE.Mesh(new THREE.BoxGeometry(17.1, 0.45, 0.5), Mat.buildingRoof);
+  beamFront.position.set(0, 4.65, 6.85);
+  const beamBack = new THREE.Mesh(new THREE.BoxGeometry(17.1, 0.45, 0.5), Mat.buildingRoof);
+  beamBack.position.set(0, 4.65, -5.45);
+  const beamLeft = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 12.8), Mat.buildingRoof);
+  beamLeft.position.set(-8.3, 4.65, 0.7);
+  const beamRight = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 12.8), Mat.buildingRoof);
+  beamRight.position.set(8.3, 4.65, 0.7);
+  canopyRoofMesh.add(beamFront, beamBack, beamLeft, beamRight);
+
+  // 2. Red Brand Perimeter Trim Ribbon
+  const fasciaFront = new THREE.Mesh(new THREE.BoxGeometry(17.2, 0.28, 0.54), Mat.redTrim);
+  fasciaFront.position.set(0, 4.65, 6.85);
+  const fasciaBack = new THREE.Mesh(new THREE.BoxGeometry(17.2, 0.28, 0.54), Mat.redTrim);
+  fasciaBack.position.set(0, 4.65, -5.45);
+  const fasciaLeft = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 12.9), Mat.redTrim);
+  fasciaLeft.position.set(-8.3, 4.65, 0.7);
+  const fasciaRight = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 12.9), Mat.redTrim);
+  fasciaRight.position.set(8.3, 4.65, 0.7);
+  canopyRoofMesh.add(fasciaFront, fasciaBack, fasciaLeft, fasciaRight);
 
   // Front Fascia "PIXELOIL" Stencil Plaque
   const frontPlate = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.42, 0.1), Mat.roadWhite);
-  frontPlate.position.set(0, 4.65, 7.11);
-  canopy.add(frontPlate);
+  frontPlate.position.set(0, 4.65, 7.14);
+  canopyRoofMesh.add(frontPlate);
 
   const frontText = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.26, 0.12), Mat.redTrim);
-  frontText.position.set(0, 4.65, 7.12);
-  canopy.add(frontText);
+  frontText.position.set(0, 4.65, 7.15);
+  canopyRoofMesh.add(frontText);
 
-  // Solar Mounting Struts on Canopy Roof
-  for (let z = -4.0; z <= 5.0; z += 3.0) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(15.5, 0.06, 0.08), Mat.solarFrame);
-    rail.position.set(0, 5.0, z + 0.7);
-    canopy.add(rail);
-  }
+  // 3. Translucent Polycarbonate Glass Roof Pane (Crystal Visibility of All Pumps & Cars Below)
+  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(16.2, 0.04, 12.0), Mat.canopyGlass);
+  glassRoof.position.set(0, 4.70, 0.7);
+  canopyRoofMesh.add(glassRoof);
 
-  // 4 High-Lumen Down-Facing LED Spotlights for Pump Islands
+  // 4. Architectural Structural Steel Truss Grid (Sleek Skylight I-Beams)
+  [-3.8, -0.8, 2.2, 5.2].forEach(z => {
+    const trussX = new THREE.Mesh(new THREE.BoxGeometry(16.1, 0.12, 0.08), Mat.solarFrame);
+    trussX.position.set(0, 4.62, z);
+    canopyRoofMesh.add(trussX);
+  });
+
+  [-5.5, -2.75, 0, 2.75, 5.5].forEach(x => {
+    const trussZ = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 12.0), Mat.solarFrame);
+    trussZ.position.set(x, 4.62, 0.7);
+    canopyRoofMesh.add(trussZ);
+  });
+
+  // 5. 4 High-Lumen Down-Facing LED Spotlights for Pump Islands
   const spotCoords = [
     [-4, 4.28, -3.0],
     [4, 4.28, -3.0],
@@ -1663,14 +1782,24 @@ function createCanopyMesh() {
     fix.position.set(sx, 4.32, sz);
     const bulb = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.04, 10), Mat.lampGlow);
     bulb.position.set(sx, 4.25, sz);
-    canopy.add(fix, bulb);
+    canopyRoofMesh.add(fix, bulb);
 
     const light = new THREE.PointLight(0xFFE8A0, 0.95, 8.5);
     light.position.set(sx, sy, sz);
     nightLights.push({ light, targetIntensity: 0.95 });
-    canopy.add(light);
+    canopyRoofMesh.add(light);
   });
 
+  // Apply initial anim progress
+  if (canopyAnimProgress < 0.01) {
+    canopyRoofMesh.scale.set(1.0, 1.0, 0.04);
+    canopyRoofMesh.position.set(0, 0, -6.2);
+    canopyRoofMesh.rotation.x = -0.35;
+    canopyRoofMesh.visible = false;
+    if (Mat.canopyGlass) Mat.canopyGlass.opacity = 0.0;
+  }
+
+  canopy.add(canopyRoofMesh);
   return canopy;
 }
 
@@ -2288,19 +2417,64 @@ function buildPerimeterFloraAndTerrain(diorama) {
     diorama.add(rocks);
   });
 
-  const treeCoords = [
-    [-32, -30], [-26, -32], [-20, -31], [-14, -33], [-8, -32], [0, -34],
-    [8, -32], [14, -33], [20, -31], [26, -32], [32, -30],
-    [-34, -20], [-33, -10], [-34, 0], [-33, 10], [-34, 20], [-32, 28],
-    [34, -20], [33, -10], [34, 0], [33, 10], [34, 20], [32, 28],
-    [-26, 29], [-16, 28], [16, 28], [26, 29]
+  // Diverse Tree Placements (Oak, Pine, Palm, Road-verge Saplings, Wild Bushes)
+  const diverseTreeList = [
+    // Back Hill Pines & Sturdy Oaks
+    { pos: [-32, -30], type: 'pine', scale: 1.25 },
+    { pos: [-26, -32], type: 'oak',  scale: 1.15 },
+    { pos: [-20, -31], type: 'pine', scale: 0.95 },
+    { pos: [-14, -33], type: 'oak',  scale: 1.30 },
+    { pos: [-8, -32],  type: 'pine', scale: 1.10 },
+    { pos: [0, -34],   type: 'oak',  scale: 1.40 },
+    { pos: [8, -32],   type: 'pine', scale: 1.15 },
+    { pos: [14, -33],  type: 'oak',  scale: 1.20 },
+    { pos: [20, -31],  type: 'pine', scale: 1.05 },
+    { pos: [26, -32],  type: 'oak',  scale: 1.25 },
+    { pos: [32, -30],  type: 'pine', scale: 1.30 },
+
+    // Left & Right Perimeter Trees
+    { pos: [-34, -20], type: 'pine', scale: 1.10 },
+    { pos: [-33, -10], type: 'oak',  scale: 1.15 },
+    { pos: [-34, 0],   type: 'pine', scale: 1.05 },
+    { pos: [-33, 10],  type: 'oak',  scale: 1.20 },
+    { pos: [-34, 20],  type: 'pine', scale: 1.25 },
+    { pos: [-32, 28],  type: 'oak',  scale: 1.10 },
+
+    { pos: [34, -20],  type: 'pine', scale: 1.10 },
+    { pos: [33, -10],  type: 'oak',  scale: 1.25 },
+    { pos: [34, 0],    type: 'pine', scale: 1.15 },
+    { pos: [33, 10],   type: 'oak',  scale: 1.05 },
+    { pos: [34, 20],   type: 'pine', scale: 1.30 },
+    { pos: [32, 28],   type: 'oak',  scale: 1.20 },
+
+    // Station Garden Palms (Beside Entrance & Planters)
+    { pos: [-12, -4.5], type: 'palm', scale: 1.05 },
+    { pos: [12, -4.5],  type: 'palm', scale: 1.05 },
+
+    // Roadway Refüj Young Saplings (with Support Stakes)
+    { pos: [-24, 14.5], type: 'sapling', scale: 0.95 },
+    { pos: [-14, 14.5], type: 'sapling', scale: 1.00 },
+    { pos: [14, 14.5],  type: 'sapling', scale: 1.00 },
+    { pos: [24, 14.5],  type: 'sapling', scale: 0.95 }
   ];
-  treeCoords.forEach(([x, z], idx) => {
-    const tree = createLowPolyTree(idx);
-    tree.position.set(x, 0.04, z);
-    const scale = 0.85 + Math.random() * 0.45;
-    tree.scale.set(scale, scale, scale);
+
+  diverseTreeList.forEach((tData, idx) => {
+    const tree = createDiverseLowPolyTree(idx, tData.type);
+    tree.position.set(tData.pos[0], 0.04, tData.pos[1]);
+    const s = tData.scale || 1.0;
+    tree.scale.set(s, s, s);
     diorama.add(tree);
+  });
+
+  // Wild Grass Clump Clusters along fence lines
+  const bushCoords = [
+    [-17, -10], [17, -10], [-21, -4], [21, -4],
+    [-11, 7.2], [11, 7.2], [-5, 7.2], [5, 7.2]
+  ];
+  bushCoords.forEach(([bx, bz], bIdx) => {
+    const bush = createWildBush(bIdx);
+    bush.position.set(bx, 0.04, bz);
+    diorama.add(bush);
   });
 
   const planter1 = createFlowerPlanter();
@@ -2551,6 +2725,172 @@ class Sheep {
   }
 }
 
+// 2b. West Cloud Viaduct (Sol Sınır - Bulutlara Uzanan Asma Viyadük Köprüsü)
+function buildWestCloudViaduct(diorama) {
+  const viaductGroup = new THREE.Group();
+
+  // Highway Bridge Deck Extension (X: -40 to -58, Width: 7.5, Height: 0.8)
+  const deckGeo = new THREE.BoxGeometry(18, 0.8, 7.5);
+  const deckMesh = new THREE.Mesh(deckGeo, Mat.asphalt);
+  deckMesh.position.set(-49, -0.37, 11.5);
+  deckMesh.receiveShadow = true;
+  viaductGroup.add(deckMesh);
+
+  // Concrete Bridge Base Slab
+  const slabGeo = new THREE.BoxGeometry(18.2, 0.6, 7.9);
+  const slabMesh = new THREE.Mesh(slabGeo, Mat.concrete);
+  slabMesh.position.set(-49, -0.75, 11.5);
+  viaductGroup.add(slabMesh);
+
+  // Double Yellow Lines along the viaduct
+  for (let i = -56; i <= -40; i += 3) {
+    const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
+    const l1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
+    l1.position.set(i, 0.05, 11.35);
+    const l2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
+    l2.position.set(i, 0.05, 11.65);
+    viaductGroup.add(l1, l2);
+  }
+
+  // Safety Guardrails on North & South edges of viaduct
+  [-1, 1].forEach(side => {
+    const railZ = 11.5 + side * 3.75;
+    // Concrete base curb
+    const curb = new THREE.Mesh(new THREE.BoxGeometry(18, 0.35, 0.25), Mat.darkInk);
+    curb.position.set(-49, 0.18, railZ);
+    viaductGroup.add(curb);
+    // Chrome tubular handrail
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(18, 0.08, 0.08), Mat.chrome);
+    rail.position.set(-49, 0.52, railZ);
+    viaductGroup.add(rail);
+
+    // Stanchion posts every 3 meters
+    for (let x = -56; x <= -40; x += 3.2) {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.08), Mat.chrome);
+      post.position.set(x, 0.35, railZ);
+      viaductGroup.add(post);
+    }
+  });
+
+  // Massive Architectural Concrete Pylon under viaduct
+  const pylonGeo = new THREE.BoxGeometry(2.4, 12.0, 5.5);
+  const pylon = new THREE.Mesh(pylonGeo, Mat.concrete);
+  pylon.position.set(-49, -6.5, 11.5);
+  pylon.castShadow = true;
+  viaductGroup.add(pylon);
+
+  // Support corbel brackets
+  const bracketGeo = new THREE.BoxGeometry(3.6, 1.2, 5.8);
+  const bracket = new THREE.Mesh(bracketGeo, Mat.darkInk);
+  bracket.position.set(-49, -1.2, 11.5);
+  viaductGroup.add(bracket);
+
+  // 3D Soft Pastel Cloud Bank at Viaduct Mouth (X: -54 to -58)
+  const cloudGroup = new THREE.Group();
+  const cloudMat = Mat.cloud;
+  const cloudSteamMat = Mat.steam;
+  const cloudPositions = [
+    [-54, 0.6, 9.0, 1.8],
+    [-56, 1.2, 11.5, 2.4],
+    [-55, 0.4, 14.2, 2.0],
+    [-57, 1.8, 9.8, 2.2],
+    [-58, 0.8, 12.8, 2.6],
+    [-53.5, -0.4, 11.5, 1.6],
+    [-56.5, 2.2, 12.0, 1.9],
+    [-55, -0.8, 7.5, 2.1]
+  ];
+
+  cloudPositions.forEach(([cx, cy, cz, rad], idx) => {
+    const geo = new THREE.DodecahedronGeometry(rad, 1);
+    const m = (idx % 3 === 0) ? cloudSteamMat : cloudMat;
+    const mesh = new THREE.Mesh(geo, m);
+    mesh.position.set(cx, cy, cz);
+    mesh.scale.set(1.3, 0.85, 1.1);
+    cloudGroup.add(mesh);
+  });
+  viaductGroup.add(cloudGroup);
+
+  diorama.add(viaductGroup);
+}
+
+// 2c. East Hyper-Ring Speedway Portal (Sağ Sınır - Fütüristik Aerodinamik Hızlandırma Kemeri)
+function buildEastHyperRingPortal(diorama) {
+  const portalGroup = new THREE.Group();
+
+  // Highway Bridge Deck Extension (X: +40 to +58, Width: 7.5, Height: 0.8)
+  const deckGeo = new THREE.BoxGeometry(18, 0.8, 7.5);
+  const deckMesh = new THREE.Mesh(deckGeo, Mat.asphalt);
+  deckMesh.position.set(49, -0.37, 11.5);
+  deckMesh.receiveShadow = true;
+  portalGroup.add(deckMesh);
+
+  // Dark High-Tech Base Slab
+  const slabGeo = new THREE.BoxGeometry(18.2, 0.6, 7.9);
+  const slabMesh = new THREE.Mesh(slabGeo, Mat.darkInk);
+  slabMesh.position.set(49, -0.75, 11.5);
+  portalGroup.add(slabMesh);
+
+  // Double Yellow Lines
+  for (let i = 40; i <= 56; i += 3) {
+    const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
+    const l1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
+    l1.position.set(i, 0.05, 11.35);
+    const l2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
+    l2.position.set(i, 0.05, 11.65);
+    portalGroup.add(l1, l2);
+  }
+
+  // Under-deck structural diagonal space trusses
+  [44, 48, 52, 56].forEach(tx => {
+    const truss = new THREE.Mesh(new THREE.BoxGeometry(0.35, 4.2, 6.5), Mat.solarFrame);
+    truss.position.set(tx, -2.6, 11.5);
+    truss.rotation.z = 0.25;
+    portalGroup.add(truss);
+  });
+
+  // 4 Aerodynamic Hexagonal Speed-Ring Arches
+  const ringX = [42, 46, 50, 54];
+  ringX.forEach((rx, idx) => {
+    const archGroup = new THREE.Group();
+    archGroup.position.set(rx, 0, 11.5);
+
+    // Left & Right Steel Pillars
+    [-1, 1].forEach(side => {
+      const pz = side * 3.85;
+      const col = new THREE.Mesh(new THREE.BoxGeometry(0.55, 3.8, 0.45), Mat.darkInk);
+      col.position.set(0, 1.9, pz);
+      col.castShadow = true;
+      archGroup.add(col);
+
+      // Cyan Accent Strip on each pillar
+      const glow = new THREE.Mesh(new THREE.BoxGeometry(0.58, 2.8, 0.1), Mat.evGlow);
+      glow.position.set(0, 1.8, pz - side * 0.18);
+      archGroup.add(glow);
+
+      // Translucent Aerodynamic Glass Wing Deflector
+      const wingGeo = new THREE.BoxGeometry(1.4, 3.0, 0.08);
+      const wing = new THREE.Mesh(wingGeo, Mat.canopyGlass);
+      wing.position.set(0.4, 2.2, pz + side * 0.45);
+      wing.rotation.y = side * 0.35;
+      archGroup.add(wing);
+    });
+
+    // Top Overhead Arch Crossbeam
+    const topBeam = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.45, 8.2), Mat.darkInk);
+    topBeam.position.set(0, 3.9, 0);
+    archGroup.add(topBeam);
+
+    // Overhead Speed Sensor Strip
+    const sensorStrip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 6.5), Mat.evGlow);
+    sensorStrip.position.set(0, 3.65, 0);
+    archGroup.add(sensorStrip);
+
+    portalGroup.add(archGroup);
+  });
+
+  diorama.add(portalGroup);
+}
+
 function createVoxelCloud() {
   const cloud = new THREE.Group();
   const count = 5 + Math.floor(Math.random() * 4);
@@ -2570,36 +2910,536 @@ function createVoxelCloud() {
   return cloud;
 }
 
-function createLowPolyTree(id = 0) {
+function createOakTree(id = 0) {
   const tree = new THREE.Group();
-  tree.userData = { treeId: id };
+  tree.userData = { treeId: id, treeType: 'oak' };
 
-  const trunk = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.0, 0.7), Mat.wood);
-  trunk.position.y = 1.0;
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.55, 2.6, 7), Mat.wood);
+  trunk.position.y = 1.3;
+  trunk.castShadow = true;
+  tree.add(trunk);
+
+  const crown = new THREE.Group();
+  crown.position.y = 2.6;
+
+  const centerSphere = new THREE.Mesh(new THREE.DodecahedronGeometry(2.0, 1), Mat.oakFoliage);
+  centerSphere.position.y = 1.1;
+  centerSphere.castShadow = true;
+  crown.add(centerSphere);
+
+  const offsets = [
+    [-1.2, 0.7, 0.8, 1.3, Mat.oakFoliageLight],
+    [1.3, 0.9, -0.7, 1.4, Mat.oakFoliage],
+    [-0.8, 1.5, -1.0, 1.2, Mat.foliageDark],
+    [0.9, 1.6, 0.9, 1.1, Mat.oakFoliageLight]
+  ];
+  offsets.forEach(([ox, oy, oz, r, mat]) => {
+    const c = new THREE.Mesh(new THREE.DodecahedronGeometry(r, 0), mat);
+    c.position.set(ox, oy, oz);
+    c.castShadow = true;
+    crown.add(c);
+  });
+
+  tree.add(crown);
+  tree.userData.crown = crown;
+  animatedTrees.push(tree);
+  return tree;
+}
+
+function createPineTree(id = 0) {
+  const tree = new THREE.Group();
+  tree.userData = { treeId: id, treeType: 'pine' };
+
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.40, 2.2, 6), Mat.wood);
+  trunk.position.y = 1.1;
   trunk.castShadow = true;
   tree.add(trunk);
 
   const crown = new THREE.Group();
   crown.position.y = 2.0;
 
-  const l1 = new THREE.Mesh(new THREE.ConeGeometry(2.2, 2.0, 6), Mat.foliage);
-  l1.position.y = 0.2;
-  l1.castShadow = true;
+  const layers = [
+    { r: 2.2, h: 1.8, y: 0.3, mat: Mat.pineFoliage },
+    { r: 1.7, h: 1.6, y: 1.3, mat: Mat.foliageDark },
+    { r: 1.2, h: 1.4, y: 2.2, mat: Mat.pineFoliage },
+    { r: 0.7, h: 1.1, y: 3.1, mat: Mat.foliage }
+  ];
+  layers.forEach(l => {
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(l.r, l.h, 6), l.mat);
+    cone.position.y = l.y;
+    cone.castShadow = true;
+    crown.add(cone);
+  });
 
-  const l2 = new THREE.Mesh(new THREE.ConeGeometry(1.8, 1.8, 6), Mat.foliageDark);
-  l2.position.y = 1.3;
-  l2.castShadow = true;
-
-  const l3 = new THREE.Mesh(new THREE.ConeGeometry(1.2, 1.4, 6), Mat.foliage);
-  l3.position.y = 2.3;
-  l3.castShadow = true;
-
-  crown.add(l1, l2, l3);
   tree.add(crown);
   tree.userData.crown = crown;
   animatedTrees.push(tree);
-
   return tree;
+}
+
+function createPalmTree(id = 0) {
+  const tree = new THREE.Group();
+  tree.userData = { treeId: id, treeType: 'palm' };
+
+  const trunkGroup = new THREE.Group();
+  for (let s = 0; s < 5; s++) {
+    const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.18 - s * 0.015, 0.22 - s * 0.015, 0.85, 6), Mat.palmTrunk);
+    seg.position.set(Math.sin(s * 0.25) * 0.25, s * 0.75 + 0.42, 0);
+    seg.rotation.z = -s * 0.08;
+    seg.castShadow = true;
+    trunkGroup.add(seg);
+  }
+  tree.add(trunkGroup);
+
+  const crown = new THREE.Group();
+  crown.position.set(0.6, 4.0, 0);
+
+  for (let i = 0; i < 7; i++) {
+    const angle = (i * 2 * Math.PI) / 7;
+    const frond = new THREE.Group();
+    frond.rotation.y = angle;
+    frond.rotation.z = 0.55 + (i % 2) * 0.15;
+
+    const leaf = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.04, 0.35), Mat.palmLeaf);
+    leaf.position.x = 0.8;
+    leaf.castShadow = true;
+    frond.add(leaf);
+    crown.add(frond);
+  }
+
+  tree.add(crown);
+  tree.userData.crown = crown;
+  animatedTrees.push(tree);
+  return tree;
+}
+
+function createRoadVergeSapling(id = 0) {
+  const tree = new THREE.Group();
+  tree.userData = { treeId: id, treeType: 'sapling' };
+
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 2.6, 5), Mat.wood);
+  stem.position.y = 1.3;
+  stem.castShadow = true;
+  tree.add(stem);
+
+  const stake1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.6, 4), Mat.planterWood);
+  stake1.position.set(-0.25, 0.75, 0);
+  stake1.rotation.z = 0.25;
+  const stake2 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.6, 4), Mat.planterWood);
+  stake2.position.set(0.25, 0.75, 0);
+  stake2.rotation.z = -0.25;
+  tree.add(stake1, stake2);
+
+  const crown = new THREE.Group();
+  crown.position.y = 2.4;
+  const leaves = new THREE.Mesh(new THREE.DodecahedronGeometry(0.75, 0), Mat.oakFoliageLight);
+  leaves.position.y = 0.3;
+  leaves.castShadow = true;
+  crown.add(leaves);
+
+  tree.add(crown);
+  tree.userData.crown = crown;
+  animatedTrees.push(tree);
+  return tree;
+}
+
+function createWildBush(id = 0) {
+  const bush = new THREE.Group();
+  bush.userData = { treeId: id, treeType: 'bush' };
+  const count = 2 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < count; i++) {
+    const bMesh = new THREE.Mesh(new THREE.DodecahedronGeometry(0.35 + Math.random() * 0.25, 0), Mat.foliage);
+    bMesh.position.set((Math.random() - 0.5) * 0.4, 0.2 + (Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.4);
+    bMesh.castShadow = true;
+    bush.add(bMesh);
+  }
+  bush.userData.crown = bush;
+  animatedTrees.push(bush);
+  return bush;
+}
+
+function createDiverseLowPolyTree(id = 0, type = 'pine') {
+  if (type === 'oak') return createOakTree(id);
+  if (type === 'palm') return createPalmTree(id);
+  if (type === 'sapling') return createRoadVergeSapling(id);
+  return createPineTree(id);
+}
+
+function createLowPolyTree(id = 0) {
+  return createDiverseLowPolyTree(id, 'pine');
+}
+
+function createRoadPuddles(diorama) {
+  const puddleCoords = [
+    [-6.5, 0.05, 10.2, 2.2, 1.4, 0.25],
+    [7.5, 0.05, 12.0, 1.9, 1.2, -0.4],
+    [-2.0, 0.05, 1.5, 1.6, 1.1, 0.6]
+  ];
+  puddleCoords.forEach(([x, y, z, rx, rz, rot], pIdx) => {
+    const geo = new THREE.CircleGeometry(rx * 0.5, 12);
+    geo.rotateX(-Math.PI / 2);
+    geo.scale(1.0, 1.0, rz / rx);
+    const mesh = new THREE.Mesh(geo, Mat.puddle);
+    mesh.position.set(x, y, z);
+    mesh.rotation.y = rot;
+    mesh.userData = { isPuddle: true, pIndex: pIdx };
+    diorama.add(mesh);
+    roadPuddles.push(mesh);
+  });
+}
+
+function createManholeSteamSystem(diorama) {
+  const manholes = [
+    [-8.5, 0.045, 9.8],
+    [8.5, 0.045, 10.4],
+    [-7.0, 0.045, -8.2]
+  ];
+  manholes.forEach(([mx, my, mz], idx) => {
+    const cover = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.02, 12), Mat.darkInk);
+    cover.position.set(mx, my, mz);
+    diorama.add(cover);
+
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.015, 12), Mat.asphaltPatch);
+    rim.position.set(mx, my - 0.005, mz);
+    diorama.add(rim);
+
+    // Steam emitter group
+    const emitter = {
+      pos: new THREE.Vector3(mx, my + 0.1, mz),
+      particles: [],
+      timer: Math.random() * 2.0
+    };
+    manholeSteamEmitters.push(emitter);
+  });
+}
+
+function createSkyFlockBirds(diorama) {
+  for (let i = 0; i < 5; i++) {
+    const bird = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.08, 0.45), Mat.roadWhite);
+    const lWing = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.22), Mat.roadWhite);
+    lWing.position.set(-0.35, 0, 0);
+    const rWing = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.04, 0.22), Mat.roadWhite);
+    rWing.position.set(0.35, 0, 0);
+    bird.add(body, lWing, rWing);
+    bird.userData = {
+      lWing, rWing,
+      flockOffset: i * (Math.PI * 2 / 5),
+      radius: 18 + (i % 2) * 5,
+      speed: 0.65 + i * 0.08,
+      altitude: 20 + i * 1.4
+    };
+    diorama.add(bird);
+    skyFlockBirds.push(bird);
+  }
+}
+
+function createPerchedPigeons(diorama) {
+  const spots = [
+    [-13.1, 4.6, 7.5, 0],
+    [14.9, 4.6, 7.5, Math.PI],
+    [-4.5, 4.65, -6.4, 0.3]
+  ];
+  spots.forEach(([px, py, pz, rot], idx) => {
+    const pigeon = new THREE.Group();
+    const pBody = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.2, 0.32), Mat.pigeonGrey);
+    pBody.position.y = 0.1;
+    const pHead = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.14), Mat.pigeonNeck);
+    pHead.position.set(0, 0.22, 0.12);
+    const pBeak = new THREE.Mesh(new THREE.ConeGeometry(0.04, 0.09, 4), Mat.flowerYellow);
+    pBeak.rotation.x = Math.PI / 2;
+    pBeak.position.set(0, 0.22, 0.21);
+    pigeon.add(pBody, pHead, pBeak);
+    pigeon.position.set(px, py, pz);
+    pigeon.rotation.y = rot;
+    pigeon.userData = { head: pHead, bobTimer: Math.random() * 3.0 };
+    diorama.add(pigeon);
+    perchedPigeons.push(pigeon);
+  });
+}
+
+function createNightMoths(diorama) {
+  const lampCenters = [
+    new THREE.Vector3(-14, 4.0, 7.5),
+    new THREE.Vector3(14, 4.0, 7.5)
+  ];
+  lampCenters.forEach((center, cIdx) => {
+    for (let m = 0; m < 4; m++) {
+      const moth = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 0.06), Mat.lampGlow);
+      moth.userData = {
+        center,
+        angle: Math.random() * Math.PI * 2,
+        dist: 0.4 + Math.random() * 0.9,
+        speed: 3.0 + Math.random() * 4.0,
+        heightOffset: (Math.random() - 0.5) * 0.6
+      };
+      diorama.add(moth);
+      nightMoths.push(moth);
+    }
+  });
+}
+
+function createAirConditionerUnit(diorama) {
+  const acGroup = new THREE.Group();
+  acGroup.position.set(-3.2, 3.2, -12.3);
+
+  const housing = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 0.6), Mat.acGrey);
+  housing.castShadow = true;
+  acGroup.add(housing);
+
+  const grille = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.65, 0.05), Mat.darkInk);
+  grille.position.set(0, 0, -0.31);
+  acGroup.add(grille);
+
+  acFanMesh = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.08, 0.04), Mat.chrome);
+  acFanMesh.position.set(0, 0, -0.32);
+  acGroup.add(acFanMesh);
+
+  const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 2.8, 5), Mat.darkInk);
+  pipe.position.set(0.5, -1.4, -0.15);
+  acGroup.add(pipe);
+
+  diorama.add(acGroup);
+}
+
+function createUrbanWearDetails(diorama) {
+  // 1. Patched asphalt areas (differently shaded bitumen slabs)
+  const patches = [
+    [-3.0, 0.046, 12.2, 2.4, 1.8, 0.15],
+    [5.5, 0.046, 10.8, 1.8, 2.2, -0.2],
+    [-7.5, 0.046, 2.5, 2.0, 1.5, 0.35]
+  ];
+  patches.forEach(([x, y, z, sx, sz, rot]) => {
+    const patch = new THREE.Mesh(new THREE.BoxGeometry(sx, 0.01, sz), Mat.asphaltPatch);
+    patch.position.set(x, y, z);
+    patch.rotation.y = rot;
+    patch.receiveShadow = true;
+    diorama.add(patch);
+  });
+
+  // 2. Torn Wall Posters & Graffiti accent on shop west wall
+  const poster1 = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1.1), Mat.posterRed);
+  poster1.position.set(-5.06, 2.2, -9.5);
+  poster1.rotation.y = -Math.PI / 2;
+  const poster2 = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.8), Mat.posterCyan);
+  poster2.position.set(-5.06, 1.8, -8.6);
+  poster2.rotation.y = -Math.PI / 2;
+  poster2.rotation.z = -0.15;
+  diorama.add(poster1, poster2);
+
+  // 3. Crumpled Newspaper & Paper Cup trash blown into corners
+  const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.04, 0.14, 6), Mat.paperTrash);
+  cup.position.set(-5.6, 0.07, -6.8);
+  cup.rotation.z = Math.PI / 2.3;
+  const news = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.02, 0.22), Mat.paperTrash);
+  news.position.set(-6.1, 0.05, -7.1);
+  news.rotation.y = 0.45;
+  diorama.add(cup, news);
+
+  // 4. Rolling Tin Can Prop (with subtle physics roll on gust)
+  rollingCanMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.16, 8), Mat.tinCan);
+  rollingCanMesh.position.set(3.5, 0.05, 6.8);
+  rollingCanMesh.rotation.z = Math.PI / 2;
+  rollingCanMesh.userData = { baseX: 3.5, baseZ: 6.8, rollTimer: 8.0 };
+  diorama.add(rollingCanMesh);
+}
+
+function createHighAltitudeJet(diorama) {
+  skyJetMesh = new THREE.Group();
+  const jetBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.2, 1.6), Mat.roadWhite);
+  const wings = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.04, 0.6), Mat.roadWhite);
+  wings.position.set(0, 0, 0.1);
+  const tail = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.5, 0.4), Mat.redTrim);
+  tail.position.set(0, 0.25, -0.6);
+  skyJetMesh.add(jetBody, wings, tail);
+
+  skyJetMesh.position.set(-60, 32, -28);
+  skyJetMesh.rotation.y = Math.PI / 2.15;
+  skyJetMesh.userData = { speed: 4.5, active: true };
+  diorama.add(skyJetMesh);
+}
+
+function updateCafePatrons(targetDiorama = diorama) {
+  cafePatrons.forEach(p => {
+    if (p.parent) p.parent.remove(p);
+  });
+  cafePatrons.length = 0;
+
+  if (!State.upgrades.hasMarket || State.upgrades.marketLevel < 2) return;
+
+  const patronSpots = [
+    { pos: [-16.2, 0.04, -5.6], rot: 0.4, clothes: Mat.npcClothes1, hair: Mat.npcHairDark },
+    { pos: [-17.4, 0.04, -5.4], rot: -1.8, clothes: Mat.npcClothes2, hair: Mat.npcHairBlonde },
+    { pos: [-11.8, 0.04, -5.6], rot: 1.2, clothes: Mat.npcClothes3, hair: Mat.npcHairDark }
+  ];
+
+  patronSpots.forEach((spot, idx) => {
+    const patron = new THREE.Group();
+    const pelvis = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.25, 0.3), spot.clothes);
+    pelvis.position.y = 0.52;
+
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.45, 0.28), spot.clothes);
+    torso.position.y = 0.85;
+
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.24, 0.24), Mat.npcSkin);
+    head.position.set(0, 1.2, 0);
+
+    const hair = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.1, 0.26), spot.hair);
+    hair.position.set(0, 1.32, 0);
+
+    const thighL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.32), Mat.darkInk);
+    thighL.position.set(-0.1, 0.46, 0.16);
+    const thighR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.32), Mat.darkInk);
+    thighR.position.set(0.1, 0.46, 0.16);
+
+    const shinL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.42, 0.1), Mat.darkInk);
+    shinL.position.set(-0.1, 0.21, 0.3);
+    const shinR = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.42, 0.1), Mat.darkInk);
+    shinR.position.set(0.1, 0.21, 0.3);
+
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.03, 0.08, 6), Mat.coffeeCup);
+    cup.position.set(0.18, 0.78, 0.22);
+
+    patron.add(pelvis, torso, head, hair, thighL, thighR, shinL, shinR, cup);
+    patron.position.set(spot.pos[0], spot.pos[1], spot.pos[2]);
+    patron.rotation.y = spot.rot;
+    patron.userData = { head, sipTimer: idx * 2.0 };
+
+    if (targetDiorama) targetDiorama.add(patron);
+    cafePatrons.push(patron);
+  });
+}
+
+function updateLivingWorldFX(delta, totalSeconds) {
+  // 1. Sky flock birds circling
+  skyFlockBirds.forEach(bird => {
+    const u = bird.userData;
+    u.flockOffset += u.speed * delta;
+    bird.position.x = Math.cos(u.flockOffset) * u.radius;
+    bird.position.z = Math.sin(u.flockOffset) * u.radius;
+    bird.position.y = u.altitude + Math.sin(totalSeconds * 1.5 + u.flockOffset) * 0.8;
+    bird.rotation.y = -u.flockOffset - Math.PI / 2;
+    const flap = Math.sin(totalSeconds * 8.0 + u.flockOffset) * 0.35;
+    u.lWing.rotation.z = flap;
+    u.rWing.rotation.z = -flap;
+  });
+
+  // 2. Perched pigeons head bobbing
+  perchedPigeons.forEach(pigeon => {
+    pigeon.userData.bobTimer -= delta;
+    if (pigeon.userData.bobTimer <= 0) {
+      pigeon.userData.bobTimer = 1.8 + Math.random() * 3.5;
+      pigeon.userData.head.rotation.y = (Math.random() - 0.5) * 0.8;
+    }
+  });
+
+  // 3. Night Moths / Fireflies around street lights
+  const isNight = State.hour < 6 || State.hour >= 20;
+  nightMoths.forEach(moth => {
+    moth.visible = isNight;
+    if (isNight) {
+      const u = moth.userData;
+      u.angle += u.speed * delta;
+      moth.position.set(
+        u.center.x + Math.cos(u.angle) * u.dist,
+        u.center.y + u.heightOffset + Math.sin(totalSeconds * 4.0 + u.angle) * 0.15,
+        u.center.z + Math.sin(u.angle) * u.dist
+      );
+    }
+  });
+
+  // 4. Manhole steam puffs
+  manholeSteamEmitters.forEach(emitter => {
+    emitter.timer -= delta;
+    if (emitter.timer <= 0) {
+      emitter.timer = 0.22 + Math.random() * 0.28;
+      if (Math.random() < 0.65) {
+        const steamMesh = new THREE.Mesh(
+          new THREE.DodecahedronGeometry(0.12 + Math.random() * 0.12, 0),
+          Mat.steam
+        );
+        steamMesh.position.copy(emitter.pos);
+        steamMesh.position.x += (Math.random() - 0.5) * 0.25;
+        steamMesh.position.z += (Math.random() - 0.5) * 0.25;
+        scene.add(steamMesh);
+        particles.push({
+          mesh: steamMesh,
+          mat: steamMesh.material,
+          vel: new THREE.Vector3((Math.random() - 0.5) * 0.1, 0.45 + Math.random() * 0.35, (Math.random() - 0.5) * 0.1),
+          life: 1.6,
+          maxLife: 1.6
+        });
+      }
+    }
+  });
+
+  // 5. Air Conditioner compressor fan & water drip
+  if (acFanMesh) {
+    acFanMesh.rotation.z += 12.0 * delta;
+  }
+  acDripTimer += delta;
+  if (acDripTimer >= 2.8) {
+    acDripTimer = 0;
+    const drop = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 0.03), Mat.glass);
+    drop.position.set(-2.7, 1.8, -12.45);
+    scene.add(drop);
+    particles.push({
+      mesh: drop,
+      mat: drop.material,
+      vel: new THREE.Vector3(0, -1.8, 0),
+      life: 0.9,
+      maxLife: 0.9
+    });
+  }
+
+  // 6. High altitude jet plane
+  if (skyJetMesh && skyJetMesh.userData.active) {
+    skyJetMesh.position.x += skyJetMesh.userData.speed * delta;
+    skyJetMesh.position.z += (skyJetMesh.userData.speed * 0.15) * delta;
+    if (skyJetMesh.position.x > 65) {
+      skyJetMesh.position.set(-65, 32, -28);
+    }
+  }
+
+  // 7. Faulty street lamp occasional flicker
+  faultyLampTimer += delta;
+  if (faultyLampTimer > 18.0) {
+    if (faultyLampTimer < 18.35) {
+      if (totemGlowLight) {
+        totemGlowLight.intensity = Math.random() > 0.4 ? 0.9 : 0.1;
+      }
+    } else {
+      faultyLampTimer = (Math.random() - 0.5) * 6.0;
+    }
+  }
+
+  // 8. Rolling tin can physics
+  if (rollingCanMesh) {
+    const u = rollingCanMesh.userData;
+    u.rollTimer -= delta;
+    if (u.rollTimer <= 0) {
+      u.rollTimer = 12.0 + Math.random() * 10.0;
+      rollingCanVelocity = 2.4;
+    }
+    if (rollingCanVelocity > 0.01) {
+      rollingCanMesh.position.x += rollingCanVelocity * delta;
+      rollingCanMesh.rotation.y += rollingCanVelocity * 6.0 * delta;
+      rollingCanVelocity *= 0.96;
+      if (rollingCanMesh.position.x > 12) {
+        rollingCanMesh.position.x = u.baseX;
+        rollingCanVelocity = 0;
+      }
+    }
+  }
+
+  // 9. Cafe Patrons sipping coffee
+  cafePatrons.forEach(patron => {
+    patron.userData.sipTimer -= delta;
+    if (patron.userData.sipTimer <= 0) {
+      patron.userData.sipTimer = 3.5 + Math.random() * 4.0;
+      patron.userData.head.rotation.x = Math.sin(totalSeconds * 3.0) * 0.15;
+    }
+  });
 }
 
 // ---------------------------------------------------------
@@ -2731,6 +3571,84 @@ function lerpAngle(current, target, factor) {
 const CAR_COLORS = [0x4A7BB0, 0xC44D3F, 0x4E9B66, 0x2A3E59, 0xD47631, 0x546E7A, 0x8E44AD, 0x34495E, 0xBE8C3D];
 const FUEL_TYPES = ['benzin', 'dizel', 'lpg', 'ev'];
 
+// Kinematic Forward Proximity & Collision Sensor (Anti-Ghosting & Safe Following)
+function getForwardObstacleDistance(me, isBypass = false) {
+  let minDistance = 999;
+  const myPos = me.mesh.position;
+  const myX = myPos.x;
+  const myZ = myPos.z;
+
+  if (isBypass) {
+    // 1. Check other bypass vehicles ahead in the highway lane corridor
+    if (typeof bgVehicles !== 'undefined' && Array.isArray(bgVehicles)) {
+      for (let i = 0; i < bgVehicles.length; i++) {
+        const other = bgVehicles[i];
+        if (other === me) continue;
+        const ox = other.mesh.position.x;
+        const oz = other.mesh.position.z;
+        if (Math.abs(oz - myZ) < 2.0 && ox > myX) {
+          const d = ox - myX;
+          if (d < minDistance) minDistance = d;
+        }
+      }
+    }
+    // 2. Also check if any customer car is currently departing/merging into highway ahead
+    if (typeof cars !== 'undefined' && Array.isArray(cars)) {
+      for (let i = 0; i < cars.length; i++) {
+        const c = cars[i];
+        if (c.state === 'DEPARTING' && c.mesh.position.z > 9.0) {
+          const ox = c.mesh.position.x;
+          if (ox > myX && (ox - myX) < minDistance && Math.abs(c.mesh.position.z - myZ) < 2.4) {
+            minDistance = ox - myX;
+          }
+        }
+      }
+    }
+  } else {
+    // Customer car (Vehicle)
+    if (me.state === 'APPROACHING' || me.state === 'DEPARTING') {
+      // Check other customer cars ahead in same queue/path
+      if (typeof cars !== 'undefined' && Array.isArray(cars)) {
+        for (let i = 0; i < cars.length; i++) {
+          const other = cars[i];
+          if (other === me) continue;
+          const ox = other.mesh.position.x;
+          const oz = other.mesh.position.z;
+          const dist = Math.hypot(ox - myX, oz - myZ);
+
+          if (me.waypoints && me.wpIndex < me.waypoints.length) {
+            const wp = me.waypoints[me.wpIndex];
+            const toWpX = wp.x - myX;
+            const toWpZ = wp.z - myZ;
+            const toOtherX = ox - myX;
+            const toOtherZ = oz - myZ;
+            const dot = toWpX * toOtherX + toWpZ * toOtherZ;
+            // If other car is in our travel heading and within proximity
+            if (dot > 0 && dist < 5.2 && dist < minDistance) {
+              minDistance = dist;
+            }
+          }
+        }
+      }
+
+      // If DEPARTING and approaching highway merge (Z > 9.0), yield to fast bypass traffic!
+      if (me.state === 'DEPARTING' && myZ > 9.0) {
+        if (typeof bgVehicles !== 'undefined' && Array.isArray(bgVehicles)) {
+          for (let i = 0; i < bgVehicles.length; i++) {
+            const bg = bgVehicles[i];
+            const bgX = bg.mesh.position.x;
+            if (bgX < myX + 2.5 && bgX > myX - 8.5) {
+              minDistance = Math.min(minDistance, 2.0); // Force yield stop
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return minDistance < 900 ? minDistance : null;
+}
+
 class Vehicle {
   constructor(modelType, fuelType, colorHex) {
     this.modelType = modelType;
@@ -2848,8 +3766,8 @@ class Vehicle {
     sprite.position.set(0, 2.3, 0);
     car.add(sprite);
 
-    // Initial position on highway, facing +X (Math.PI / 2)
-    car.position.set(-36, 0, 11.5);
+    // Initial position inside West Cloud Viaduct, facing +X (Math.PI / 2)
+    car.position.set(-52, 0, 11.5);
     car.rotation.y = Math.PI / 2;
     return car;
   }
@@ -2857,17 +3775,30 @@ class Vehicle {
   initApproachPath() {
     if (!this.targetPumpSlot) return;
     const slotPos = this.targetPumpSlot.pos;
+    const isFrontRow = slotPos.z >= 2;
     const parkZ = slotPos.z + 1.8;
     const parkX = slotPos.x;
 
-    // Curved 5-waypoint entry trajectory into pump bay
-    this.waypoints = [
-      new THREE.Vector3(slotPos.x - 7.0, 0, 11.5),              // 1. Highway deceleration
-      new THREE.Vector3(slotPos.x - 3.5, 0, 9.2),               // 2. Apron entrance curve
-      new THREE.Vector3(slotPos.x - 1.0, 0, Math.max(5.8, parkZ + 2.8)), // 3. Bay corridor alignment
-      new THREE.Vector3(parkX, 0, parkZ + 1.2),                 // 4. Pump entry straight
-      new THREE.Vector3(parkX, 0, parkZ)                        // 5. Final pump docking stop
-    ];
+    if (isFrontRow) {
+      // Front Row Pumps (#3 and #4): Smooth entry directly into front bay corridor
+      this.waypoints = [
+        new THREE.Vector3(slotPos.x - 7.5, 0, 11.5),             // 1. Highway deceleration
+        new THREE.Vector3(slotPos.x - 4.2, 0, 9.2),              // 2. Apron entrance curb curve
+        new THREE.Vector3(slotPos.x - 1.2, 0, parkZ + 1.8),      // 3. Front bay corridor alignment
+        new THREE.Vector3(parkX, 0, parkZ + 0.8),                // 4. Pump entry straight
+        new THREE.Vector3(parkX, 0, parkZ)                       // 5. Final pump docking stop
+      ];
+    } else {
+      // Back Row Pumps (#1 and #2): Drive through dedicated open outer aisle without clipping front islands
+      this.waypoints = [
+        new THREE.Vector3(slotPos.x - 8.5, 0, 11.5),             // 1. Highway deceleration
+        new THREE.Vector3(slotPos.x - 5.5, 0, 9.0),              // 2. Apron entrance curb curve
+        new THREE.Vector3(slotPos.x - 2.8, 0, 5.2),              // 3. Clear bypass aisle around front island
+        new THREE.Vector3(slotPos.x - 0.8, 0, 1.8),              // 4. Inner aisle alignment
+        new THREE.Vector3(parkX, 0, parkZ + 0.8),                // 5. Back bay straight alignment
+        new THREE.Vector3(parkX, 0, parkZ)                       // 6. Final pump docking stop
+      ];
+    }
     this.wpIndex = 0;
     this.state = 'APPROACHING';
   }
@@ -2877,10 +3808,10 @@ class Vehicle {
     const startZ = this.mesh.position.z;
 
     this.waypoints = [
-      new THREE.Vector3(startX + 1.2, 0, startZ + 2.6),  // 1. Forward roll from bay
-      new THREE.Vector3(startX + 3.8, 0, 8.5),           // 2. Apron exit curve
-      new THREE.Vector3(startX + 8.0, 0, 11.5),          // 3. Highway merge
-      new THREE.Vector3(45, 0, 11.5)                     // 4. Highway departure offscreen
+      new THREE.Vector3(startX + 1.0, 0, startZ + 1.8),  // 1. Forward roll out of bay
+      new THREE.Vector3(startX + 3.8, 0, 8.6),           // 2. Apron exit curve
+      new THREE.Vector3(startX + 7.5, 0, 11.5),          // 3. Highway merge lane
+      new THREE.Vector3(56, 0, 11.5)                     // 4. Drive off through East Hyper-Ring Portal
     ];
     this.wpIndex = 0;
     this.state = 'DEPARTING';
@@ -2907,6 +3838,17 @@ class Vehicle {
           fw.rotation.y = lerpAngle(fw.rotation.y, steerAngle, 0.15 * State.timeSpeed);
         });
 
+        // Forward Obstacle Proximity & Safe Following Check (Anti-Ghosting Physics)
+        const aheadDist = getForwardObstacleDistance(this, false);
+        let obstacleBrakeFactor = 1.0;
+        if (aheadDist !== null) {
+          if (aheadDist < 2.8) {
+            obstacleBrakeFactor = 0.0; // Complete stop behind leading vehicle!
+          } else if (aheadDist < 4.8) {
+            obstacleBrakeFactor = (aheadDist - 2.8) / 2.0; // Smooth deceleration
+          }
+        }
+
         // Acceleration & Deceleration curves
         let targetSpeed = this.cruiseSpeed;
         if (this.state === 'APPROACHING' && this.wpIndex === this.waypoints.length - 1) {
@@ -2916,10 +3858,12 @@ class Vehicle {
           targetSpeed = this.cruiseSpeed * 1.15;
         }
 
+        targetSpeed *= obstacleBrakeFactor;
+
         this.currentSpeed = THREE.MathUtils.lerp(this.currentSpeed, targetSpeed, 0.08 * State.timeSpeed);
         const stepDist = this.currentSpeed * State.timeSpeed;
 
-        if (dist > 0.01) {
+        if (dist > 0.01 && obstacleBrakeFactor > 0.01) {
           const moveStep = Math.min(stepDist, dist);
           this.mesh.position.x += (dx / dist) * moveStep;
           this.mesh.position.z += (dz / dist) * moveStep;
@@ -2945,7 +3889,7 @@ class Vehicle {
             }
           }
         }
-      } else if (this.mesh.position.x > 38) {
+      } else if (this.mesh.position.x > 56) {
         this.destroy();
       }
     } else if (this.state === 'WAITING' || this.state === 'REFUELING') {
@@ -2998,6 +3942,7 @@ function spawnCar() {
   const randomColor = CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)];
 
   const car = new Vehicle('sedan', randomFuel, randomColor);
+  car.mesh.position.set(-52, 0, 11.5); // Spawn inside West Cloud Viaduct!
   car.targetPumpSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
   car.targetPumpSlot.occupiedBy = car;
   car.initApproachPath();
@@ -3043,6 +3988,8 @@ function initPointerAndKeyboard() {
     keysPressed[e.code] = true;
     if (e.code === 'KeyR' || e.code === 'Space') {
       resetCameraView();
+    } else if (e.code === 'KeyT') {
+      toggleCanopySetting();
     } else if (e.code === 'KeyQ') {
       rotateCameraBy(Math.PI / 4);
     } else if (e.code === 'KeyE') {
@@ -3784,6 +4731,7 @@ function buyMarketUpgrade() {
         State.upgrades.hasMarket = true;
         State.upgrades.marketLevel = 1;
         spawnMarketBayMesh(1);
+        updateCafePatrons(diorama);
         updateBuildModalButtons();
         showToast(t('toast_market_active'));
         sfx.playFanfare();
@@ -3802,6 +4750,7 @@ function buyMarketUpgrade() {
     State.money -= cost;
     State.upgrades.marketLevel = nextLvl;
     spawnMarketBayMesh(nextLvl);
+    updateCafePatrons(diorama);
     updateBuildModalButtons();
     showToast(`Mini Market & Cafe Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
@@ -4213,14 +5162,23 @@ class BypassVehicle {
   }
 
   reset() {
-    this.speed = 10 + Math.random() * 8;
-    this.mesh.position.set(-48 - Math.random() * 15, 0, 13.4);
+    this.speed = 9 + Math.random() * 6;
+    this.mesh.position.set(-54 - Math.random() * 8, 0, 13.4);
     this.mesh.rotation.y = Math.PI / 2;
   }
 
   update(delta) {
-    this.mesh.position.x += this.speed * delta;
-    if (this.mesh.position.x > 48) {
+    const aheadDist = getForwardObstacleDistance(this, true);
+    let speedMult = 1.0;
+    if (aheadDist !== null) {
+      if (aheadDist < 2.8) {
+        speedMult = 0;
+      } else if (aheadDist < 5.0) {
+        speedMult = (aheadDist - 2.8) / 2.2;
+      }
+    }
+    this.mesh.position.x += this.speed * speedMult * delta * State.timeSpeed;
+    if (this.mesh.position.x > 56) {
       this.reset();
     }
   }
@@ -4479,6 +5437,8 @@ function animate() {
   updateBypassTraffic(delta);
   updateParticles(delta);
   updateWindAndCreatures(delta, totalSeconds);
+  updateLivingWorldFX(delta, totalSeconds);
+  updateCanopyAnimation(delta);
   updatePlotBadges(totalSeconds);
 
   for (let i = cars.length - 1; i >= 0; i--) {
@@ -4512,6 +5472,17 @@ function switchSettingsTab(tabId) {
 }
 
 function updateSettingsUI() {
+  const btnCanopy = document.getElementById('btn-toggle-canopy');
+  if (btnCanopy) {
+    btnCanopy.textContent = State.settings.showCanopy ? (currentLang === 'tr' ? 'AÇIK' : 'ON') : (currentLang === 'tr' ? 'KAPALI' : 'OFF');
+    btnCanopy.className = `neo-btn toggle-btn ${State.settings.showCanopy ? 'success' : 'danger'}`;
+  }
+
+  const btnQuickCanopy = document.getElementById('btn-quick-toggle-canopy');
+  if (btnQuickCanopy) {
+    btnQuickCanopy.classList.toggle('active', State.settings.showCanopy);
+  }
+
   const btnSfx = document.getElementById('btn-toggle-sfx');
   if (btnSfx) {
     btnSfx.textContent = State.settings.sfx ? (currentLang === 'tr' ? 'AÇIK' : 'ON') : (currentLang === 'tr' ? 'KAPALI' : 'OFF');
@@ -4539,6 +5510,46 @@ function updateSettingsUI() {
   if (btnLang) {
     btnLang.textContent = currentLang === 'tr' ? 'Türkçe (TR)' : 'English (EN)';
   }
+}
+
+function updateCanopyAnimation(delta) {
+  if (!canopyRoofMesh) return;
+  if (Math.abs(canopyAnimProgress - canopyTargetProgress) > 0.0005) {
+    canopyAnimProgress = THREE.MathUtils.damp(canopyAnimProgress, canopyTargetProgress, 7.5, delta);
+    
+    // Z-axis scale: 1.0 (fully deployed) to 0.04 (retracted into market)
+    const zScale = THREE.MathUtils.lerp(0.04, 1.0, canopyAnimProgress);
+    // Z-axis position: 0.0 (over pumps) to -6.2 (retracted back against market wall)
+    const zPos = THREE.MathUtils.lerp(-6.2, 0.0, canopyAnimProgress);
+    // X-axis tilt angle: 0 rad (flat horizontal) to -0.35 rad (-20 deg upward folded accordion)
+    const xRot = THREE.MathUtils.lerp(-0.35, 0.0, canopyAnimProgress);
+
+    canopyRoofMesh.scale.set(1.0, 1.0, zScale);
+    canopyRoofMesh.position.set(0, 0, zPos);
+    canopyRoofMesh.rotation.x = xRot;
+
+    if (Mat.canopyGlass) {
+      Mat.canopyGlass.opacity = THREE.MathUtils.lerp(0.0, 0.32, canopyAnimProgress);
+    }
+  }
+
+  if (canopyTargetProgress === 0.0 && canopyAnimProgress < 0.015) {
+    canopyRoofMesh.visible = false;
+  } else {
+    canopyRoofMesh.visible = true;
+  }
+}
+
+function toggleCanopySetting() {
+  State.settings.showCanopy = !State.settings.showCanopy;
+  localStorage.setItem('pixeloil_canopy_vis', State.settings.showCanopy);
+  canopyTargetProgress = State.settings.showCanopy ? 1.0 : 0.0;
+  if (canopyRoofMesh) {
+    canopyRoofMesh.visible = true;
+  }
+  sfx.playCanopyMove(State.settings.showCanopy);
+  updateSettingsUI();
+  showToast(t('toast_canopy_toggled'));
 }
 
 function toggleSFXSetting() {

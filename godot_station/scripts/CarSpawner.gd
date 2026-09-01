@@ -80,14 +80,26 @@ func _try_spawn_car() -> void:
 	car.car_color = car_colors.pick_random()
 	car.assigned_pump_node = assigned_pump
 
-	# Route: Main Road Spawn -> Curved Forecourt Turn -> Pump bay alignment -> Pump slot
-	var spawn_pos: Vector3 = Vector3(-45, 0, 14)
-	var wp1: Vector3 = Vector3(pump_slot_pos.x - 7.0, 0, 14.0)
-	var wp2: Vector3 = Vector3(pump_slot_pos.x - 3.5, 0, 11.5)
-	var wp3: Vector3 = Vector3(pump_slot_pos.x - 1.0, 0, pump_slot_pos.z + 2.8)
+	# Route: West Cloud Viaduct Spawn -> Clean Non-Clipping Apron Driveway -> Pump Slot
+	var spawn_pos: Vector3 = Vector3(-52, 0, 14)
+	var is_front_row: bool = pump_slot_pos.z >= 2.0
 	var final_pump_pos: Vector3 = pump_slot_pos + Vector3(0, 0, -1.8)
 
-	car.global_position = spawn_pos
-	car.waypoints = [wp1, wp2, wp3, final_pump_pos]
+	if is_front_row:
+		car.waypoints = [
+			Vector3(pump_slot_pos.x - 7.5, 0, 14.0),
+			Vector3(pump_slot_pos.x - 4.2, 0, 11.5),
+			Vector3(pump_slot_pos.x - 1.2, 0, pump_slot_pos.z + 1.8),
+			final_pump_pos
+		]
+	else:
+		car.waypoints = [
+			Vector3(pump_slot_pos.x - 8.5, 0, 14.0),
+			Vector3(pump_slot_pos.x - 5.5, 0, 11.5),
+			Vector3(pump_slot_pos.x - 2.8, 0, 6.5),
+			Vector3(pump_slot_pos.x - 0.8, 0, 2.5),
+			final_pump_pos
+		]
 
+	car.global_position = spawn_pos
 	get_parent().add_child(car)

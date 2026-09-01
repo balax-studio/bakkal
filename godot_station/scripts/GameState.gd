@@ -35,9 +35,10 @@ var has_manager: bool = false
 var current_theme: String = "standard"
 var unlocked_themes: Array = ["standard"]
 
-# Visual Addons
+# Visual Addons & View Settings
 var has_totem_addon: bool = false
 var has_garden_addon: bool = false
+var show_canopy: bool = true
 
 # Staff Levels (Starts with 0 - requires manual pumping initially!)
 var staff_attendant: int = 0
@@ -529,6 +530,11 @@ func debug_advance_day() -> void:
 	minute = 0.0
 	_daily_summary()
 	EventBus.time_updated.emit(hour, 0, day)
+
+func toggle_canopy_visibility() -> void:
+	show_canopy = !show_canopy
+	EventBus.canopy_visibility_changed.emit(show_canopy)
+	EventBus.show_toast.emit(I18n.t("toast_canopy_toggled"), true)
 
 func debug_max_reputation() -> void:
 	reputation = 5.0

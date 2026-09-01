@@ -9,6 +9,9 @@
 [ext_resource type="PackedScene" path="res://scenes/Tank.tscn" id="7_tank"]
 [ext_resource type="PackedScene" path="res://scenes/Pump.tscn" id="8_pump"]
 [ext_resource type="PackedScene" path="res://scenes/Tree.tscn" id="9_tree"]
+[ext_resource type="Material" path="res://materials/mat_dark_ink.tres" id="10_dark"]
+[ext_resource type="Material" path="res://materials/mat_glass.tres" id="11_glass"]
+[ext_resource type="Material" path="res://materials/mat_blue.tres" id="12_blue"]
 
 [node name="Diorama" type="Node3D"]
 
@@ -130,3 +133,92 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 3)
 
 [node name="Tree8" parent="Trees" instance=ExtResource("9_tree")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, 0, -10)
+
+[node name="Puddles" type="Node3D" parent="."]
+
+[node name="Puddle1" type="CSGCylinder3D" parent="Puddles"]
+transform = Transform3D(1.1, 0, 0, 0, 1, 0, 0, 0, 0.7, -6.5, 0.05, 10.2)
+radius = 1.1
+height = 0.01
+material = ExtResource("2_asphalt")
+
+[node name="Puddle2" type="CSGCylinder3D" parent="Puddles"]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 0.6, 7.5, 0.05, 12.0)
+radius = 0.95
+height = 0.01
+material = ExtResource("2_asphalt")
+
+[node name="Manholes" type="Node3D" parent="."]
+
+[node name="Manhole1" type="CSGCylinder3D" parent="Manholes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.05, 9.8)
+radius = 0.48
+height = 0.02
+material = ExtResource("2_asphalt")
+
+[node name="Manhole2" type="CSGCylinder3D" parent="Manholes"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0.05, 10.4)
+radius = 0.48
+height = 0.02
+material = ExtResource("2_asphalt")
+
+[node name="WestViaduct" type="Node3D" parent="."]
+
+[node name="Deck" type="CSGBox3D" parent="WestViaduct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49, -0.37, 11.5)
+size = Vector3(18, 0.8, 7.5)
+material = ExtResource("2_asphalt")
+
+[node name="Slab" type="CSGBox3D" parent="WestViaduct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49, -0.75, 11.5)
+size = Vector3(18.2, 0.6, 7.9)
+material = ExtResource("4_conc")
+
+[node name="Pylon" type="CSGBox3D" parent="WestViaduct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49, -6.5, 11.5)
+size = Vector3(2.4, 12.0, 5.5)
+material = ExtResource("4_conc")
+
+[node name="NorthRail" type="CSGBox3D" parent="WestViaduct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49, 0.35, 7.75)
+size = Vector3(18, 0.7, 0.25)
+material = ExtResource("10_dark")
+
+[node name="SouthRail" type="CSGBox3D" parent="WestViaduct"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49, 0.35, 15.25)
+size = Vector3(18, 0.7, 0.25)
+material = ExtResource("10_dark")
+
+[node name="EastHyperRing" type="Node3D" parent="."]
+
+[node name="Deck" type="CSGBox3D" parent="EastHyperRing"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, -0.37, 11.5)
+size = Vector3(18, 0.8, 7.5)
+material = ExtResource("2_asphalt")
+
+[node name="Slab" type="CSGBox3D" parent="EastHyperRing"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49, -0.75, 11.5)
+size = Vector3(18.2, 0.6, 7.9)
+material = ExtResource("10_dark")
+
+[node name="Ring1" type="CSGBox3D" parent="EastHyperRing"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, 1.9, 11.5)
+size = Vector3(0.65, 4.0, 8.2)
+material = ExtResource("10_dark")
+
+[node name="Glow1" type="CSGBox3D" parent="EastHyperRing/Ring1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+size = Vector3(0.3, 0.2, 7.0)
+material = ExtResource("12_blue")
+
+[node name="Ring2" type="CSGBox3D" parent="EastHyperRing"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 1.9, 11.5)
+size = Vector3(0.65, 4.0, 8.2)
+material = ExtResource("10_dark")
+
+[node name="Glow2" type="CSGBox3D" parent="EastHyperRing/Ring2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+size = Vector3(0.3, 0.2, 7.0)
+material = ExtResource("12_blue")
+
+

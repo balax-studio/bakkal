@@ -17,6 +17,7 @@ var speed: float = 4.2 # Slower, realistic tycoon pacing
 @onready var body_mesh: CSGBox3D = $Body
 
 func _ready() -> void:
+	add_to_group("cars")
 	if body_mesh:
 		var mat: StandardMaterial3D = StandardMaterial3D.new()
 		mat.albedo_color = car_color
@@ -35,6 +36,22 @@ func update_order_label() -> void:
 		label_order.text = "OK! +TL"
 		label_order.modulate = Color(0.3, 1.0, 0.5)
 
+func _get_forward_obstacle_distance() -> float:
+	var min_dist: float = 999.0
+	var all_cars: Array[Node] = get_tree().get_nodes_in_group("cars")
+	for other in all_cars:
+		if other == self or not is_instance_valid(other):
+			continue
+		var to_other: Vector3 = (other.global_position - global_position)
+		to_other.y = 0
+		var d: float = to_other.length()
+		if current_wp < waypoints.size():
+			var to_wp: Vector3 = (waypoints[current_wp] - global_position)
+			to_wp.y = 0
+			if to_wp.dot(to_other) > 0 and d < 5.0 and d < min_dist:
+				min_dist = d
+	return min_dist
+
 func _process(delta: float) -> void:
 	if state == State.ENTERING or state == State.LEAVING:
 		if current_wp < waypoints.size():
@@ -51,7 +68,18 @@ func _process(delta: float) -> void:
 				elif state == State.LEAVING:
 					current_speed = speed * 1.15
 
-				global_position += move_dir * current_speed * delta
+				# Safe Distance / Anti-Ghosting Proximity Check
+				var ahead_dist: float = _get_forward_obstacle_distance()
+				var obstacle_mult: float = 1.0
+				if ahead_dist < 2.5:
+					obstacle_mult = 0.0
+				elif ahead_dist < 4.8:
+					obstacle_mult = (ahead_dist - 2.5) / 2.3
+
+				current_speed *= obstacle_mult
+
+				if obstacle_mult > 0.01:
+					global_position += move_dir * current_speed * delta
 				# Smooth face rotation using shortest angle
 				var target_rot_y: float = atan2(move_dir.x, move_dir.z)
 				rotation.y = lerp_angle(rotation.y, target_rot_y, 8.5 * delta)
@@ -86,12 +114,12 @@ func finish_refueling(earned_money: float) -> void:
 		assigned_pump_node.current_car = null
 		assigned_pump_node.update_status_display()
 
-	# Generate smooth curved exit waypoints to main road
+	# Generate smooth curved exit waypoints to main road and East Portal
 	waypoints = [
-		global_position + Vector3(1.2, 0, 2.5),
+		global_position + Vector3(1.2, 0, 2.2),
 		Vector3(global_position.x + 3.8, 0, 8.5),
-		Vector3(global_position.x + 8.0, 0, 14.0),
-		Vector3(50, 0, 14.0)
+		Vector3(global_position.x + 7.5, 0, 14.0),
+		Vector3(56, 0, 14.0)
 	]
 	current_wp = 0
 

@@ -11,6 +11,8 @@ var cam_speed: float = 25.0
 
 func _ready() -> void:
 	EventBus.time_updated.connect(_on_time_updated)
+	EventBus.canopy_visibility_changed.connect(_on_canopy_visibility_changed)
+	_on_canopy_visibility_changed(GameState.show_canopy)
 	_update_lighting(GameState.hour)
 	if camera:
 		initial_cam_pos = camera.position
@@ -34,6 +36,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		var delta_m = event.position - last_mouse_pos
 		last_mouse_pos = event.position
 		_pan_camera_by_mouse(delta_m)
+	elif event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_T:
+			GameState.toggle_canopy_visibility()
 
 func _pan_camera_by_mouse(delta_m: Vector2) -> void:
 	if not camera:
@@ -112,3 +117,20 @@ func _update_lighting(hour: int) -> void:
 		else:
 			dir_light.light_energy = 0.75
 			dir_light.light_color = Color(1.0, 0.65, 0.45) # Dusk sunset
+
+func _on_canopy_visibility_changed(is_vis: bool) -> void:
+	var canopy: Node3D = get_node_or_null("Diorama/Canopy")
+	if not canopy:
+		return
+	var tween: Tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	if is_vis:
+		canopy.visible = true
+		tween.tween_property(canopy, "scale:z", 1.0, 0.65)
+		tween.tween_property(canopy, "position:z", 0.0, 0.65)
+		tween.tween_property(canopy, "rotation_degrees:x", 0.0, 0.65)
+	else:
+		tween.tween_property(canopy, "scale:z", 0.04, 0.65)
+		tween.tween_property(canopy, "position:z", -6.2, 0.65)
+		tween.tween_property(canopy, "rotation_degrees:x", -20.0, 0.65)
+		tween.chain().tween_callback(func(): if not GameState.show_canopy: canopy.visible = false)
+
