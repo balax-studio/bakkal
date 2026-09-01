@@ -27,8 +27,11 @@ func _refresh_built_state() -> void:
 			label_status.text = "İNŞA ET"
 			label_status.modulate = Color(0.9, 0.7, 0.2)
 	else:
+		var lvl: int = 1
+		if pump_index - 1 < GameState.pump_levels.size():
+			lvl = GameState.pump_levels[pump_index - 1]
 		if label_num:
-			label_num.text = "P-%d" % pump_index
+			label_num.text = "P-%d (Lvl %d)" % [pump_index, lvl]
 		update_status_display()
 
 func update_status_display() -> void:

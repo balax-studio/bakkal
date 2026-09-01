@@ -5,6 +5,7 @@
 [ext_resource type="Material" path="res://materials/mat_road_yellow.tres" id="3_yellow"]
 [ext_resource type="Material" path="res://materials/mat_concrete.tres" id="4_conc"]
 [ext_resource type="PackedScene" path="res://scenes/Building.tscn" id="5_bld"]
+[ext_resource type="PackedScene" path="res://scenes/Canopy.tscn" id="6_canopy"]
 [ext_resource type="PackedScene" path="res://scenes/Tank.tscn" id="7_tank"]
 [ext_resource type="PackedScene" path="res://scenes/Pump.tscn" id="8_pump"]
 [ext_resource type="PackedScene" path="res://scenes/Tree.tscn" id="9_tree"]
@@ -45,6 +46,9 @@ material = ExtResource("3_yellow")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 1)
 size = Vector3(30, 0.08, 18)
 material = ExtResource("4_conc")
+
+[node name="Canopy" parent="." instance=ExtResource("6_canopy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Building" parent="." instance=ExtResource("5_bld")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -8.5)

@@ -3,39 +3,93 @@
 [ext_resource type="Material" path="res://materials/mat_concrete.tres" id="1_conc"]
 [ext_resource type="Material" path="res://materials/mat_building.tres" id="2_bld"]
 [ext_resource type="Material" path="res://materials/mat_red.tres" id="3_red"]
+[ext_resource type="Material" path="res://materials/mat_dark_ink.tres" id="4_ink"]
 
 [node name="Canopy" type="Node3D"]
 
-[node name="Pillar1" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.1, -2.5)
-radius = 0.2
+[node name="Pillars" type="Node3D" parent="."]
+
+[node name="Pillar1" type="CSGCylinder3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.1, -2.4)
+radius = 0.22
 height = 4.2
+material = ExtResource("4_ink")
+
+[node name="Footing1" type="CSGBox3D" parent="Pillars/Pillar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.95, 0)
+size = Vector3(0.7, 0.3, 0.7)
 material = ExtResource("1_conc")
 
-[node name="Pillar2" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.1, -2.5)
-radius = 0.2
+[node name="Pillar2" type="CSGCylinder3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 2.1, -2.4)
+radius = 0.22
 height = 4.2
+material = ExtResource("4_ink")
+
+[node name="Footing2" type="CSGBox3D" parent="Pillars/Pillar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.95, 0)
+size = Vector3(0.7, 0.3, 0.7)
 material = ExtResource("1_conc")
 
-[node name="Pillar3" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.1, 2.5)
-radius = 0.2
+[node name="Pillar3" type="CSGCylinder3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 2.1, 4.4)
+radius = 0.22
 height = 4.2
+material = ExtResource("4_ink")
+
+[node name="Footing3" type="CSGBox3D" parent="Pillars/Pillar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.95, 0)
+size = Vector3(0.7, 0.3, 0.7)
 material = ExtResource("1_conc")
 
-[node name="Pillar4" type="CSGCylinder3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 2.1, 2.5)
-radius = 0.2
+[node name="Pillar4" type="CSGCylinder3D" parent="Pillars"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 2.1, 4.4)
+radius = 0.22
 height = 4.2
+material = ExtResource("4_ink")
+
+[node name="Footing4" type="CSGBox3D" parent="Pillars/Pillar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.95, 0)
+size = Vector3(0.7, 0.3, 0.7)
 material = ExtResource("1_conc")
 
 [node name="RoofStructure" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 0)
-size = Vector3(13.5, 0.5, 8.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5, 1.0)
+size = Vector3(16.8, 0.65, 12.5)
 material = ExtResource("2_bld")
 
 [node name="RedFasciaBand" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 0)
-size = Vector3(13.7, 0.25, 8.7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.52, 1.0)
+size = Vector3(17.0, 0.32, 12.7)
 material = ExtResource("3_red")
+
+[node name="WhiteTrimBand" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.7, 1.0)
+size = Vector3(17.05, 0.08, 12.75)
+material = ExtResource("2_bld")
+
+[node name="SpotLights" type="Node3D" parent="."]
+
+[node name="Spot1" type="OmniLight3D" parent="SpotLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 4.15, -2.0)
+light_color = Color(1.0, 0.94, 0.85, 1)
+light_energy = 1.4
+omni_range = 8.5
+
+[node name="Spot2" type="OmniLight3D" parent="SpotLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0, 4.15, -2.0)
+light_color = Color(1.0, 0.94, 0.85, 1)
+light_energy = 1.4
+omni_range = 8.5
+
+[node name="Spot3" type="OmniLight3D" parent="SpotLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0, 4.15, 4.0)
+light_color = Color(1.0, 0.94, 0.85, 1)
+light_energy = 1.4
+omni_range = 8.5
+
+[node name="Spot4" type="OmniLight3D" parent="SpotLights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0, 4.15, 4.0)
+light_color = Color(1.0, 0.94, 0.85, 1)
+light_energy = 1.4
+omni_range = 8.5

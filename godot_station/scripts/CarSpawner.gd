@@ -80,12 +80,14 @@ func _try_spawn_car() -> void:
 	car.car_color = car_colors.pick_random()
 	car.assigned_pump_node = assigned_pump
 
-	# Route: Main Road Spawn -> Forecourt turn -> Pump slot
+	# Route: Main Road Spawn -> Curved Forecourt Turn -> Pump bay alignment -> Pump slot
 	var spawn_pos: Vector3 = Vector3(-45, 0, 14)
-	var turn_pos: Vector3 = Vector3(pump_slot_pos.x, 0, 14)
+	var wp1: Vector3 = Vector3(pump_slot_pos.x - 7.0, 0, 14.0)
+	var wp2: Vector3 = Vector3(pump_slot_pos.x - 3.5, 0, 11.5)
+	var wp3: Vector3 = Vector3(pump_slot_pos.x - 1.0, 0, pump_slot_pos.z + 2.8)
 	var final_pump_pos: Vector3 = pump_slot_pos + Vector3(0, 0, -1.8)
 
 	car.global_position = spawn_pos
-	car.waypoints = [turn_pos, final_pump_pos]
+	car.waypoints = [wp1, wp2, wp3, final_pump_pos]
 
 	get_parent().add_child(car)

@@ -11,7 +11,7 @@ var vehicle_name: String = "Sedan"
 var assigned_pump_node: Node = null
 var waypoints: Array[Vector3] = []
 var current_wp: int = 0
-var speed: float = 9.0
+var speed: float = 4.2 # Slower, realistic tycoon pacing
 
 @onready var label_order: Label3D = $LabelOrder
 @onready var body_mesh: CSGBox3D = $Body
@@ -43,12 +43,18 @@ func _process(delta: float) -> void:
 			dir.y = 0 # Keep horizontal
 			var dist: float = dir.length()
 
-			if dist > 0.2:
+			if dist > 0.15:
 				var move_dir: Vector3 = dir.normalized()
-				global_position += move_dir * speed * delta
-				# Smooth face rotation
+				var current_speed: float = speed
+				if state == State.ENTERING and current_wp == waypoints.size() - 1:
+					current_speed = maxf(1.0, speed * clampf(dist / 2.2, 0.2, 1.0))
+				elif state == State.LEAVING:
+					current_speed = speed * 1.15
+
+				global_position += move_dir * current_speed * delta
+				# Smooth face rotation using shortest angle
 				var target_rot_y: float = atan2(move_dir.x, move_dir.z)
-				rotation.y = lerp_angle(rotation.y, target_rot_y, 12.0 * delta)
+				rotation.y = lerp_angle(rotation.y, target_rot_y, 8.5 * delta)
 			else:
 				current_wp += 1
 				if current_wp >= waypoints.size():
@@ -80,11 +86,12 @@ func finish_refueling(earned_money: float) -> void:
 		assigned_pump_node.current_car = null
 		assigned_pump_node.update_status_display()
 
-	# Generate exit waypoints to main road
+	# Generate smooth curved exit waypoints to main road
 	waypoints = [
-		global_position + Vector3(0, 0, 8),
-		Vector3(28, 0, 14),
-		Vector3(50, 0, 14)
+		global_position + Vector3(1.2, 0, 2.5),
+		Vector3(global_position.x + 3.8, 0, 8.5),
+		Vector3(global_position.x + 8.0, 0, 14.0),
+		Vector3(50, 0, 14.0)
 	]
 	current_wp = 0
 

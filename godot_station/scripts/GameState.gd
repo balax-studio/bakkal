@@ -18,11 +18,17 @@ const INGAME_MINUTES_PER_REAL_SECOND: float = 1440.0 / 420.0
 
 # Station Infrastructure Upgrades (Starts with ONLY 1 Pump)
 var pumps_count: int = 1 # 1 to 4
+var pump_levels: Array = [1, 1, 1, 1]
 var has_car_wash: bool = false
+var wash_level: int = 1
 var has_market: bool = false
+var market_level: int = 1
 var has_solar_panels: bool = false
+var solar_level: int = 1
 var has_turbine: bool = false
+var turbine_level: int = 1
 var has_ev_charger: bool = false
+var ev_level: int = 1
 var has_manager: bool = false
 
 # Themes
@@ -247,103 +253,153 @@ func _on_pump_built() -> void:
 	EventBus.show_toast.emit(I18n.t("toast_pump_built", [pumps_count]), true)
 
 func build_car_wash() -> bool:
-	if has_car_wash:
+	if not has_car_wash:
+		if spend_money(12000.0):
+			EventBus.show_toast.emit(I18n.t("toast_construction_started", [I18n.t("upgrade_wash_title"), 90]), true)
+			active_timers.append({
+				"id": "wash",
+				"total": 90.0,
+				"remaining": 90.0,
+				"callback": Callable(self, "_on_wash_built")
+			})
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["12.000"]), false)
 		return false
-	if spend_money(12000.0):
-		EventBus.show_toast.emit(I18n.t("toast_construction_started", [I18n.t("upgrade_wash_title"), 90]), true)
-		active_timers.append({
-			"id": "wash",
-			"total": 90.0,
-			"remaining": 90.0,
-			"callback": Callable(self, "_on_wash_built")
-		})
-		return true
-	EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["12.000"]), false)
+	elif wash_level < 3:
+		var next_lvl: int = wash_level + 1
+		var cost: float = 8000.0 if next_lvl == 2 else 15000.0
+		if spend_money(cost):
+			wash_level = next_lvl
+			EventBus.station_upgraded.emit("Oto Yıkama Seviye %d" % wash_level)
+			EventBus.show_toast.emit("Oto Yıkama Seviye %d yapıldı!" % wash_level, true)
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", [int(cost)]), false)
 	return false
 
 func _on_wash_built() -> void:
 	has_car_wash = true
+	wash_level = 1
 	EventBus.station_upgraded.emit("Oto Yıkama")
 	EventBus.show_toast.emit(I18n.t("toast_wash_active"), true)
 
 func build_market() -> bool:
-	if has_market:
+	if not has_market:
+		if spend_money(14000.0):
+			EventBus.show_toast.emit(I18n.t("toast_construction_started", [I18n.t("upgrade_market_title"), 90]), true)
+			active_timers.append({
+				"id": "market",
+				"total": 90.0,
+				"remaining": 90.0,
+				"callback": Callable(self, "_on_market_built")
+			})
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["14.000"]), false)
 		return false
-	if spend_money(14000.0):
-		EventBus.show_toast.emit(I18n.t("toast_construction_started", [I18n.t("upgrade_market_title"), 90]), true)
-		active_timers.append({
-			"id": "market",
-			"total": 90.0,
-			"remaining": 90.0,
-			"callback": Callable(self, "_on_market_built")
-		})
-		return true
-	EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["14.000"]), false)
+	elif market_level < 3:
+		var next_lvl: int = market_level + 1
+		var cost: float = 9500.0 if next_lvl == 2 else 18000.0
+		if spend_money(cost):
+			market_level = next_lvl
+			EventBus.station_upgraded.emit("Mini Market Seviye %d" % market_level)
+			EventBus.show_toast.emit("Mini Market Seviye %d yapıldı!" % market_level, true)
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", [int(cost)]), false)
 	return false
 
 func _on_market_built() -> void:
 	has_market = true
+	market_level = 1
 	EventBus.station_upgraded.emit("Mini Market")
 	EventBus.show_toast.emit(I18n.t("toast_market_active"), true)
 
 func build_solar_panels() -> bool:
-	if has_solar_panels:
+	if not has_solar_panels:
+		if spend_money(8500.0):
+			EventBus.show_toast.emit(I18n.t("toast_construction_started", [I18n.t("upgrade_solar_title"), 60]), true)
+			active_timers.append({
+				"id": "solar",
+				"total": 60.0,
+				"remaining": 60.0,
+				"callback": Callable(self, "_on_solar_built")
+			})
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["8.500"]), false)
 		return false
-	if spend_money(8500.0):
-		EventBus.show_toast.emit(I18n.t("toast_construction_started", [I18n.t("upgrade_solar_title"), 60]), true)
-		active_timers.append({
-			"id": "solar",
-			"total": 60.0,
-			"remaining": 60.0,
-			"callback": Callable(self, "_on_solar_built")
-		})
-		return true
-	EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["8.500"]), false)
+	elif solar_level < 3:
+		var next_lvl: int = solar_level + 1
+		var cost: float = 6000.0 if next_lvl == 2 else 12000.0
+		if spend_money(cost):
+			solar_level = next_lvl
+			EventBus.station_upgraded.emit("Güneş Santrali Seviye %d" % solar_level)
+			EventBus.show_toast.emit("Güneş Santrali Seviye %d yapıldı!" % solar_level, true)
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", [int(cost)]), false)
 	return false
 
 func _on_solar_built() -> void:
 	has_solar_panels = true
+	solar_level = 1
 	buy_costs["elektrik"] = 0.0
 	EventBus.station_upgraded.emit("Güneş Santrali")
 	EventBus.show_toast.emit(I18n.t("toast_solar_built"), true)
 
 func build_turbine() -> bool:
-	if has_turbine:
+	if not has_turbine:
+		if spend_money(11000.0):
+			EventBus.show_toast.emit(I18n.t("toast_construction_started", ["Rüzgar Türbini", 60]), true)
+			active_timers.append({
+				"id": "turbine",
+				"total": 60.0,
+				"remaining": 60.0,
+				"callback": Callable(self, "_on_turbine_built")
+			})
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["11.000"]), false)
 		return false
-	if spend_money(11000.0):
-		EventBus.show_toast.emit(I18n.t("toast_construction_started", ["Rüzgar Türbini", 60]), true)
-		active_timers.append({
-			"id": "turbine",
-			"total": 60.0,
-			"remaining": 60.0,
-			"callback": Callable(self, "_on_turbine_built")
-		})
-		return true
-	EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["11.000"]), false)
+	elif turbine_level < 3:
+		var next_lvl: int = turbine_level + 1
+		var cost: float = 8000.0 if next_lvl == 2 else 16000.0
+		if spend_money(cost):
+			turbine_level = next_lvl
+			EventBus.station_upgraded.emit("Rüzgar Türbini Seviye %d" % turbine_level)
+			EventBus.show_toast.emit("Rüzgar Türbini Seviye %d yapıldı!" % turbine_level, true)
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", [int(cost)]), false)
 	return false
 
 func _on_turbine_built() -> void:
 	has_turbine = true
+	turbine_level = 1
 	EventBus.station_upgraded.emit("Rüzgar Türbini")
 	EventBus.show_toast.emit(I18n.t("toast_turbine_built"), true)
 
 func build_ev_charger() -> bool:
-	if has_ev_charger:
+	if not has_ev_charger:
+		if spend_money(18000.0):
+			EventBus.show_toast.emit(I18n.t("toast_construction_started", ["EV Ultra Şarj", 60]), true)
+			active_timers.append({
+				"id": "ev",
+				"total": 60.0,
+				"remaining": 60.0,
+				"callback": Callable(self, "_on_ev_built")
+			})
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["18.000"]), false)
 		return false
-	if spend_money(18000.0):
-		EventBus.show_toast.emit(I18n.t("toast_construction_started", ["EV Ultra Şarj", 60]), true)
-		active_timers.append({
-			"id": "ev",
-			"total": 60.0,
-			"remaining": 60.0,
-			"callback": Callable(self, "_on_ev_built")
-		})
-		return true
-	EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", ["18.000"]), false)
+	elif ev_level < 3:
+		var next_lvl: int = ev_level + 1
+		var cost: float = 12000.0 if next_lvl == 2 else 24000.0
+		if spend_money(cost):
+			ev_level = next_lvl
+			EventBus.station_upgraded.emit("EV Ultra Şarj Seviye %d" % ev_level)
+			EventBus.show_toast.emit("EV Ultra Şarj Seviye %d yapıldı!" % ev_level, true)
+			return true
+		EventBus.show_toast.emit(I18n.t("toast_insufficient_funds", [int(cost)]), false)
 	return false
 
 func _on_ev_built() -> void:
 	has_ev_charger = true
+	ev_level = 1
 	EventBus.station_upgraded.emit("EV Şarj İstasyonu")
 	EventBus.show_toast.emit(I18n.t("toast_ev_built"), true)
 
@@ -442,11 +498,17 @@ func debug_finish_timers() -> void:
 
 func debug_unlock_all() -> void:
 	pumps_count = 4
+	pump_levels = [3, 3, 3, 3]
 	has_car_wash = true
+	wash_level = 3
 	has_market = true
+	market_level = 3
 	has_solar_panels = true
+	solar_level = 3
 	has_turbine = true
+	turbine_level = 3
 	has_ev_charger = true
+	ev_level = 3
 	parcel_a = true
 	parcel_b = true
 	parcel_c = true

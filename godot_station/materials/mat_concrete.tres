@@ -1,6 +1,6 @@
 [gd_resource type="StandardMaterial3D" format=3]
 
 [resource]
-albedo_color = Color(0.78, 0.79, 0.77, 1.0)
+albedo_color = Color(0.24, 0.28, 0.33, 1.0)
 roughness = 1.0
 specular_mode = 2
