@@ -948,9 +948,10 @@ function initThree() {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
-  // Scene
+  // Scene with Atmospheric Soft Depth Fog
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xCCE0ED);
+  scene.fog = new THREE.FogExp2(0xCCE0ED, 0.0075);
 
   // Orthographic Camera (Isometric 2:1)
   const aspect = width / height;
@@ -1088,11 +1089,8 @@ function buildDiorama() {
   apronMesh.receiveShadow = true;
   diorama.add(apronMesh);
 
-  // Forecourt Driveway Curb Trim
-  const curbGeo = new THREE.BoxGeometry(22.4, 0.14, 0.3);
-  const curbFront = new THREE.Mesh(curbGeo, Mat.darkInk);
-  curbFront.position.set(0, 0.07, 7.8);
-  diorama.add(curbFront);
+  // 3b. Dedicated Driveway Inbound & Outbound Ramps & Safety Island Curbs
+  buildStationDrivewayRamps(diorama);
 
   // Oil Stain on Station Forecourt
   const stain1 = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.01, 8), Mat.oilStain);
@@ -1788,6 +1786,20 @@ function createCanopyMesh() {
     light.position.set(sx, sy, sz);
     nightLights.push({ light, targetIntensity: 0.95 });
     canopyRoofMesh.add(light);
+
+    // Soft Cinematic Downlight Light Cone (Volumetric Down-Glow)
+    const cone = new THREE.Mesh(
+      new THREE.ConeGeometry(1.6, 3.8, 12, 1, true),
+      new THREE.MeshBasicMaterial({
+        color: 0xFFECA0,
+        transparent: true,
+        opacity: 0.08,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      })
+    );
+    cone.position.set(sx, sy - 1.9, sz);
+    canopyRoofMesh.add(cone);
   });
 
   // Apply initial anim progress
@@ -2891,6 +2903,91 @@ function buildEastHyperRingPortal(diorama) {
   diorama.add(portalGroup);
 }
 
+// 3b. Dedicated Station Driveway Inbound/Outbound Ramps & Architectural Divider
+function buildStationDrivewayRamps(diorama) {
+  const rampGroup = new THREE.Group();
+
+  // 1. Inbound Deceleration Slip Ramp (Giriş Rampası: X: -14.0 to -9.0, Z: 7.6 to 10.2)
+  const inRampGeo = new THREE.BoxGeometry(5.4, 0.08, 2.6);
+  const inRamp = new THREE.Mesh(inRampGeo, Mat.asphalt);
+  inRamp.position.set(-11.5, 0.045, 8.9);
+  inRamp.receiveShadow = true;
+  rampGroup.add(inRamp);
+
+  // Inbound White Directional Turn-In Arrow on Asphalt
+  const inArrowStem = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 1.3), Mat.roadWhite);
+  inArrowStem.position.set(-11.5, 0.09, 8.8);
+  inArrowStem.rotation.y = -0.45;
+  rampGroup.add(inArrowStem);
+
+  const inArrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.5, 3), Mat.roadWhite);
+  inArrowHead.position.set(-11.8, 0.09, 8.1);
+  inArrowHead.rotation.x = Math.PI / 2;
+  inArrowHead.rotation.z = 2.0;
+  rampGroup.add(inArrowHead);
+
+  // Inbound Corner Safety Hazard Islands (Left curb divider)
+  const inCurb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.18, 0.5), Mat.hazardStripe);
+  inCurb.position.set(-14.2, 0.09, 7.8);
+  rampGroup.add(inCurb);
+
+  // 2. Outbound Acceleration Merge Ramp (Çıkış Rampası: X: +9.0 to +14.0, Z: 7.6 to 10.2)
+  const outRampGeo = new THREE.BoxGeometry(5.4, 0.08, 2.6);
+  const outRamp = new THREE.Mesh(outRampGeo, Mat.asphalt);
+  outRamp.position.set(11.5, 0.045, 8.9);
+  outRamp.receiveShadow = true;
+  rampGroup.add(outRamp);
+
+  // Outbound White Directional Merge Arrow on Asphalt
+  const outArrowStem = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 1.3), Mat.roadWhite);
+  outArrowStem.position.set(11.5, 0.09, 8.8);
+  outArrowStem.rotation.y = 0.45;
+  rampGroup.add(outArrowStem);
+
+  const outArrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.5, 3), Mat.roadWhite);
+  outArrowHead.position.set(11.8, 0.09, 9.5);
+  outArrowHead.rotation.x = Math.PI / 2;
+  outArrowHead.rotation.z = -1.1;
+  rampGroup.add(outArrowHead);
+
+  // Outbound Give-Way / Yield White Dash Line across exit
+  for (let x = 9.6; x <= 13.4; x += 0.75) {
+    const dash = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.02, 0.12), Mat.roadWhite);
+    dash.position.set(x, 0.09, 7.9);
+    rampGroup.add(dash);
+  }
+
+  // Outbound Corner Safety Hazard Islands (Right curb divider)
+  const outCurb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.18, 0.5), Mat.hazardStripe);
+  outCurb.position.set(14.2, 0.09, 7.8);
+  rampGroup.add(outCurb);
+
+  // 3. Central Safety Median Divider (Orta Refüj / Ada Sınır Ayracı: X: -7.6 to +7.6)
+  const medianGeo = new THREE.BoxGeometry(15.4, 0.22, 0.65);
+  const median = new THREE.Mesh(medianGeo, Mat.darkInk);
+  median.position.set(0, 0.11, 7.8);
+  rampGroup.add(median);
+
+  const medianTop = new THREE.Mesh(new THREE.BoxGeometry(15.0, 0.04, 0.5), Mat.concrete);
+  medianTop.position.set(0, 0.23, 7.8);
+  rampGroup.add(medianTop);
+
+  // Planter Shrub Clusters & Solar Reflectors along Central Median
+  [-5.2, -2.6, 0, 2.6, 5.2].forEach(mx => {
+    const bush = new THREE.Mesh(new THREE.DodecahedronGeometry(0.28, 0), Mat.foliage);
+    bush.position.set(mx, 0.36, 7.8);
+    bush.scale.set(1.4, 0.8, 1.0);
+    rampGroup.add(bush);
+
+    // Solar Safety Road Stud Reflector
+    const stud = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.12), Mat.lampGlow);
+    stud.position.set(mx + 1.2, 0.25, 7.8);
+    rampGroup.add(stud);
+  });
+
+  diorama.add(rampGroup);
+}
+
 function createVoxelCloud() {
   const cloud = new THREE.Group();
   const count = 5 + Math.floor(Math.random() * 4);
@@ -3755,23 +3852,25 @@ class Vehicle {
     const parkX = slotPos.x;
 
     if (isFrontRow) {
-      // Front Row Pumps (#3 and #4): Smooth entry from inner highway lane into front bay
+      // Front Row Pumps (#3 and #4): Inbound Slip Ramp -> Front pump bay parallel side-docking (facing +X)
       this.waypoints = [
-        new THREE.Vector3(slotPos.x - 7.5, 0, 9.8),              // 1. Inner highway lane deceleration
-        new THREE.Vector3(slotPos.x - 4.2, 0, 8.2),              // 2. Apron entrance curb curve
-        new THREE.Vector3(slotPos.x - 1.2, 0, parkZ + 1.8),      // 3. Front bay corridor alignment
-        new THREE.Vector3(parkX, 0, parkZ + 0.8),                // 4. Pump entry straight
-        new THREE.Vector3(parkX, 0, parkZ)                       // 5. Final pump docking stop
+        new THREE.Vector3(-14.0, 0, 9.8),                 // 1. Highway inner lane approach
+        new THREE.Vector3(-11.5, 0, 8.8),                 // 2. Turn into Inbound Slip Ramp
+        new THREE.Vector3(-8.5, 0, 7.4),                  // 3. Enter forecourt apron
+        new THREE.Vector3(slotPos.x - 3.8, 0, parkZ),     // 4. Align facing +X in front pump lane
+        new THREE.Vector3(parkX - 1.0, 0, parkZ),         // 5. Approach dispenser
+        new THREE.Vector3(parkX, 0, parkZ)                // 6. Dock PARALLEL alongside pump!
       ];
     } else {
-      // Back Row Pumps (#1 and #2): Dedicated outer driveway without clipping front islands
+      // Back Row Pumps (#1 and #2): Inbound Slip Ramp -> Bypass around front island -> Back pump bay parallel side-docking
       this.waypoints = [
-        new THREE.Vector3(slotPos.x - 8.5, 0, 9.8),              // 1. Inner highway lane deceleration
-        new THREE.Vector3(slotPos.x - 5.5, 0, 8.2),              // 2. Apron entrance curb curve
-        new THREE.Vector3(slotPos.x - 2.8, 0, 4.8),              // 3. Clear bypass aisle around front island
-        new THREE.Vector3(slotPos.x - 0.8, 0, 1.8),              // 4. Inner aisle alignment
-        new THREE.Vector3(parkX, 0, parkZ + 0.8),                // 5. Back bay straight alignment
-        new THREE.Vector3(parkX, 0, parkZ)                       // 6. Final pump docking stop
+        new THREE.Vector3(-14.0, 0, 9.8),                 // 1. Highway inner lane approach
+        new THREE.Vector3(-11.5, 0, 8.8),                 // 2. Turn into Inbound Slip Ramp
+        new THREE.Vector3(-8.8, 0, 6.4),                  // 3. Clear outer apron curve
+        new THREE.Vector3(slotPos.x - 4.5, 0, 3.2),       // 4. Outer bypass aisle (clears pump 3 island)
+        new THREE.Vector3(slotPos.x - 2.8, 0, parkZ),     // 5. Turn into back pump lane
+        new THREE.Vector3(parkX - 1.0, 0, parkZ),         // 6. Straight bay alignment
+        new THREE.Vector3(parkX, 0, parkZ)                // 7. Dock PARALLEL alongside pump!
       ];
     }
     this.wpIndex = 0;
@@ -3783,10 +3882,11 @@ class Vehicle {
     const startZ = this.mesh.position.z;
 
     this.waypoints = [
-      new THREE.Vector3(startX + 1.0, 0, startZ + 1.8),  // 1. Forward roll out of bay
-      new THREE.Vector3(startX + 3.8, 0, 8.0),           // 2. Apron exit curve
-      new THREE.Vector3(startX + 7.5, 0, 9.8),           // 3. Inner highway lane merge
-      new THREE.Vector3(56, 0, 9.8)                      // 4. Drive off smoothly through East Hyper-Ring Portal
+      new THREE.Vector3(startX + 3.0, 0, startZ),        // 1. Drive forward straight alongside pump facing +X
+      new THREE.Vector3(8.5, 0, 7.4),                    // 2. Turn toward Outbound Apron
+      new THREE.Vector3(11.5, 0, 8.8),                   // 3. Enter Outbound Merge Ramp
+      new THREE.Vector3(14.5, 0, 9.8),                   // 4. Smooth highway merge
+      new THREE.Vector3(56.0, 0, 9.8)                    // 5. Accelerate through East Hyper-Ring Portal
     ];
     this.wpIndex = 0;
     this.state = 'DEPARTING';
@@ -3891,6 +3991,7 @@ class Vehicle {
 
   _arriveAtPump() {
     this.mesh.position.y = 0;
+    this.mesh.rotation.y = Math.PI / 2; // Exact parallel docking facing +X alongside pump
     this.state = 'WAITING';
     this.bounceTime = 0;
     this.targetPumpSlot.occupiedBy = this;
@@ -3922,7 +4023,7 @@ function spawnCar() {
   const randomColor = CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)];
 
   const car = new Vehicle('sedan', randomFuel, randomColor);
-  car.mesh.position.set(-52, 0, 11.5); // Spawn inside West Cloud Viaduct!
+  car.mesh.position.set(-52, 0, 9.8); // Spawn inside West Cloud Viaduct on Inner Lane!
   car.targetPumpSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
   car.targetPumpSlot.occupiedBy = car;
   car.initApproachPath();
