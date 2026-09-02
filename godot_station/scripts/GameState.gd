@@ -31,6 +31,39 @@ var has_ev_charger: bool = false
 var ev_level: int = 1
 var has_manager: bool = false
 
+# 12 Expansion Facilities
+var has_tire_shop: bool = false
+var tire_shop_level: int = 1
+var has_lube_bay: bool = false
+var lube_bay_level: int = 1
+var has_vacuum_hub: bool = false
+var vacuum_hub_level: int = 1
+var has_moto_dock: bool = false
+var moto_dock_level: int = 1
+var has_truck_stop: bool = false
+var truck_stop_level: int = 1
+var has_bakery_drive: bool = false
+var bakery_drive_level: int = 1
+var has_food_truck: bool = false
+var food_truck_level: int = 1
+var has_rest_lounge: bool = false
+var rest_lounge_level: int = 1
+var has_pet_park: bool = false
+var pet_park_level: int = 1
+var has_parcel_hub: bool = false
+var parcel_hub_level: int = 1
+var has_atm_hub: bool = false
+var atm_hub_level: int = 1
+var has_hydrogen_bay: bool = false
+var hydrogen_bay_level: int = 1
+
+# Retention & Live-Ops Systems (D1 / D7 / D30)
+var daily_streak: int = 1
+var last_streak_day: int = 0
+var offline_vault_max_seconds: float = 7200.0
+var rush_hour_remaining: float = 0.0
+var next_rush_seconds: float = 1200.0
+
 # Themes
 var current_theme: String = "standard"
 var unlocked_themes: Array = ["standard"]

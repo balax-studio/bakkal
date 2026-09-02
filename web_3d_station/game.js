@@ -115,6 +115,30 @@ const I18N = {
     plot_solar: 'Çatı GES',
     plot_turbine: 'Rüzgar Türbini',
     plot_ev: 'EV Şarj',
+    plot_tire_shop: 'Lastik Servisi',
+    plot_lube_bay: 'Hızlı Yağ Değişim',
+    plot_vacuum_hub: 'Oto Vakum Hub',
+    plot_moto_dock: 'Moto Swap',
+    plot_truck_stop: 'Tır Peronu',
+    plot_bakery_drive: 'Drive-Thru Cafe',
+    plot_food_truck: 'Burger Van',
+    plot_rest_lounge: 'Mola & WC',
+    plot_pet_park: 'Pet Parkı',
+    plot_parcel_hub: 'Kargo Dolabı',
+    plot_atm_hub: 'ATM Kiosk',
+    plot_hydrogen_bay: 'H2 Hidrojen',
+    tab_service: 'Oto Servis',
+    tab_lifestyle: 'Yaşam & Mola',
+    vault_title: 'Çevrimdışı Kasa (2 Saat Sınırı)',
+    vault_desc: 'İstasyonun sen yokken pasif gelir üretti!',
+    vault_double_btn: '2X KATLA & TOPLA',
+    vault_collect_btn: 'TOPLA',
+    streak_title: '7 Günlük Giriş Serisi',
+    streak_day: 'GÜN {0}',
+    streak_claim: 'ÖDÜLÜ AL',
+    streak_claimed: 'ALINDI',
+    rush_banner_title: 'AKARYAKIT TANKERİ GELDİ!',
+    rush_banner_desc: '2X Gelir Çarpanı & Tam Akış Aktif!',
     settings_title: 'Ayarlar & Sistem',
     tab_settings_audio: 'Ses & Dil',
     tab_settings_graphics: 'Grafik',
@@ -266,6 +290,30 @@ const I18N = {
     plot_solar: 'Solar Roof',
     plot_turbine: 'Wind Turbine',
     plot_ev: 'EV Charging',
+    plot_tire_shop: 'Tire Shop',
+    plot_lube_bay: 'Quick Lube',
+    plot_vacuum_hub: 'Vacuum Detailing',
+    plot_moto_dock: 'Moto Swap',
+    plot_truck_stop: 'Truck Stop',
+    plot_bakery_drive: 'Drive-Thru Cafe',
+    plot_food_truck: 'Burger Truck',
+    plot_rest_lounge: 'Rest Lounge',
+    plot_pet_park: 'Pet Park',
+    plot_parcel_hub: 'Parcel Locker',
+    plot_atm_hub: 'ATM Kiosk',
+    plot_hydrogen_bay: 'H2 Hydrogen',
+    tab_service: 'Auto Service',
+    tab_lifestyle: 'Lifestyle & Rest',
+    vault_title: 'Offline Earnings Vault (2h Limit)',
+    vault_desc: 'Your station generated passive income while away!',
+    vault_double_btn: '2X DOUBLE & COLLECT',
+    vault_collect_btn: 'COLLECT',
+    streak_title: '7-Day Login Streak',
+    streak_day: 'DAY {0}',
+    streak_claim: 'CLAIM REWARD',
+    streak_claimed: 'CLAIMED',
+    rush_banner_title: 'FUEL TANKER ARRIVED!',
+    rush_banner_desc: '2X Revenue Multiplier & Full Flow Active!',
     settings_title: 'Settings & System',
     tab_settings_audio: 'Audio & Lang',
     tab_settings_graphics: 'Graphics',
@@ -382,7 +430,41 @@ const State = {
     turbineLevel: 1,
     hasEvCharger: false,
     evLevel: 1,
-    hasManager: false
+    hasManager: false,
+    hasTireShop: false,
+    tireShopLevel: 1,
+    hasLubeBay: false,
+    lubeBayLevel: 1,
+    hasVacuumHub: false,
+    vacuumHubLevel: 1,
+    hasMotoDock: false,
+    motoDockLevel: 1,
+    hasTruckStop: false,
+    truckStopLevel: 1,
+    hasBakeryDrive: false,
+    bakeryDriveLevel: 1,
+    hasFoodTruck: false,
+    foodTruckLevel: 1,
+    hasRestLounge: false,
+    restLoungeLevel: 1,
+    hasPetPark: false,
+    petParkLevel: 1,
+    hasParcelHub: false,
+    parcelHubLevel: 1,
+    hasAtmHub: false,
+    atmHubLevel: 1,
+    hasHydrogenBay: false,
+    hydrogenBayLevel: 1
+  },
+
+  // Retention & Engagement State
+  retention: {
+    lastSaveTime: Date.now(),
+    dailyStreak: 1,
+    lastStreakClaimDay: 0,
+    offlineVaultMaxSeconds: 7200, // 2 Hours Cap
+    rushHourRemaining: 0,
+    nextRushEventSeconds: 1200 // 20 mins
   },
 
   // Themes
@@ -675,27 +757,51 @@ let turbineGroup = null;
 let turbineRotor = null;
 let secondaryTurbineRotor = null;
 let evChargerGroup = null;
+let tireShopGroup = null;
+let lubeBayGroup = null;
+let vacuumHubGroup = null;
+let motoDockGroup = null;
+let truckStopGroup = null;
+let bakeryDriveGroup = null;
+let foodTruckGroup = null;
+let restLoungeGroup = null;
+let petParkGroup = null;
+let parcelHubGroup = null;
+let atmHubGroup = null;
+let hydrogenBayGroup = null;
 let islandGrassMesh = null;
 let islandDirtMesh = null;
 let islandSlabMesh = null;
 
 const pumpSlots = [
-  { id: 0, pos: new THREE.Vector3(-4, 0, -2), occupiedBy: null, mesh: null, isBuilt: true },
-  { id: 1, pos: new THREE.Vector3(4, 0, -2),  occupiedBy: null, mesh: null, isBuilt: false },
-  { id: 2, pos: new THREE.Vector3(-4, 0, 4),  occupiedBy: null, mesh: null, isBuilt: false },
-  { id: 3, pos: new THREE.Vector3(4, 0, 4),   occupiedBy: null, mesh: null, isBuilt: false }
+  { id: 0, pos: new THREE.Vector3(-4.5, 0, -1.8), occupiedBy: null, mesh: null, isBuilt: true },
+  { id: 1, pos: new THREE.Vector3(4.5, 0, -1.8),  occupiedBy: null, mesh: null, isBuilt: false },
+  { id: 2, pos: new THREE.Vector3(-4.5, 0, 3.4),  occupiedBy: null, mesh: null, isBuilt: false },
+  { id: 3, pos: new THREE.Vector3(4.5, 0, 3.4),   occupiedBy: null, mesh: null, isBuilt: false }
 ];
 
 // Pre-designated 3D Construction Plots
 const PLOTS = {
-  pump2:   { id: 'pump2',   type: 'pump',    slotId: 1, pos: new THREE.Vector3(4, 0, -2),   cost: 6000,  duration: 45, name: 'Pompa #2',   tab: 'fac' },
-  pump3:   { id: 'pump3',   type: 'pump',    slotId: 2, pos: new THREE.Vector3(-4, 0, 4),   cost: 8000,  duration: 45, name: 'Pompa #3',   tab: 'fac' },
-  pump4:   { id: 'pump4',   type: 'pump',    slotId: 3, pos: new THREE.Vector3(4, 0, 4),    cost: 10000, duration: 45, name: 'Pompa #4',   tab: 'fac' },
-  wash:    { id: 'wash',    type: 'wash',    pos: new THREE.Vector3(16, 0.04, -2),          cost: 12000, duration: 90, name: 'Oto Yıkama', tab: 'fac' },
-  market:  { id: 'market',  type: 'market',  pos: new THREE.Vector3(-14, 0.04, -8),         cost: 14000, duration: 90, name: 'Mini Market',tab: 'fac' },
-  solar:   { id: 'solar',   type: 'solar',   pos: new THREE.Vector3(0, 4.55, -9.5),         cost: 8500,  duration: 60, name: 'Çatı GES',   tab: 'energy' },
-  turbine: { id: 'turbine', type: 'turbine', pos: new THREE.Vector3(-22, 0.04, -8),         cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
-  ev:      { id: 'ev',      type: 'ev',      pos: new THREE.Vector3(-8, 0.04, 4),           cost: 18000, duration: 60, name: 'EV Şarj',    tab: 'energy' }
+  pump2:        { id: 'pump2',        type: 'pump',         slotId: 1, pos: new THREE.Vector3(4.5, 0, -1.8),   cost: 6000,  duration: 45, name: 'Pompa #2',       tab: 'fac' },
+  pump3:        { id: 'pump3',        type: 'pump',         slotId: 2, pos: new THREE.Vector3(-4.5, 0, 3.4),   cost: 8000,  duration: 45, name: 'Pompa #3',       tab: 'fac' },
+  pump4:        { id: 'pump4',        type: 'pump',         slotId: 3, pos: new THREE.Vector3(4.5, 0, 3.4),    cost: 10000, duration: 45, name: 'Pompa #4',       tab: 'fac' },
+  wash:         { id: 'wash',         type: 'wash',         pos: new THREE.Vector3(18, 0.04, -2),          cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
+  market:       { id: 'market',       type: 'market',       pos: new THREE.Vector3(-14, 0.04, -8),         cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
+  solar:        { id: 'solar',        type: 'solar',        pos: new THREE.Vector3(0, 4.55, -9.5),         cost: 8500,  duration: 60, name: 'Çatı GES',       tab: 'energy' },
+  turbine:      { id: 'turbine',      type: 'turbine',      pos: new THREE.Vector3(-22, 0.04, -8),         cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
+  ev:           { id: 'ev',           type: 'ev',           pos: new THREE.Vector3(-8, 0.04, 4),           cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
+  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',    pos: new THREE.Vector3(20, 0.04, -6),          cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
+  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',     pos: new THREE.Vector3(-6, 0.04, -15),         cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
+  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',   pos: new THREE.Vector3(23, 0.04, 6),           cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
+  moto_dock:    { id: 'moto_dock',    type: 'moto_dock',    pos: new THREE.Vector3(-16, 0.04, 2),          cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
+  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',   pos: new THREE.Vector3(28, 0.04, -14),         cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
+  bakery_drive: { id: 'bakery_drive', type: 'bakery_drive', pos: new THREE.Vector3(-14, 0.04, -1),         cost: 16000, duration: 60, name: 'Drive-Thru Cafe',tab: 'lifestyle' },
+  food_truck:   { id: 'food_truck',   type: 'food_truck',   pos: new THREE.Vector3(14, 0.04, -14),         cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
+  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',  pos: new THREE.Vector3(6, 0.04, -15),          cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
+  pet_park:     { id: 'pet_park',     type: 'pet_park',     pos: new THREE.Vector3(-26, 0.04, 5),          cost: 7000,  duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
+  parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',   pos: new THREE.Vector3(-15, 0.04, -14),        cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
+  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',      pos: new THREE.Vector3(6.5, 0.04, -6.5),       cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
+  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay', pos: new THREE.Vector3(-24, 0.04, -2),        cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
 };
 
 const plotSignMeshes = {};
@@ -940,7 +1046,19 @@ const Mat = {
   npcClothes3: new THREE.MeshLambertMaterial({ color: 0x56824B }),
   coffeeCup: new THREE.MeshLambertMaterial({ color: 0xFDFBF7 }),
   // Modern Translucent Glass & Steel Canopy
-  canopyGlass: new THREE.MeshLambertMaterial({ color: 0x9FD8F6, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide })
+  canopyGlass: new THREE.MeshLambertMaterial({ color: 0x9FD8F6, transparent: true, opacity: 0.32, depthWrite: false, side: THREE.DoubleSide }),
+  // Architectural & Interior Minimarket Diorama Materials
+  counterWood: new THREE.MeshLambertMaterial({ color: 0x8D6346 }),
+  shelfGrey: new THREE.MeshLambertMaterial({ color: 0x505C6B }),
+  shelfGoods1: new THREE.MeshLambertMaterial({ color: 0xD84D42 }),
+  shelfGoods2: new THREE.MeshLambertMaterial({ color: 0xF2B93B }),
+  shelfGoods3: new THREE.MeshLambertMaterial({ color: 0x3E8CE6 }),
+  shelfGoods4: new THREE.MeshLambertMaterial({ color: 0x48A868 }),
+  doorMat: new THREE.MeshLambertMaterial({ color: 0x2A323D }),
+  neonAmber: new THREE.MeshBasicMaterial({ color: 0xFFB300 }),
+  beaconRed: new THREE.MeshBasicMaterial({ color: 0xFF2222 }),
+  interiorFloor: new THREE.MeshLambertMaterial({ color: 0xD0D7DE }),
+  screenGlow: new THREE.MeshBasicMaterial({ color: 0x64FFDA })
 };
 
 function initThree() {
@@ -960,10 +1078,15 @@ function initThree() {
   camera.position.set(26, 24, 26);
   camera.lookAt(0, 0, 0);
 
-  // Renderer
+  // Renderer with ACESFilmic Tone Mapping for rich cinematic dynamic range & true color fidelity
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.08;
+  if ('outputColorSpace' in renderer) {
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+  }
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
@@ -991,11 +1114,11 @@ function initThree() {
     TWO: THREE.TOUCH.DOLLY_PAN  // Mobil iki parmak: yakınlaştır ve kaydır
   };
 
-  // Lights - Warm Soft Sunlight & Balanced Pastel Ambient
-  ambientLight = new THREE.AmbientLight(0xE4EBF2, 0.65);
+  // Lights - Warm Soft Sunlight & Balanced Atmospheric Ambient
+  ambientLight = new THREE.AmbientLight(0xD8E5F0, 0.70);
   scene.add(ambientLight);
 
-  sunLight = new THREE.DirectionalLight(0xFFF6E8, 0.95);
+  sunLight = new THREE.DirectionalLight(0xFFF7EC, 1.15);
   sunLight.position.set(18, 30, 18);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.width = 2048;
@@ -1007,6 +1130,8 @@ function initThree() {
   sunLight.shadow.camera.right = shadowDist;
   sunLight.shadow.camera.top = shadowDist;
   sunLight.shadow.camera.bottom = -shadowDist;
+  sunLight.shadow.bias = -0.0003;
+  sunLight.shadow.normalBias = 0.02;
   scene.add(sunLight);
 
   // Build Living Environment
@@ -1036,6 +1161,316 @@ function onWindowResize() {
 // =========================================================
 // 5. LIVING 3D DIORAMA MESH BUILDERS
 // =========================================================
+
+function createMainMarketBuilding() {
+  const shopGroup = new THREE.Group();
+  shopGroup.position.set(0, 0, -9.5);
+
+  // 1. Concrete Foundation Plinth & Raised Porch
+  const basePlinth = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.35, 6.2), Mat.concrete);
+  basePlinth.position.y = 0.175;
+  basePlinth.receiveShadow = true;
+  shopGroup.add(basePlinth);
+
+  // Entrance Step / Ramp Pad
+  const step = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.15, 0.7), Mat.concrete);
+  step.position.set(0, 0.075, 3.3);
+  step.receiveShadow = true;
+  shopGroup.add(step);
+
+  // Welcome Floor Mat
+  const mat = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.03, 0.6), Mat.doorMat);
+  mat.position.set(0, 0.16, 3.25);
+  shopGroup.add(mat);
+
+  // Interior Tiled Floor (inside building, visible through glass)
+  const intFloor = new THREE.Mesh(new THREE.BoxGeometry(9.8, 0.05, 5.2), Mat.interiorFloor);
+  intFloor.position.set(0, 0.36, -0.1);
+  intFloor.receiveShadow = true;
+  shopGroup.add(intFloor);
+
+  // 2. Main Building Architectural Shell (Walls)
+  // Back Wall
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(10.6, 4.2, 0.45), Mat.buildingWall);
+  backWall.position.set(0, 2.45, -2.65);
+  backWall.castShadow = true;
+  backWall.receiveShadow = true;
+  shopGroup.add(backWall);
+
+  // Left Wall
+  const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.2, 5.4), Mat.buildingWall);
+  leftWall.position.set(-5.075, 2.45, -0.1);
+  leftWall.castShadow = true;
+  leftWall.receiveShadow = true;
+  shopGroup.add(leftWall);
+
+  // Right Wall
+  const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.45, 4.2, 5.4), Mat.buildingWall);
+  rightWall.position.set(5.075, 2.45, -0.1);
+  rightWall.castShadow = true;
+  rightWall.receiveShadow = true;
+  shopGroup.add(rightWall);
+
+  // Front Header Wall Beam (Above Glass Storefront)
+  const frontHeader = new THREE.Mesh(new THREE.BoxGeometry(10.6, 1.2, 0.5), Mat.buildingWall);
+  frontHeader.position.set(0, 3.95, 2.65);
+  frontHeader.castShadow = true;
+  shopGroup.add(frontHeader);
+
+  // Front Corner Pillars / Brick Jambs
+  const leftPillar = new THREE.Mesh(new THREE.BoxGeometry(0.65, 3.0, 0.55), Mat.buildingWall);
+  leftPillar.position.set(-4.975, 1.85, 2.65);
+  leftPillar.castShadow = true;
+  const rightPillar = new THREE.Mesh(new THREE.BoxGeometry(0.65, 3.0, 0.55), Mat.buildingWall);
+  rightPillar.position.set(4.975, 1.85, 2.65);
+  rightPillar.castShadow = true;
+  shopGroup.add(leftPillar, rightPillar);
+
+  // 3. Storefront Glass & Aluminum Framing
+  // Left Showcase Glass
+  const glassLeft = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.5, 0.08), Mat.glass);
+  glassLeft.position.set(-2.55, 1.62, 2.65);
+  // Right Showcase Glass
+  const glassRight = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.5, 0.08), Mat.glass);
+  glassRight.position.set(2.55, 1.62, 2.65);
+  shopGroup.add(glassLeft, glassRight);
+
+  // Black Aluminum Framing Mullions for Windows
+  [[-4.35, 1.62], [-0.75, 1.62], [0.75, 1.62], [4.35, 1.62], [-2.55, 1.62], [2.55, 1.62]].forEach(([mx, my]) => {
+    const mullionV = new THREE.Mesh(new THREE.BoxGeometry(0.06, 2.52, 0.12), Mat.darkInk);
+    mullionV.position.set(mx, my, 2.65);
+    shopGroup.add(mullionV);
+  });
+  // Window Bottom Sill & Top Transom Bars
+  [-2.55, 2.55].forEach(wx => {
+    const sill = new THREE.Mesh(new THREE.BoxGeometry(3.65, 0.08, 0.14), Mat.darkInk);
+    sill.position.set(wx, 0.38, 2.65);
+    const midBar = new THREE.Mesh(new THREE.BoxGeometry(3.65, 0.05, 0.12), Mat.darkInk);
+    midBar.position.set(wx, 1.65, 2.65);
+    const topBar = new THREE.Mesh(new THREE.BoxGeometry(3.65, 0.08, 0.14), Mat.darkInk);
+    topBar.position.set(wx, 2.87, 2.65);
+    shopGroup.add(sill, midBar, topBar);
+  });
+
+  // 4. Center Double Sliding Doors (Automatic Glass Door with Handles & Sensor)
+  const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.5, 2.52, 0.12), Mat.darkInk);
+  doorFrame.position.set(0, 1.62, 2.64);
+  const doorGlass = new THREE.Mesh(new THREE.BoxGeometry(1.36, 2.38, 0.06), Mat.glass);
+  doorGlass.position.set(0, 1.62, 2.64);
+  // Center Door Split Line & Chrome Pull Handles
+  const splitLine = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.4, 0.14), Mat.darkInk);
+  splitLine.position.set(0, 1.62, 2.64);
+  const handleL = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.6, 0.04), Mat.chrome);
+  handleL.position.set(-0.12, 1.45, 2.72);
+  const handleR = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.6, 0.04), Mat.chrome);
+  handleR.position.set(0.12, 1.45, 2.72);
+  // Overhead Motion Sensor Box with status LED
+  const sensorBox = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.1, 0.14), Mat.darkInk);
+  sensorBox.position.set(0, 2.84, 2.72);
+  const sensorLED = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.04, 0.02), Mat.greenAccent);
+  sensorLED.position.set(0, 2.84, 2.79);
+  shopGroup.add(doorFrame, doorGlass, splitLine, handleL, handleR, sensorBox, sensorLED);
+
+  // Entrance Cantilever Awning over Door
+  const awning = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1.2), Mat.redTrim);
+  awning.position.set(0, 3.12, 3.25);
+  awning.castShadow = true;
+  const awningGlass = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.03, 1.1), Mat.canopyGlass);
+  awningGlass.position.set(0, 3.15, 3.25);
+  // Support Rods
+  const rodL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.1, 6), Mat.chrome);
+  rodL.position.set(-1.05, 3.55, 3.2);
+  rodL.rotation.x = Math.PI / 4;
+  const rodR = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.1, 6), Mat.chrome);
+  rodR.position.set(1.05, 3.55, 3.2);
+  rodR.rotation.x = Math.PI / 4;
+  shopGroup.add(awning, awningGlass, rodL, rodR);
+
+  // 5. Interior 3D Store Diorama (Gondola Shelves, Register, Coffee Bar)
+  // Left Side: Checkout Register Counter
+  const counter = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.75), Mat.counterWood);
+  counter.position.set(-3.2, 0.81, 1.4);
+  counter.castShadow = true;
+  const posTerminal = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.22, 0.22), Mat.darkInk);
+  posTerminal.position.set(-3.0, 1.34, 1.4);
+  posTerminal.rotation.y = -0.3;
+  const posScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 0.14), Mat.screenGlow);
+  posScreen.position.set(-3.0, 1.38, 1.51);
+  posScreen.rotation.y = -0.3;
+  const scannerBox = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.18, 0.12), Mat.darkInk);
+  scannerBox.position.set(-3.45, 1.32, 1.35);
+  shopGroup.add(counter, posTerminal, posScreen, scannerBox);
+
+  // Center-Back: 3-Tier Gondola Shelving Unit with Stock
+  const shelfBack = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.1, 0.5), Mat.shelfGrey);
+  shelfBack.position.set(0, 1.41, -0.6);
+  shelfBack.castShadow = true;
+  shopGroup.add(shelfBack);
+
+  // Shelf Ledges & Colorful Product Boxes
+  const shelfGoodsColors = [Mat.shelfGoods1, Mat.shelfGoods2, Mat.shelfGoods3, Mat.shelfGoods4];
+  for (let sLevel = 0; sLevel < 3; sLevel++) {
+    const sY = 0.65 + sLevel * 0.6;
+    const shelfLedge = new THREE.Mesh(new THREE.BoxGeometry(3.55, 0.05, 0.55), Mat.darkInk);
+    shelfLedge.position.set(0, sY, -0.6);
+    shopGroup.add(shelfLedge);
+
+    // Row of product boxes
+    for (let bx = -1.5; bx <= 1.5; bx += 0.32) {
+      const gMat = shelfGoodsColors[Math.abs(Math.floor(bx * 7 + sLevel)) % shelfGoodsColors.length];
+      const boxItem = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.35, 0.35), gMat);
+      boxItem.position.set(bx, sY + 0.2, -0.58);
+      shopGroup.add(boxItem);
+    }
+  }
+
+  // Right Side: Coffee Bar & Cold Beverage Chiller
+  const coffeeBar = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.9, 0.75), Mat.counterWood);
+  coffeeBar.position.set(3.2, 0.81, 1.4);
+  coffeeBar.castShadow = true;
+  const coffeeMaker = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.55, 0.4), Mat.darkInk);
+  coffeeMaker.position.set(3.1, 1.53, 1.4);
+  const coffeeNozzle = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.06, 0.12), Mat.chrome);
+  coffeeNozzle.position.set(3.1, 1.35, 1.62);
+  // Stack of Cups
+  const cupStack = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.38, 8), Mat.coffeeCup);
+  cupStack.position.set(3.6, 1.45, 1.4);
+  shopGroup.add(coffeeBar, coffeeMaker, coffeeNozzle, cupStack);
+
+  // Cold Beverage Chiller Display on Right Back Wall
+  const chiller = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.2, 0.7), Mat.darkInk);
+  chiller.position.set(4.1, 1.46, -0.8);
+  const chillerGlass = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.9, 0.05), Mat.glass);
+  chillerGlass.position.set(4.1, 1.46, -0.42);
+  const chillerGlow = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.8, 0.02), Mat.screenGlow);
+  chillerGlow.position.set(4.1, 1.46, -0.72);
+  shopGroup.add(chiller, chillerGlass, chillerGlow);
+
+  // Interior Ceiling Warm LED Lights
+  const ceilingLed1 = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.06, 0.3), Mat.lampGlow);
+  ceilingLed1.position.set(-1.8, 4.15, 0.8);
+  const ceilingLed2 = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.06, 0.3), Mat.lampGlow);
+  ceilingLed2.position.set(1.8, 4.15, 0.8);
+  shopGroup.add(ceilingLed1, ceilingLed2);
+
+  // Warm Shop Interior Glow Light
+  shopInteriorLight = new THREE.PointLight(0xFFE8A8, 1.25, 18);
+  shopInteriorLight.position.set(0, 2.8, 0.6);
+  nightLights.push({ light: shopInteriorLight, targetIntensity: 1.25 });
+  shopGroup.add(shopInteriorLight);
+
+  // 6. Roof Assembly & Surrounding Parapet Walls
+  const roofMain = new THREE.Mesh(new THREE.BoxGeometry(10.8, 0.25, 5.8), Mat.buildingRoof);
+  roofMain.position.set(0, 4.45, -0.1);
+  roofMain.castShadow = true;
+  roofMain.receiveShadow = true;
+  shopGroup.add(roofMain);
+
+  // Parapet Perimeter Wall (Front, Back, Left, Right)
+  const parapetFront = new THREE.Mesh(new THREE.BoxGeometry(10.9, 0.45, 0.25), Mat.redTrim);
+  parapetFront.position.set(0, 4.75, 2.75);
+  parapetFront.castShadow = true;
+  const parapetBack = new THREE.Mesh(new THREE.BoxGeometry(10.9, 0.45, 0.25), Mat.buildingRoof);
+  parapetBack.position.set(0, 4.75, -2.95);
+  const parapetLeft = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.45, 5.9), Mat.buildingRoof);
+  parapetLeft.position.set(-5.35, 4.75, -0.1);
+  const parapetRight = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.45, 5.9), Mat.buildingRoof);
+  parapetRight.position.set(5.35, 4.75, -0.1);
+  shopGroup.add(parapetFront, parapetBack, parapetLeft, parapetRight);
+
+  // Red Parapet Accent Ribbon on Front Edge
+  const brandRibbon = new THREE.Mesh(new THREE.BoxGeometry(10.92, 0.15, 0.04), Mat.redTrim);
+  brandRibbon.position.set(0, 4.50, 2.90);
+  shopGroup.add(brandRibbon);
+
+  // 7. Roof HVAC & Industrial Chillers
+  // HVAC Unit #1 (Left)
+  const hvac1 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.95, 1.2), Mat.acGrey);
+  hvac1.position.set(-2.6, 5.05, -1.0);
+  hvac1.castShadow = true;
+  const hvacGrille1 = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.06, 12), Mat.darkInk);
+  hvacGrille1.position.set(-2.6, 5.54, -1.0);
+  shopGroup.add(hvac1, hvacGrille1);
+
+  // HVAC Unit #2 (Right)
+  const hvac2 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.05, 1.4), Mat.acGrey);
+  hvac2.position.set(2.4, 5.10, -1.1);
+  hvac2.castShadow = true;
+  const hvacGrille2 = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.06, 12), Mat.darkInk);
+  hvacGrille2.position.set(2.4, 5.64, -1.1);
+  shopGroup.add(hvac2, hvacGrille2);
+
+  // Rooftop Ductwork Pipes
+  const duct1 = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.25, 0.25), Mat.chrome);
+  duct1.position.set(0, 4.7, -1.1);
+  const ductElbow = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.4, 0.25), Mat.chrome);
+  ductElbow.position.set(0, 4.5, -2.1);
+  shopGroup.add(duct1, ductElbow);
+
+  // Rooftop Antenna / Communication Mast with Beacon
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 2.4, 6), Mat.chrome);
+  mast.position.set(-4.5, 5.8, -2.2);
+  const beacon = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.12), Mat.beaconRed);
+  beacon.position.set(-4.5, 7.0, -2.2);
+  shopGroup.add(mast, beacon);
+
+  // 8. Side Walls Exterior Details (Rain Downspouts & Backlit Posters)
+  // Left Downspout
+  const pipeL = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 4.4, 8), Mat.darkInk);
+  pipeL.position.set(-5.35, 2.3, 2.4);
+  const pipeL_elbow = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.24), Mat.darkInk);
+  pipeL_elbow.position.set(-5.35, 4.4, 2.48);
+  // Right Downspout
+  const pipeR = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 4.4, 8), Mat.darkInk);
+  pipeR.position.set(5.35, 2.3, 2.4);
+  const pipeR_elbow = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.24), Mat.darkInk);
+  pipeR_elbow.position.set(5.35, 4.4, 2.48);
+  shopGroup.add(pipeL, pipeL_elbow, pipeR, pipeR_elbow);
+
+  // Right Side Illuminated Promo Poster Frames
+  const posterFrame1 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.4, 1.0), Mat.darkInk);
+  posterFrame1.position.set(5.32, 2.3, 0.6);
+  const posterArt1 = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.3), Mat.posterYellow);
+  posterArt1.rotation.y = Math.PI / 2;
+  posterArt1.position.set(5.37, 2.3, 0.6);
+  shopGroup.add(posterFrame1, posterArt1);
+
+  // 9. Brutalist 3D Illuminated Roof Signboard ("PIXEL MARKET / 24H EXPRESS")
+  const signStructure = new THREE.Group();
+  signStructure.position.set(0, 5.5, 2.75);
+
+  // Steel Frame Support Stanchions
+  [-2.2, 2.2].forEach(sx => {
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.2, 0.1), Mat.darkInk);
+    post.position.set(sx, -0.2, 0);
+    signStructure.add(post);
+  });
+
+  // Main Red Stencil Sign Backing Box
+  const signBox = new THREE.Mesh(new THREE.BoxGeometry(6.4, 1.35, 0.35), Mat.redTrim);
+  signBox.castShadow = true;
+  signStructure.add(signBox);
+
+  // Top Neon Amber Border Rail
+  const neonTop = new THREE.Mesh(new THREE.BoxGeometry(6.3, 0.05, 0.38), Mat.neonAmber);
+  neonTop.position.set(0, 0.64, 0);
+  const neonBottom = new THREE.Mesh(new THREE.BoxGeometry(6.3, 0.05, 0.38), Mat.neonAmber);
+  neonBottom.position.set(0, -0.64, 0);
+  signStructure.add(neonTop, neonBottom);
+
+  // 3D Geometric Front Lettering Plate ("PIXEL EXPRESS")
+  const letterPlaque = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.85, 0.08), Mat.roadWhite);
+  letterPlaque.position.set(0, 0.08, 0.20);
+  const letterCenter = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.55, 0.10), Mat.darkInk);
+  letterCenter.position.set(0, 0.08, 0.21);
+  const expressTag = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.20, 0.12), Mat.neonAmber);
+  expressTag.position.set(0, -0.42, 0.21);
+  signStructure.add(letterPlaque, letterCenter, expressTag);
+
+  shopGroup.add(signStructure);
+
+  return shopGroup;
+}
 
 function buildDiorama() {
   const diorama = new THREE.Group();
@@ -1083,9 +1518,9 @@ function buildDiorama() {
   buildEastHyperRingPortal(diorama);
 
   // 3. Station Concrete Forecourt Apron (Procedural High-Precision Industrial Grid)
-  const apronGeo = new THREE.BoxGeometry(22, 0.08, 18);
+  const apronGeo = new THREE.BoxGeometry(28, 0.08, 22);
   const apronMesh = new THREE.Mesh(apronGeo, Mat.apronGrid);
-  apronMesh.position.set(0, 0.04, 0);
+  apronMesh.position.set(0, 0.04, 0.5);
   apronMesh.receiveShadow = true;
   diorama.add(apronMesh);
 
@@ -1097,50 +1532,8 @@ function buildDiorama() {
   stain1.position.set(-4, 0.09, -2);
   diorama.add(stain1);
 
-  // 4. Main Minimarket Building
-  const shopGroup = new THREE.Group();
-  const shopBody = new THREE.Mesh(new THREE.BoxGeometry(10, 4.2, 5.5), Mat.buildingWall);
-  shopBody.position.set(0, 2.1, -9.5);
-  shopBody.castShadow = true;
-  shopBody.receiveShadow = true;
-  shopGroup.add(shopBody);
-
-  // Shop Flat Roof Trim
-  const shopRoof = new THREE.Mesh(new THREE.BoxGeometry(10.6, 0.4, 6.1), Mat.buildingRoof);
-  shopRoof.position.set(0, 4.3, -9.5);
-  shopRoof.castShadow = true;
-  shopGroup.add(shopRoof);
-
-  // Red Parapet Accent Strip
-  const shopTrim = new THREE.Mesh(new THREE.BoxGeometry(10.4, 0.25, 0.1), Mat.redTrim);
-  shopTrim.position.set(0, 4.0, -6.4);
-  shopGroup.add(shopTrim);
-
-  // Large Front Showcase Windows
-  const win1 = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.6, 0.1), Mat.glass);
-  win1.position.set(-2.5, 1.8, -6.7);
-  const win2 = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.6, 0.1), Mat.glass);
-  win2.position.set(2.5, 1.8, -6.7);
-  shopGroup.add(win1, win2);
-
-  // Entrance Double Sliding Doors
-  const doorGeo = new THREE.BoxGeometry(1.6, 2.6, 0.12);
-  const doorMesh = new THREE.Mesh(doorGeo, Mat.darkInk);
-  doorMesh.position.set(0, 1.8, -6.68);
-  shopGroup.add(doorMesh);
-
-  // Minimarket Roof Signboard
-  const signGeo = new THREE.BoxGeometry(5.2, 1.1, 0.2);
-  const signMesh = new THREE.Mesh(signGeo, Mat.redTrim);
-  signMesh.position.set(0, 4.9, -6.4);
-  shopGroup.add(signMesh);
-
-  // Warm Shop Interior Glow Light
-  shopInteriorLight = new THREE.PointLight(0xFFE082, 0.9, 14);
-  shopInteriorLight.position.set(0, 2.5, -8);
-  nightLights.push({ light: shopInteriorLight, targetIntensity: 0.9 });
-  shopGroup.add(shopInteriorLight);
-
+  // 4. Main Minimarket Building (Rich 3D Architectural Diorama)
+  const shopGroup = createMainMarketBuilding();
   diorama.add(shopGroup);
 
   // 5. Main Overhead Structural Steel Canopy (Sundurma) Architecture
@@ -1167,7 +1560,8 @@ function buildDiorama() {
 
   // 9. Highway LED Price Totem Sign
   const totem = createTotemMesh();
-  totem.position.set(-10, 0, 8.5);
+  totem.position.set(-16.5, 0, 6.8);
+  totem.rotation.y = 0.44;
   diorama.add(totem);
 
   // 10. Station Perimeters, Rocks, Hills & Diverse Trees (Oak, Pine, Palm, Saplings)
@@ -1232,12 +1626,12 @@ function buildDiorama() {
     diorama.add(bird);
   }
 
-  // 11. Drifting Low-Poly Clouds
+  // 11. High Altitude Drifting Low-Poly Clouds (Kept above camera line-of-sight)
   for (let c = 0; c < 8; c++) {
     const cloud = createVoxelCloud();
     cloud.position.set(
       -36 + Math.random() * 72,
-      18 + Math.random() * 8,
+      38 + Math.random() * 8,
       -36 + Math.random() * 72
     );
     clouds.push(cloud);
@@ -1315,8 +1709,15 @@ function createPlotBadgeMesh(plot, floatY = 1.0) {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.minFilter = THREE.LinearFilter;
-  const mat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+  const mat = new THREE.MeshBasicMaterial({
+    map: texture,
+    transparent: true,
+    alphaTest: 0.05,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
   const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.62), mat);
+  badge.renderOrder = 99;
   badge.position.set(0, floatY, 0);
   badge.rotation.x = -Math.PI / 6;
   badge.userData = { isPlotSign: true, isBadge: true, plotId: plot.id, plot: plot, baseY: floatY };
@@ -1593,6 +1994,291 @@ function createEvPlotMesh(plot) {
   return group;
 }
 
+function createTireShopPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 4.2), Mat.concrete);
+  slab.position.y = 0.04;
+  slab.receiveShadow = true;
+  group.add(slab);
+
+  // Pallet with stack of 3 black rubber tires
+  const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.1, 1.2), Mat.palletWood);
+  pallet.position.set(-1.4, 0.09, -1.0);
+  group.add(pallet);
+  for (let t = 0; t < 3; t++) {
+    const tire = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.14, 8, 12), Mat.darkInk);
+    tire.rotation.x = Math.PI / 2;
+    tire.position.set(-1.4, 0.22 + t * 0.22, -1.0);
+    group.add(tire);
+  }
+
+  // Pneumatic Tool Stand & Air Compressor Tank
+  const comp = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.7, 8), Mat.redTrim);
+  comp.rotation.z = Math.PI / 2;
+  comp.position.set(1.4, 0.45, -1.0);
+  group.add(comp);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createLubeBayPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.08, 4.8), Mat.concrete);
+  slab.position.y = 0.04;
+  slab.receiveShadow = true;
+  group.add(slab);
+
+  // Service Pit Depression
+  const pit = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.04, 3.6), Mat.darkInk);
+  pit.position.y = 0.07;
+  const hazardCurbL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 3.6), Mat.hazardStripe);
+  hazardCurbL.position.set(-0.76, 0.08, 0);
+  const hazardCurbR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 3.6), Mat.hazardStripe);
+  hazardCurbR.position.set(0.76, 0.08, 0);
+  group.add(pit, hazardCurbL, hazardCurbR);
+
+  // 2 Oil Drum Barrels with Drip Tray
+  const tray = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.04, 0.8), Mat.darkInk);
+  tray.position.set(-1.4, 0.06, 1.4);
+  const drum1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.75, 10), Mat.blueAccent);
+  drum1.position.set(-1.6, 0.44, 1.4);
+  const drum2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.75, 10), Mat.orangeAccent);
+  drum2.position.set(-1.1, 0.44, 1.4);
+  group.add(tray, drum1, drum2);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createVacuumHubPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.06, 3.8), Mat.concrete);
+  pad.position.y = 0.03;
+  group.add(pad);
+
+  // Dual Stainless Vacuum Island Base
+  const vIsland = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.14, 2.4), Mat.darkInk);
+  vIsland.position.set(0, 0.1, 0);
+  const can1 = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.85, 8), Mat.chrome);
+  can1.position.set(0, 0.55, -0.6);
+  const can2 = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.85, 8), Mat.chrome);
+  can2.position.set(0, 0.55, 0.6);
+  group.add(vIsland, can1, can2);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createMotoDockPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.04, 2.6), Mat.greenAccent);
+  pad.position.y = 0.02;
+  group.add(pad);
+
+  // Battery Swap Cabinet Baseplate
+  const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.6), Mat.darkInk);
+  base.position.set(0, 0.05, -0.8);
+  const conduit = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 1.2), Mat.chrome);
+  conduit.position.set(0, 0.05, 0.1);
+  group.add(base, conduit);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.95);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createTruckStopPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.12, 5.0), Mat.concrete);
+  slab.position.y = 0.06;
+  group.add(slab);
+
+  // Heavy Wheel Stops & Diesel Island Stub
+  const curb1 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.2, 0.3), Mat.hazardStripe);
+  curb1.position.set(-1.8, 0.16, 1.6);
+  const curb2 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.2, 0.3), Mat.hazardStripe);
+  curb2.position.set(1.8, 0.16, 1.6);
+  const dIsland = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.22, 1.0), Mat.darkInk);
+  dIsland.position.set(0, 0.17, -0.8);
+  group.add(curb1, curb2, dIsland);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.45);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createBakeryDrivePlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 4.0), Mat.wood);
+  deck.position.y = 0.04;
+  group.add(deck);
+
+  // Order Intercom Post & Menu Board Frame
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, 0.12), Mat.darkInk);
+  post.position.set(-1.8, 0.64, 1.2);
+  const board = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.06), Mat.orangeAccent);
+  board.position.set(-1.8, 1.1, 1.2);
+  group.add(post, board);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createFoodTruckPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.04, 3.6), Mat.dirt);
+  pad.position.y = 0.02;
+  group.add(pad);
+
+  // Picnic Bench Frame & String Light Posts
+  const pPost1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), Mat.wood);
+  pPost1.position.set(-2.0, 1.1, -1.4);
+  const pPost2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), Mat.wood);
+  pPost2.position.set(2.0, 1.1, -1.4);
+  group.add(pPost1, pPost2);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createRestLoungePlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.08, 4.4), Mat.concrete);
+  slab.position.y = 0.04;
+  group.add(slab);
+
+  // Plumbing Stub Pipes
+  const pipe1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4, 8), Mat.blueAccent);
+  pipe1.position.set(-1.2, 0.24, -1.2);
+  const pipe2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4, 8), Mat.redTrim);
+  pipe2.position.set(-0.8, 0.24, -1.2);
+  group.add(pipe1, pipe2);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createPetParkPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const grass = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.04, 5.0), Mat.grass);
+  grass.position.y = 0.02;
+  group.add(grass);
+
+  // Tiny Red Fire Hydrant Prop & Agility Ramp Footing
+  const hydrant = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.45, 8), Mat.redTrim);
+  hydrant.position.set(1.4, 0.24, 1.2);
+  group.add(hydrant);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createParcelHubPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.06, 1.8), Mat.concrete);
+  pad.position.y = 0.03;
+  group.add(pad);
+
+  // Locker Mount Anchor Plate
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.04, 0.8), Mat.darkInk);
+  plate.position.set(0, 0.08, 0);
+  group.add(plate);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.05);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createAtmHubPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.06, 1.8), Mat.darkInk);
+  plate.position.y = 0.03;
+  group.add(plate);
+
+  // Armored Security Column Base
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.8, 0.2), Mat.chrome);
+  post.position.set(0.9, 0.93, -0.6);
+  const cam = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), Mat.darkInk);
+  cam.position.set(0.9, 1.8, -0.4);
+  group.add(post, cam);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
+function createHydrogenBayPlotMesh(plot) {
+  const group = new THREE.Group();
+  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
+  const ring = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.6, 0.12, 16), Mat.concrete);
+  ring.position.y = 0.06;
+  group.add(ring);
+
+  // Cryogenic Flange Base
+  const flange = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.06, 16), Mat.evGlow);
+  flange.position.y = 0.14;
+  group.add(flange);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
+  group.userData.signCanvas = canvas;
+  group.userData.signTexture = texture;
+  group.userData.badgeMesh = badge;
+  group.add(badge);
+  return group;
+}
+
 function createPlotSignMesh(plot) {
   switch (plot.type) {
     case 'pump':
@@ -1607,6 +2293,30 @@ function createPlotSignMesh(plot) {
       return createTurbinePlotMesh(plot);
     case 'ev':
       return createEvPlotMesh(plot);
+    case 'tire_shop':
+      return createTireShopPlotMesh(plot);
+    case 'lube_bay':
+      return createLubeBayPlotMesh(plot);
+    case 'vacuum_hub':
+      return createVacuumHubPlotMesh(plot);
+    case 'moto_dock':
+      return createMotoDockPlotMesh(plot);
+    case 'truck_stop':
+      return createTruckStopPlotMesh(plot);
+    case 'bakery_drive':
+      return createBakeryDrivePlotMesh(plot);
+    case 'food_truck':
+      return createFoodTruckPlotMesh(plot);
+    case 'rest_lounge':
+      return createRestLoungePlotMesh(plot);
+    case 'pet_park':
+      return createPetParkPlotMesh(plot);
+    case 'parcel_hub':
+      return createParcelHubPlotMesh(plot);
+    case 'atm_hub':
+      return createAtmHubPlotMesh(plot);
+    case 'hydrogen_bay':
+      return createHydrogenBayPlotMesh(plot);
     default:
       return createPumpPlotMesh(plot);
   }
@@ -1687,92 +2397,92 @@ function createCanopyMesh() {
   const canopy = new THREE.Group();
   canopy.position.set(0, 0, 1.0); // Covers the 4 pump bays perfectly
 
-  // 4 Heavy Industrial Steel Tubular Pillars with Reinforced Concrete Pedestals (Remain stationary)
+  // 4 Heavy Industrial Steel Tubular Pillars with Reinforced Concrete Pedestals (In-line with pump island rows)
   const pillarCoords = [
-    [-6.8, -3.8],
-    [6.8, -3.8],
-    [-6.8, 5.2],
-    [6.8, 5.2]
+    [-7.8, -2.8],
+    [7.8, -2.8],
+    [-7.8, 2.4],
+    [7.8, 2.4]
   ];
-
-  pillarCoords.forEach(([px, pz]) => {
-    // Concrete Footing Plinth
-    const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 0.9), Mat.concrete);
-    plinth.position.set(px, 0.2, pz);
-    plinth.castShadow = true;
-    canopy.add(plinth);
-
-    // Main Column Steel Tube
-    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 4.4, 8), Mat.darkInk);
-    col.position.set(px, 2.4, pz);
-    col.castShadow = true;
-    canopy.add(col);
-
-    // Diagonal Gusset Bracing Brackets
-    const br = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.8, 0.14), Mat.chrome);
-    br.position.set(px > 0 ? px - 0.35 : px + 0.35, 4.1, pz);
-    br.rotation.z = px > 0 ? Math.PI / 4 : -Math.PI / 4;
-    canopy.add(br);
-  });
 
   // Retractable Folding Overhead Roof Assembly (Folds and retracts towards the market building)
   canopyRoofMesh = new THREE.Group();
 
+  pillarCoords.forEach(([px, pz]) => {
+    // Concrete Footing Plinth (always on island)
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.2, 0.8), Mat.concrete);
+    plinth.position.set(px, 0.1, pz);
+    plinth.castShadow = true;
+    const basePlate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.5), Mat.darkInk);
+    basePlate.position.set(px, 0.22, pz);
+    canopy.add(plinth, basePlate);
+
+    // Main Column Steel Tube & Brackets (Rise with canopyRoofMesh)
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 4.4, 8), Mat.darkInk);
+    col.position.set(px, 2.4, pz);
+    col.castShadow = true;
+
+    const br = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.8, 0.14), Mat.chrome);
+    br.position.set(px > 0 ? px - 0.35 : px + 0.35, 4.1, pz);
+    br.rotation.z = px > 0 ? Math.PI / 4 : -Math.PI / 4;
+    canopyRoofMesh.add(col, br);
+  });
+
   // 1. Perimeter Frame Beams (Open Interior for Transparency)
-  const beamFront = new THREE.Mesh(new THREE.BoxGeometry(17.1, 0.45, 0.5), Mat.buildingRoof);
-  beamFront.position.set(0, 4.65, 6.85);
-  const beamBack = new THREE.Mesh(new THREE.BoxGeometry(17.1, 0.45, 0.5), Mat.buildingRoof);
-  beamBack.position.set(0, 4.65, -5.45);
-  const beamLeft = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 12.8), Mat.buildingRoof);
-  beamLeft.position.set(-8.3, 4.65, 0.7);
-  const beamRight = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 12.8), Mat.buildingRoof);
-  beamRight.position.set(8.3, 4.65, 0.7);
+  const beamFront = new THREE.Mesh(new THREE.BoxGeometry(19.6, 0.45, 0.5), Mat.buildingRoof);
+  beamFront.position.set(0, 4.65, 5.8);
+  const beamBack = new THREE.Mesh(new THREE.BoxGeometry(19.6, 0.45, 0.5), Mat.buildingRoof);
+  beamBack.position.set(0, 4.65, -6.8);
+  const beamLeft = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 13.1), Mat.buildingRoof);
+  beamLeft.position.set(-9.8, 4.65, -0.5);
+  const beamRight = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 13.1), Mat.buildingRoof);
+  beamRight.position.set(9.8, 4.65, -0.5);
   canopyRoofMesh.add(beamFront, beamBack, beamLeft, beamRight);
 
   // 2. Red Brand Perimeter Trim Ribbon
-  const fasciaFront = new THREE.Mesh(new THREE.BoxGeometry(17.2, 0.28, 0.54), Mat.redTrim);
-  fasciaFront.position.set(0, 4.65, 6.85);
-  const fasciaBack = new THREE.Mesh(new THREE.BoxGeometry(17.2, 0.28, 0.54), Mat.redTrim);
-  fasciaBack.position.set(0, 4.65, -5.45);
-  const fasciaLeft = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 12.9), Mat.redTrim);
-  fasciaLeft.position.set(-8.3, 4.65, 0.7);
-  const fasciaRight = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 12.9), Mat.redTrim);
-  fasciaRight.position.set(8.3, 4.65, 0.7);
+  const fasciaFront = new THREE.Mesh(new THREE.BoxGeometry(19.7, 0.28, 0.54), Mat.redTrim);
+  fasciaFront.position.set(0, 4.65, 5.8);
+  const fasciaBack = new THREE.Mesh(new THREE.BoxGeometry(19.7, 0.28, 0.54), Mat.redTrim);
+  fasciaBack.position.set(0, 4.65, -6.8);
+  const fasciaLeft = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 13.2), Mat.redTrim);
+  fasciaLeft.position.set(-9.8, 4.65, -0.5);
+  const fasciaRight = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 13.2), Mat.redTrim);
+  fasciaRight.position.set(9.8, 4.65, -0.5);
   canopyRoofMesh.add(fasciaFront, fasciaBack, fasciaLeft, fasciaRight);
 
   // Front Fascia "PIXELOIL" Stencil Plaque
   const frontPlate = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.42, 0.1), Mat.roadWhite);
-  frontPlate.position.set(0, 4.65, 7.14);
+  frontPlate.position.set(0, 4.65, 6.09);
   canopyRoofMesh.add(frontPlate);
 
   const frontText = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.26, 0.12), Mat.redTrim);
-  frontText.position.set(0, 4.65, 7.15);
+  frontText.position.set(0, 4.65, 6.10);
   canopyRoofMesh.add(frontText);
 
   // 3. Translucent Polycarbonate Glass Roof Pane (Crystal Visibility of All Pumps & Cars Below)
-  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(16.2, 0.04, 12.0), Mat.canopyGlass);
-  glassRoof.position.set(0, 4.70, 0.7);
+  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(18.6, 0.04, 12.1), Mat.canopyGlass);
+  glassRoof.position.set(0, 4.70, -0.5);
   canopyRoofMesh.add(glassRoof);
 
   // 4. Architectural Structural Steel Truss Grid (Sleek Skylight I-Beams)
-  [-3.8, -0.8, 2.2, 5.2].forEach(z => {
-    const trussX = new THREE.Mesh(new THREE.BoxGeometry(16.1, 0.12, 0.08), Mat.solarFrame);
+  [-5.0, -2.8, -0.5, 2.4, 4.8].forEach(z => {
+    const trussX = new THREE.Mesh(new THREE.BoxGeometry(18.5, 0.12, 0.08), Mat.solarFrame);
     trussX.position.set(0, 4.62, z);
     canopyRoofMesh.add(trussX);
   });
 
-  [-5.5, -2.75, 0, 2.75, 5.5].forEach(x => {
-    const trussZ = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 12.0), Mat.solarFrame);
-    trussZ.position.set(x, 4.62, 0.7);
+  [-6.5, -3.25, 0, 3.25, 6.5].forEach(x => {
+    const trussZ = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 12.1), Mat.solarFrame);
+    trussZ.position.set(x, 4.62, -0.5);
     canopyRoofMesh.add(trussZ);
   });
 
   // 5. 4 High-Lumen Down-Facing LED Spotlights for Pump Islands
   const spotCoords = [
-    [-4, 4.28, -3.0],
-    [4, 4.28, -3.0],
-    [-4, 4.28, 3.0],
-    [4, 4.28, 3.0]
+    [-4.5, 4.28, -2.8],
+    [4.5, 4.28, -2.8],
+    [-4.5, 4.28, 2.4],
+    [4.5, 4.28, 2.4]
   ];
 
   spotCoords.forEach(([sx, sy, sz]) => {
@@ -2372,6 +3082,442 @@ function spawnEvChargerMesh(level = 1) {
   triggerUpgradeFX(evChargerGroup);
 }
 
+function spawnTireShopMesh(level = 1) {
+  if (tireShopGroup) { scene.remove(tireShopGroup); tireShopGroup = null; }
+  tireShopGroup = new THREE.Group();
+  tireShopGroup.position.set(20, 0.04, -6);
+  tireShopGroup.userData = { facility: 'tire_shop', level };
+
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.12, 4.4), Mat.concrete);
+  slab.position.y = 0.06;
+  slab.receiveShadow = true;
+  tireShopGroup.add(slab);
+
+  if (level === 1) {
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.2, 4.6), Mat.redTrim);
+    roof.position.y = 3.2;
+    const post1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.2, 8), Mat.chrome);
+    post1.position.set(-2.4, 1.6, -2.0);
+    const post2 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.2, 8), Mat.chrome);
+    post2.position.set(2.4, 1.6, -2.0);
+    const post3 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.2, 8), Mat.chrome);
+    post3.position.set(-2.4, 1.6, 2.0);
+    const post4 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 3.2, 8), Mat.chrome);
+    post4.position.set(2.4, 1.6, 2.0);
+    tireShopGroup.add(roof, post1, post2, post3, post4);
+
+    const changer = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.3, 0.8), Mat.blueAccent);
+    changer.position.set(-1.4, 0.7, 0);
+    const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.8, 6), Mat.chrome);
+    arm.position.set(-1.4, 1.5, 0);
+    tireShopGroup.add(changer, arm);
+
+    for (let i = 0; i < 4; i++) {
+      const tire = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.12, 8, 12), Mat.darkInk);
+      tire.rotation.x = Math.PI / 2;
+      tire.position.set(1.4, 0.18 + i * 0.22, -1.0);
+      tireShopGroup.add(tire);
+    }
+  } else if (level === 2) {
+    const building = new THREE.Mesh(new THREE.BoxGeometry(5.4, 3.6, 4.6), Mat.buildingWall);
+    building.position.y = 1.8;
+    building.castShadow = true;
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.3, 5.0), Mat.redTrim);
+    roof.position.y = 3.75;
+    tireShopGroup.add(building, roof);
+
+    const liftBase = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.14, 3.2), Mat.roadYellow);
+    liftBase.position.set(0, 0.3, 0.5);
+    tireShopGroup.add(liftBase);
+
+    const sign = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.8, 0.2), Mat.darkInk);
+    sign.position.set(0, 3.3, 2.32);
+    tireShopGroup.add(sign);
+  } else {
+    const building = new THREE.Mesh(new THREE.BoxGeometry(5.8, 4.2, 5.0), Mat.darkInk);
+    building.position.y = 2.1;
+    building.castShadow = true;
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(4.8, 2.8, 0.1), Mat.glass);
+    glass.position.set(0, 2.0, 2.52);
+    const laserPylon1 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 2.2, 8), Mat.redTrim);
+    laserPylon1.position.set(-2.2, 1.1, 1.8);
+    const laserPylon2 = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 2.2, 8), Mat.redTrim);
+    laserPylon2.position.set(2.2, 1.1, 1.8);
+    tireShopGroup.add(building, glass, laserPylon1, laserPylon2);
+  }
+
+  scene.add(tireShopGroup);
+  triggerUpgradeFX(tireShopGroup);
+}
+
+function spawnLubeBayMesh(level = 1) {
+  if (lubeBayGroup) { scene.remove(lubeBayGroup); lubeBayGroup = null; }
+  lubeBayGroup = new THREE.Group();
+  lubeBayGroup.position.set(-6, 0.04, -15);
+  lubeBayGroup.userData = { facility: 'lube_bay', level };
+
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.12, 5.2), Mat.concrete);
+  slab.position.y = 0.06;
+  slab.receiveShadow = true;
+  lubeBayGroup.add(slab);
+
+  if (level === 1) {
+    const pit = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 4.2), Mat.darkInk);
+    pit.position.y = 0.1;
+    const h1 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 4.2), Mat.hazardStripe);
+    h1.position.set(-0.85, 0.11, 0);
+    const h2 = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.08, 4.2), Mat.hazardStripe);
+    h2.position.set(0.85, 0.11, 0);
+    lubeBayGroup.add(pit, h1, h2);
+
+    const con = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.4, 0.7), Mat.blueAccent);
+    con.position.set(-1.6, 0.76, -1.5);
+    lubeBayGroup.add(con);
+  } else if (level === 2) {
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.25, 5.4), Mat.blueAccent);
+    roof.position.y = 3.6;
+    const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 3.6, 0.16), Mat.chrome);
+    p1.position.set(-2.1, 1.8, -2.4);
+    const p2 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 3.6, 0.16), Mat.chrome);
+    p2.position.set(2.1, 1.8, -2.4);
+    lubeBayGroup.add(roof, p1, p2);
+
+    for (let x = -1.2; x <= 1.2; x += 0.8) {
+      const reel = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.16, 8), Mat.roadYellow);
+      reel.rotation.z = Math.PI / 2;
+      reel.position.set(x, 3.3, 0);
+      lubeBayGroup.add(reel);
+    }
+  } else {
+    const bay = new THREE.Mesh(new THREE.BoxGeometry(5.0, 4.0, 5.6), Mat.darkInk);
+    bay.position.y = 2.0;
+    bay.castShadow = true;
+    const portal = new THREE.Mesh(new THREE.BoxGeometry(5.2, 4.2, 0.3), Mat.evGlow);
+    portal.position.set(0, 2.1, 2.8);
+    lubeBayGroup.add(bay, portal);
+  }
+
+  scene.add(lubeBayGroup);
+  triggerUpgradeFX(lubeBayGroup);
+}
+
+function spawnVacuumHubMesh(level = 1) {
+  if (vacuumHubGroup) { scene.remove(vacuumHubGroup); vacuumHubGroup = null; }
+  vacuumHubGroup = new THREE.Group();
+  vacuumHubGroup.position.set(23, 0.04, 6);
+  vacuumHubGroup.userData = { facility: 'vacuum_hub', level };
+
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.08, 4.2), Mat.concrete);
+  slab.position.y = 0.04;
+  slab.receiveShadow = true;
+  vacuumHubGroup.add(slab);
+
+  const count = level === 1 ? 2 : (level === 2 ? 4 : 6);
+  const zSpan = 3.2 / (Math.ceil(count / 2) || 1);
+
+  for (let i = 0; i < count; i++) {
+    const side = (i % 2 === 0) ? -1.5 : 1.5;
+    const zPos = -1.2 + Math.floor(i / 2) * zSpan;
+    const vac = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 1.4, 8), Mat.chrome);
+    vac.position.set(side, 0.74, zPos);
+    const top = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), Mat.blueAccent);
+    top.position.set(side, 1.44, zPos);
+    const boom = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.2, 6), Mat.roadYellow);
+    boom.position.set(side, 2.0, zPos);
+    vacuumHubGroup.add(vac, top, boom);
+  }
+
+  if (level >= 2) {
+    const canopy = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 4.4), Mat.blueAccent);
+    canopy.position.y = 3.2;
+    vacuumHubGroup.add(canopy);
+  }
+
+  scene.add(vacuumHubGroup);
+  triggerUpgradeFX(vacuumHubGroup);
+}
+
+function spawnMotoDockMesh(level = 1) {
+  if (motoDockGroup) { scene.remove(motoDockGroup); motoDockGroup = null; }
+  motoDockGroup = new THREE.Group();
+  motoDockGroup.position.set(-16, 0.04, 2);
+  motoDockGroup.userData = { facility: 'moto_dock', level };
+
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.06, 2.8), Mat.greenAccent);
+  pad.position.y = 0.03;
+  motoDockGroup.add(pad);
+
+  const towerCount = level === 1 ? 1 : (level === 2 ? 2 : 3);
+  for (let i = 0; i < towerCount; i++) {
+    const xPos = (i - (towerCount - 1) / 2) * 1.0;
+    const cabinet = new THREE.Mesh(new THREE.BoxGeometry(0.8, 2.0, 0.5), Mat.darkInk);
+    cabinet.position.set(xPos, 1.03, -0.8);
+    const screen = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.4, 0.04), Mat.evGlow);
+    screen.position.set(xPos, 1.4, -0.53);
+    motoDockGroup.add(cabinet, screen);
+
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 2; c++) {
+        const slot = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.18, 0.04), Mat.greenAccent);
+        slot.position.set(xPos - 0.18 + c * 0.36, 0.45 + r * 0.3, -0.53);
+        motoDockGroup.add(slot);
+      }
+    }
+  }
+
+  if (level >= 2) {
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.08, 3.0), Mat.solarCell);
+    roof.position.y = 2.8;
+    motoDockGroup.add(roof);
+  }
+
+  scene.add(motoDockGroup);
+  triggerUpgradeFX(motoDockGroup);
+}
+
+function spawnTruckStopMesh(level = 1) {
+  if (truckStopGroup) { scene.remove(truckStopGroup); truckStopGroup = null; }
+  truckStopGroup = new THREE.Group();
+  truckStopGroup.position.set(28, 0.04, -14);
+  truckStopGroup.userData = { facility: 'truck_stop', level };
+
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(8.5, 0.14, 5.8), Mat.concrete);
+  slab.position.y = 0.07;
+  slab.receiveShadow = true;
+  truckStopGroup.add(slab);
+
+  const pump1 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.2, 0.9), Mat.darkInk);
+  pump1.position.set(0, 1.17, 0);
+  const pumpHead = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.4, 1.0), Mat.greenAccent);
+  pumpHead.position.set(0, 2.3, 0);
+  truckStopGroup.add(pump1, pumpHead);
+
+  if (level >= 2) {
+    const defTank = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 2.4, 10), Mat.blueAccent);
+    defTank.position.set(3.0, 1.27, -1.6);
+    truckStopGroup.add(defTank);
+  }
+
+  if (level === 3) {
+    const cRoof = new THREE.Mesh(new THREE.BoxGeometry(9.0, 0.3, 6.4), Mat.darkInk);
+    cRoof.position.y = 5.2;
+    const col1 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 5.2, 8), Mat.chrome);
+    col1.position.set(-3.8, 2.6, 0);
+    const col2 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 5.2, 8), Mat.chrome);
+    col2.position.set(3.8, 2.6, 0);
+    truckStopGroup.add(cRoof, col1, col2);
+  }
+
+  scene.add(truckStopGroup);
+  triggerUpgradeFX(truckStopGroup);
+}
+
+function spawnBakeryDriveMesh(level = 1) {
+  if (bakeryDriveGroup) { scene.remove(bakeryDriveGroup); bakeryDriveGroup = null; }
+  bakeryDriveGroup = new THREE.Group();
+  bakeryDriveGroup.position.set(-14, 0.04, -1);
+  bakeryDriveGroup.userData = { facility: 'bakery_drive', level };
+
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.08, 4.4), Mat.wood);
+  deck.position.y = 0.04;
+  bakeryDriveGroup.add(deck);
+
+  if (level === 1) {
+    const kiosk = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.8, 3.2), Mat.buildingWall);
+    kiosk.position.y = 1.44;
+    kiosk.castShadow = true;
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.25, 3.6), Mat.orangeAccent);
+    roof.position.y = 2.95;
+    const win = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 0.1), Mat.glass);
+    win.position.set(0, 1.4, 1.62);
+    bakeryDriveGroup.add(kiosk, roof, win);
+  } else if (level === 2) {
+    const shop = new THREE.Mesh(new THREE.BoxGeometry(4.6, 3.4, 3.8), Mat.buildingWall);
+    shop.position.y = 1.74;
+    shop.castShadow = true;
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.35, 4.2), Mat.orangeAccent);
+    roof.position.y = 3.6;
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.8, 0.1), Mat.glass);
+    glass.position.set(0, 1.6, 1.92);
+    bakeryDriveGroup.add(shop, roof, glass);
+  } else {
+    const f1 = new THREE.Mesh(new THREE.BoxGeometry(5.2, 3.0, 4.2), Mat.buildingWall);
+    f1.position.y = 1.54;
+    const f2 = new THREE.Mesh(new THREE.BoxGeometry(4.8, 2.6, 3.8), Mat.buildingWall);
+    f2.position.y = 4.34;
+    const neonSign = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.8, 0.2), Mat.orangeAccent);
+    neonSign.position.set(0, 5.9, 1.92);
+    bakeryDriveGroup.add(f1, f2, neonSign);
+  }
+
+  scene.add(bakeryDriveGroup);
+  triggerUpgradeFX(bakeryDriveGroup);
+}
+
+function spawnFoodTruckMesh(level = 1) {
+  if (foodTruckGroup) { scene.remove(foodTruckGroup); foodTruckGroup = null; }
+  foodTruckGroup = new THREE.Group();
+  foodTruckGroup.position.set(14, 0.04, -14);
+  foodTruckGroup.userData = { facility: 'food_truck', level };
+
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.06, 4.2), Mat.dirt);
+  pad.position.y = 0.03;
+  foodTruckGroup.add(pad);
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.2, 2.0), Mat.redTrim);
+  body.position.set(0, 1.3, 0);
+  body.castShadow = true;
+  const roof = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 3.8, 12, 1, false, 0, Math.PI), Mat.chrome);
+  roof.rotation.z = Math.PI / 2;
+  roof.position.set(0, 2.4, 0);
+  const hatch = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.9, 0.1), Mat.roadWhite);
+  hatch.position.set(0, 1.5, 1.02);
+  foodTruckGroup.add(body, roof, hatch);
+
+  const tCount = level === 1 ? 1 : (level === 2 ? 2 : 3);
+  for (let i = 0; i < tCount; i++) {
+    const table = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.7, 0.8), Mat.benchWood);
+    table.position.set(-1.8 + i * 1.8, 0.38, 2.2);
+    foodTruckGroup.add(table);
+  }
+
+  scene.add(foodTruckGroup);
+  triggerUpgradeFX(foodTruckGroup);
+}
+
+function spawnRestLoungeMesh(level = 1) {
+  if (restLoungeGroup) { scene.remove(restLoungeGroup); restLoungeGroup = null; }
+  restLoungeGroup = new THREE.Group();
+  restLoungeGroup.position.set(6, 0.04, -15);
+  restLoungeGroup.userData = { facility: 'rest_lounge', level };
+
+  const slab = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.1, 4.6), Mat.concrete);
+  slab.position.y = 0.05;
+  slab.receiveShadow = true;
+  restLoungeGroup.add(slab);
+
+  const building = new THREE.Mesh(new THREE.BoxGeometry(5.0, 3.2, 4.0), Mat.buildingWall);
+  building.position.y = 1.65;
+  building.castShadow = true;
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.3, 4.4), Mat.blueAccent);
+  roof.position.y = 3.4;
+  restLoungeGroup.add(building, roof);
+
+  const doorL = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.0, 0.08), Mat.blueAccent);
+  doorL.position.set(-1.2, 1.05, 2.02);
+  const doorR = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.0, 0.08), Mat.redTrim);
+  doorR.position.set(1.2, 1.05, 2.02);
+  restLoungeGroup.add(doorL, doorR);
+
+  scene.add(restLoungeGroup);
+  triggerUpgradeFX(restLoungeGroup);
+}
+
+function spawnPetParkMesh(level = 1) {
+  if (petParkGroup) { scene.remove(petParkGroup); petParkGroup = null; }
+  petParkGroup = new THREE.Group();
+  petParkGroup.position.set(-26, 0.04, 5);
+  petParkGroup.userData = { facility: 'pet_park', level };
+
+  const grass = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.06, 5.4), Mat.grass);
+  grass.position.y = 0.03;
+  petParkGroup.add(grass);
+
+  const fGeoX = new THREE.BoxGeometry(5.4, 0.7, 0.08);
+  const fGeoZ = new THREE.BoxGeometry(0.08, 0.7, 5.4);
+  const fBack = new THREE.Mesh(fGeoX, Mat.wood);
+  fBack.position.set(0, 0.38, -2.66);
+  const fLeft = new THREE.Mesh(fGeoZ, Mat.wood);
+  fLeft.position.set(-2.66, 0.38, 0);
+  const fRight = new THREE.Mesh(fGeoZ, Mat.wood);
+  fRight.position.set(2.66, 0.38, 0);
+  petParkGroup.add(fBack, fLeft, fRight);
+
+  const hydrant = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 0.55, 8), Mat.redTrim);
+  hydrant.position.set(1.6, 0.3, 1.2);
+  const ramp = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.1, 0.8), Mat.roadYellow);
+  ramp.rotation.z = 0.25;
+  ramp.position.set(-1.0, 0.4, 0);
+  petParkGroup.add(hydrant, ramp);
+
+  scene.add(petParkGroup);
+  triggerUpgradeFX(petParkGroup);
+}
+
+function spawnParcelHubMesh(level = 1) {
+  if (parcelHubGroup) { scene.remove(parcelHubGroup); parcelHubGroup = null; }
+  parcelHubGroup = new THREE.Group();
+  parcelHubGroup.position.set(-15, 0.04, -14);
+  parcelHubGroup.userData = { facility: 'parcel_hub', level };
+
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.08, 2.2), Mat.concrete);
+  pad.position.y = 0.04;
+  parcelHubGroup.add(pad);
+
+  const locker = new THREE.Mesh(new THREE.BoxGeometry(3.4, 2.2, 0.8), Mat.darkInk);
+  locker.position.set(0, 1.14, 0);
+  locker.castShadow = true;
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 0.04), Mat.evGlow);
+  screen.position.set(0, 1.4, 0.42);
+  parcelHubGroup.add(locker, screen);
+
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.1, 1.4), Mat.orangeAccent);
+  roof.position.set(0, 2.3, 0.2);
+  parcelHubGroup.add(roof);
+
+  scene.add(parcelHubGroup);
+  triggerUpgradeFX(parcelHubGroup);
+}
+
+function spawnAtmHubMesh(level = 1) {
+  if (atmHubGroup) { scene.remove(atmHubGroup); atmHubGroup = null; }
+  atmHubGroup = new THREE.Group();
+  atmHubGroup.position.set(6.5, 0.04, -6.5);
+  atmHubGroup.userData = { facility: 'atm_hub', level };
+
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.08, 2.0), Mat.concrete);
+  pad.position.y = 0.04;
+  atmHubGroup.add(pad);
+
+  const atm1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.0, 0.7), Mat.blueAccent);
+  atm1.position.set(-0.6, 1.04, 0);
+  const atm2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.0, 0.7), Mat.orangeAccent);
+  atm2.position.set(0.6, 1.04, 0);
+  const hood = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1.2), Mat.darkInk);
+  hood.position.set(0, 2.1, 0.2);
+  atmHubGroup.add(atm1, atm2, hood);
+
+  scene.add(atmHubGroup);
+  triggerUpgradeFX(atmHubGroup);
+}
+
+function spawnHydrogenBayMesh(level = 1) {
+  if (hydrogenBayGroup) { scene.remove(hydrogenBayGroup); hydrogenBayGroup = null; }
+  hydrogenBayGroup = new THREE.Group();
+  hydrogenBayGroup.position.set(-24, 0.04, -2);
+  hydrogenBayGroup.userData = { facility: 'hydrogen_bay', level };
+
+  const ring = new THREE.Mesh(new THREE.CylinderGeometry(2.8, 3.0, 0.14, 16), Mat.concrete);
+  ring.position.y = 0.07;
+  hydrogenBayGroup.add(ring);
+
+  const silo = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 4.6, 16), Mat.chrome);
+  silo.position.set(0, 2.37, 0);
+  silo.castShadow = true;
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), Mat.evGlow);
+  dome.position.set(0, 4.67, 0);
+  hydrogenBayGroup.add(silo, dome);
+
+  const pylon = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.0, 0.7), Mat.darkInk);
+  pylon.position.set(1.8, 1.07, 1.4);
+  const pGlow = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.05), Mat.evGlow);
+  pGlow.position.set(1.8, 1.2, 1.76);
+  hydrogenBayGroup.add(pylon, pGlow);
+
+  scene.add(hydrogenBayGroup);
+  triggerUpgradeFX(hydrogenBayGroup);
+}
+
 function createTotemMesh() {
   const totem = new THREE.Group();
 
@@ -2460,7 +3606,7 @@ function buildPerimeterFloraAndTerrain(diorama) {
     { pos: [32, 28],   type: 'oak',  scale: 1.20 },
 
     // Station Garden Palms (Beside Entrance & Planters)
-    { pos: [-12, -4.5], type: 'palm', scale: 1.05 },
+    { pos: [-26.0, -12.0], type: 'palm', scale: 1.05 },
     { pos: [12, -4.5],  type: 'palm', scale: 1.05 },
 
     // Roadway Refüj Young Saplings (with Support Stakes)
@@ -2927,8 +4073,8 @@ function buildStationDrivewayRamps(diorama) {
   rampGroup.add(inArrowHead);
 
   // Inbound Corner Safety Hazard Islands (Left curb divider)
-  const inCurb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.18, 0.5), Mat.hazardStripe);
-  inCurb.position.set(-14.2, 0.09, 7.8);
+  const inCurb = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.18, 0.5), Mat.hazardStripe);
+  inCurb.position.set(-14.8, 0.09, 7.8);
   rampGroup.add(inCurb);
 
   // 2. Outbound Acceleration Merge Ramp (Çıkış Rampası: X: +9.0 to +14.0, Z: 7.6 to 10.2)
@@ -2958,8 +4104,8 @@ function buildStationDrivewayRamps(diorama) {
   }
 
   // Outbound Corner Safety Hazard Islands (Right curb divider)
-  const outCurb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.18, 0.5), Mat.hazardStripe);
-  outCurb.position.set(14.2, 0.09, 7.8);
+  const outCurb = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.18, 0.5), Mat.hazardStripe);
+  outCurb.position.set(14.8, 0.09, 7.8);
   rampGroup.add(outCurb);
 
   // 3. Central Safety Median Divider (Orta Refüj / Ada Sınır Ayracı: X: -7.6 to +7.6)
@@ -3847,29 +4993,29 @@ class Vehicle {
   initApproachPath() {
     if (!this.targetPumpSlot) return;
     const slotPos = this.targetPumpSlot.pos;
-    const isFrontRow = slotPos.z >= 2;
-    const parkZ = slotPos.z + 1.8;
+    const isFrontRow = slotPos.z >= 1.0;
+    const parkZ = isFrontRow ? 5.2 : 0.0;
     const parkX = slotPos.x;
 
     if (isFrontRow) {
-      // Front Row Pumps (#3 and #4): Inbound Slip Ramp -> Front pump bay parallel side-docking (facing +X)
+      // Front Row Pumps (#3 and #4): Inbound Slip Ramp -> Wide entrance curve -> Straight into front pump bay (Z: 5.2)
       this.waypoints = [
-        new THREE.Vector3(-14.0, 0, 9.8),                 // 1. Highway inner lane approach
-        new THREE.Vector3(-11.5, 0, 8.8),                 // 2. Turn into Inbound Slip Ramp
-        new THREE.Vector3(-8.5, 0, 7.4),                  // 3. Enter forecourt apron
-        new THREE.Vector3(slotPos.x - 3.8, 0, parkZ),     // 4. Align facing +X in front pump lane
-        new THREE.Vector3(parkX - 1.0, 0, parkZ),         // 5. Approach dispenser
+        new THREE.Vector3(-16.0, 0, 9.8),                 // 1. Highway inner lane approach
+        new THREE.Vector3(-12.5, 0, 8.6),                 // 2. Turn into Inbound Slip Ramp
+        new THREE.Vector3(-9.5, 0, 6.8),                  // 3. Enter forecourt apron (safely clears west pillar at X: -9.2, Z: 6.8)
+        new THREE.Vector3(-7.2, 0, parkZ),                // 4. Align straight facing +X in front pump lane
+        new THREE.Vector3(parkX - 1.4, 0, parkZ),         // 5. Approach dispenser
         new THREE.Vector3(parkX, 0, parkZ)                // 6. Dock PARALLEL alongside pump!
       ];
     } else {
-      // Back Row Pumps (#1 and #2): Inbound Slip Ramp -> Bypass around front island -> Back pump bay parallel side-docking
+      // Back Row Pumps (#1 and #2): Inbound Slip Ramp -> Bypass around front island -> Straight into back pump bay (Z: 0.0)
       this.waypoints = [
-        new THREE.Vector3(-14.0, 0, 9.8),                 // 1. Highway inner lane approach
-        new THREE.Vector3(-11.5, 0, 8.8),                 // 2. Turn into Inbound Slip Ramp
-        new THREE.Vector3(-8.8, 0, 6.4),                  // 3. Clear outer apron curve
-        new THREE.Vector3(slotPos.x - 4.5, 0, 3.2),       // 4. Outer bypass aisle (clears pump 3 island)
-        new THREE.Vector3(slotPos.x - 2.8, 0, parkZ),     // 5. Turn into back pump lane
-        new THREE.Vector3(parkX - 1.0, 0, parkZ),         // 6. Straight bay alignment
+        new THREE.Vector3(-16.0, 0, 9.8),                 // 1. Highway inner lane approach
+        new THREE.Vector3(-12.5, 0, 8.6),                 // 2. Turn into Inbound Slip Ramp
+        new THREE.Vector3(-8.8, 0, 6.2),                  // 3. Clear outer apron curve
+        new THREE.Vector3(-8.2, 0, 2.6),                  // 4. Wide bypass aisle (safely clears pump 3 island at X: -4.5)
+        new THREE.Vector3(-6.8, 0, parkZ),                // 5. Turn into back pump lane
+        new THREE.Vector3(parkX - 1.4, 0, parkZ),         // 6. Straight bay alignment
         new THREE.Vector3(parkX, 0, parkZ)                // 7. Dock PARALLEL alongside pump!
       ];
     }
@@ -3880,14 +5026,28 @@ class Vehicle {
   initDeparturePath() {
     const startX = this.mesh.position.x;
     const startZ = this.mesh.position.z;
+    const isFrontRow = startZ >= 2.5;
 
-    this.waypoints = [
-      new THREE.Vector3(startX + 3.0, 0, startZ),        // 1. Drive forward straight alongside pump facing +X
-      new THREE.Vector3(8.5, 0, 7.4),                    // 2. Turn toward Outbound Apron
-      new THREE.Vector3(11.5, 0, 8.8),                   // 3. Enter Outbound Merge Ramp
-      new THREE.Vector3(14.5, 0, 9.8),                   // 4. Smooth highway merge
-      new THREE.Vector3(56.0, 0, 9.8)                    // 5. Accelerate through East Hyper-Ring Portal
-    ];
+    if (isFrontRow) {
+      // Front Row departure (Z: 5.2): Straight forward -> Outbound Apron -> Merge Ramp -> East Hyper-Ring
+      this.waypoints = [
+        new THREE.Vector3(startX + 2.5, 0, 5.2),          // 1. Drive forward straight alongside pump facing +X
+        new THREE.Vector3(8.5, 0, 5.2),                   // 2. Clear pump 4 bay
+        new THREE.Vector3(11.5, 0, 7.2),                  // 3. Turn toward Outbound Apron
+        new THREE.Vector3(14.5, 0, 9.2),                  // 4. Enter Outbound Merge Ramp
+        new THREE.Vector3(56.0, 0, 9.8)                   // 5. Accelerate through East Hyper-Ring Portal
+      ];
+    } else {
+      // Back Row departure (Z: 0.0): Straight forward -> Smooth curve across forecourt -> Outbound Merge Ramp
+      this.waypoints = [
+        new THREE.Vector3(startX + 2.5, 0, 0.0),          // 1. Drive forward straight alongside pump facing +X
+        new THREE.Vector3(7.8, 0, 0.0),                   // 2. Clear pump 2 bay
+        new THREE.Vector3(9.8, 0, 3.2),                   // 3. Smooth curve across forecourt
+        new THREE.Vector3(12.0, 0, 7.2),                  // 4. Turn toward Outbound Apron
+        new THREE.Vector3(14.8, 0, 9.2),                  // 5. Enter Outbound Merge Ramp
+        new THREE.Vector3(56.0, 0, 9.8)                   // 6. Accelerate through East Hyper-Ring Portal
+      ];
+    }
     this.wpIndex = 0;
     this.state = 'DEPARTING';
   }
@@ -4419,7 +5579,7 @@ function toggleModal(modalId, open) {
 }
 
 function switchBuildTab(tabKey) {
-  const tabs = ['custom', 'fac', 'energy', 'land'];
+  const tabs = ['custom', 'fac', 'service', 'lifestyle', 'energy', 'land'];
   tabs.forEach(tKey => {
     const pane = document.getElementById(`build-tab-${tKey}`);
     const btn = document.getElementById(`tab-btn-build-${tKey}`);
@@ -4708,6 +5868,41 @@ function updateBuildModalButtons() {
       btnEv.className = 'buy-btn neo-btn success';
     }
   }
+
+  // 7-18: 12 New Facilities
+  updateTierButtonState('btn-buy-tire-shop', 'hasTireShop', 'tireShopLevel', 7500, 5500, 11000);
+  updateTierButtonState('btn-buy-lube-bay', 'hasLubeBay', 'lubeBayLevel', 9500, 6500, 13000);
+  updateTierButtonState('btn-buy-vacuum-hub', 'hasVacuumHub', 'vacuumHubLevel', 6500, 4500, 9000);
+  updateTierButtonState('btn-buy-moto-dock', 'hasMotoDock', 'motoDockLevel', 5000, 3500, 7500);
+  updateTierButtonState('btn-buy-truck-stop', 'hasTruckStop', 'truckStopLevel', 22000, 15000, 30000);
+  updateTierButtonState('btn-buy-bakery-drive', 'hasBakeryDrive', 'bakeryDriveLevel', 16000, 11000, 22000);
+  updateTierButtonState('btn-buy-food-truck', 'hasFoodTruck', 'foodTruckLevel', 8000, 6000, 12000);
+  updateTierButtonState('btn-buy-rest-lounge', 'hasRestLounge', 'restLoungeLevel', 11000, 8000, 16000);
+  updateTierButtonState('btn-buy-pet-park', 'hasPetPark', 'petParkLevel', 7000, 5000, 10000);
+  updateTierButtonState('btn-buy-parcel-hub', 'hasParcelHub', 'parcelHubLevel', 4500, 3000, 6500);
+  updateTierButtonState('btn-buy-atm-hub', 'hasAtmHub', 'atmHubLevel', 3500, 2500, 5000);
+  updateTierButtonState('btn-buy-hydrogen-bay', 'hasHydrogenBay', 'hydrogenBayLevel', 25000, 18000, 35000);
+}
+
+function updateTierButtonState(btnId, hasProp, lvlProp, baseCost, l2Cost, l3Cost) {
+  const btn = document.getElementById(btnId);
+  if (!btn || btn.disabled) return;
+  const has = State.upgrades[hasProp];
+  const lvl = State.upgrades[lvlProp] || 1;
+  if (!has) {
+    btn.textContent = `₺ ${baseCost.toLocaleString()}`;
+    btn.className = 'buy-btn neo-btn danger';
+  } else if (lvl === 1) {
+    btn.textContent = `${currentLang === 'tr' ? 'Seviye 2' : 'Lvl 2'} (₺${l2Cost.toLocaleString()})`;
+    btn.className = 'buy-btn neo-btn warning';
+  } else if (lvl === 2) {
+    btn.textContent = `${currentLang === 'tr' ? 'Seviye 3' : 'Lvl 3'} (₺${l3Cost.toLocaleString()})`;
+    btn.className = 'buy-btn neo-btn gold';
+  } else {
+    btn.textContent = `${currentLang === 'tr' ? 'MAKS (Seviye 3)' : 'MAX (Level 3)'}`;
+    btn.disabled = true;
+    btn.className = 'buy-btn neo-btn success';
+  }
 }
 
 function buyPumpUpgrade() {
@@ -4967,6 +6162,64 @@ function buyEvChargerUpgrade() {
     updateHUD();
   }
 }
+
+function buyFacilityUpgrade(plotKey, propName, levelProp, spawnFn, btnId, costL2, costL3, customToastBuilt) {
+  const plot = PLOTS[plotKey];
+  if (!plot) return;
+
+  if (!State.upgrades[propName]) {
+    if (State.money < plot.cost) {
+      showToast(t('toast_insufficient_funds', plot.cost.toLocaleString()), 'error');
+      return;
+    }
+    State.money -= plot.cost;
+    updateHUD();
+
+    startConstructionTimer(
+      plotKey,
+      plot.name,
+      plot.duration,
+      () => {
+        State.upgrades[propName] = true;
+        State.upgrades[levelProp] = 1;
+        spawnFn(1);
+        updateBuildModalButtons();
+        showToast(customToastBuilt || `${plot.name} kuruldu!`);
+        sfx.playFanfare();
+        updateHUD();
+      },
+      plot,
+      btnId
+    );
+  } else if (State.upgrades[levelProp] < 3) {
+    const nextLvl = State.upgrades[levelProp] + 1;
+    const cost = nextLvl === 2 ? costL2 : costL3;
+    if (State.money < cost) {
+      showToast(t('toast_insufficient_funds', cost.toLocaleString()), 'error');
+      return;
+    }
+    State.money -= cost;
+    State.upgrades[levelProp] = nextLvl;
+    spawnFn(nextLvl);
+    updateBuildModalButtons();
+    showToast(`${plot.name} Seviye ${nextLvl} yapıldı!`);
+    sfx.playFanfare();
+    updateHUD();
+  }
+}
+
+function buyTireShopUpgrade()    { buyFacilityUpgrade('tire_shop', 'hasTireShop', 'tireShopLevel', spawnTireShopMesh, 'btn-buy-tire-shop', 5500, 11000, 'Lastik Servisi & Rot-Balans açıldı!'); }
+function buyLubeBayUpgrade()     { buyFacilityUpgrade('lube_bay', 'hasLubeBay', 'lubeBayLevel', spawnLubeBayMesh, 'btn-buy-lube-bay', 6500, 13000, 'Hızlı Yağ Değişim Servisi açıldı!'); }
+function buyVacuumHubUpgrade()   { buyFacilityUpgrade('vacuum_hub', 'hasVacuumHub', 'vacuumHubLevel', spawnVacuumHubMesh, 'btn-buy-vacuum-hub', 4500, 9000, 'Oto Vakum & Detailing Hub açıldı!'); }
+function buyMotoDockUpgrade()    { buyFacilityUpgrade('moto_dock', 'hasMotoDock', 'motoDockLevel', spawnMotoDockMesh, 'btn-buy-moto-dock', 3500, 7500, 'Moto Batarya Takas İstasyonu kuruldu!'); }
+function buyTruckStopUpgrade()   { buyFacilityUpgrade('truck_stop', 'hasTruckStop', 'truckStopLevel', spawnTruckStopMesh, 'btn-buy-truck-stop', 15000, 30000, 'Ağır Vasıta / Tır Peronu açıldı!'); }
+function buyBakeryDriveUpgrade() { buyFacilityUpgrade('bakery_drive', 'hasBakeryDrive', 'bakeryDriveLevel', spawnBakeryDriveMesh, 'btn-buy-bakery-drive', 11000, 22000, 'Drive-Thru Cafe & Bakery açıldı!'); }
+function buyFoodTruckUpgrade()   { buyFacilityUpgrade('food_truck', 'hasFoodTruck', 'foodTruckLevel', spawnFoodTruckMesh, 'btn-buy-food-truck', 6000, 12000, 'Retro Burger Karavanı hizmete girdi!'); }
+function buyRestLoungeUpgrade()  { buyFacilityUpgrade('rest_lounge', 'hasRestLounge', 'restLoungeLevel', spawnRestLoungeMesh, 'btn-buy-rest-lounge', 8000, 16000, '7/24 Temiz Mola & WC Modülü açıldı!'); }
+function buyPetParkUpgrade()     { buyFacilityUpgrade('pet_park', 'hasPetPark', 'petParkLevel', spawnPetParkMesh, 'btn-buy-pet-park', 5000, 10000, 'Evcil Hayvan Mola Parkı açıldı!'); }
+function buyParcelHubUpgrade()   { buyFacilityUpgrade('parcel_hub', 'hasParcelHub', 'parcelHubLevel', spawnParcelHubMesh, 'btn-buy-parcel-hub', 3000, 6500, 'Akıllı Kargo Dolabı terminali kuruldu!'); }
+function buyAtmHubUpgrade()      { buyFacilityUpgrade('atm_hub', 'hasAtmHub', 'atmHubLevel', spawnAtmHubMesh, 'btn-buy-atm-hub', 2500, 5000, 'Zırhlı ATM & Kripto Kiosk kuruldu!'); }
+function buyHydrogenBayUpgrade() { buyFacilityUpgrade('hydrogen_bay', 'hasHydrogenBay', 'hydrogenBayLevel', spawnHydrogenBayMesh, 'btn-buy-hydrogen-bay', 18000, 35000, 'Yeşil Hidrojen Silosu ve Dolum Peronu açıldı!'); }
 
 // Staff Training
 function trainStaff(staffType, cost) {
@@ -5428,32 +6681,33 @@ function updateSkyLighting() {
   let nightAlpha = 0.0;
 
   if (h >= 21 || h < 5) {
-    skyColor = new THREE.Color(0x131B26);
-    sunColor = new THREE.Color(0x647696);
-    sunEnergy = 0.28;
-    ambientLight.intensity = 0.38;
+    skyColor = new THREE.Color(0x0E1622); // Deep Cinematic Midnight Obsidian
+    sunColor = new THREE.Color(0x6880A8); // Cool Lunar Moonlight
+    sunEnergy = 0.35;
+    ambientLight.intensity = 0.42;
     nightAlpha = 1.0;
   } else if (h >= 5 && h < 8) {
-    skyColor = new THREE.Color(0xF0BE9D);
-    sunColor = new THREE.Color(0xF7A884);
-    sunEnergy = 0.75;
-    ambientLight.intensity = 0.55;
-    nightAlpha = 0.2;
+    skyColor = new THREE.Color(0xF5BA96); // Peach & Gold Dawn Horizon
+    sunColor = new THREE.Color(0xFCAB7A); // Warm Sunrise Amber
+    sunEnergy = 0.90;
+    ambientLight.intensity = 0.62;
+    nightAlpha = Math.max(0, (8.0 - h) / 3.0);
   } else if (h >= 8 && h < 18) {
-    skyColor = new THREE.Color(0xCCE0ED); // Soft pastel daylight sky
-    sunColor = new THREE.Color(0xFFF6E8); // Warm gentle sunlight
-    sunEnergy = 0.95;
-    ambientLight.intensity = 0.65;
+    skyColor = new THREE.Color(0xD0E2EE); // Crisp Pastel Blue Daylight
+    sunColor = new THREE.Color(0xFFF8EC); // High-Fidelity Warm Sunlight
+    sunEnergy = 1.15;
+    ambientLight.intensity = 0.70;
     nightAlpha = 0.0;
   } else {
-    skyColor = new THREE.Color(0xDE8B68);
-    sunColor = new THREE.Color(0xEE8E3B);
-    sunEnergy = 0.70;
-    ambientLight.intensity = 0.50;
-    nightAlpha = (h - 18) / 3.0;
+    skyColor = new THREE.Color(0xE07850); // Vibrant Amber / Crimson Sunset
+    sunColor = new THREE.Color(0xF28238); // Golden Hour Radiance
+    sunEnergy = 0.85;
+    ambientLight.intensity = 0.58;
+    nightAlpha = Math.max(0, Math.min(1, (h - 18.0) / 3.0));
   }
 
   scene.background.lerp(skyColor, 0.08);
+  if (scene.fog) scene.fog.color.lerp(skyColor, 0.08);
   sunLight.color.lerp(sunColor, 0.08);
   sunLight.intensity = THREE.MathUtils.lerp(sunLight.intensity, sunEnergy, 0.08);
 
@@ -5521,6 +6775,7 @@ function animate() {
   updateLivingWorldFX(delta, totalSeconds);
   updateCanopyAnimation(delta);
   updatePlotBadges(totalSeconds);
+  updateRetentionAndEconomy(delta);
 
   for (let i = cars.length - 1; i >= 0; i--) {
     cars[i].update();
@@ -5928,6 +7183,234 @@ function debugSpawnCar() {
   showToast('Debug: Yeni müşteri aracı çağrıldı.');
 }
 
+// =========================================================
+// RETENTION & ENGAGEMENT ENGINE (D1 / D7 / D30 Systems)
+// =========================================================
+
+let passiveAccumulator = 0;
+let lastAutoSaveTime = Date.now();
+
+function updateRetentionAndEconomy(delta) {
+  // 1. Passive income calculation (every 1 second)
+  passiveAccumulator += delta * State.timeSpeed;
+  if (passiveAccumulator >= 1.0) {
+    const sec = Math.floor(passiveAccumulator);
+    passiveAccumulator -= sec;
+
+    const rate = calculateTotalPassiveIncomePerSec();
+    const earned = rate * sec;
+    if (earned > 0) {
+      State.money += earned;
+      State.totalRev += earned;
+      updateHUD();
+    }
+  }
+
+  // 2. Rush Hour countdown & trigger
+  if (State.retention.rushHourRemaining > 0) {
+    State.retention.rushHourRemaining -= delta;
+    const banner = document.getElementById('rush-hour-banner');
+    const timerText = document.getElementById('rush-timer-text');
+    if (banner && timerText) {
+      banner.classList.remove('hidden');
+      const mins = Math.floor(State.retention.rushHourRemaining / 60);
+      const secs = Math.floor(State.retention.rushHourRemaining % 60);
+      timerText.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    if (State.retention.rushHourRemaining <= 0) {
+      State.retention.rushHourRemaining = 0;
+      const banner = document.getElementById('rush-hour-banner');
+      if (banner) banner.classList.add('hidden');
+      showToast(currentLang === 'tr' ? 'Akaryakıt Tankeri Rush saati sona erdi!' : 'Fuel Tanker Rush Hour has ended!');
+    }
+  } else {
+    State.retention.nextRushEventSeconds -= delta;
+    if (State.retention.nextRushEventSeconds <= 0) {
+      triggerRushHour();
+    }
+  }
+
+  // 3. Periodic local state save (every 10s)
+  const now = Date.now();
+  if (now - lastAutoSaveTime > 10000) {
+    lastAutoSaveTime = now;
+    localStorage.setItem('pixeloil_last_save_time', now.toString());
+    localStorage.setItem('pixeloil_retention', JSON.stringify(State.retention));
+  }
+}
+
+function calculateTotalPassiveIncomePerSec() {
+  let rate = 0;
+  if (State.upgrades.hasCarWash) rate += 1.2 * State.upgrades.washLevel;
+  if (State.upgrades.hasMarket) rate += 1.8 * State.upgrades.marketLevel * Math.max(1, State.staff.cashier);
+  if (State.upgrades.hasTurbine) rate += 0.8 * State.upgrades.turbineLevel;
+  if (State.upgrades.hasSolar) rate += 0.6 * State.upgrades.solarLevel;
+  if (State.upgrades.hasEvCharger) rate += 1.5 * State.upgrades.evLevel;
+  
+  if (State.upgrades.hasTireShop) rate += 1.0 * State.upgrades.tireShopLevel;
+  if (State.upgrades.hasLubeBay) rate += 1.4 * State.upgrades.lubeBayLevel;
+  if (State.upgrades.hasVacuumHub) rate += 0.8 * State.upgrades.vacuumHubLevel;
+  if (State.upgrades.hasMotoDock) rate += 0.9 * State.upgrades.motoDockLevel;
+  if (State.upgrades.hasTruckStop) rate += 2.8 * State.upgrades.truckStopLevel;
+  if (State.upgrades.hasBakeryDrive) rate += 2.2 * State.upgrades.bakeryDriveLevel;
+  if (State.upgrades.hasFoodTruck) rate += 1.2 * State.upgrades.foodTruckLevel;
+  if (State.upgrades.hasRestLounge) rate += 0.9 * State.upgrades.restLoungeLevel;
+  if (State.upgrades.hasPetPark) rate += 0.6 * State.upgrades.petParkLevel;
+  if (State.upgrades.hasParcelHub) rate += 0.7 * State.upgrades.parcelHubLevel;
+  if (State.upgrades.hasAtmHub) rate += 1.1 * State.upgrades.atmHubLevel;
+  if (State.upgrades.hasHydrogenBay) rate += 3.5 * State.upgrades.hydrogenBayLevel;
+
+  // Synergies:
+  if (State.upgrades.hasMarket && State.upgrades.hasBakeryDrive) rate *= 1.3;
+  if (State.upgrades.hasCarWash && State.upgrades.hasVacuumHub) rate *= 1.35;
+  if (State.upgrades.hasTruckStop && State.upgrades.hasRestLounge) rate *= 1.25;
+  if (State.retention.rushHourRemaining > 0) rate *= 2.0;
+
+  return rate;
+}
+
+function triggerRushHour() {
+  State.retention.rushHourRemaining = 180; // 3 Minutes 2x Boost
+  State.retention.nextRushEventSeconds = 1200; // Reset next rush to 20 mins
+  
+  // Free tanker fuel bonus (750L each)
+  ['benzin', 'dizel', 'lpg', 'ev'].forEach(k => {
+    State.tanks[k].current = Math.min(State.tanks[k].max, State.tanks[k].current + 750);
+  });
+  
+  const banner = document.getElementById('rush-hour-banner');
+  if (banner) banner.classList.remove('hidden');
+  sfx.playFanfare();
+  showToast(currentLang === 'tr' ? 'AKARYAKIT TANKERİ RUSH BAŞLADI! 2X GELİR & ÜCRETSİZ YAKIT!' : 'FUEL TANKER RUSH ACTIVE! 2X REVENUE & FREE FUEL!');
+  updateHUD();
+  updateOrderModalStatus();
+}
+
+function checkOfflineEarnings() {
+  const lastSave = parseInt(localStorage.getItem('pixeloil_last_save_time') || Date.now(), 10);
+  const now = Date.now();
+  const elapsedSec = Math.max(0, Math.floor((now - lastSave) / 1000));
+  const cappedSec = Math.min(State.retention.offlineVaultMaxSeconds, elapsedSec);
+  localStorage.setItem('pixeloil_last_save_time', now.toString());
+
+  if (cappedSec >= 15) {
+    const rate = calculateTotalPassiveIncomePerSec();
+    const totalEarned = Math.max(120, Math.floor(rate * cappedSec));
+    showOfflineVaultModal(cappedSec, totalEarned);
+  }
+}
+
+function showOfflineVaultModal(elapsedSec, earned) {
+  const modal = document.getElementById('offline-vault-modal');
+  if (!modal) return;
+  
+  const hours = Math.floor(elapsedSec / 3600);
+  const mins = Math.floor((elapsedSec % 3600) / 60);
+  const timeStr = hours > 0 ? `${hours}s ${mins}dk` : `${mins} dakika`;
+  
+  const timeEl = document.getElementById('vault-elapsed-time');
+  const amountEl = document.getElementById('vault-earned-amount');
+  const capNoticeEl = document.getElementById('vault-cap-notice');
+  
+  if (timeEl) timeEl.textContent = timeStr;
+  if (amountEl) amountEl.textContent = `₺${earned.toLocaleString('tr-TR')}`;
+  if (capNoticeEl) {
+    if (elapsedSec >= State.retention.offlineVaultMaxSeconds) {
+      capNoticeEl.textContent = currentLang === 'tr' 
+        ? '⚠️ Kasa kapasitesi (2 Saat) doldu! Daha fazla gelir kaybetmemek için düzenli giriş yapın.' 
+        : '⚠️ Vault cap (2 Hours) reached! Log in regularly to avoid losing profits.';
+      capNoticeEl.classList.remove('hidden');
+    } else {
+      capNoticeEl.classList.add('hidden');
+    }
+  }
+
+  modal.dataset.earned = earned;
+  modal.classList.remove('hidden');
+  sfx.playCoin();
+}
+
+function collectOfflineVault(doubleIt = false) {
+  const modal = document.getElementById('offline-vault-modal');
+  if (!modal) return;
+  const baseEarned = parseInt(modal.dataset.earned || 0, 10);
+  const multiplier = doubleIt ? 2 : 1;
+  const total = baseEarned * multiplier;
+
+  State.money += total;
+  State.totalRev += total;
+  updateHUD();
+  modal.classList.add('hidden');
+  sfx.playFanfare();
+  showToast(currentLang === 'tr' ? `₺${total.toLocaleString('tr-TR')} kasanıza aktarıldı!` : `₺${total.toLocaleString('tr-TR')} added to your vault!`);
+}
+
+function checkDailyStreak() {
+  const lastDateStr = localStorage.getItem('pixeloil_last_streak_date');
+  const todayStr = new Date().toDateString();
+
+  if (lastDateStr !== todayStr) {
+    // Check if yesterday or first time
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (lastDateStr === yesterday.toDateString()) {
+      State.retention.dailyStreak = (State.retention.dailyStreak % 7) + 1;
+    } else if (lastDateStr) {
+      State.retention.dailyStreak = 1; // Streak reset
+    }
+    
+    showDailyStreakModal();
+  }
+}
+
+function showDailyStreakModal() {
+  const modal = document.getElementById('daily-streak-modal');
+  if (!modal) return;
+
+  const currentStreak = State.retention.dailyStreak;
+  const streakRewards = [2500, 5000, 8000, 12000, 16000, 22000, 35000];
+
+  for (let d = 1; d <= 7; d++) {
+    const card = document.getElementById(`streak-day-${d}`);
+    if (card) {
+      card.classList.remove('active', 'claimed', 'locked');
+      if (d < currentStreak) {
+        card.classList.add('claimed');
+      } else if (d === currentStreak) {
+        card.classList.add('active');
+      } else {
+        card.classList.add('locked');
+      }
+    }
+  }
+
+  const claimBtn = document.getElementById('btn-claim-streak');
+  if (claimBtn) {
+    const reward = streakRewards[currentStreak - 1] || 2500;
+    claimBtn.textContent = currentLang === 'tr' ? `GÜN ${currentStreak} ÖDÜLÜNÜ AL (₺${reward.toLocaleString('tr-TR')})` : `CLAIM DAY ${currentStreak} (₺${reward.toLocaleString('tr-TR')})`;
+  }
+
+  modal.classList.remove('hidden');
+  sfx.playFanfare();
+}
+
+function claimDailyStreakReward() {
+  const modal = document.getElementById('daily-streak-modal');
+  if (!modal) return;
+  const streakRewards = [2500, 5000, 8000, 12000, 16000, 22000, 35000];
+  const reward = streakRewards[State.retention.dailyStreak - 1] || 2500;
+
+  State.money += reward;
+  State.totalRev += reward;
+  localStorage.setItem('pixeloil_last_streak_date', new Date().toDateString());
+  updateHUD();
+
+  modal.classList.add('hidden');
+  sfx.playFanfare();
+  showToast(currentLang === 'tr' ? `Günlük Seri Ödülü: +₺${reward.toLocaleString('tr-TR')} Kasanıza Eklendi!` : `Daily Streak Reward: +₺${reward.toLocaleString('tr-TR')} claimed!`);
+}
+
 // Start Game on Page Load
 window.addEventListener('DOMContentLoaded', () => {
   initThree();
@@ -5935,5 +7418,7 @@ window.addEventListener('DOMContentLoaded', () => {
   updateHUD();
   updateOrderModalStatus();
   updateDailyLedger();
+  checkOfflineEarnings();
+  setTimeout(checkDailyStreak, 1200);
   showToast(t('toast_welcome'));
 });

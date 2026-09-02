@@ -5,58 +5,244 @@
 [ext_resource type="Material" path="res://materials/mat_red.tres" id="3_red"]
 [ext_resource type="Material" path="res://materials/mat_glass.tres" id="4_glass"]
 [ext_resource type="Material" path="res://materials/mat_dark_ink.tres" id="5_ink"]
+[ext_resource type="Material" path="res://materials/mat_wood.tres" id="6_wood"]
+[ext_resource type="Material" path="res://materials/mat_blue.tres" id="7_blue"]
+[ext_resource type="Material" path="res://materials/mat_road_yellow.tres" id="8_yellow"]
+[ext_resource type="Material" path="res://materials/mat_green.tres" id="9_green"]
+[ext_resource type="Material" path="res://materials/mat_concrete.tres" id="10_conc"]
 
 [node name="Building" type="Node3D"]
 
-[node name="GroundFloor" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
-size = Vector3(9, 3.5, 6)
+[node name="FoundationPlinth" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.175, 0)
+size = Vector3(11.2, 0.35, 6.2)
+material = ExtResource("10_conc")
+
+[node name="EntranceStep" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 3.3)
+size = Vector3(2.8, 0.15, 0.7)
+material = ExtResource("10_conc")
+
+[node name="DoorMat" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, 3.25)
+size = Vector3(2.0, 0.03, 0.6)
+material = ExtResource("5_ink")
+
+[node name="InteriorFloor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, -0.1)
+size = Vector3(9.8, 0.05, 5.2)
+material = ExtResource("10_conc")
+
+[node name="BackWall" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.45, -2.65)
+size = Vector3(10.6, 4.2, 0.45)
 material = ExtResource("1_bld")
 
-[node name="SecondFloor" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, 0)
-size = Vector3(7.5, 2.5, 5)
+[node name="LeftWall" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.075, 2.45, -0.1)
+size = Vector3(0.45, 4.2, 5.4)
 material = ExtResource("1_bld")
 
-[node name="RoofOverhang" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.1, 0)
-size = Vector3(8.2, 0.3, 5.6)
-material = ExtResource("2_roof")
+[node name="RightWall" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.075, 2.45, -0.1)
+size = Vector3(0.45, 4.2, 5.4)
+material = ExtResource("1_bld")
 
-[node name="RoofAc1" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 6.7, -0.8)
-size = Vector3(1.2, 0.9, 1.2)
-material = ExtResource("2_roof")
+[node name="FrontHeader" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.95, 2.65)
+size = Vector3(10.6, 1.2, 0.5)
+material = ExtResource("1_bld")
 
-[node name="RoofAc2" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 6.7, 0.6)
-size = Vector3(1.4, 0.9, 1.4)
-material = ExtResource("2_roof")
+[node name="LeftPillar" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.975, 1.85, 2.65)
+size = Vector3(0.65, 3.0, 0.55)
+material = ExtResource("1_bld")
+
+[node name="RightPillar" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.975, 1.85, 2.65)
+size = Vector3(0.65, 3.0, 0.55)
+material = ExtResource("1_bld")
+
+[node name="WindowLeft" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.55, 1.62, 2.65)
+size = Vector3(3.6, 2.5, 0.08)
+material = ExtResource("4_glass")
+
+[node name="WindowRight" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.55, 1.62, 2.65)
+size = Vector3(3.6, 2.5, 0.08)
+material = ExtResource("4_glass")
+
+[node name="WindowFrameL1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.55, 0.38, 2.65)
+size = Vector3(3.65, 0.08, 0.14)
+material = ExtResource("5_ink")
+
+[node name="WindowFrameL2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.55, 2.87, 2.65)
+size = Vector3(3.65, 0.08, 0.14)
+material = ExtResource("5_ink")
+
+[node name="WindowFrameR1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.55, 0.38, 2.65)
+size = Vector3(3.65, 0.08, 0.14)
+material = ExtResource("5_ink")
+
+[node name="WindowFrameR2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.55, 2.87, 2.65)
+size = Vector3(3.65, 0.08, 0.14)
+material = ExtResource("5_ink")
+
+[node name="DoorFrame" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 2.64)
+size = Vector3(1.5, 2.52, 0.12)
+material = ExtResource("5_ink")
+
+[node name="DoorGlass" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 2.64)
+size = Vector3(1.36, 2.38, 0.06)
+material = ExtResource("4_glass")
+
+[node name="DoorSplitLine" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 2.64)
+size = Vector3(0.04, 2.4, 0.14)
+material = ExtResource("5_ink")
 
 [node name="EntranceAwning" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.4, 3.4)
-size = Vector3(3.8, 0.3, 1.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.12, 3.25)
+size = Vector3(2.4, 0.12, 1.2)
 material = ExtResource("3_red")
 
-[node name="ShopWindow1" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 1.5, 3.05)
-size = Vector3(2.2, 1.6, 0.2)
-material = ExtResource("4_glass")
+[node name="CheckoutCounter" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.2, 0.81, 1.4)
+size = Vector3(1.6, 0.9, 0.75)
+material = ExtResource("6_wood")
 
-[node name="ShopWindow2" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 1.5, 3.05)
-size = Vector3(2.2, 1.6, 0.2)
-material = ExtResource("4_glass")
+[node name="POSTerminal" type="CSGBox3D" parent="."]
+transform = Transform3D(0.955, 0, -0.296, 0, 1, 0, 0.296, 0, 0.955, -3.0, 1.34, 1.4)
+size = Vector3(0.24, 0.22, 0.22)
+material = ExtResource("5_ink")
+
+[node name="ShelfUnit" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.41, -0.6)
+size = Vector3(3.6, 2.1, 0.5)
+material = ExtResource("2_roof")
+
+[node name="GoodsRow1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0, 0.85, -0.58)
+size = Vector3(0.8, 0.35, 0.35)
+material = ExtResource("3_red")
+
+[node name="GoodsRow2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 0.85, -0.58)
+size = Vector3(0.8, 0.35, 0.35)
+material = ExtResource("8_yellow")
+
+[node name="GoodsRow3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.85, -0.58)
+size = Vector3(0.8, 0.35, 0.35)
+material = ExtResource("7_blue")
+
+[node name="GoodsRow4" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 1.45, -0.58)
+size = Vector3(1.2, 0.35, 0.35)
+material = ExtResource("9_green")
+
+[node name="GoodsRow5" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 1.45, -0.58)
+size = Vector3(1.2, 0.35, 0.35)
+material = ExtResource("3_red")
+
+[node name="CoffeeBar" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 0.81, 1.4)
+size = Vector3(1.6, 0.9, 0.75)
+material = ExtResource("6_wood")
+
+[node name="CoffeeMaker" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1, 1.53, 1.4)
+size = Vector3(0.45, 0.55, 0.4)
+material = ExtResource("5_ink")
+
+[node name="ShopInteriorLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0.6)
+light_color = Color(1, 0.91, 0.66, 1)
+light_energy = 1.3
+omni_range = 16.0
+
+[node name="RoofMain" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.45, -0.1)
+size = Vector3(10.8, 0.25, 5.8)
+material = ExtResource("2_roof")
+
+[node name="ParapetFront" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, 2.75)
+size = Vector3(10.9, 0.45, 0.25)
+material = ExtResource("3_red")
+
+[node name="ParapetBack" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.75, -2.95)
+size = Vector3(10.9, 0.45, 0.25)
+material = ExtResource("2_roof")
+
+[node name="ParapetLeft" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.35, 4.75, -0.1)
+size = Vector3(0.25, 0.45, 5.9)
+material = ExtResource("2_roof")
+
+[node name="ParapetRight" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.35, 4.75, -0.1)
+size = Vector3(0.25, 0.45, 5.9)
+material = ExtResource("2_roof")
+
+[node name="RoofHVAC1" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6, 5.05, -1.0)
+size = Vector3(1.6, 0.95, 1.2)
+material = ExtResource("10_conc")
+
+[node name="RoofHVAC2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4, 5.10, -1.1)
+size = Vector3(1.8, 1.05, 1.4)
+material = ExtResource("10_conc")
+
+[node name="DownspoutL" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.35, 2.3, 2.4)
+radius = 0.04
+height = 4.4
+material = ExtResource("5_ink")
+
+[node name="DownspoutR" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.35, 2.3, 2.4)
+radius = 0.04
+height = 4.4
+material = ExtResource("5_ink")
 
 [node name="SignBoard" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3, 3.1)
-size = Vector3(4.6, 0.8, 0.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.5, 2.75)
+size = Vector3(6.4, 1.35, 0.35)
 material = ExtResource("3_red")
 
+[node name="NeonTop" type="CSGBox3D" parent="SignBoard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)
+size = Vector3(6.3, 0.05, 0.38)
+material = ExtResource("8_yellow")
+
+[node name="NeonBottom" type="CSGBox3D" parent="SignBoard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.64, 0)
+size = Vector3(6.3, 0.05, 0.38)
+material = ExtResource("8_yellow")
+
 [node name="LabelSign" type="Label3D" parent="SignBoard"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.16)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0.22)
 double_sided = false
-text = "BENELOIL"
+text = "PIXEL EXPRESS"
 font_size = 36
 outline_size = 8
+outline_modulate = Color(0.1, 0.1, 0.1, 1)
+
+[node name="LabelSub" type="Label3D" parent="SignBoard"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0.22)
+double_sided = false
+text = "24/7 MINI MARKET"
+font_size = 20
+outline_size = 6
 outline_modulate = Color(0.1, 0.1, 0.1, 1)

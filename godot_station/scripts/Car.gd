@@ -121,14 +121,24 @@ func finish_refueling(earned_money: float) -> void:
 		assigned_pump_node.current_car = null
 		assigned_pump_node.update_status_display()
 
-	# Generate smooth straight roll -> Outbound Apron -> Merge Ramp -> East Portal
-	waypoints = [
-		Vector3(global_position.x + 3.0, 0, global_position.z),
-		Vector3(8.5, 0, 7.4),
-		Vector3(11.5, 0, 8.8),
-		Vector3(14.5, 0, 9.8),
-		Vector3(56.0, 0, 9.8)
-	]
+	var is_front_row: bool = global_position.z >= 2.5
+	if is_front_row:
+		waypoints = [
+			Vector3(global_position.x + 2.5, 0, 5.2),
+			Vector3(8.5, 0, 5.2),
+			Vector3(11.5, 0, 7.2),
+			Vector3(14.5, 0, 9.2),
+			Vector3(56.0, 0, 9.8)
+		]
+	else:
+		waypoints = [
+			Vector3(global_position.x + 2.5, 0, 0.0),
+			Vector3(7.8, 0, 0.0),
+			Vector3(9.8, 0, 3.2),
+			Vector3(12.0, 0, 7.2),
+			Vector3(14.8, 0, 9.2),
+			Vector3(56.0, 0, 9.8)
+		]
 	current_wp = 0
 
 func _depart_station() -> void:

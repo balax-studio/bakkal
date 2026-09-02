@@ -6,13 +6,13 @@ extends Node3D
 var _timer: float = 0.0
 var pump_nodes: Array[Node] = []
 
-# Slot positions relative to station
-# Pump 1: (-3.5, 0, 0), Pump 2: (3.5, 0, 0), Pump 3: (-3.5, 0, 5), Pump 4: (3.5, 0, 5)
+# Slot positions relative to station with wide lane clearance
+# Pump 1: (-4.5, 0, -1.8), Pump 2: (4.5, 0, -1.8), Pump 3: (-4.5, 0, 3.4), Pump 4: (4.5, 0, 3.4)
 var pump_positions: Array[Vector3] = [
-	Vector3(-3.5, 0, 0),
-	Vector3(3.5, 0, 0),
-	Vector3(-3.5, 0, 5),
-	Vector3(3.5, 0, 5)
+	Vector3(-4.5, 0, -1.8),
+	Vector3(4.5, 0, -1.8),
+	Vector3(-4.5, 0, 3.4),
+	Vector3(4.5, 0, 3.4)
 ]
 
 var car_colors: Array[Color] = [
@@ -34,7 +34,6 @@ var vehicle_types: Array[Dictionary] = [
 ]
 
 func _ready() -> void:
-	# Find pumps in parent
 	call_deferred("_find_pumps")
 
 func _find_pumps() -> void:
@@ -80,28 +79,28 @@ func _try_spawn_car() -> void:
 	car.car_color = car_colors.pick_random()
 	car.assigned_pump_node = assigned_pump
 
-	# Route: West Cloud Viaduct Spawn -> Dedicated Inbound Slip Ramp -> Side-Parallel Docking
+	# Route: West Cloud Viaduct Spawn -> Inbound Slip Ramp -> Wide Maneuver Corridors -> Parallel Docking
 	var spawn_pos: Vector3 = Vector3(-52, 0, 9.8)
-	var is_front_row: bool = pump_slot_pos.z >= 2.0
-	var final_pump_pos: Vector3 = Vector3(pump_slot_pos.x, 0, pump_slot_pos.z + 1.8)
+	var is_front_row: bool = pump_slot_pos.z >= 1.0
+	var final_pump_pos: Vector3 = Vector3(pump_slot_pos.x, 0, 5.2 if is_front_row else 0.0)
 
 	if is_front_row:
 		car.waypoints = [
-			Vector3(-14.0, 0, 9.8),
-			Vector3(-11.5, 0, 8.8),
-			Vector3(-8.5, 0, 7.4),
-			Vector3(pump_slot_pos.x - 3.8, 0, final_pump_pos.z),
-			Vector3(pump_slot_pos.x - 1.0, 0, final_pump_pos.z),
+			Vector3(-16.0, 0, 9.8),
+			Vector3(-12.5, 0, 8.6),
+			Vector3(-9.5, 0, 6.8),
+			Vector3(-7.2, 0, final_pump_pos.z),
+			Vector3(pump_slot_pos.x - 1.4, 0, final_pump_pos.z),
 			final_pump_pos
 		]
 	else:
 		car.waypoints = [
-			Vector3(-14.0, 0, 9.8),
-			Vector3(-11.5, 0, 8.8),
-			Vector3(-8.8, 0, 6.4),
-			Vector3(pump_slot_pos.x - 4.5, 0, 3.2),
-			Vector3(pump_slot_pos.x - 2.8, 0, final_pump_pos.z),
-			Vector3(pump_slot_pos.x - 1.0, 0, final_pump_pos.z),
+			Vector3(-16.0, 0, 9.8),
+			Vector3(-12.5, 0, 8.6),
+			Vector3(-8.8, 0, 6.2),
+			Vector3(-8.2, 0, 2.6),
+			Vector3(-6.8, 0, final_pump_pos.z),
+			Vector3(pump_slot_pos.x - 1.4, 0, final_pump_pos.z),
 			final_pump_pos
 		]
 

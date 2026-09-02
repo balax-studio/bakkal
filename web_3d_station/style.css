@@ -314,24 +314,31 @@ body, html {
 }
 
 /* =========================================================
-   BOTTOM-RIGHT FLOATING CAMERA CONTROLS BAR
+   RIGHT-ALIGNED FLOATING CAMERA CONTROLS BAR (VERTICAL)
    ========================================================= */
 #camera-controls-bar {
   position: absolute;
-  bottom: max(16px, env(safe-area-inset-bottom, 16px));
-  right: max(16px, env(safe-area-inset-right, 16px));
-  z-index: 10;
+  top: 50%;
+  right: max(12px, env(safe-area-inset-right, 12px));
+  transform: translateY(-50%);
+  z-index: 15;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 6px;
 }
 
 .cam-btn {
+  width: 40px;
+  height: 40px;
   min-height: 40px;
   min-width: 40px;
-  padding: 6px 10px;
-  gap: 6px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   font-weight: 800;
   background: var(--bg-card);
@@ -341,35 +348,28 @@ body, html {
   color: var(--ink-text);
 }
 .cam-btn-text {
-  font-size: 11px;
-  letter-spacing: 0.5px;
+  display: none;
 }
 
 .cam-hint-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 8px;
-  background: var(--bg-inner);
-  border: 1.5px solid var(--ink-border);
-  border-radius: var(--radius-sm);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ink-muted);
-  white-space: nowrap;
+  display: none;
 }
 
 @media (max-width: 768px) {
   #camera-controls-bar {
-    bottom: calc(max(16px, env(safe-area-inset-bottom, 16px)) + 64px);
-    right: max(12px, env(safe-area-inset-right, 12px));
-    padding: 4px 6px;
-    gap: 4px;
+    top: 50%;
+    right: max(8px, env(safe-area-inset-right, 8px));
+    transform: translateY(-50%);
+    bottom: auto;
+    padding: 5px;
+    gap: 5px;
   }
   .cam-btn {
-    min-height: 36px;
-    min-width: 36px;
-    padding: 4px 6px;
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    min-width: 38px;
+    padding: 0;
   }
   .cam-btn-text, .cam-hint-chip {
     display: none;
@@ -1015,15 +1015,19 @@ body, html {
     height: 6px;
   }
   #camera-controls-bar {
-    bottom: calc(max(12px, env(safe-area-inset-bottom, 12px)) + 58px);
-    right: max(10px, env(safe-area-inset-right, 10px));
-    padding: 4px 6px;
+    top: 50%;
+    right: max(6px, env(safe-area-inset-right, 6px));
+    transform: translateY(-50%);
+    bottom: auto;
+    padding: 4px;
     gap: 4px;
   }
   .cam-btn {
+    width: 36px;
+    height: 36px;
     min-height: 36px;
     min-width: 36px;
-    padding: 4px 6px;
+    padding: 0;
   }
   #fab-menu {
     bottom: max(12px, env(safe-area-inset-bottom, 12px));
@@ -1041,5 +1045,128 @@ body, html {
   .legal-action-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* =========================================================
+   RUSH HOUR BANNER & RETENTION STYLES
+   ========================================================= */
+.rush-banner {
+  position: absolute;
+  top: max(8px, env(safe-area-inset-top, 8px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  width: calc(100% - 24px);
+  max-width: 640px;
+  animation: rushSlideDown 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+@keyframes rushSlideDown {
+  0% { transform: translate(-50%, -100%); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+.rush-banner-content {
+  background: var(--dark-ink);
+  color: #FFFFFF;
+  border-color: var(--accent-red);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+}
+.rush-icon-wrap {
+  background: var(--accent-red);
+  color: #FFFFFF;
+  width: 34px;
+  height: 34px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.rush-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.rush-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--accent-gold);
+  letter-spacing: 0.5px;
+}
+.rush-sub {
+  font-size: 10px;
+  font-weight: 600;
+  color: #DDD;
+}
+.rush-timer-badge {
+  background: var(--accent-red);
+  color: #FFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+/* 7-Day Streak Ladder Grid */
+.streak-ladder-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.streak-card {
+  background: #EAE3D5;
+  border: 2px solid var(--ink-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 2px 2px 0px var(--ink-border);
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  position: relative;
+  transition: transform 0.15s ease;
+}
+.streak-card.jackpot {
+  grid-column: span 2;
+  background: #FFF7D6;
+  border-color: #D48806;
+}
+.streak-card.active {
+  background: #D9F7BE;
+  border-color: #389E0D;
+  transform: scale(1.04);
+}
+.streak-card.claimed {
+  background: #F0F0F0;
+  opacity: 0.6;
+}
+.streak-day-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--ink-muted);
+}
+.streak-reward-val {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink-text);
+}
+.streak-status-icon {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--accent-green);
+}
+
+.pulse {
+  animation: pulseAnim 1s infinite alternate;
+}
+@keyframes pulseAnim {
+  0% { transform: scale(0.92); opacity: 0.8; }
+  100% { transform: scale(1.12); opacity: 1; }
 }
 

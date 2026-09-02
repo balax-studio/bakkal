@@ -54,7 +54,7 @@ material = ExtResource("4_conc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Building" parent="." instance=ExtResource("5_bld")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -8.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9.5)
 
 [node name="FuelTanks" parent="." instance=ExtResource("7_tank")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -8.5)
@@ -62,24 +62,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0, -8.5)
 [node name="Pumps" type="Node3D" parent="."]
 
 [node name="Pump1" parent="Pumps" instance=ExtResource("8_pump")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, -1.8)
 
 [node name="Pump2" parent="Pumps" instance=ExtResource("8_pump")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -1.8)
 pump_index = 2
 
 [node name="Pump3" parent="Pumps" instance=ExtResource("8_pump")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.5, 0, 3.4)
 pump_index = 3
 
 [node name="Pump4" parent="Pumps" instance=ExtResource("8_pump")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, 4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, 3.4)
 pump_index = 4
 
 [node name="StreetLamps" type="Node3D" parent="."]
 
 [node name="Lamp1" type="Node3D" parent="StreetLamps"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 7.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, 7.5)
 
 [node name="Post" type="CSGCylinder3D" parent="StreetLamps/Lamp1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
@@ -94,7 +94,7 @@ light_energy = 1.2
 omni_range = 14.0
 
 [node name="Lamp2" type="Node3D" parent="StreetLamps"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 7.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 0, 7.5)
 
 [node name="Post" type="CSGCylinder3D" parent="StreetLamps/Lamp2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, 0)
