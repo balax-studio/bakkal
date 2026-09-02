@@ -18,6 +18,24 @@
   <!-- 3D Canvas Container -->
   <div id="canvas-container"></div>
 
+  <!-- Rush Hour & Tanker Event Banner -->
+  <div id="rush-hour-banner" class="rush-banner hidden">
+    <div class="rush-banner-content neo-panel">
+      <div class="rush-icon-wrap">
+        <svg class="neo-icon pulse" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div class="rush-info">
+        <span class="rush-title" data-i18n="rush_title">AKARYAKIT TANKERİ RUSH SAATİ!</span>
+        <span class="rush-sub" data-i18n="rush_sub">Tüm tesislerde 2X Hızlı Gelir & Ücretsiz Yakıt İkmali</span>
+      </div>
+      <div class="rush-timer-badge">
+        <span id="rush-timer-text">03:00</span>
+      </div>
+    </div>
+  </div>
+
   <!-- HUD Top Bar -->
   <header id="top-bar" class="neo-panel">
     <div class="top-bar-left">
@@ -295,6 +313,14 @@
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M8 10h.01"></path><path d="M16 10h.01"></path><path d="M8 14h.01"></path><path d="M16 14h.01"></path></svg>
           <span data-i18n="tab_fac">Tesis & Personel</span>
         </button>
+        <button id="tab-btn-build-service" class="tab-btn" onclick="switchBuildTab('service')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span data-i18n="tab_service">Oto Servis</span>
+        </button>
+        <button id="tab-btn-build-lifestyle" class="tab-btn" onclick="switchBuildTab('lifestyle')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+          <span data-i18n="tab_lifestyle">Mola & Yaşam</span>
+        </button>
         <button id="tab-btn-build-energy" class="tab-btn" onclick="switchBuildTab('energy')">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
           <span data-i18n="tab_energy">Yeşil Enerji & EV</span>
@@ -422,7 +448,105 @@
         </div>
       </div>
 
-      <!-- Tab 3: Green Energy & EV -->
+      <!-- Tab: Service Bays -->
+      <div id="build-tab-service" class="tab-pane hidden">
+        <h3 class="section-title">Oto Servis & Hızlı Bakım Tesisleri</h3>
+        
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Lastik Servisi & Rot-Balans</h3>
+            <p>Lastik değişimi ve nitrojen dolumu ile araç başına +₺40 yan gelir sağlar.</p>
+          </div>
+          <button id="btn-buy-tire-shop" class="buy-btn neo-btn danger" onclick="buyTireShopUpgrade()">₺ 7.500</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Hızlı Yağ & Sıvı Değişim Servisi</h3>
+            <p>15 dakikada ekspres yağ değişimi ve filtre yenileme (+₺65/araç).</p>
+          </div>
+          <button id="btn-buy-lube-bay" class="buy-btn neo-btn danger" onclick="buyLubeBayUpgrade()">₺ 9.500</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Oto Vakum & Detailing Hub</h3>
+            <p>Yıkama sonrası iç temizlik ve cila alanı (+₺25 jeton geliri).</p>
+          </div>
+          <button id="btn-buy-vacuum-hub" class="buy-btn neo-btn danger" onclick="buyVacuumHubUpgrade()">₺ 6.500</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Moto Kurye & Batarya Takas</h3>
+            <p>Kurye filolarına 30 saniyede hazır batarya takası (+₺20/değişim).</p>
+          </div>
+          <button id="btn-buy-moto-dock" class="buy-btn neo-btn danger" onclick="buyMotoDockUpgrade()">₺ 5.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Ağır Vasıta / Tır İkmal Peronu</h3>
+            <p>Yüksek debili pompa ile kamyon ve tırlara yüksek hacimli yakıt satışı (+₺150/dolum).</p>
+          </div>
+          <button id="btn-buy-truck-stop" class="buy-btn neo-btn danger" onclick="buyTruckStopUpgrade()">₺ 22.000</button>
+        </div>
+      </div>
+
+      <!-- Tab: Lifestyle & Mola -->
+      <div id="build-tab-lifestyle" class="tab-pane hidden">
+        <h3 class="section-title">Yol Boyu Yaşam & Mola Tesisleri</h3>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Drive-Thru Cafe & Bakery</h3>
+            <p>Araçtan inmeden taze kahve ve sıcak kruvasan satışı (+₺50 sipariş geliri).</p>
+          </div>
+          <button id="btn-buy-bakery-drive" class="buy-btn neo-btn danger" onclick="buyBakeryDriveUpgrade()">₺ 16.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Retro Burger Karavanı</h3>
+            <p>Lezzetli atıştırmalık ve sokak lezzetleri (+₺35 ciro).</p>
+          </div>
+          <button id="btn-buy-food-truck" class="buy-btn neo-btn danger" onclick="buyFoodTruckUpgrade()">₺ 8.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>7/24 Temiz Dinlenme & WC Modülü</h3>
+            <p>Turnikeli hijyenik tuvalet ve duş kabinleri (+₺15 turnike / itibar artışı).</p>
+          </div>
+          <button id="btn-buy-rest-lounge" class="buy-btn neo-btn danger" onclick="buyRestLoungeUpgrade()">₺ 11.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Evcil Hayvan Mola Parkı</h3>
+            <p>Evcil hayvan sahipleri için oyun alanı ve mama otomatı (+₺20 otomat geliri).</p>
+          </div>
+          <button id="btn-buy-pet-park" class="buy-btn neo-btn danger" onclick="buyPetParkUpgrade()">₺ 7.000</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Akıllı Kargo Dolabı Hub</h3>
+            <p>E-ticaret paket teslimat ve iade noktası (+₺30 komisyon geliri).</p>
+          </div>
+          <button id="btn-buy-parcel-hub" class="buy-btn neo-btn danger" onclick="buyParcelHubUpgrade()">₺ 4.500</button>
+        </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Zırhlı ATM & Kripto Kiosk</h3>
+            <p>Nakit çekim ve dijital bakiye komisyonu (+₺25 işlem komisyonu).</p>
+          </div>
+          <button id="btn-buy-atm-hub" class="buy-btn neo-btn danger" onclick="buyAtmHubUpgrade()">₺ 3.500</button>
+        </div>
+      </div>
+
+      <!-- Tab: Green Energy & EV -->
       <div id="build-tab-energy" class="tab-pane hidden">
         <h3 class="section-title" data-i18n="energy_title">Yeşil Enerji Altyapısı</h3>
         <div class="energy-grid">
@@ -445,7 +569,7 @@
           </div>
         </div>
 
-        <h3 class="section-title" data-i18n="ev_title" style="margin-top: 6px;">EV Ultra Şarj Ağı</h3>
+        <h3 class="section-title" data-i18n="ev_title" style="margin-top: 6px;">EV Ultra Şarj & Hidrojen</h3>
         <div class="upgrade-card neo-panel-inner">
           <div class="upgrade-info">
             <h3 data-i18n="ev_charger_title">350kW DC Ultra Hızlı EV Şarj Yuvası</h3>
@@ -453,9 +577,17 @@
           </div>
           <button id="btn-buy-ev-charger" class="buy-btn neo-btn danger" onclick="buyEvChargerUpgrade()">₺ 18.000</button>
         </div>
+
+        <div class="upgrade-card neo-panel-inner">
+          <div class="upgrade-info">
+            <h3>Yeşil Hidrojen (H2) Silosu & Peronu</h3>
+            <p>Geleceğin sıfır emisyonlu hidrojen araçlarına 700 bar yüksek basınç dolumu (+₺250 ciro).</p>
+          </div>
+          <button id="btn-buy-hydrogen-bay" class="buy-btn neo-btn danger" onclick="buyHydrogenBayUpgrade()">₺ 25.000</button>
+        </div>
       </div>
 
-      <!-- Tab 4: Land Expansion -->
+      <!-- Tab: Land Expansion -->
       <div id="build-tab-land" class="tab-pane hidden">
         <h3 class="section-title" data-i18n="land_title">İmar İzinleri & Parsel Alımı</h3>
         <div class="parcel-grid">
@@ -921,6 +1053,107 @@
           <button class="neo-btn warning" onclick="debugMaxReputation()">İtibarı Maksimum Yap (5.0)</button>
           <button class="neo-btn success" onclick="debugSpawnCar()">Anında Araç Çağır</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offline Earnings Vault Modal (D1 Retention) -->
+  <div id="offline-vault-modal" class="modal-overlay hidden">
+    <div class="modal-card neo-panel" style="max-width: 440px; text-align: center;">
+      <div class="modal-header" style="justify-content: center;">
+        <div class="title-with-icon">
+          <svg class="neo-icon gold" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <path d="M7 15h0M2 9.5h20"></path>
+          </svg>
+          <h2 data-i18n="vault_title">Çevrimdışı Kasa Geliri</h2>
+        </div>
+      </div>
+      <div class="vault-body neo-panel-inner" style="margin: 14px 0; padding: 18px 12px;">
+        <p class="vault-desc" data-i18n="vault_desc">Siz yokken istasyon tesisleriniz çalışmaya devam etti!</p>
+        <div class="vault-stat-row" style="display: flex; justify-content: space-between; margin: 12px 0 6px 0; font-size: 13px;">
+          <span class="vault-label" data-i18n="vault_time">Geçen Süre:</span>
+          <span id="vault-elapsed-time" class="vault-val" style="font-weight: 800;">1s 45dk</span>
+        </div>
+        <div class="vault-earned-display" style="background: var(--dark-ink); color: var(--gold-accent); padding: 16px; border: 2px solid var(--dark-ink); font-size: 28px; font-weight: 900; letter-spacing: 0.5px; border-radius: 4px; margin: 10px 0;">
+          <span id="vault-earned-amount">₺ 4.850</span>
+        </div>
+        <p id="vault-cap-notice" class="vault-cap-warning hidden" style="color: var(--danger-red); font-size: 11px; font-weight: 700; margin-top: 6px;" data-i18n="vault_cap_warning">
+          Kasa kapasitesi (2 Saat) doldu! Gelir kaybı yaşamamak için düzenli uğrayın.
+        </p>
+      </div>
+      <div class="vault-actions" style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="neo-btn success" style="width: 100%; padding: 12px; font-weight: 800;" onclick="collectOfflineVault(false)">
+          <span data-i18n="vault_collect">KASAYA AKTAR</span>
+        </button>
+        <button class="neo-btn gold" style="width: 100%; padding: 12px; font-weight: 800;" onclick="collectOfflineVault(true)">
+          <svg class="neo-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span data-i18n="vault_double">2X İLE AL (BONUS)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7-Day Daily Streak Modal (D7 Retention) -->
+  <div id="daily-streak-modal" class="modal-overlay hidden">
+    <div class="modal-card neo-panel" style="max-width: 540px;">
+      <div class="modal-header">
+        <div class="title-with-icon">
+          <svg class="neo-icon gold" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <h2 data-i18n="streak_title">7 Günlük Giriş Serisi</h2>
+        </div>
+        <button class="modal-close-btn neo-btn" onclick="toggleModal('daily-streak-modal', false)" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <p class="streak-subtitle" style="font-size: 12px; color: #555; margin-bottom: 12px;" data-i18n="streak_subtitle">İstasyonu her gün ziyaret et, 7. günde Mega İkramiye kazan!</p>
+      
+      <div class="streak-ladder-grid">
+        <div class="streak-card" id="streak-day-1">
+          <span class="streak-day-label">GÜN 1</span>
+          <span class="streak-reward-val">₺ 2.500</span>
+          <span class="streak-status-icon">✓</span>
+        </div>
+        <div class="streak-card" id="streak-day-2">
+          <span class="streak-day-label">GÜN 2</span>
+          <span class="streak-reward-val">₺ 5.000</span>
+          <span class="streak-status-icon">✓</span>
+        </div>
+        <div class="streak-card" id="streak-day-3">
+          <span class="streak-day-label">GÜN 3</span>
+          <span class="streak-reward-val">₺ 8.000</span>
+          <span class="streak-status-icon">✓</span>
+        </div>
+        <div class="streak-card" id="streak-day-4">
+          <span class="streak-day-label">GÜN 4</span>
+          <span class="streak-reward-val">₺ 12.000</span>
+          <span class="streak-status-icon">✓</span>
+        </div>
+        <div class="streak-card" id="streak-day-5">
+          <span class="streak-day-label">GÜN 5</span>
+          <span class="streak-reward-val">₺ 16.000</span>
+          <span class="streak-status-icon">✓</span>
+        </div>
+        <div class="streak-card" id="streak-day-6">
+          <span class="streak-day-label">GÜN 6</span>
+          <span class="streak-reward-val">₺ 22.000</span>
+          <span class="streak-status-icon">✓</span>
+        </div>
+        <div class="streak-card jackpot" id="streak-day-7">
+          <span class="streak-day-label">GÜN 7 (MEGA)</span>
+          <span class="streak-reward-val">₺ 35.000</span>
+          <span class="streak-status-icon">★</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <button id="btn-claim-streak" class="neo-btn success" style="width: 100%; padding: 12px; font-weight: 800;" onclick="claimDailyStreakReward()">
+          GÜNLÜK ÖDÜLÜ AL
+        </button>
       </div>
     </div>
   </div>
