@@ -31,3 +31,12 @@
   - EV Şarj: Yeşil zemin boyaması, tekerlek takozları ve elektrik kablo kanalları.
 - **ETKİLEŞİMLİ PROMPT & MODAL ENTEGRASYONU**: İnşaat alanına (temele veya rozete) tıklandığında ilgili tesisin inşaat/geliştirme modali doğrudan açılmalıdır.
 
+## 7. Spatial Clearance & Zero-Overlap Standard
+- **SIFIR ÇAKIŞMA & KORİDOR EMNİYETİ**: Hiçbir 3D tesis, diorama, temel veya tabela başka bir tesisin bounding box alanına taşamaz. Tesisler arasında araçların ve yayaların geçebileceği minimum 4.0m net manevra koridoru ve güvenlik payı bırakılmalıdır.
+- **PARSEL KOORDİNAT HİYERARŞİSİ**: Doğu kanadı (Oto Yıkama, Lastik Servisi, Vakum Hub, Tır Peronu), Kuzey kanadı (Mola & WC, Yağ Değişim, Food Truck, Kargo Hub, ATM) ve Batı kanadı (Market, Drive-Thru Cafe, Moto Swap, EV Şarj, Hidrojen, Rüzgar Türbini) birbirinden bağımsız temiz servis akslarına sahip olmalıdır.
+
+## 8. Dynamic Station Apron & Collision-Free Waypoint Navigation
+- **DİNAMİK ZEMİN GENİŞLEMESİ (DYNAMIC APRON ENCOMPASSING)**: İstasyonun antrasit asfalt önlüğü (`#20252D` / `Mat.apronGrid`), inşa edilen veya arsa açılan her yeni tesis ile pürüzsüzce birleşecek (seamless apron connector) şekilde genişletilmelidir. Tesisler çim zemin üzerinde izole ve kopuk kutular olarak duramaz; sarı-siyah brutalist emniyet bordürleri ve şerit çizgileriyle ana zemine bağlanmalıdır.
+- **ÇARPIŞMASIZ ŞERİT & WAYPOINT NAVİGASYONU**: İstasyon ana yolundan ayrılan araçlar için her hedef (Pompalar, Yıkama, Servisler, Market) için ayrı `approachWaypoints`, `dockingNode` ve `departureWaypoints` tanımlanmalıdır. Araçlar asla binaların, pompaların veya ada refüjlerinin içinden (clipping) geçemez; dönüş yarıçapları yumuşatılmış kinematiğe ve yön açısına sahip olmalıdır.
+
+
