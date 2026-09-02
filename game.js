@@ -1487,10 +1487,10 @@ function updateStationApronExpansion() {
   const FACILITY_APRONS = [
     { key: 'wash',         prop: 'hasCarWash',     dim: [12.0, 0.08, 14.0], center: [18.0, 0.04, 2.0],   curbSide: 'east' },
     { key: 'tire_shop',    prop: 'hasTireShop',    dim: [10.0, 0.08, 10.0], center: [22.0, 0.04, -9.0],  curbSide: 'east' },
-    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [10.0, 0.08, 8.0],  center: [24.0, 0.04, 8.5],   curbSide: 'east' },
-    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [14.0, 0.08, 12.0], center: [30.0, 0.04, -15.0], curbSide: 'east' },
-    { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [10.0, 0.08, 9.0],  center: [-15.0, 0.04, -1.0], curbSide: 'west' },
-    { key: 'market',       prop: 'hasMarket',      dim: [10.0, 0.08, 10.0], center: [-15.0, 0.04, -8.0], curbSide: 'west' },
+    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [10.0, 0.08, 8.0],  center: [24.0, 0.04, 9.0],   curbSide: 'east' },
+    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [14.0, 0.08, 12.0], center: [30.0, 0.04, -16.0], curbSide: 'east' },
+    { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [10.0, 0.08, 9.0],  center: [-14.0, 0.04, -1.0], curbSide: 'west' },
+    { key: 'market',       prop: 'hasMarket',      dim: [10.0, 0.08, 10.0], center: [-14.0, 0.04, -8.0], curbSide: 'west' },
     { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [8.0, 0.08, 8.0],   center: [-16.0, 0.04, 5.0],  curbSide: 'west' },
     { key: 'ev',           prop: 'hasEvCharger',   dim: [7.0, 0.08, 6.0],   center: [-8.0, 0.04, 4.0],   curbSide: 'west' },
     { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [10.0, 0.08, 8.0],  center: [-24.0, 0.04, -2.0], curbSide: 'west' },
@@ -1505,9 +1505,12 @@ function updateStationApronExpansion() {
 
   FACILITY_APRONS.forEach(fa => {
     const isBuilt = State.upgrades && State.upgrades[fa.prop];
+    // ONLY expand ground when facility is BUILT! Otherwise stay natural clean grass!
+    if (!isBuilt) return;
+
     const slab = new THREE.Mesh(
       new THREE.BoxGeometry(fa.dim[0], fa.dim[1], fa.dim[2]),
-      isBuilt ? Mat.asphalt : Mat.asphaltPatch
+      Mat.asphalt
     );
     slab.position.set(fa.center[0], fa.center[1], fa.center[2]);
     slab.receiveShadow = true;
@@ -1530,11 +1533,9 @@ function updateStationApronExpansion() {
       stationApronExtensionsGroup.add(curb);
     }
 
-    if (isBuilt) {
-      const line = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.015, fa.dim[2] * 0.6), Mat.roadWhite);
-      line.position.set(fa.center[0], fa.center[1] + 0.045, fa.center[2]);
-      stationApronExtensionsGroup.add(line);
-    }
+    const line = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.015, fa.dim[2] * 0.6), Mat.roadWhite);
+    line.position.set(fa.center[0], fa.center[1] + 0.045, fa.center[2]);
+    stationApronExtensionsGroup.add(line);
   });
 }
 
@@ -1842,48 +1843,17 @@ function createWashPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Concrete Wash Bay Slab
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.06, 8.4), Mat.concrete);
-  slab.position.y = 0.03;
-  slab.receiveShadow = true;
-  slab.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  group.add(slab);
-
-  // Central Drainage Steel Grating Trench
-  const trench = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.02, 7.2), Mat.darkInk);
-  trench.position.y = 0.065;
-  group.add(trench);
-  for (let z = -3.2; z <= 3.2; z += 0.8) {
-    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.02, 0.12), Mat.rockDark);
-    bar.position.set(0, 0.075, z);
-    group.add(bar);
-  }
-
-  // 4 Corner Safety Bollards / Stanchions
-  const corners = [[-2.4, -3.8], [2.4, -3.8], [-2.4, 3.8], [2.4, 3.8]];
-  corners.forEach(([cx, cz]) => {
-    const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.65, 8), Mat.hazardStripe);
-    bollard.position.set(cx, 0.35, cz);
-    const top = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), Mat.darkInk);
-    top.position.set(cx, 0.7, cz);
-    group.add(bollard, top);
+  [[-2.4, -3.8], [2.4, -3.8], [-2.4, 3.8], [2.4, 3.8]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
   });
 
-  // Pallet with Coiled Hoses & Piping
-  const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.12, 1.2), Mat.palletWood);
-  pallet.position.set(1.8, 0.09, 2.8);
-  const hose = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.08, 6, 12), Mat.blueAccent);
-  hose.rotation.x = Math.PI / 2;
-  hose.position.set(1.8, 0.22, 2.8);
-  group.add(pallet, hose);
-
-  // Floating Pill Badge
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
-
   return group;
 }
 
@@ -1891,51 +1861,17 @@ function createMarketPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Concrete Foundation Floor Slab
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.08, 5.2), Mat.concrete);
-  slab.position.y = 0.04;
-  slab.receiveShadow = true;
-  slab.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  group.add(slab);
-
-  // Perimeter Concrete Foundation Footing Beams
-  const bFront = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.16, 0.24), Mat.dirt);
-  bFront.position.set(0, 0.12, 2.48);
-  const bBack = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.16, 0.24), Mat.dirt);
-  bBack.position.set(0, 0.12, -2.48);
-  const bLeft = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 4.8), Mat.dirt);
-  bLeft.position.set(-3.18, 0.12, 0);
-  const bRight = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.16, 4.8), Mat.dirt);
-  bRight.position.set(3.18, 0.12, 0);
-  group.add(bFront, bBack, bLeft, bRight);
-
-  // 2 Wooden Pallets with Terracotta Bricks
-  const p1 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 1.1), Mat.palletWood);
-  p1.position.set(-1.8, 0.09, 0.8);
-  const bricks1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.6, 0.9), Mat.brickClay);
-  bricks1.position.set(-1.8, 0.42, 0.8);
-
-  const p2 = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.1, 1.1), Mat.palletWood);
-  p2.position.set(-0.4, 0.09, 0.8);
-  const bricks2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.45, 0.9), Mat.concrete);
-  bricks2.position.set(-0.4, 0.35, 0.8);
-  group.add(p1, bricks1, p2, bricks2);
-
-  // Surveying Stakes
-  const stakeGeo = new THREE.BoxGeometry(0.06, 0.55, 0.06);
-  [[-3.18, -2.48], [3.18, -2.48], [-3.18, 2.48], [3.18, 2.48]].forEach(([sx, sz]) => {
-    const stake = new THREE.Mesh(stakeGeo, Mat.wood);
-    stake.position.set(sx, 0.3, sz);
-    group.add(stake);
+  [[-3.0, -2.2], [3.0, -2.2], [-3.0, 2.2], [3.0, 2.2]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
   });
 
-  // Floating Pill Badge
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.4);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
-
   return group;
 }
 
@@ -1943,33 +1879,18 @@ function createSolarPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Solar Mounting Aluminum Strut Rails on Canopy Roof
+  // Subtle solar frame mounting rail on canopy roof
   for (let z = -1.6; z <= 1.6; z += 1.6) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.05, 0.08), Mat.solarFrame);
-    rail.position.set(0, 0.03, z);
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.04, 0.06), Mat.solarFrame);
+    rail.position.set(0, 0.02, z);
     group.add(rail);
   }
-  for (let x = -3.2; x <= 3.2; x += 1.6) {
-    const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.06, 3.4), Mat.solarFrame);
-    bracket.position.set(x, 0.03, 0);
-    group.add(bracket);
-  }
 
-  // Industrial Weatherproof Junction / Inverter Box
-  const jBox = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.25), Mat.darkInk);
-  jBox.position.set(3.5, 0.18, 1.5);
-  const conduit = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9, 8), Mat.chrome);
-  conduit.rotation.z = Math.PI / 2;
-  conduit.position.set(2.9, 0.15, 1.5);
-  group.add(jBox, conduit);
-
-  // Floating Pill Badge on Canopy Roof
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.85);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
-
   return group;
 }
 
@@ -1977,49 +1898,23 @@ function createTurbinePlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Heavy Reinforced Circular Concrete Foundation Pedestal
-  const pedestal = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.4, 0.16, 16), Mat.concrete);
-  pedestal.position.y = 0.08;
-  pedestal.receiveShadow = true;
-  pedestal.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  group.add(pedestal);
-
-  // Center Steel Flange Base Plate
+  // Low-profile steel anchor flange on grass
   const centerFlange = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.04, 16), Mat.darkInk);
-  centerFlange.position.y = 0.17;
+  centerFlange.position.y = 0.04;
   group.add(centerFlange);
 
-  // 8 Heavy Steel Foundation Anchor Bolts / Studs
-  const boltGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.22, 6);
-  for (let i = 0; i < 8; i++) {
-    const angle = (i / 8) * Math.PI * 2;
-    const bx = Math.cos(angle) * 0.7;
-    const bz = Math.sin(angle) * 0.7;
-    const bolt = new THREE.Mesh(boltGeo, Mat.chrome);
-    bolt.position.set(bx, 0.26, bz);
-    group.add(bolt);
-  }
-
-  // Cable Trench
-  const trench = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.04, 2.4), Mat.darkInk);
-  trench.position.set(0, 0.08, 1.8);
-  group.add(trench);
-
-  // 3 Safety Cones around foundation
-  const conePositions = [[-1.8, -1.2], [1.8, -1.2], [0, 2.2]];
-  conePositions.forEach(([cx, cz]) => {
+  // 3 Safety Cones around boundary
+  [[-1.8, -1.2], [1.8, -1.2], [0, 2.2]].forEach(([cx, cz]) => {
     const c = createSafetyConeMesh();
-    c.position.set(cx, 0.02, cz);
+    c.position.set(cx, 0.04, cz);
     group.add(c);
   });
 
-  // Floating Pill Badge
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.4);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
-
   return group;
 }
 
@@ -2027,68 +1922,30 @@ function createEvPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Green Painted Asphalt EV Bay Marking Pad
-  const bay = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.02, 2.4), Mat.greenAccent);
-  bay.position.y = 0.015;
-  bay.receiveShadow = true;
-  bay.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  group.add(bay);
-
-  // 2 Concrete Wheel Stops / Parking Curbs
-  const curb1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.12, 0.18), Mat.concrete);
-  curb1.position.set(-0.8, 0.07, -0.9);
-  const curb2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.12, 0.18), Mat.concrete);
-  curb2.position.set(0.8, 0.07, -0.9);
-  group.add(curb1, curb2);
-
-  // Electrical Station Mounting Baseplate
-  const base = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.04, 0.5), Mat.darkInk);
-  base.position.set(0, 0.04, -1.1);
-  const cautionPlate = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.01, 0.2), Mat.hazardStripe);
-  cautionPlate.position.set(0, 0.065, -1.1);
-  group.add(base, cautionPlate);
-
   // 2 Safety Cones
-  const c1 = createSafetyConeMesh();
-  c1.position.set(-1.4, 0.02, 0.8);
-  const c2 = createSafetyConeMesh();
-  c2.position.set(1.4, 0.02, 0.8);
-  group.add(c1, c2);
+  [[-1.4, 0.8], [1.4, 0.8]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
-  // Floating Pill Badge
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.05);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
-
   return group;
 }
 
 function createTireShopPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 4.2), Mat.concrete);
-  slab.position.y = 0.04;
-  slab.receiveShadow = true;
-  group.add(slab);
 
-  // Pallet with stack of 3 black rubber tires
-  const pallet = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.1, 1.2), Mat.palletWood);
-  pallet.position.set(-1.4, 0.09, -1.0);
-  group.add(pallet);
-  for (let t = 0; t < 3; t++) {
-    const tire = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.14, 8, 12), Mat.darkInk);
-    tire.rotation.x = Math.PI / 2;
-    tire.position.set(-1.4, 0.22 + t * 0.22, -1.0);
-    group.add(tire);
-  }
-
-  // Pneumatic Tool Stand & Air Compressor Tank
-  const comp = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.7, 8), Mat.redTrim);
-  comp.rotation.z = Math.PI / 2;
-  comp.position.set(1.4, 0.45, -1.0);
-  group.add(comp);
+  [[-2.2, -2.0], [2.2, -2.0], [-2.2, 2.0], [2.2, 2.0]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
   group.userData.signCanvas = canvas;
@@ -2101,28 +1958,12 @@ function createTireShopPlotMesh(plot) {
 function createLubeBayPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.08, 4.8), Mat.concrete);
-  slab.position.y = 0.04;
-  slab.receiveShadow = true;
-  group.add(slab);
 
-  // Service Pit Depression
-  const pit = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.04, 3.6), Mat.darkInk);
-  pit.position.y = 0.07;
-  const hazardCurbL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 3.6), Mat.hazardStripe);
-  hazardCurbL.position.set(-0.76, 0.08, 0);
-  const hazardCurbR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 3.6), Mat.hazardStripe);
-  hazardCurbR.position.set(0.76, 0.08, 0);
-  group.add(pit, hazardCurbL, hazardCurbR);
-
-  // 2 Oil Drum Barrels with Drip Tray
-  const tray = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.04, 0.8), Mat.darkInk);
-  tray.position.set(-1.4, 0.06, 1.4);
-  const drum1 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.75, 10), Mat.blueAccent);
-  drum1.position.set(-1.6, 0.44, 1.4);
-  const drum2 = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.75, 10), Mat.orangeAccent);
-  drum2.position.set(-1.1, 0.44, 1.4);
-  group.add(tray, drum1, drum2);
+  [[-2.0, -2.2], [2.0, -2.2], [-2.0, 2.2], [2.0, 2.2]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
   group.userData.signCanvas = canvas;
@@ -2135,18 +1976,12 @@ function createLubeBayPlotMesh(plot) {
 function createVacuumHubPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const pad = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.06, 3.8), Mat.concrete);
-  pad.position.y = 0.03;
-  group.add(pad);
 
-  // Dual Stainless Vacuum Island Base
-  const vIsland = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.14, 2.4), Mat.darkInk);
-  vIsland.position.set(0, 0.1, 0);
-  const can1 = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.85, 8), Mat.chrome);
-  can1.position.set(0, 0.55, -0.6);
-  const can2 = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.85, 8), Mat.chrome);
-  can2.position.set(0, 0.55, 0.6);
-  group.add(vIsland, can1, can2);
+  [[-2.0, -1.8], [2.0, -1.8], [-2.0, 1.8], [2.0, 1.8]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
   group.userData.signCanvas = canvas;
@@ -2159,16 +1994,12 @@ function createVacuumHubPlotMesh(plot) {
 function createMotoDockPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.04, 2.6), Mat.greenAccent);
-  pad.position.y = 0.02;
-  group.add(pad);
 
-  // Battery Swap Cabinet Baseplate
-  const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.06, 0.6), Mat.darkInk);
-  base.position.set(0, 0.05, -0.8);
-  const conduit = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 1.2), Mat.chrome);
-  conduit.position.set(0, 0.05, 0.1);
-  group.add(base, conduit);
+  [[-1.5, -1.2], [1.5, -1.2], [-1.5, 1.2], [1.5, 1.2]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.95);
   group.userData.signCanvas = canvas;
@@ -2181,18 +2012,12 @@ function createMotoDockPlotMesh(plot) {
 function createTruckStopPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.12, 5.0), Mat.concrete);
-  slab.position.y = 0.06;
-  group.add(slab);
 
-  // Heavy Wheel Stops & Diesel Island Stub
-  const curb1 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.2, 0.3), Mat.hazardStripe);
-  curb1.position.set(-1.8, 0.16, 1.6);
-  const curb2 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.2, 0.3), Mat.hazardStripe);
-  curb2.position.set(1.8, 0.16, 1.6);
-  const dIsland = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.22, 1.0), Mat.darkInk);
-  dIsland.position.set(0, 0.17, -0.8);
-  group.add(curb1, curb2, dIsland);
+  [[-3.2, -2.2], [3.2, -2.2], [-3.2, 2.2], [3.2, 2.2]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.45);
   group.userData.signCanvas = canvas;
@@ -2205,16 +2030,12 @@ function createTruckStopPlotMesh(plot) {
 function createBakeryDrivePlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 4.0), Mat.wood);
-  deck.position.y = 0.04;
-  group.add(deck);
 
-  // Order Intercom Post & Menu Board Frame
-  const post = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, 0.12), Mat.darkInk);
-  post.position.set(-1.8, 0.64, 1.2);
-  const board = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.6, 0.06), Mat.orangeAccent);
-  board.position.set(-1.8, 1.1, 1.2);
-  group.add(post, board);
+  [[-2.2, -1.8], [2.2, -1.8], [-2.2, 1.8], [2.2, 1.8]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
   group.userData.signCanvas = canvas;
@@ -2227,16 +2048,12 @@ function createBakeryDrivePlotMesh(plot) {
 function createFoodTruckPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const pad = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.04, 3.6), Mat.dirt);
-  pad.position.y = 0.02;
-  group.add(pad);
 
-  // Picnic Bench Frame & String Light Posts
-  const pPost1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), Mat.wood);
-  pPost1.position.set(-2.0, 1.1, -1.4);
-  const pPost2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.2, 6), Mat.wood);
-  pPost2.position.set(2.0, 1.1, -1.4);
-  group.add(pPost1, pPost2);
+  [[-2.2, -1.6], [2.2, -1.6], [-2.2, 1.6], [2.2, 1.6]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
   group.userData.signCanvas = canvas;
@@ -2249,16 +2066,12 @@ function createFoodTruckPlotMesh(plot) {
 function createRestLoungePlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const slab = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.08, 4.4), Mat.concrete);
-  slab.position.y = 0.04;
-  group.add(slab);
 
-  // Plumbing Stub Pipes
-  const pipe1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4, 8), Mat.blueAccent);
-  pipe1.position.set(-1.2, 0.24, -1.2);
-  const pipe2 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4, 8), Mat.redTrim);
-  pipe2.position.set(-0.8, 0.24, -1.2);
-  group.add(pipe1, pipe2);
+  [[-2.2, -2.0], [2.2, -2.0], [-2.2, 2.0], [2.2, 2.0]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
   group.userData.signCanvas = canvas;
@@ -2271,14 +2084,12 @@ function createRestLoungePlotMesh(plot) {
 function createPetParkPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const grass = new THREE.Mesh(new THREE.BoxGeometry(5.0, 0.04, 5.0), Mat.grass);
-  grass.position.y = 0.02;
-  group.add(grass);
 
-  // Tiny Red Fire Hydrant Prop & Agility Ramp Footing
-  const hydrant = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 0.45, 8), Mat.redTrim);
-  hydrant.position.set(1.4, 0.24, 1.2);
-  group.add(hydrant);
+  [[-2.2, -2.2], [2.2, -2.2], [-2.2, 2.2], [2.2, 2.2]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
   group.userData.signCanvas = canvas;
@@ -2291,14 +2102,12 @@ function createPetParkPlotMesh(plot) {
 function createParcelHubPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.06, 1.8), Mat.concrete);
-  pad.position.y = 0.03;
-  group.add(pad);
 
-  // Locker Mount Anchor Plate
-  const plate = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.04, 0.8), Mat.darkInk);
-  plate.position.set(0, 0.08, 0);
-  group.add(plate);
+  [[-1.4, -0.6], [1.4, -0.6], [-1.4, 0.6], [1.4, 0.6]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.05);
   group.userData.signCanvas = canvas;
@@ -2311,16 +2120,12 @@ function createParcelHubPlotMesh(plot) {
 function createAtmHubPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const plate = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.06, 1.8), Mat.darkInk);
-  plate.position.y = 0.03;
-  group.add(plate);
 
-  // Armored Security Column Base
-  const post = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.8, 0.2), Mat.chrome);
-  post.position.set(0.9, 0.93, -0.6);
-  const cam = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), Mat.darkInk);
-  cam.position.set(0.9, 1.8, -0.4);
-  group.add(post, cam);
+  [[-1.0, -0.6], [1.0, -0.6], [-1.0, 0.6], [1.0, 0.6]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
   group.userData.signCanvas = canvas;
@@ -2333,14 +2138,16 @@ function createAtmHubPlotMesh(plot) {
 function createHydrogenBayPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  const ring = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.6, 0.12, 16), Mat.concrete);
-  ring.position.y = 0.06;
-  group.add(ring);
 
-  // Cryogenic Flange Base
-  const flange = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.06, 16), Mat.evGlow);
-  flange.position.y = 0.14;
-  group.add(flange);
+  const centerFlange = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.04, 16), Mat.darkInk);
+  centerFlange.position.y = 0.04;
+  group.add(centerFlange);
+
+  [[-1.8, -1.2], [1.8, -1.2], [0, 2.0]].forEach(([cx, cz]) => {
+    const c = createSafetyConeMesh();
+    c.position.set(cx, 0.04, cz);
+    group.add(c);
+  });
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
   group.userData.signCanvas = canvas;
@@ -3635,12 +3442,12 @@ function createTotemMesh() {
 
 function buildPerimeterFloraAndTerrain(diorama) {
   const hillPositions = [
-    [-24, 0, -22, 12, 3.0, 12],
-    [24, 0, -22, 14, 3.5, 12],
-    [-28, 0, 4, 10, 2.5, 10],
-    [28, 0, 4, 10, 2.5, 10],
-    [-20, 0, 24, 12, 2.8, 8],
-    [20, 0, 24, 12, 2.8, 8]
+    [-34, 0, -26, 12, 3.0, 12],
+    [34, 0, -26, 14, 3.5, 12],
+    [-36, 0, 10, 10, 2.5, 10],
+    [36, 0, 10, 10, 2.5, 10],
+    [-26, 0, 32, 12, 2.8, 8],
+    [26, 0, 32, 12, 2.8, 8]
   ];
   hillPositions.forEach(([x, y, z, sx, sy, sz]) => {
     const hill = createGrassMound(sx, sy, sz);
@@ -3649,8 +3456,8 @@ function buildPerimeterFloraAndTerrain(diorama) {
   });
 
   const rockPositions = [
-    [-18, 0.3, -12], [-14, 0.3, 18], [16, 0.3, 18],
-    [20, 0.3, -14], [-28, 0.4, -6], [28, 0.4, -6]
+    [-36, 0.3, -26], [-34, 0.3, 24], [34, 0.3, 24],
+    [36, 0.3, -26], [-38, 0.4, 0], [38, 0.4, 0]
   ];
   rockPositions.forEach(p => {
     const rocks = createRockCluster();
@@ -3674,29 +3481,29 @@ function buildPerimeterFloraAndTerrain(diorama) {
     { pos: [32, -30],  type: 'pine', scale: 1.30 },
 
     // Left & Right Perimeter Trees
-    { pos: [-34, -20], type: 'pine', scale: 1.10 },
-    { pos: [-33, -10], type: 'oak',  scale: 1.15 },
-    { pos: [-34, 0],   type: 'pine', scale: 1.05 },
-    { pos: [-33, 10],  type: 'oak',  scale: 1.20 },
-    { pos: [-34, 20],  type: 'pine', scale: 1.25 },
-    { pos: [-32, 28],  type: 'oak',  scale: 1.10 },
+    { pos: [-36, -20], type: 'pine', scale: 1.10 },
+    { pos: [-35, -10], type: 'oak',  scale: 1.15 },
+    { pos: [-36, 0],   type: 'pine', scale: 1.05 },
+    { pos: [-35, 10],  type: 'oak',  scale: 1.20 },
+    { pos: [-36, 20],  type: 'pine', scale: 1.25 },
+    { pos: [-34, 28],  type: 'oak',  scale: 1.10 },
 
-    { pos: [34, -20],  type: 'pine', scale: 1.10 },
-    { pos: [33, -10],  type: 'oak',  scale: 1.25 },
-    { pos: [34, 0],    type: 'pine', scale: 1.15 },
-    { pos: [33, 10],   type: 'oak',  scale: 1.05 },
-    { pos: [34, 20],   type: 'pine', scale: 1.30 },
-    { pos: [32, 28],   type: 'oak',  scale: 1.20 },
+    { pos: [36, -20],  type: 'pine', scale: 1.10 },
+    { pos: [35, -10],  type: 'oak',  scale: 1.25 },
+    { pos: [36, 0],    type: 'pine', scale: 1.15 },
+    { pos: [35, 10],   type: 'oak',  scale: 1.05 },
+    { pos: [36, 20],   type: 'pine', scale: 1.30 },
+    { pos: [34, 28],   type: 'oak',  scale: 1.20 },
 
-    // Station Garden Palms (Beside Entrance & Planters)
-    { pos: [-26.0, -12.0], type: 'palm', scale: 1.05 },
-    { pos: [12, -4.5],  type: 'palm', scale: 1.05 },
+    // Outer Edge Palms
+    { pos: [-34.0, -16.0], type: 'palm', scale: 1.05 },
+    { pos: [34.0, -16.0],  type: 'palm', scale: 1.05 },
 
     // Roadway Refüj Young Saplings (with Support Stakes)
-    { pos: [-24, 14.5], type: 'sapling', scale: 0.95 },
-    { pos: [-14, 14.5], type: 'sapling', scale: 1.00 },
-    { pos: [14, 14.5],  type: 'sapling', scale: 1.00 },
-    { pos: [24, 14.5],  type: 'sapling', scale: 0.95 }
+    { pos: [-24, 15.5], type: 'sapling', scale: 0.95 },
+    { pos: [-14, 15.5], type: 'sapling', scale: 1.00 },
+    { pos: [14, 15.5],  type: 'sapling', scale: 1.00 },
+    { pos: [24, 15.5],  type: 'sapling', scale: 0.95 }
   ];
 
   diverseTreeList.forEach((tData, idx) => {
@@ -3707,10 +3514,10 @@ function buildPerimeterFloraAndTerrain(diorama) {
     diorama.add(tree);
   });
 
-  // Wild Grass Clump Clusters along fence lines
+  // Wild Grass Clump Clusters along outer perimeter fence lines
   const bushCoords = [
-    [-17, -10], [17, -10], [-21, -4], [21, -4],
-    [-11, 7.2], [11, 7.2], [-5, 7.2], [5, 7.2]
+    [-34, -14], [34, -14], [-32, 16], [32, 16],
+    [-16, 16.5], [16, 16.5]
   ];
   bushCoords.forEach(([bx, bz], bIdx) => {
     const bush = createWildBush(bIdx);
