@@ -785,23 +785,23 @@ const PLOTS = {
   pump2:        { id: 'pump2',        type: 'pump',         slotId: 1, pos: new THREE.Vector3(4.5, 0, -1.8),   cost: 6000,  duration: 45, name: 'Pompa #2',       tab: 'fac' },
   pump3:        { id: 'pump3',        type: 'pump',         slotId: 2, pos: new THREE.Vector3(-4.5, 0, 3.4),   cost: 8000,  duration: 45, name: 'Pompa #3',       tab: 'fac' },
   pump4:        { id: 'pump4',        type: 'pump',         slotId: 3, pos: new THREE.Vector3(4.5, 0, 3.4),    cost: 10000, duration: 45, name: 'Pompa #4',       tab: 'fac' },
-  wash:         { id: 'wash',         type: 'wash',         pos: new THREE.Vector3(18, 0.04, -2),          cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
-  market:       { id: 'market',       type: 'market',       pos: new THREE.Vector3(-14, 0.04, -8),         cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
+  wash:         { id: 'wash',         type: 'wash',         pos: new THREE.Vector3(18.0, 0.04, 2.0),       cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
+  market:       { id: 'market',       type: 'market',       pos: new THREE.Vector3(-14.0, 0.04, -8.0),     cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
   solar:        { id: 'solar',        type: 'solar',        pos: new THREE.Vector3(0, 4.55, -9.5),         cost: 8500,  duration: 60, name: 'Çatı GES',       tab: 'energy' },
-  turbine:      { id: 'turbine',      type: 'turbine',      pos: new THREE.Vector3(-22, 0.04, -8),         cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
-  ev:           { id: 'ev',           type: 'ev',           pos: new THREE.Vector3(-8, 0.04, 4),           cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
-  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',    pos: new THREE.Vector3(20, 0.04, -6),          cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
-  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',     pos: new THREE.Vector3(-6, 0.04, -15),         cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
-  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',   pos: new THREE.Vector3(23, 0.04, 6),           cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
-  moto_dock:    { id: 'moto_dock',    type: 'moto_dock',    pos: new THREE.Vector3(-16, 0.04, 2),          cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
-  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',   pos: new THREE.Vector3(28, 0.04, -14),         cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
-  bakery_drive: { id: 'bakery_drive', type: 'bakery_drive', pos: new THREE.Vector3(-14, 0.04, -1),         cost: 16000, duration: 60, name: 'Drive-Thru Cafe',tab: 'lifestyle' },
-  food_truck:   { id: 'food_truck',   type: 'food_truck',   pos: new THREE.Vector3(14, 0.04, -14),         cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
-  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',  pos: new THREE.Vector3(6, 0.04, -15),          cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
-  pet_park:     { id: 'pet_park',     type: 'pet_park',     pos: new THREE.Vector3(-26, 0.04, 5),          cost: 7000,  duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
-  parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',   pos: new THREE.Vector3(-15, 0.04, -14),        cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
-  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',      pos: new THREE.Vector3(6.5, 0.04, -6.5),       cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
-  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay', pos: new THREE.Vector3(-24, 0.04, -2),        cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
+  turbine:      { id: 'turbine',      type: 'turbine',      pos: new THREE.Vector3(-24.0, 0.04, -9.0),     cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
+  ev:           { id: 'ev',           type: 'ev',           pos: new THREE.Vector3(-8.0, 0.04, 4.0),       cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
+  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',    pos: new THREE.Vector3(22.0, 0.04, -9.0),      cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
+  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',     pos: new THREE.Vector3(-4.0, 0.04, -15.0),     cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
+  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',   pos: new THREE.Vector3(24.0, 0.04, 9.0),       cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
+  moto_dock:    { id: 'moto_dock',    type: 'moto_dock',    pos: new THREE.Vector3(-16.0, 0.04, 5.0),      cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
+  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',   pos: new THREE.Vector3(30.0, 0.04, -16.0),     cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
+  bakery_drive: { id: 'bakery_drive', type: 'bakery_drive', pos: new THREE.Vector3(-14.0, 0.04, -1.0),     cost: 16000, duration: 60, name: 'Drive-Thru Cafe',tab: 'lifestyle' },
+  food_truck:   { id: 'food_truck',   type: 'food_truck',   pos: new THREE.Vector3(14.0, 0.04, -15.0),     cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
+  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',  pos: new THREE.Vector3(5.0, 0.04, -15.0),      cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
+  pet_park:     { id: 'pet_park',     type: 'pet_park',     pos: new THREE.Vector3(-26.0, 0.04, 5.0),      cost: 7000,  duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
+  parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',   pos: new THREE.Vector3(-14.0, 0.04, -15.0),    cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
+  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',      pos: new THREE.Vector3(8.5, 0.04, -6.5),       cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
+  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay', pos: new THREE.Vector3(-24.0, 0.04, -2.0),     cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
 };
 
 const plotSignMeshes = {};
@@ -1472,6 +1472,72 @@ function createMainMarketBuilding() {
   return shopGroup;
 }
 
+let stationApronExtensionsGroup = null;
+
+function updateStationApronExpansion() {
+  if (!stationApronExtensionsGroup) return;
+
+  // Clear previous extension meshes
+  while (stationApronExtensionsGroup.children.length > 0) {
+    const obj = stationApronExtensionsGroup.children[0];
+    stationApronExtensionsGroup.remove(obj);
+  }
+
+  // Facility apron connection definitions
+  const FACILITY_APRONS = [
+    { key: 'wash',         prop: 'hasCarWash',     dim: [12.0, 0.08, 14.0], center: [18.0, 0.04, 2.0],   curbSide: 'east' },
+    { key: 'tire_shop',    prop: 'hasTireShop',    dim: [10.0, 0.08, 10.0], center: [22.0, 0.04, -9.0],  curbSide: 'east' },
+    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [10.0, 0.08, 8.0],  center: [24.0, 0.04, 8.5],   curbSide: 'east' },
+    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [14.0, 0.08, 12.0], center: [30.0, 0.04, -15.0], curbSide: 'east' },
+    { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [10.0, 0.08, 9.0],  center: [-15.0, 0.04, -1.0], curbSide: 'west' },
+    { key: 'market',       prop: 'hasMarket',      dim: [10.0, 0.08, 10.0], center: [-15.0, 0.04, -8.0], curbSide: 'west' },
+    { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [8.0, 0.08, 8.0],   center: [-16.0, 0.04, 5.0],  curbSide: 'west' },
+    { key: 'ev',           prop: 'hasEvCharger',   dim: [7.0, 0.08, 6.0],   center: [-8.0, 0.04, 4.0],   curbSide: 'west' },
+    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [10.0, 0.08, 8.0],  center: [-24.0, 0.04, -2.0], curbSide: 'west' },
+    { key: 'turbine',      prop: 'hasTurbine',     dim: [8.0, 0.08, 8.0],   center: [-24.0, 0.04, -9.0], curbSide: 'west' },
+    { key: 'pet_park',     prop: 'hasPetPark',     dim: [8.0, 0.08, 8.0],   center: [-26.0, 0.04, 5.0],  curbSide: 'west' },
+    { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [9.0, 0.08, 8.0],   center: [-4.0, 0.04, -15.0], curbSide: 'north' },
+    { key: 'food_truck',   prop: 'hasFoodTruck',   dim: [10.0, 0.08, 8.0],  center: [14.0, 0.04, -15.0], curbSide: 'north' },
+    { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 8.0],   center: [5.0, 0.04, -15.0],  curbSide: 'north' },
+    { key: 'parcel_hub',   prop: 'hasParcelHub',   dim: [7.0, 0.08, 6.0],   center: [-14.0, 0.04, -15.0],curbSide: 'north' },
+    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [6.0, 0.08, 6.0],   center: [8.5, 0.04, -6.5],   curbSide: 'north' }
+  ];
+
+  FACILITY_APRONS.forEach(fa => {
+    const isBuilt = State.upgrades && State.upgrades[fa.prop];
+    const slab = new THREE.Mesh(
+      new THREE.BoxGeometry(fa.dim[0], fa.dim[1], fa.dim[2]),
+      isBuilt ? Mat.asphalt : Mat.asphaltPatch
+    );
+    slab.position.set(fa.center[0], fa.center[1], fa.center[2]);
+    slab.receiveShadow = true;
+    stationApronExtensionsGroup.add(slab);
+
+    // Subtle curb border on outer bounds
+    const curbHeight = 0.12;
+    const curbWidth = 0.35;
+    if (fa.curbSide === 'east') {
+      const curb = new THREE.Mesh(new THREE.BoxGeometry(curbWidth, curbHeight, fa.dim[2]), Mat.hazardStripe);
+      curb.position.set(fa.center[0] + fa.dim[0] / 2 - curbWidth / 2, fa.center[1] + curbHeight / 2, fa.center[2]);
+      stationApronExtensionsGroup.add(curb);
+    } else if (fa.curbSide === 'west') {
+      const curb = new THREE.Mesh(new THREE.BoxGeometry(curbWidth, curbHeight, fa.dim[2]), Mat.hazardStripe);
+      curb.position.set(fa.center[0] - fa.dim[0] / 2 + curbWidth / 2, fa.center[1] + curbHeight / 2, fa.center[2]);
+      stationApronExtensionsGroup.add(curb);
+    } else if (fa.curbSide === 'north') {
+      const curb = new THREE.Mesh(new THREE.BoxGeometry(fa.dim[0], curbHeight, curbWidth), Mat.hazardStripe);
+      curb.position.set(fa.center[0], fa.center[1] + curbHeight / 2, fa.center[2] - fa.dim[2] / 2 + curbWidth / 2);
+      stationApronExtensionsGroup.add(curb);
+    }
+
+    if (isBuilt) {
+      const line = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.015, fa.dim[2] * 0.6), Mat.roadWhite);
+      line.position.set(fa.center[0], fa.center[1] + 0.045, fa.center[2]);
+      stationApronExtensionsGroup.add(line);
+    }
+  });
+}
+
 function buildDiorama() {
   const diorama = new THREE.Group();
 
@@ -1523,6 +1589,11 @@ function buildDiorama() {
   apronMesh.position.set(0, 0.04, 0.5);
   apronMesh.receiveShadow = true;
   diorama.add(apronMesh);
+
+  // Dynamic Seamless Apron Expansion (Encompassing all built facilities)
+  stationApronExtensionsGroup = new THREE.Group();
+  diorama.add(stationApronExtensionsGroup);
+  updateStationApronExpansion();
 
   // 3b. Dedicated Driveway Inbound & Outbound Ramps & Safety Island Curbs
   buildStationDrivewayRamps(diorama);
@@ -3085,7 +3156,7 @@ function spawnEvChargerMesh(level = 1) {
 function spawnTireShopMesh(level = 1) {
   if (tireShopGroup) { scene.remove(tireShopGroup); tireShopGroup = null; }
   tireShopGroup = new THREE.Group();
-  tireShopGroup.position.set(20, 0.04, -6);
+  tireShopGroup.position.copy(PLOTS.tire_shop.pos);
   tireShopGroup.userData = { facility: 'tire_shop', level };
 
   const slab = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.12, 4.4), Mat.concrete);
@@ -3148,12 +3219,13 @@ function spawnTireShopMesh(level = 1) {
 
   scene.add(tireShopGroup);
   triggerUpgradeFX(tireShopGroup);
+  updateStationApronExpansion();
 }
 
 function spawnLubeBayMesh(level = 1) {
   if (lubeBayGroup) { scene.remove(lubeBayGroup); lubeBayGroup = null; }
   lubeBayGroup = new THREE.Group();
-  lubeBayGroup.position.set(-6, 0.04, -15);
+  lubeBayGroup.position.copy(PLOTS.lube_bay.pos);
   lubeBayGroup.userData = { facility: 'lube_bay', level };
 
   const slab = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.12, 5.2), Mat.concrete);
@@ -3199,12 +3271,13 @@ function spawnLubeBayMesh(level = 1) {
 
   scene.add(lubeBayGroup);
   triggerUpgradeFX(lubeBayGroup);
+  updateStationApronExpansion();
 }
 
 function spawnVacuumHubMesh(level = 1) {
   if (vacuumHubGroup) { scene.remove(vacuumHubGroup); vacuumHubGroup = null; }
   vacuumHubGroup = new THREE.Group();
-  vacuumHubGroup.position.set(23, 0.04, 6);
+  vacuumHubGroup.position.copy(PLOTS.vacuum_hub.pos);
   vacuumHubGroup.userData = { facility: 'vacuum_hub', level };
 
   const slab = new THREE.Mesh(new THREE.BoxGeometry(4.6, 0.08, 4.2), Mat.concrete);
@@ -3235,12 +3308,13 @@ function spawnVacuumHubMesh(level = 1) {
 
   scene.add(vacuumHubGroup);
   triggerUpgradeFX(vacuumHubGroup);
+  updateStationApronExpansion();
 }
 
 function spawnMotoDockMesh(level = 1) {
   if (motoDockGroup) { scene.remove(motoDockGroup); motoDockGroup = null; }
   motoDockGroup = new THREE.Group();
-  motoDockGroup.position.set(-16, 0.04, 2);
+  motoDockGroup.position.copy(PLOTS.moto_dock.pos);
   motoDockGroup.userData = { facility: 'moto_dock', level };
 
   const pad = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.06, 2.8), Mat.greenAccent);
@@ -3273,12 +3347,13 @@ function spawnMotoDockMesh(level = 1) {
 
   scene.add(motoDockGroup);
   triggerUpgradeFX(motoDockGroup);
+  updateStationApronExpansion();
 }
 
 function spawnTruckStopMesh(level = 1) {
   if (truckStopGroup) { scene.remove(truckStopGroup); truckStopGroup = null; }
   truckStopGroup = new THREE.Group();
-  truckStopGroup.position.set(28, 0.04, -14);
+  truckStopGroup.position.copy(PLOTS.truck_stop.pos);
   truckStopGroup.userData = { facility: 'truck_stop', level };
 
   const slab = new THREE.Mesh(new THREE.BoxGeometry(8.5, 0.14, 5.8), Mat.concrete);
@@ -3310,12 +3385,13 @@ function spawnTruckStopMesh(level = 1) {
 
   scene.add(truckStopGroup);
   triggerUpgradeFX(truckStopGroup);
+  updateStationApronExpansion();
 }
 
 function spawnBakeryDriveMesh(level = 1) {
   if (bakeryDriveGroup) { scene.remove(bakeryDriveGroup); bakeryDriveGroup = null; }
   bakeryDriveGroup = new THREE.Group();
-  bakeryDriveGroup.position.set(-14, 0.04, -1);
+  bakeryDriveGroup.position.copy(PLOTS.bakery_drive.pos);
   bakeryDriveGroup.userData = { facility: 'bakery_drive', level };
 
   const deck = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.08, 4.4), Mat.wood);
@@ -3352,12 +3428,13 @@ function spawnBakeryDriveMesh(level = 1) {
 
   scene.add(bakeryDriveGroup);
   triggerUpgradeFX(bakeryDriveGroup);
+  updateStationApronExpansion();
 }
 
 function spawnFoodTruckMesh(level = 1) {
   if (foodTruckGroup) { scene.remove(foodTruckGroup); foodTruckGroup = null; }
   foodTruckGroup = new THREE.Group();
-  foodTruckGroup.position.set(14, 0.04, -14);
+  foodTruckGroup.position.copy(PLOTS.food_truck.pos);
   foodTruckGroup.userData = { facility: 'food_truck', level };
 
   const pad = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.06, 4.2), Mat.dirt);
@@ -3383,12 +3460,13 @@ function spawnFoodTruckMesh(level = 1) {
 
   scene.add(foodTruckGroup);
   triggerUpgradeFX(foodTruckGroup);
+  updateStationApronExpansion();
 }
 
 function spawnRestLoungeMesh(level = 1) {
   if (restLoungeGroup) { scene.remove(restLoungeGroup); restLoungeGroup = null; }
   restLoungeGroup = new THREE.Group();
-  restLoungeGroup.position.set(6, 0.04, -15);
+  restLoungeGroup.position.copy(PLOTS.rest_lounge.pos);
   restLoungeGroup.userData = { facility: 'rest_lounge', level };
 
   const slab = new THREE.Mesh(new THREE.BoxGeometry(5.6, 0.1, 4.6), Mat.concrete);
@@ -3411,12 +3489,13 @@ function spawnRestLoungeMesh(level = 1) {
 
   scene.add(restLoungeGroup);
   triggerUpgradeFX(restLoungeGroup);
+  updateStationApronExpansion();
 }
 
 function spawnPetParkMesh(level = 1) {
   if (petParkGroup) { scene.remove(petParkGroup); petParkGroup = null; }
   petParkGroup = new THREE.Group();
-  petParkGroup.position.set(-26, 0.04, 5);
+  petParkGroup.position.copy(PLOTS.pet_park.pos);
   petParkGroup.userData = { facility: 'pet_park', level };
 
   const grass = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.06, 5.4), Mat.grass);
@@ -3442,12 +3521,13 @@ function spawnPetParkMesh(level = 1) {
 
   scene.add(petParkGroup);
   triggerUpgradeFX(petParkGroup);
+  updateStationApronExpansion();
 }
 
 function spawnParcelHubMesh(level = 1) {
   if (parcelHubGroup) { scene.remove(parcelHubGroup); parcelHubGroup = null; }
   parcelHubGroup = new THREE.Group();
-  parcelHubGroup.position.set(-15, 0.04, -14);
+  parcelHubGroup.position.copy(PLOTS.parcel_hub.pos);
   parcelHubGroup.userData = { facility: 'parcel_hub', level };
 
   const pad = new THREE.Mesh(new THREE.BoxGeometry(4.0, 0.08, 2.2), Mat.concrete);
@@ -3467,12 +3547,13 @@ function spawnParcelHubMesh(level = 1) {
 
   scene.add(parcelHubGroup);
   triggerUpgradeFX(parcelHubGroup);
+  updateStationApronExpansion();
 }
 
 function spawnAtmHubMesh(level = 1) {
   if (atmHubGroup) { scene.remove(atmHubGroup); atmHubGroup = null; }
   atmHubGroup = new THREE.Group();
-  atmHubGroup.position.set(6.5, 0.04, -6.5);
+  atmHubGroup.position.copy(PLOTS.atm_hub.pos);
   atmHubGroup.userData = { facility: 'atm_hub', level };
 
   const pad = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.08, 2.0), Mat.concrete);
@@ -3489,12 +3570,13 @@ function spawnAtmHubMesh(level = 1) {
 
   scene.add(atmHubGroup);
   triggerUpgradeFX(atmHubGroup);
+  updateStationApronExpansion();
 }
 
 function spawnHydrogenBayMesh(level = 1) {
   if (hydrogenBayGroup) { scene.remove(hydrogenBayGroup); hydrogenBayGroup = null; }
   hydrogenBayGroup = new THREE.Group();
-  hydrogenBayGroup.position.set(-24, 0.04, -2);
+  hydrogenBayGroup.position.copy(PLOTS.hydrogen_bay.pos);
   hydrogenBayGroup.userData = { facility: 'hydrogen_bay', level };
 
   const ring = new THREE.Mesh(new THREE.CylinderGeometry(2.8, 3.0, 0.14, 16), Mat.concrete);
@@ -3516,6 +3598,7 @@ function spawnHydrogenBayMesh(level = 1) {
 
   scene.add(hydrogenBayGroup);
   triggerUpgradeFX(hydrogenBayGroup);
+  updateStationApronExpansion();
 }
 
 function createTotemMesh() {
@@ -4692,7 +4775,7 @@ function updateLivingWorldFX(delta, totalSeconds) {
 function spawnCarWashMesh() {
   if (carWashGroup) return;
   carWashGroup = new THREE.Group();
-  carWashGroup.position.set(16, 0.04, -2);
+  carWashGroup.position.copy(PLOTS.wash.pos);
 
   const arch = new THREE.Mesh(new THREE.BoxGeometry(5.0, 3.8, 8.0), Mat.blueAccent);
   arch.position.y = 1.9;
@@ -4712,12 +4795,13 @@ function spawnCarWashMesh() {
   carWashGroup.add(b1, b2);
 
   scene.add(carWashGroup);
+  updateStationApronExpansion();
 }
 
 function spawnMarketBayMesh() {
   if (marketBayGroup) return;
   marketBayGroup = new THREE.Group();
-  marketBayGroup.position.set(-14, 0.04, -8);
+  marketBayGroup.position.copy(PLOTS.market.pos);
 
   const bay = new THREE.Mesh(new THREE.BoxGeometry(6.5, 3.6, 5.0), Mat.buildingWall);
   bay.position.y = 1.8;
@@ -4733,12 +4817,13 @@ function spawnMarketBayMesh() {
   marketBayGroup.add(glassFront);
 
   scene.add(marketBayGroup);
+  updateStationApronExpansion();
 }
 
 function spawnSolarPanelsMesh() {
   if (solarPanelsGroup) return;
   solarPanelsGroup = new THREE.Group();
-  solarPanelsGroup.position.set(0, 4.55, -9.5);
+  solarPanelsGroup.position.copy(PLOTS.solar.pos);
 
   for (let x = -3.6; x <= 3.6; x += 1.8) {
     for (let z = -1.6; z <= 1.6; z += 1.6) {
@@ -4754,7 +4839,7 @@ function spawnSolarPanelsMesh() {
 function spawnTurbineMesh() {
   if (turbineGroup) return;
   turbineGroup = new THREE.Group();
-  turbineGroup.position.set(-22, 0.04, -8);
+  turbineGroup.position.copy(PLOTS.turbine.pos);
 
   const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 12, 8), Mat.solarFrame);
   mast.position.y = 6.0;
@@ -4778,12 +4863,13 @@ function spawnTurbineMesh() {
   turbineGroup.add(turbineRotor);
 
   scene.add(turbineGroup);
+  updateStationApronExpansion();
 }
 
 function spawnEvChargerMesh() {
   if (evChargerGroup) return;
   evChargerGroup = new THREE.Group();
-  evChargerGroup.position.set(-8, 0.04, 4);
+  evChargerGroup.position.copy(PLOTS.ev.pos);
 
   const pad = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.2, 2.0), Mat.concrete);
   pad.position.y = 0.1;
@@ -4798,6 +4884,7 @@ function spawnEvChargerMesh() {
   });
 
   scene.add(evChargerGroup);
+  updateStationApronExpansion();
 }
 
 // =========================================================
@@ -5964,6 +6051,7 @@ function buyWashUpgrade() {
         State.upgrades.hasCarWash = true;
         State.upgrades.washLevel = 1;
         spawnCarWashMesh(1);
+        updateStationApronExpansion();
         updateBuildModalButtons();
         showToast(t('toast_wash_active'));
         sfx.playFanfare();
@@ -5982,6 +6070,7 @@ function buyWashUpgrade() {
     State.money -= cost;
     State.upgrades.washLevel = nextLvl;
     spawnCarWashMesh(nextLvl);
+    updateStationApronExpansion();
     updateBuildModalButtons();
     showToast(`Oto Yıkama Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
@@ -6008,6 +6097,7 @@ function buyMarketUpgrade() {
         State.upgrades.marketLevel = 1;
         spawnMarketBayMesh(1);
         updateCafePatrons(diorama);
+        updateStationApronExpansion();
         updateBuildModalButtons();
         showToast(t('toast_market_active'));
         sfx.playFanfare();
@@ -6027,6 +6117,7 @@ function buyMarketUpgrade() {
     State.upgrades.marketLevel = nextLvl;
     spawnMarketBayMesh(nextLvl);
     updateCafePatrons(diorama);
+    updateStationApronExpansion();
     updateBuildModalButtons();
     showToast(`Mini Market & Cafe Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
@@ -6052,6 +6143,7 @@ function buySolarUpgrade() {
         State.upgrades.hasSolar = true;
         State.upgrades.solarLevel = 1;
         spawnSolarPanelsMesh(1);
+        updateStationApronExpansion();
         updateBuildModalButtons();
         showToast(t('toast_solar_built'));
         sfx.playFanfare();
@@ -6070,6 +6162,7 @@ function buySolarUpgrade() {
     State.money -= cost;
     State.upgrades.solarLevel = nextLvl;
     spawnSolarPanelsMesh(nextLvl);
+    updateStationApronExpansion();
     updateBuildModalButtons();
     showToast(`Çatı GES Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
@@ -6095,6 +6188,7 @@ function buyTurbineUpgrade() {
         State.upgrades.hasTurbine = true;
         State.upgrades.turbineLevel = 1;
         spawnTurbineMesh(1);
+        updateStationApronExpansion();
         updateBuildModalButtons();
         showToast(t('toast_turbine_built'));
         sfx.playFanfare();
@@ -6113,6 +6207,7 @@ function buyTurbineUpgrade() {
     State.money -= cost;
     State.upgrades.turbineLevel = nextLvl;
     spawnTurbineMesh(nextLvl);
+    updateStationApronExpansion();
     updateBuildModalButtons();
     showToast(`Rüzgar Türbini Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
@@ -6138,6 +6233,7 @@ function buyEvChargerUpgrade() {
         State.upgrades.hasEvCharger = true;
         State.upgrades.evLevel = 1;
         spawnEvChargerMesh(1);
+        updateStationApronExpansion();
         updateBuildModalButtons();
         showToast(t('toast_ev_built'));
         sfx.playFanfare();
@@ -6156,6 +6252,7 @@ function buyEvChargerUpgrade() {
     State.money -= cost;
     State.upgrades.evLevel = nextLvl;
     spawnEvChargerMesh(nextLvl);
+    updateStationApronExpansion();
     updateBuildModalButtons();
     showToast(`EV Ultra Şarj Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
@@ -6183,6 +6280,7 @@ function buyFacilityUpgrade(plotKey, propName, levelProp, spawnFn, btnId, costL2
         State.upgrades[propName] = true;
         State.upgrades[levelProp] = 1;
         spawnFn(1);
+        updateStationApronExpansion();
         updateBuildModalButtons();
         showToast(customToastBuilt || `${plot.name} kuruldu!`);
         sfx.playFanfare();
@@ -6201,6 +6299,7 @@ function buyFacilityUpgrade(plotKey, propName, levelProp, spawnFn, btnId, costL2
     State.money -= cost;
     State.upgrades[levelProp] = nextLvl;
     spawnFn(nextLvl);
+    updateStationApronExpansion();
     updateBuildModalButtons();
     showToast(`${plot.name} Seviye ${nextLvl} yapıldı!`);
     sfx.playFanfare();
