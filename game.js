@@ -1069,7 +1069,7 @@ const Mat = {
   screenGlow: new THREE.MeshBasicMaterial({ color: 0x64FFDA })
 };
 
-function initThree() {
+async function initThree() {
   await document.fonts.ready;
   const container = document.getElementById('canvas-container');
   const width = window.innerWidth;
@@ -7481,8 +7481,8 @@ function claimDailyStreakReward() {
 }
 
 // Start Game on Page Load
-window.addEventListener('DOMContentLoaded', () => {
-  initThree();
+window.addEventListener('DOMContentLoaded', async () => {
+  await initThree();
   updateI18nDOM();
   updateHUD();
   updateOrderModalStatus();
