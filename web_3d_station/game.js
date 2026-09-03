@@ -6791,7 +6791,6 @@ function animate() {
     camera.position.z += diffZ;
   }
   controls.target.y = 0;
-  controls.target.y = 0;
   controls.update();
 
   updateDayNightCycle(delta);
@@ -6892,10 +6891,6 @@ function updateCanopyAnimation(delta) {
     canopyRoofMesh.scale.set(1.0, 1.0, zScale);
     canopyRoofMesh.position.set(0, 0, zPos);
     canopyRoofMesh.rotation.x = xRot;
-
-    if (Mat.canopyGlass.clone()) {
-      Mat.canopyGlass.clone().opacity = THREE.MathUtils.lerp(0.0, 0.32, canopyAnimProgress);
-    }
   }
 
   if (canopyTargetProgress === 0.0 && canopyAnimProgress < 0.015) {
@@ -6943,7 +6938,9 @@ function toggleShadowsSetting() {
   if (renderer) {
     renderer.shadowMap.enabled = State.settings.shadows;
     scene.traverse(obj => {
-      if (obj.isMesh) { if (!obj.userData._castShadow) obj.userData._castShadow = obj.castShadow; if (!obj.userData._receiveShadow) obj.userData._receiveShadow = obj.receiveShadow;
+      if (obj.isMesh) {
+        if (!obj.userData._castShadow) obj.userData._castShadow = obj.castShadow;
+        if (!obj.userData._receiveShadow) obj.userData._receiveShadow = obj.receiveShadow;
         obj.castShadow = State.settings.shadows;
         obj.receiveShadow = State.settings.shadows;
       }
@@ -6957,30 +6954,18 @@ function setGraphicsQuality(q) {
   localStorage.setItem('pixeloil_quality', q);
   if (renderer) {
     if (q === 'low') {
-      if (renderer) {
-        renderer.shadowMap.mapSize.width = 1024;
-        renderer.shadowMap.mapSize.height = 1024;
-        renderer.getContext().getParameter(renderer.getContext().MAX_TEXTURE_IMAGE_UNITS);
-      }
+      renderer.shadowMap.mapSize.width = 1024;
+      renderer.shadowMap.mapSize.height = 1024;
       particleLimit = 15;
       renderer.setPixelRatio(1);
     } else if (q === 'med') {
-      if (renderer) {
-        renderer.shadowMap.mapSize.width = 1024;
-        renderer.shadowMap.mapSize.height = 1024;
-      }
+      renderer.shadowMap.mapSize.width = 1536;
+      renderer.shadowMap.mapSize.height = 1536;
       particleLimit = 25;
-      if (renderer) {
-        renderer.shadowMap.mapSize.width = 2048;
-        renderer.shadowMap.mapSize.height = 2048;
-      }
-      particleLimit = 40;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     } else {
-      if (renderer) {
-        renderer.shadowMap.mapSize.width = 2048;
-        renderer.shadowMap.mapSize.height = 2048;
-      }
+      renderer.shadowMap.mapSize.width = 2048;
+      renderer.shadowMap.mapSize.height = 2048;
       particleLimit = 40;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
