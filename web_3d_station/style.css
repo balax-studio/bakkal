@@ -748,9 +748,9 @@ body, html {
 /* Toast Notifications */
 #toast-container {
   position: absolute;
-  bottom: 24px;
-  right: 24px;
-  z-index: 100;
+  bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  right: max(24px, env(safe-area-inset-right, 24px));
+  z-index: 1200;
   display: flex;
   flex-direction: column;
   gap: 8px;

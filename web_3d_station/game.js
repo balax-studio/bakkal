@@ -133,12 +133,19 @@ const I18N = {
     vault_desc: 'İstasyonun sen yokken pasif gelir üretti!',
     vault_double_btn: '2X KATLA & TOPLA',
     vault_collect_btn: 'TOPLA',
+    vault_double: '2X KATLA & TOPLA',
+    vault_collect: 'TOPLA',
+    vault_cap_warning: 'Maksimum 2 saatlik gelir sistemi',
+    vault_time: '2 Saat Limiti',
     streak_title: '7 Günlük Giriş Serisi',
     streak_day: 'GÜN {0}',
     streak_claim: 'ÖDÜLÜ AL',
     streak_claimed: 'ALINDI',
+    streak_subtitle: 'Her gün giriş yap ve ödüller kazan',
     rush_banner_title: 'AKARYAKIT TANKERİ GELDİ!',
     rush_banner_desc: '2X Gelir Çarpanı & Tam Akış Aktif!',
+    rush_title: 'AKARYAKIT TANKERİ RUSH SAATİ!',
+    rush_sub: 'Tüm tesislerde 2X Hızlı Gelir & Ücretsiz Yakıt İkmali',
     settings_title: 'Ayarlar & Sistem',
     tab_settings_audio: 'Ses & Dil',
     tab_settings_graphics: 'Grafik',
@@ -308,12 +315,19 @@ const I18N = {
     vault_desc: 'Your station generated passive income while away!',
     vault_double_btn: '2X DOUBLE & COLLECT',
     vault_collect_btn: 'COLLECT',
+    vault_double: '2X DOUBLE & COLLECT',
+    vault_collect: 'COLLECT',
+    vault_cap_warning: 'Maximum 2-hour earning system',
+    vault_time: '2-Hour Limit',
     streak_title: '7-Day Login Streak',
     streak_day: 'DAY {0}',
     streak_claim: 'CLAIM REWARD',
     streak_claimed: 'CLAIMED',
+    streak_subtitle: 'Log in daily to unlock exclusive rewards',
     rush_banner_title: 'FUEL TANKER ARRIVED!',
     rush_banner_desc: '2X Revenue Multiplier & Full Flow Active!',
+    rush_title: 'FUEL TANKER ARRIVED!',
+    rush_sub: '2X Fast Income on All Facilities & Free Fuel Supply!',
     settings_title: 'Settings & System',
     tab_settings_audio: 'Audio & Lang',
     tab_settings_graphics: 'Graphics',
@@ -789,7 +803,7 @@ const PLOTS = {
   atm_hub:      { id: 'atm_hub',      type: 'atm_hub',                 tier: 1, pos: new THREE.Vector3(6.8, 0.04, -7.0),   cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
   parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',              tier: 1, pos: new THREE.Vector3(-6.8, 0.04, -7.0),  cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
   wash:         { id: 'wash',         type: 'wash',                    tier: 1, pos: new THREE.Vector3(16.25, 0.04, 2.0),  cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
-  market:       { id: 'market',       type: 'market',                  tier: 1, pos: new THREE.Vector3(0, 0.04, -10.0),    cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
+  market:       { id: 'market',       type: 'market',                  tier: 1, pos: new THREE.Vector3(0, 0.04, -6.2),    cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
   tire_shop:    { id: 'tire_shop',    type: 'tire_shop',               tier: 2, pos: new THREE.Vector3(16.25, 0.04, -4.5), cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
   food_truck:   { id: 'food_truck',   type: 'food_truck',              tier: 2, pos: new THREE.Vector3(8.0, 0.04, -3.5),   cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
   ev:           { id: 'ev',           type: 'ev',                      tier: 2, pos: new THREE.Vector3(-16.25, 0.04, 3.5), cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
@@ -937,6 +951,10 @@ function createStationGridTexture() {
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;
+  tex.encoding = THREE.sRGBEncoding;
+  tex.magFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.generateMipmaps = true;
   return tex;
 }
 
@@ -1075,7 +1093,9 @@ function initThree() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
-  if ('outputColorSpace' in renderer) {
+  if ('outputEncoding' in renderer) {
+    renderer.outputEncoding = THREE.sRGBEncoding;
+  } else if ('outputColorSpace' in renderer) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
   }
   renderer.shadowMap.enabled = true;
@@ -1266,7 +1286,7 @@ function createMainMarketBuilding() {
   const awning = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1.2), Mat.redTrim);
   awning.position.set(0, 3.12, 3.25);
   awning.castShadow = true;
-  const awningGlass = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.03, 1.1), Mat.canopyGlass);
+  const awningGlass = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.03, 1.1), Mat.canopyGlass.clone());
   awningGlass.position.set(0, 3.15, 3.25);
   // Support Rods
   const rodL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.1, 6), Mat.chrome);
@@ -1477,6 +1497,7 @@ function updateStationApronExpansion() {
   // Facility apron connection definitions (Calibrated seamless wing extensions)
   const FACILITY_APRONS = [
     { key: 'wash',         prop: 'hasCarWash',     dim: [8.5, 0.08, 9.0],   center: [16.25, 0.04, 2.0],   curbSide: 'east' },
+    { key: 'market',       prop: 'hasMarket',      dim: [8.0, 0.08, 6.0],   center: [6.0, 0.04, -10.0],   curbSide: 'east' },
     { key: 'tire_shop',    prop: 'hasTireShop',    dim: [8.5, 0.08, 5.5],   center: [16.25, 0.04, -4.5],  curbSide: 'east' },
     { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [8.5, 0.08, 4.5],   center: [16.25, 0.04, -9.5],  curbSide: 'east' },
     { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [8.0, 0.08, 4.0],   center: [16.0, 0.04, -13.5],  curbSide: 'east' },
@@ -1670,7 +1691,7 @@ function createCurvedHighway() {
   roadGeo.setIndex(indices);
   roadGeo.computeVertexNormals();
 
-  const roadMesh = new THREE.Mesh(roadGeo, Mat.asphalt);
+  const roadMesh = new THREE.Mesh(roadGeo, Mat.apronGrid);
   roadMesh.receiveShadow = true;
   group.add(roadMesh);
 
@@ -2376,7 +2397,7 @@ function createCanopyMesh() {
   canopyRoofMesh.add(frontText);
 
   // 3. Translucent Polycarbonate Glass Skylight Roof Pane
-  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.04, 6.6), Mat.canopyGlass);
+  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.04, 6.6), Mat.canopyGlass.clone());
   glassRoof.position.set(0, 4.70, 1.0);
   canopyRoofMesh.add(glassRoof);
 
@@ -2625,7 +2646,7 @@ function spawnCarWashMesh(level = 1) {
     carWashGroup = null;
   }
   carWashGroup = new THREE.Group();
-  carWashGroup.position.set(16, 0.04, -2);
+  carWashGroup.position.copy(PLOTS.wash.pos);
   carWashGroup.userData = { facility: 'wash', level: level };
 
   // Concrete Wash Bay Slab with Drainage Grate
@@ -2721,6 +2742,7 @@ function spawnCarWashMesh(level = 1) {
   }
 
   scene.add(carWashGroup);
+  updateStationApronExpansion();
   triggerUpgradeFX(carWashGroup);
 }
 
@@ -2730,7 +2752,7 @@ function spawnMarketBayMesh(level = 1) {
     marketBayGroup = null;
   }
   marketBayGroup = new THREE.Group();
-  marketBayGroup.position.set(-14, 0.04, -8);
+  marketBayGroup.position.set(6.0, 0.04, -10.0);
   marketBayGroup.userData = { facility: 'market', level: level };
 
   if (level === 1) {
@@ -2817,6 +2839,7 @@ function spawnMarketBayMesh(level = 1) {
   }
 
   scene.add(marketBayGroup);
+  updateStationApronExpansion();
   triggerUpgradeFX(marketBayGroup);
 }
 
@@ -2826,7 +2849,7 @@ function spawnSolarPanelsMesh(level = 1) {
     solarPanelsGroup = null;
   }
   solarPanelsGroup = new THREE.Group();
-  solarPanelsGroup.position.set(0, 4.55, -9.5);
+  solarPanelsGroup.position.copy(PLOTS.solar.pos);
   solarPanelsGroup.userData = { facility: 'solar', level: level };
 
   const countX = level === 1 ? 2 : (level === 2 ? 4 : 5);
@@ -2862,7 +2885,7 @@ function spawnTurbineMesh(level = 1) {
     secondaryTurbineRotor = null;
   }
   turbineGroup = new THREE.Group();
-  turbineGroup.position.set(-22, 0.04, -8);
+  turbineGroup.position.copy(PLOTS.turbine.pos);
   turbineGroup.userData = { facility: 'turbine', level: level };
 
   const mastHeight = level === 1 ? 12.0 : (level === 2 ? 15.5 : 18.0);
@@ -2928,7 +2951,7 @@ function spawnEvChargerMesh(level = 1) {
     evChargerGroup = null;
   }
   evChargerGroup = new THREE.Group();
-  evChargerGroup.position.set(-8, 0.04, 4);
+  evChargerGroup.position.copy(PLOTS.ev.pos);
   evChargerGroup.userData = { facility: 'ev', level: level };
 
   // EV Green Parking Pad
@@ -4061,7 +4084,7 @@ function buildStationDrivewayRamps(diorama) {
 
   // 1. Inbound Deceleration Slip Ramp (Connects highway Z: 9.8 to apron Z: 6.0 at X: -10.5)
   const inRampGeo = new THREE.BoxGeometry(3.2, 0.08, 3.8);
-  const inRamp = new THREE.Mesh(inRampGeo, Mat.asphalt);
+  const inRamp = new THREE.Mesh(inRampGeo, Mat.apronGrid);
   inRamp.position.set(-10.6, 0.045, 7.9);
   inRamp.receiveShadow = true;
   rampGroup.add(inRamp);
@@ -4079,7 +4102,7 @@ function buildStationDrivewayRamps(diorama) {
 
   // 2. Outbound Acceleration Merge Ramp (Connects apron Z: 6.0 to highway Z: 9.8 at X: 10.5)
   const outRampGeo = new THREE.BoxGeometry(3.2, 0.08, 3.8);
-  const outRamp = new THREE.Mesh(outRampGeo, Mat.asphalt);
+  const outRamp = new THREE.Mesh(outRampGeo, Mat.apronGrid);
   outRamp.position.set(10.6, 0.045, 7.9);
   outRamp.receiveShadow = true;
   rampGroup.add(outRamp);
@@ -4604,7 +4627,7 @@ function updateLivingWorldFX(delta, totalSeconds) {
       if (Math.random() < 0.65) {
         const steamMesh = new THREE.Mesh(
           new THREE.DodecahedronGeometry(0.12 + Math.random() * 0.12, 0),
-          Mat.steam
+          Mat.steam.clone()
         );
         steamMesh.position.copy(emitter.pos);
         steamMesh.position.x += (Math.random() - 0.5) * 0.25;
@@ -4613,9 +4636,12 @@ function updateLivingWorldFX(delta, totalSeconds) {
         particles.push({
           mesh: steamMesh,
           mat: steamMesh.material,
-          vel: new THREE.Vector3((Math.random() - 0.5) * 0.1, 0.45 + Math.random() * 0.35, (Math.random() - 0.5) * 0.1),
+          vx: (Math.random() - 0.5) * 0.1,
+          vy: 0.45 + Math.random() * 0.35,
+          vz: (Math.random() - 0.5) * 0.1,
           life: 1.6,
-          maxLife: 1.6
+          maxLife: 1.6,
+          owned: true
         });
       }
     }
@@ -4628,15 +4654,19 @@ function updateLivingWorldFX(delta, totalSeconds) {
   acDripTimer += delta;
   if (acDripTimer >= 2.8) {
     acDripTimer = 0;
-    const drop = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 0.03), Mat.glass);
+    const dropMat = new THREE.MeshLambertMaterial({ color: 0xB0D4E3, transparent: true, opacity: 0.7 });
+    const drop = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.05, 0.03), dropMat);
     drop.position.set(-2.7, 1.8, -12.45);
     scene.add(drop);
     particles.push({
       mesh: drop,
       mat: drop.material,
-      vel: new THREE.Vector3(0, -1.8, 0),
+      vx: 0,
+      vy: -1.8,
+      vz: 0,
       life: 0.9,
-      maxLife: 0.9
+      maxLife: 0.9,
+      owned: true
     });
   }
 
@@ -4667,100 +4697,6 @@ function updateLivingWorldFX(delta, totalSeconds) {
     u.rollTimer -= delta;
     if (u.rollTimer <= 0) {
       u.rollTimer = 12.0 + Math.random() * 10.0;
-      rollingCanVelocity = 2.4;
-    }
-    if (rollingCanVelocity > 0.01) {
-      rollingCanMesh.position.x += rollingCanVelocity * delta;
-      rollingCanMesh.rotation.y += rollingCanVelocity * 6.0 * delta;
-      rollingCanVelocity *= 0.96;
-      if (rollingCanMesh.position.x > 12) {
-        rollingCanMesh.position.x = u.baseX;
-        rollingCanVelocity = 0;
-      }
-    }
-  }
-
-  // 9. Cafe Patrons sipping coffee
-  cafePatrons.forEach(patron => {
-    patron.userData.sipTimer -= delta;
-    if (patron.userData.sipTimer <= 0) {
-      patron.userData.sipTimer = 3.5 + Math.random() * 4.0;
-      patron.userData.head.rotation.x = Math.sin(totalSeconds * 3.0) * 0.15;
-    }
-  });
-}
-
-// ---------------------------------------------------------
-// Dynamic 3D Upgrades (Finished Meshes)
-// ---------------------------------------------------------
-
-function spawnCarWashMesh() {
-  if (carWashGroup) return;
-  carWashGroup = new THREE.Group();
-  carWashGroup.position.copy(PLOTS.wash.pos);
-
-  const arch = new THREE.Mesh(new THREE.BoxGeometry(5.0, 3.8, 8.0), Mat.blueAccent);
-  arch.position.y = 1.9;
-  arch.castShadow = true;
-  carWashGroup.add(arch);
-
-  const tunnelHole = new THREE.Mesh(new THREE.BoxGeometry(3.6, 3.2, 8.2), Mat.darkInk);
-  tunnelHole.position.y = 1.6;
-  carWashGroup.add(tunnelHole);
-
-  const brushGeo = new THREE.CylinderGeometry(0.7, 0.7, 3.2, 8);
-  const brushMat = new THREE.MeshLambertMaterial({ color: 0x00E5FF });
-  const b1 = new THREE.Mesh(brushGeo, brushMat);
-  b1.position.set(-1.2, 1.6, 0);
-  const b2 = new THREE.Mesh(brushGeo, brushMat);
-  b2.position.set(1.2, 1.6, 0);
-  carWashGroup.add(b1, b2);
-
-  scene.add(carWashGroup);
-  updateStationApronExpansion();
-}
-
-
-function spawnSolarPanelsMesh() {
-  if (solarPanelsGroup) return;
-  solarPanelsGroup = new THREE.Group();
-  solarPanelsGroup.position.copy(PLOTS.solar.pos);
-
-  for (let x = -3.6; x <= 3.6; x += 1.8) {
-    for (let z = -1.6; z <= 1.6; z += 1.6) {
-      const panel = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.08, 1.2), Mat.solarCell);
-      panel.position.set(x, 0.05, z);
-      panel.rotation.x = -0.15;
-      solarPanelsGroup.add(panel);
-    }
-  }
-  scene.add(solarPanelsGroup);
-}
-
-function spawnTurbineMesh() {
-  if (turbineGroup) return;
-  turbineGroup = new THREE.Group();
-  turbineGroup.position.copy(PLOTS.turbine.pos);
-
-  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 12, 8), Mat.solarFrame);
-  mast.position.y = 6.0;
-  mast.castShadow = true;
-  turbineGroup.add(mast);
-
-  const nacelle = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.9, 2.2), Mat.darkInk);
-  nacelle.position.set(0, 12.2, 0);
-  turbineGroup.add(nacelle);
-
-  turbineRotor = new THREE.Group();
-  turbineRotor.position.set(0, 12.2, 1.2);
-  for (let i = 0; i < 3; i++) {
-    const blade = new THREE.Mesh(new THREE.BoxGeometry(0.25, 4.2, 0.08), Mat.roadWhite);
-    blade.position.y = 2.1;
-    const holder = new THREE.Group();
-    holder.rotation.z = (i * 2 * Math.PI) / 3;
-    holder.add(blade);
-    turbineRotor.add(holder);
-  }
   turbineGroup.add(turbineRotor);
 
   scene.add(turbineGroup);
@@ -6581,7 +6517,8 @@ function spawnParticle(pos, colorHex = 0xDCD6C8, scale = 0.25) {
     vy: 0.6 + Math.random() * 0.6,
     vz: (Math.random() - 0.5) * 0.3,
     life: 1.0,
-    maxLife: 1.0 + Math.random() * 0.5
+    maxLife: 1.0 + Math.random() * 0.5,
+    owned: true
   });
 }
 
@@ -6601,7 +6538,9 @@ function updateParticles(delta) {
     if (p.life <= 0) {
       scene.remove(p.mesh);
       p.mesh.geometry.dispose();
-      p.mat.dispose();
+      if (p.owned) {
+        p.mat.dispose();
+      }
       particles.splice(i, 1);
     }
   }
@@ -6792,7 +6731,7 @@ function animate() {
   requestAnimationFrame(animate);
 
   const now = performance.now();
-  const delta = (now - lastTime) / 1000;
+  const delta = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
   const totalSeconds = now * 0.001;
 
@@ -6816,7 +6755,7 @@ function animate() {
   updateRetentionAndEconomy(delta);
 
   for (let i = cars.length - 1; i >= 0; i--) {
-    cars[i].update();
+    cars[i].update(delta);
     if (cars[i].state === 'APPROACHING' || cars[i].state === 'DEPARTING') {
       if (Math.random() < 0.15) {
         spawnParticle(cars[i].mesh.position, 0xB0B8C0, 0.2);
@@ -6902,8 +6841,8 @@ function updateCanopyAnimation(delta) {
     canopyRoofMesh.position.set(0, 0, zPos);
     canopyRoofMesh.rotation.x = xRot;
 
-    if (Mat.canopyGlass) {
-      Mat.canopyGlass.opacity = THREE.MathUtils.lerp(0.0, 0.32, canopyAnimProgress);
+    if (Mat.canopyGlass.clone()) {
+      Mat.canopyGlass.clone().opacity = THREE.MathUtils.lerp(0.0, 0.32, canopyAnimProgress);
     }
   }
 
