@@ -483,8 +483,8 @@ const State = {
 
   // Themes
   theme: 'standard',
-  season: 'summer', // summer, autumn, winter
-  unlockedSeasons: ['summer'],/
+  season: 'summer',
+  unlockedSeasons: ['summer'],
   unlockedThemes: ['standard'],
 
   // Visual Addons
