@@ -6760,21 +6760,23 @@ function updateHUDThrottled() {
     lastHUDUpdate = now;
   }
 }
+let lastFrameTime = 0;
 function animate() {
   requestAnimationFrame(animate);
 
   const now = performance.now();
-  const delta = Math.min((now - lastTime) / 1000, 0.1);
-  lastTime = now;
-  const totalSeconds = now * 0.001;
   const targetFps = State.settings.targetFps || 60;
   if (targetFps > 0) {
     const targetFrameTime = 1000 / targetFps;
-    if (now - (lastTime + delta * 1000) < targetFrameTime) {
-      requestAnimationFrame(animate);
+    if (now - lastFrameTime < targetFrameTime) {
       return;
     }
+    lastFrameTime = now;
   }
+
+  const delta = Math.min((now - lastTime) / 1000, 0.1);
+  lastTime = now;
+  const totalSeconds = now * 0.001;
 
   // Camera Navigation & Smooth Pan Clamping within station bounds
   updateKeyboardCamera(delta);
@@ -6789,27 +6791,6 @@ function animate() {
     camera.position.z += diffZ;
   }
   controls.target.y = 0;
-  const clampedX = THREE.MathUtils.clamp(controls.target.x, -26, 26);
-  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -20, 20);
-  const diffX = clampedX - controls.target.x;
-  const diffZ = clampedZ - controls.target.z;
-  if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
-    controls.target.x = clampedX;
-    controls.target.z = clampedZ;
-    camera.position.x += diffX;
-    camera.position.z += diffZ;
-  }
-  controls.target.y = 0;
-  const clampedX = THREE.MathUtils.clamp(controls.target.x, -26, 26);
-  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -20, 20);
-  const diffX = clampedX - controls.target.x;
-  const diffZ = clampedZ - controls.target.z;
-  if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
-    controls.target.x = clampedX;
-    controls.target.z = clampedZ;
-    camera.position.x += diffX;
-    camera.position.z += diffZ;
-  }
   controls.target.y = 0;
   controls.update();
 
