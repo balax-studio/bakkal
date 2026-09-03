@@ -483,6 +483,8 @@ const State = {
 
   // Themes
   theme: 'standard',
+  season: 'summer', // summer, autumn, winter
+  unlockedSeasons: ['summer'],/
   unlockedThemes: ['standard'],
 
   // Visual Addons
@@ -1068,6 +1070,7 @@ const Mat = {
 };
 
 function initThree() {
+  await document.fonts.ready;
   const container = document.getElementById('canvas-container');
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -2314,12 +2317,15 @@ function createScaffoldingMesh(plot) {
   group.add(barMesh);
 
   group.userData = {
+    progress: 0,
     canvas,
     texture: tex,
     plot
   };
 
   scene.add(group);
+  
+  group.userData.progress = 0; // 0–1 inşaat aşaması
   return group;
 }
 
@@ -2500,6 +2506,17 @@ function createTankerUnloadingArea() {
   group.add(pipe, pipeTop);
 
   return group;
+}
+
+function disposeGroup(obj) {
+  obj.traverse(child => {
+    if (child.geometry) child.geometry.dispose();
+    if (child.material) {
+      if (child.material.map) child.material.map.dispose();
+      if (child.material.normalMap) child.material.normalMap.dispose();
+      child.material.dispose();
+    }
+  });
 }
 
 function triggerUpgradeFX(group) {
@@ -4792,7 +4809,7 @@ function getForwardObstacleDistance(me, isBypass = false) {
 
 class Vehicle {
   constructor(modelType, fuelType, colorHex) {
-    this.modelType = modelType;
+    this.modelType = modelType || ["sedan", "suv", "pickup", "hatchback"][Math.floor(Math.random() * 4)];
     this.fuelType = fuelType;
     this.colorHex = colorHex;
     this.reqLiters = Math.floor(Math.random() * 35) + 20;
@@ -5204,7 +5221,7 @@ function resetCameraView() {
   camera.position.set(26, 24, 26);
   camera.zoom = 1.0;
   camera.updateProjectionMatrix();
-  controls.update();
+  controls.update(); // TODO: smooth 0.6s transition
   showToast(t('toast_cam_reset'));
 }
 
@@ -5221,7 +5238,7 @@ function rotateCameraBy(angle) {
 
 function zoomCamera(factor) {
   if (!camera || !controls) return;
-  camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.35, 4.0);
+  camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.55, 3.5);
   camera.updateProjectionMatrix();
   controls.update();
 }
@@ -6487,10 +6504,12 @@ class BypassVehicle {
 }
 
 function initBypassTraffic() {
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 8; i++) {
     const bgCar = new BypassVehicle();
-    const curX = -45 + i * 26;
+    const isReverse = i >= 4;
+  const curX = isReverse ? 68 - ((i - 4) * 26) : (-45 + i * 26);
     bgCar.mesh.position.x = curX;
+  if (isReverse) { bgCar.mesh.rotation.y = -Math.PI / 2; bgCar.speed = -bgCar.speed; }
     bgCar.mesh.position.y = getRoadElevation(curX);
     bgCar.mesh.rotation.z = -Math.atan(getRoadSlope(curX));
     bgVehicles.push(bgCar);
@@ -6614,6 +6633,12 @@ const INGAME_MINUTES_PER_REAL_SECOND = 1440.0 / 420.0;
 
 function updateDayNightCycle(delta) {
   // Advance in-game minutes continuously
+  const sunAngle = ((h - 6) / 12) * Math.PI;
+  const sunDist = 34;
+  const sunHeight = Math.max(6, Math.sin(sunAngle) * 36);
+  sunLight.position.x = Math.cos(sunAngle) * sunDist;
+  sunLight.position.y = sunHeight;
+  // sunLight.position.z = 18 stays fixed
   const gameMinutesAdvance = delta * INGAME_MINUTES_PER_REAL_SECOND * State.timeSpeed;
   State.minute += gameMinutesAdvance;
 
@@ -6645,7 +6670,7 @@ function updateDayNightCycle(delta) {
     }
   }
 
-  updateHUD();
+  updateHUDThrottled();
   updateSkyLighting();
 }
 
@@ -6727,6 +6752,14 @@ function showToast(msg, type = 'normal') {
 // =========================================================
 
 let lastTime = performance.now();
+let lastHUDUpdate = 0;
+function updateHUDThrottled() {
+  const now = performance.now();
+  if (now - lastHUDUpdate > 200) {
+    updateHUD();
+    lastHUDUpdate = now;
+  }
+}
 function animate() {
   requestAnimationFrame(animate);
 
@@ -6734,11 +6767,49 @@ function animate() {
   const delta = Math.min((now - lastTime) / 1000, 0.1);
   lastTime = now;
   const totalSeconds = now * 0.001;
+  const targetFps = State.settings.targetFps || 60;
+  if (targetFps > 0) {
+    const targetFrameTime = 1000 / targetFps;
+    if (now - (lastTime + delta * 1000) < targetFrameTime) {
+      requestAnimationFrame(animate);
+      return;
+    }
+  }
 
   // Camera Navigation & Smooth Pan Clamping within station bounds
   updateKeyboardCamera(delta);
-  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -22, 22);
-  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -18, 18);
+  const clampedX = THREE.MathUtils.clamp(controls.target.x, -26, 26);
+  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -20, 20);
+  const diffX = clampedX - controls.target.x;
+  const diffZ = clampedZ - controls.target.z;
+  if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
+    controls.target.x = clampedX;
+    controls.target.z = clampedZ;
+    camera.position.x += diffX;
+    camera.position.z += diffZ;
+  }
+  controls.target.y = 0;
+  const clampedX = THREE.MathUtils.clamp(controls.target.x, -26, 26);
+  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -20, 20);
+  const diffX = clampedX - controls.target.x;
+  const diffZ = clampedZ - controls.target.z;
+  if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
+    controls.target.x = clampedX;
+    controls.target.z = clampedZ;
+    camera.position.x += diffX;
+    camera.position.z += diffZ;
+  }
+  controls.target.y = 0;
+  const clampedX = THREE.MathUtils.clamp(controls.target.x, -26, 26);
+  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -20, 20);
+  const diffX = clampedX - controls.target.x;
+  const diffZ = clampedZ - controls.target.z;
+  if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
+    controls.target.x = clampedX;
+    controls.target.z = clampedZ;
+    camera.position.x += diffX;
+    camera.position.z += diffZ;
+  }
   controls.target.y = 0;
   controls.update();
 
@@ -6891,7 +6962,7 @@ function toggleShadowsSetting() {
   if (renderer) {
     renderer.shadowMap.enabled = State.settings.shadows;
     scene.traverse(obj => {
-      if (obj.isMesh) {
+      if (obj.isMesh) { if (!obj.userData._castShadow) obj.userData._castShadow = obj.castShadow; if (!obj.userData._receiveShadow) obj.userData._receiveShadow = obj.receiveShadow;
         obj.castShadow = State.settings.shadows;
         obj.receiveShadow = State.settings.shadows;
       }
@@ -6905,10 +6976,31 @@ function setGraphicsQuality(q) {
   localStorage.setItem('pixeloil_quality', q);
   if (renderer) {
     if (q === 'low') {
+      if (renderer) {
+        renderer.shadowMap.mapSize.width = 1024;
+        renderer.shadowMap.mapSize.height = 1024;
+        renderer.getContext().getParameter(renderer.getContext().MAX_TEXTURE_IMAGE_UNITS);
+      }
+      particleLimit = 15;
       renderer.setPixelRatio(1);
     } else if (q === 'med') {
+      if (renderer) {
+        renderer.shadowMap.mapSize.width = 1024;
+        renderer.shadowMap.mapSize.height = 1024;
+      }
+      particleLimit = 25;
+      if (renderer) {
+        renderer.shadowMap.mapSize.width = 2048;
+        renderer.shadowMap.mapSize.height = 2048;
+      }
+      particleLimit = 40;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     } else {
+      if (renderer) {
+        renderer.shadowMap.mapSize.width = 2048;
+        renderer.shadowMap.mapSize.height = 2048;
+      }
+      particleLimit = 40;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     }
   }
