@@ -7457,3 +7457,5 @@ window.addEventListener('DOMContentLoaded', async () => {
   setTimeout(checkDailyStreak, 1200);
   showToast(t('toast_welcome'));
 });
+}
+}
