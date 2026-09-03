@@ -177,8 +177,8 @@ body, html {
   font-weight: 800;
   font-size: 12px;
   cursor: pointer;
-  min-height: 34px;
-  min-width: 38px;
+  min-height: 48px;
+  min-width: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -277,7 +277,7 @@ body, html {
 }
 .debug-chip-btn {
   padding: 5px 9px;
-  min-height: 34px;
+  min-height: 48px;
   font-size: 11px;
   font-weight: 800;
   gap: 4px;
@@ -285,7 +285,7 @@ body, html {
 }
 .settings-chip-btn {
   padding: 5px 9px;
-  min-height: 34px;
+  min-height: 48px;
 }
 
 /* =========================================================
@@ -333,8 +333,8 @@ body, html {
 .cam-btn {
   width: 40px;
   height: 40px;
-  min-height: 40px;
-  min-width: 40px;
+  min-height: 48px;
+  min-width: 48px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -368,7 +368,7 @@ body, html {
     width: 38px;
     height: 38px;
     min-height: 38px;
-    min-width: 38px;
+    min-width: 48px;
     padding: 0;
   }
   .cam-btn-text, .cam-hint-chip {
@@ -434,8 +434,8 @@ body, html {
   border-radius: var(--radius-sm);
   width: 36px;
   height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  min-width: 48px;
+  min-height: 48px;
   cursor: pointer;
   font-weight: 800;
   font-size: 16px;
@@ -805,7 +805,7 @@ body, html {
   background: var(--bg-paper);
   padding: 6px 10px;
   min-height: 38px;
-  min-width: 40px;
+  min-width: 48px;
 }
 .settings-chip-btn:hover {
   background: var(--accent-gold);
@@ -856,7 +856,7 @@ body, html {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   font-weight: 800;
-  min-width: 36px;
+  min-width: 48px;
   text-align: right;
 }
 
@@ -1025,8 +1025,8 @@ body, html {
   .cam-btn {
     width: 36px;
     height: 36px;
-    min-height: 36px;
-    min-width: 36px;
+    min-height: 48px;
+    min-width: 48px;
     padding: 0;
   }
   #fab-menu {
@@ -1036,8 +1036,8 @@ body, html {
   }
   .fab-btn {
     padding: 8px 10px;
-    min-height: 42px;
-    min-width: 42px;
+    min-height: 48px;
+    min-width: 48px;
   }
   .fab-text {
     display: none;
@@ -1052,7 +1052,7 @@ body, html {
    ========================================================= */
 .rush-banner {
   position: absolute;
-  top: max(8px, env(safe-area-inset-top, 8px));
+  top: calc(72px + env(safe-area-inset-top, 8px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 95;
@@ -1168,5 +1168,31 @@ body, html {
 @keyframes pulseAnim {
   0% { transform: scale(0.92); opacity: 0.8; }
   100% { transform: scale(1.12); opacity: 1; }
+}
+
+
+/* F-2: Cinematic vignette */
+#canvas-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.18) 100%);
+  z-index: 1;
+}
+
+/* E-02: Typography scaling for mobile */
+@media (max-width: 640px) {
+  :root {
+    --fs-xs: clamp(10px, 2.5vw, 12px);
+    --fs-sm: clamp(11px, 3vw, 14px);
+    --fs-base: clamp(12px, 3.5vw, 15px);
+  }
+  body { font-size: var(--fs-base); }
+  .toast-item { font-size: var(--fs-xs); }
+  .stat-chip { font-size: var(--fs-sm); }
 }
 
