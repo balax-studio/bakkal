@@ -20,6 +20,13 @@ tonemap_exposure = 1.08
 glow_enabled = true
 glow_intensity = 0.35
 glow_bloom = 0.12
+fog_enabled = true
+fog_light_color = Color(0.816, 0.886, 0.933, 1)
+fog_density = 0.001
+fog_mode = 0
+fog_depth_begin = 48.0
+fog_depth_end = 135.0
+fog_aerial_perspective = 0.5
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_script")
