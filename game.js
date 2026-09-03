@@ -748,8 +748,8 @@ let rollingCanVelocity = 0;
 // Dynamic Building Mesh References
 let canopyGroup = null;
 let canopyRoofMesh = null;
-let canopyAnimProgress = localStorage.getItem('pixeloil_canopy_vis') !== 'false' ? 1.0 : 0.0;
-let canopyTargetProgress = canopyAnimProgress;
+let canopyAnimProgress = 1.0;
+let canopyTargetProgress = 1.0;
 let carWashGroup = null;
 let marketBayGroup = null;
 let solarPanelsGroup = null;
@@ -774,34 +774,34 @@ let islandDirtMesh = null;
 let islandSlabMesh = null;
 
 const pumpSlots = [
-  { id: 0, pos: new THREE.Vector3(-4.5, 0, -1.8), occupiedBy: null, mesh: null, isBuilt: true },
-  { id: 1, pos: new THREE.Vector3(4.5, 0, -1.8),  occupiedBy: null, mesh: null, isBuilt: false },
-  { id: 2, pos: new THREE.Vector3(-4.5, 0, 3.4),  occupiedBy: null, mesh: null, isBuilt: false },
-  { id: 3, pos: new THREE.Vector3(4.5, 0, 3.4),   occupiedBy: null, mesh: null, isBuilt: false }
+  { id: 0, pos: new THREE.Vector3(-4.5, 0.2, -1.2), dockZ: 0.5, occupiedBy: null, mesh: null, isBuilt: true },
+  { id: 1, pos: new THREE.Vector3(4.5, 0.2, -1.2),  dockZ: 0.5, occupiedBy: null, mesh: null, isBuilt: false },
+  { id: 2, pos: new THREE.Vector3(-4.5, 0.2, 2.4),   dockZ: 4.2, occupiedBy: null, mesh: null, isBuilt: false },
+  { id: 3, pos: new THREE.Vector3(4.5, 0.2, 2.4),    dockZ: 4.2, occupiedBy: null, mesh: null, isBuilt: false }
 ];
 
-// Pre-designated 3D Construction Plots
+// Pre-designated 3D Construction Plots (Calibrated Zero-Overlap Coordinates & Unlock Tiers)
 const PLOTS = {
-  pump2:        { id: 'pump2',        type: 'pump',         slotId: 1, pos: new THREE.Vector3(4.5, 0, -1.8),   cost: 6000,  duration: 45, name: 'Pompa #2',       tab: 'fac' },
-  pump3:        { id: 'pump3',        type: 'pump',         slotId: 2, pos: new THREE.Vector3(-4.5, 0, 3.4),   cost: 8000,  duration: 45, name: 'Pompa #3',       tab: 'fac' },
-  pump4:        { id: 'pump4',        type: 'pump',         slotId: 3, pos: new THREE.Vector3(4.5, 0, 3.4),    cost: 10000, duration: 45, name: 'Pompa #4',       tab: 'fac' },
-  wash:         { id: 'wash',         type: 'wash',         pos: new THREE.Vector3(18.0, 0.04, 2.0),       cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
-  market:       { id: 'market',       type: 'market',       pos: new THREE.Vector3(-14.0, 0.04, -8.0),     cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
-  solar:        { id: 'solar',        type: 'solar',        pos: new THREE.Vector3(0, 4.55, -9.5),         cost: 8500,  duration: 60, name: 'Çatı GES',       tab: 'energy' },
-  turbine:      { id: 'turbine',      type: 'turbine',      pos: new THREE.Vector3(-24.0, 0.04, -9.0),     cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
-  ev:           { id: 'ev',           type: 'ev',           pos: new THREE.Vector3(-8.0, 0.04, 4.0),       cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
-  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',    pos: new THREE.Vector3(22.0, 0.04, -9.0),      cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
-  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',     pos: new THREE.Vector3(-4.0, 0.04, -15.0),     cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
-  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',   pos: new THREE.Vector3(24.0, 0.04, 9.0),       cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
-  moto_dock:    { id: 'moto_dock',    type: 'moto_dock',    pos: new THREE.Vector3(-16.0, 0.04, 5.0),      cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
-  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',   pos: new THREE.Vector3(30.0, 0.04, -16.0),     cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
-  bakery_drive: { id: 'bakery_drive', type: 'bakery_drive', pos: new THREE.Vector3(-14.0, 0.04, -1.0),     cost: 16000, duration: 60, name: 'Drive-Thru Cafe',tab: 'lifestyle' },
-  food_truck:   { id: 'food_truck',   type: 'food_truck',   pos: new THREE.Vector3(14.0, 0.04, -15.0),     cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
-  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',  pos: new THREE.Vector3(5.0, 0.04, -15.0),      cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
-  pet_park:     { id: 'pet_park',     type: 'pet_park',     pos: new THREE.Vector3(-26.0, 0.04, 5.0),      cost: 7000,  duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
-  parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',   pos: new THREE.Vector3(-14.0, 0.04, -15.0),    cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
-  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',      pos: new THREE.Vector3(8.5, 0.04, -6.5),       cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
-  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay', pos: new THREE.Vector3(-24.0, 0.04, -2.0),     cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
+  pump2:        { id: 'pump2',        type: 'pump',         slotId: 1, tier: 1, pos: new THREE.Vector3(4.5, 0.2, -1.2),    cost: 6000,  duration: 45, name: 'Pompa #2',       tab: 'fac' },
+  pump3:        { id: 'pump3',        type: 'pump',         slotId: 2, tier: 2, pos: new THREE.Vector3(-4.5, 0.2, 2.4),    cost: 8000,  duration: 45, name: 'Pompa #3',       tab: 'fac' },
+  pump4:        { id: 'pump4',        type: 'pump',         slotId: 3, tier: 3, pos: new THREE.Vector3(4.5, 0.2, 2.4),     cost: 10000, duration: 45, name: 'Pompa #4',       tab: 'fac' },
+  solar:        { id: 'solar',        type: 'solar',                   tier: 1, pos: new THREE.Vector3(0, 4.55, -10.0),    cost: 8500,  duration: 60, name: 'Çatı GES',       tab: 'energy' },
+  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',                 tier: 1, pos: new THREE.Vector3(6.8, 0.04, -7.0),   cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
+  parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',              tier: 1, pos: new THREE.Vector3(-6.8, 0.04, -7.0),  cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
+  wash:         { id: 'wash',         type: 'wash',                    tier: 1, pos: new THREE.Vector3(16.25, 0.04, 2.0),  cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
+  market:       { id: 'market',       type: 'market',                  tier: 1, pos: new THREE.Vector3(0, 0.04, -10.0),    cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
+  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',               tier: 2, pos: new THREE.Vector3(16.25, 0.04, -4.5), cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
+  food_truck:   { id: 'food_truck',   type: 'food_truck',              tier: 2, pos: new THREE.Vector3(8.0, 0.04, -3.5),   cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
+  ev:           { id: 'ev',           type: 'ev',                      tier: 2, pos: new THREE.Vector3(-16.25, 0.04, 3.5), cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
+  bakery_drive: { id: 'bakery_drive', type: 'bakery_drive',            tier: 2, pos: new THREE.Vector3(-16.25, 0.04, -2.5),cost: 16000, duration: 60, name: 'Drive-Thru Cafe',tab: 'lifestyle' },
+  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',                tier: 3, pos: new THREE.Vector3(16.25, 0.04, -9.5), cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
+  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',              tier: 3, pos: new THREE.Vector3(16.0, 0.04, -13.5), cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
+  moto_dock:    { id: 'moto_dock',    type: 'moto_dock',               tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -8.0),cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
+  pet_park:     { id: 'pet_park',     type: 'pet_park',                tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -13.5),cost: 7000, duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
+  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',             tier: 3, pos: new THREE.Vector3(0, 0.04, -15.0),    cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
+  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',              tier: 4, pos: new THREE.Vector3(24.0, 0.04, -6.0),  cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
+  turbine:      { id: 'turbine',      type: 'turbine',                 tier: 4, pos: new THREE.Vector3(-22.0, 0.04, -13.0),cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
+  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay',            tier: 4, pos: new THREE.Vector3(-22.0, 0.04, -4.0), cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
 };
 
 const plotSignMeshes = {};
@@ -853,25 +853,13 @@ function createStationGridTexture() {
     }
   }
 
-  // 3. Safety Hazard Curb Edge (Bottom Edge / Z+ facing highway)
-  const stripeWidth = 24;
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(0, 978, 1024, 46);
-  ctx.clip();
-  ctx.fillStyle = '#E5B242';
-  ctx.fillRect(0, 978, 1024, 46);
-  ctx.fillStyle = '#1A2028';
-  for (let x = -100; x < 1100; x += stripeWidth * 2) {
-    ctx.beginPath();
-    ctx.moveTo(x, 1024);
-    ctx.lineTo(x + stripeWidth, 1024);
-    ctx.lineTo(x + stripeWidth + 46, 978);
-    ctx.lineTo(x + 46, 978);
-    ctx.closePath();
-    ctx.fill();
-  }
-  ctx.restore();
+  // 3. Clean Perimeter Border & Curb Line (High-Precision Minimalist Framing)
+  ctx.strokeStyle = '#3A4452';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, 1020, 1020);
+  ctx.strokeStyle = '#5E6D82';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(8, 8, 1008, 1008);
 
   // 4. Pump Bay Demarcation Zones (Pumps 1, 2, 3, 4)
   const drawBay = (cx, cy, label) => {
@@ -961,13 +949,13 @@ function getStationGridTexture() {
 }
 
 const Mat = {
-  grass: new THREE.MeshLambertMaterial({ color: 0x6E955A }),
+  grass: new THREE.MeshLambertMaterial({ color: 0x6E955A, flatShading: true }),
   dirt: new THREE.MeshLambertMaterial({ color: 0x8C6544 }),
   asphalt: new THREE.MeshLambertMaterial({ color: 0x2A323D }),
   concrete: new THREE.MeshLambertMaterial({ color: 0x8A94A0 }),
   apronGrid: new THREE.MeshLambertMaterial({ map: getStationGridTexture() }),
-  roadYellow: new THREE.MeshLambertMaterial({ color: 0xE5B242 }),
-  roadWhite: new THREE.MeshLambertMaterial({ color: 0xDCD8CF }),
+  roadYellow: new THREE.MeshLambertMaterial({ color: 0xE5B242, polygonOffset: true, polygonOffsetFactor: -1.0, polygonOffsetUnits: -1.0 }),
+  roadWhite: new THREE.MeshLambertMaterial({ color: 0xF7F8FA, polygonOffset: true, polygonOffsetFactor: -1.0, polygonOffsetUnits: -1.0 }),
   buildingWall: new THREE.MeshLambertMaterial({ color: 0xEDEEF2 }),
   buildingRoof: new THREE.MeshLambertMaterial({ color: 0x333C48 }),
   redTrim: new THREE.MeshLambertMaterial({ color: 0xD45D56 }),
@@ -1012,7 +1000,7 @@ const Mat = {
   evGlow: new THREE.MeshBasicMaterial({ color: 0x4EE4EA }),
   // Scaffolding & Custom Construction Plots
   hazardCone: new THREE.MeshLambertMaterial({ color: 0xF37A20 }),
-  hazardStripe: new THREE.MeshLambertMaterial({ color: 0xF2BA36 }),
+  hazardStripe: new THREE.MeshLambertMaterial({ color: 0xF2BA36, polygonOffset: true, polygonOffsetFactor: -1.0, polygonOffsetUnits: -1.0 }),
   palletWood: new THREE.MeshLambertMaterial({ color: 0x966F48 }),
   brickClay: new THREE.MeshLambertMaterial({ color: 0xB55239 }),
   sandPile: new THREE.MeshLambertMaterial({ color: 0xD6B88D }),
@@ -1066,17 +1054,20 @@ function initThree() {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
-  // Scene with Atmospheric Soft Depth Fog
+  // Scene with Atmospheric Soft Depth Fog (Linear transition: crisp station core, soft misty horizon)
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xCCE0ED);
-  scene.fog = new THREE.FogExp2(0xCCE0ED, 0.0075);
+  scene.fog = new THREE.Fog(0xCCE0ED, 48, 135);
 
-  // Orthographic Camera (Isometric 2:1)
+  // Orthographic Camera (Isometric 2:1) with negative near plane to completely eliminate foreground clipping arc
   const aspect = width / height;
   const d = 18;
-  camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, 1, 1000);
+  camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, -300, 1000);
   camera.position.set(26, 24, 26);
   camera.lookAt(0, 0, 0);
+  camera.near = -300;
+  camera.far = 1000;
+  camera.updateProjectionMatrix();
 
   // Renderer with ACESFilmic Tone Mapping for rich cinematic dynamic range & true color fidelity
   renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -1100,8 +1091,8 @@ function initThree() {
   controls.rotateSpeed = 0.85;
   controls.maxPolarAngle = Math.PI / 2.05;
   controls.minPolarAngle = Math.PI / 10;
-  controls.minZoom = 0.35;
-  controls.maxZoom = 4.0;
+  controls.minZoom = 0.55;
+  controls.maxZoom = 3.5;
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.mouseButtons = {
@@ -1483,24 +1474,23 @@ function updateStationApronExpansion() {
     stationApronExtensionsGroup.remove(obj);
   }
 
-  // Facility apron connection definitions
+  // Facility apron connection definitions (Calibrated seamless wing extensions)
   const FACILITY_APRONS = [
-    { key: 'wash',         prop: 'hasCarWash',     dim: [12.0, 0.08, 14.0], center: [18.0, 0.04, 2.0],   curbSide: 'east' },
-    { key: 'tire_shop',    prop: 'hasTireShop',    dim: [10.0, 0.08, 10.0], center: [22.0, 0.04, -9.0],  curbSide: 'east' },
-    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [10.0, 0.08, 8.0],  center: [24.0, 0.04, 9.0],   curbSide: 'east' },
-    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [14.0, 0.08, 12.0], center: [30.0, 0.04, -16.0], curbSide: 'east' },
-    { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [10.0, 0.08, 9.0],  center: [-14.0, 0.04, -1.0], curbSide: 'west' },
-    { key: 'market',       prop: 'hasMarket',      dim: [10.0, 0.08, 10.0], center: [-14.0, 0.04, -8.0], curbSide: 'west' },
-    { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [8.0, 0.08, 8.0],   center: [-16.0, 0.04, 5.0],  curbSide: 'west' },
-    { key: 'ev',           prop: 'hasEvCharger',   dim: [7.0, 0.08, 6.0],   center: [-8.0, 0.04, 4.0],   curbSide: 'west' },
-    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [10.0, 0.08, 8.0],  center: [-24.0, 0.04, -2.0], curbSide: 'west' },
-    { key: 'turbine',      prop: 'hasTurbine',     dim: [8.0, 0.08, 8.0],   center: [-24.0, 0.04, -9.0], curbSide: 'west' },
-    { key: 'pet_park',     prop: 'hasPetPark',     dim: [8.0, 0.08, 8.0],   center: [-26.0, 0.04, 5.0],  curbSide: 'west' },
-    { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [9.0, 0.08, 8.0],   center: [-4.0, 0.04, -15.0], curbSide: 'north' },
-    { key: 'food_truck',   prop: 'hasFoodTruck',   dim: [10.0, 0.08, 8.0],  center: [14.0, 0.04, -15.0], curbSide: 'north' },
-    { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 8.0],   center: [5.0, 0.04, -15.0],  curbSide: 'north' },
-    { key: 'parcel_hub',   prop: 'hasParcelHub',   dim: [7.0, 0.08, 6.0],   center: [-14.0, 0.04, -15.0],curbSide: 'north' },
-    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [6.0, 0.08, 6.0],   center: [8.5, 0.04, -6.5],   curbSide: 'north' }
+    { key: 'wash',         prop: 'hasCarWash',     dim: [8.5, 0.08, 9.0],   center: [16.25, 0.04, 2.0],   curbSide: 'east' },
+    { key: 'tire_shop',    prop: 'hasTireShop',    dim: [8.5, 0.08, 5.5],   center: [16.25, 0.04, -4.5],  curbSide: 'east' },
+    { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [8.5, 0.08, 4.5],   center: [16.25, 0.04, -9.5],  curbSide: 'east' },
+    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [8.0, 0.08, 4.0],   center: [16.0, 0.04, -13.5],  curbSide: 'east' },
+    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [10.0, 0.08, 12.0], center: [24.0, 0.04, -6.0],  curbSide: 'east' },
+    { key: 'ev',           prop: 'hasEvCharger',   dim: [8.5, 0.08, 5.5],   center: [-16.25, 0.04, 3.5],  curbSide: 'west' },
+    { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [8.5, 0.08, 6.0],   center: [-16.25, 0.04, -2.5], curbSide: 'west' },
+    { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -8.0], curbSide: 'west' },
+    { key: 'pet_park',     prop: 'hasPetPark',     dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -13.5],curbSide: 'west' },
+    { key: 'turbine',      prop: 'hasTurbine',     dim: [7.0, 0.08, 7.0],   center: [-22.0, 0.04, -13.0], curbSide: 'west' },
+    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [7.0, 0.08, 6.0],   center: [-22.0, 0.04, -4.0],  curbSide: 'west' },
+    { key: 'food_truck',   prop: 'hasFoodTruck',   dim: [5.0, 0.08, 4.0],   center: [8.0, 0.04, -3.5],    curbSide: 'north' },
+    { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 4.0],   center: [0, 0.04, -15.0],     curbSide: 'north' },
+    { key: 'parcel_hub',   prop: 'hasParcelHub',   dim: [3.5, 0.08, 3.0],   center: [-6.8, 0.04, -7.0],   curbSide: 'north' },
+    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [3.5, 0.08, 3.0],   center: [6.8, 0.04, -7.0],    curbSide: 'north' }
   ];
 
   FACILITY_APRONS.forEach(fa => {
@@ -1539,57 +1529,222 @@ function updateStationApronExpansion() {
   });
 }
 
+// =========================================================
+// PLANETOID SPHERICAL CURVATURE & HIGHWAY ELEVATION SYSTEM
+// =========================================================
+
+function getPlanetoidElevation(x, z) {
+  const dx = x;
+  const dz = z - 2;
+  const r = Math.hypot(dx, dz);
+  const plateauR = 27.5;
+  let elev = 0.0;
+
+  if (r > plateauR) {
+    const dr = r - plateauR;
+    // Gentle spherical curve downward (Animal Crossing / Tiny Planet curvature)
+    const curve = -0.00165 * dr * dr;
+    // Natural rolling meadow ripples outside station core
+    const ripple = Math.sin(x * 0.045) * Math.cos(z * 0.045) * 1.5 * Math.min(1.0, dr / 40.0);
+    // Outer perimeter steep drop to submerge into depth fog
+    const edgeDrop = dr > 100 ? -0.0035 * (dr - 100) * (dr - 100) : 0.0;
+    elev = curve + ripple + edgeDrop;
+  }
+
+  // Highway Corridor Trench & Elevation Mask (Z: 7.0 to 16.0, highway center Z = 11.5)
+  // Guarantees the asphalt highway ribbon, lane markings, and tunnel portals NEVER sink below the grass
+  const roadCenterZ = 11.5;
+  const distFromRoad = Math.abs(z - roadCenterZ);
+  const roadHalfWidth = 4.2; // 8.4m wide clear road trench
+  const blendDist = 2.4;     // Smooth natural embankment shoulder
+  if (distFromRoad < roadHalfWidth + blendDist && Math.abs(x) <= 86) {
+    const roadBase = getRoadElevation(x) - 0.06;
+    if (distFromRoad <= roadHalfWidth) {
+      elev = Math.min(elev, roadBase);
+    } else {
+      const t = (distFromRoad - roadHalfWidth) / blendDist;
+      const smoothFactor = t * t * (3 - 2 * t);
+      const blendedElev = THREE.MathUtils.lerp(roadBase, elev, smoothFactor);
+      elev = Math.min(elev, blendedElev);
+    }
+  }
+
+  return elev;
+}
+
+function getRoadElevation(x) {
+  const absX = Math.abs(x);
+  if (absX <= 24.0) return 0.035;
+  const dx = absX - 24.0;
+  return 0.035 - 0.0016 * dx * dx;
+}
+
+function getRoadSlope(x) {
+  const step = 0.5;
+  return (getRoadElevation(x + step) - getRoadElevation(x - step)) / (2 * step);
+}
+
+function createPlanetoidTerrain() {
+  const group = new THREE.Group();
+
+  // Central Core Plateau Slab (ensuring foundation under forecourt and station)
+  const coreGeo = new THREE.CylinderGeometry(28, 29, 1.2, 32);
+  const coreMesh = new THREE.Mesh(coreGeo, Mat.grass);
+  coreMesh.position.set(0, -0.6, 2);
+  coreMesh.receiveShadow = true;
+  group.add(coreMesh);
+  islandGrassMesh = coreMesh;
+
+  // Massive 320x320 Low-Poly Curved Planetoid Terrain Surface
+  const size = 320;
+  const segments = 64;
+  const planeGeo = new THREE.PlaneGeometry(size, size, segments, segments);
+  planeGeo.rotateX(-Math.PI / 2);
+
+  const posAttr = planeGeo.attributes.position;
+  for (let i = 0; i < posAttr.count; i++) {
+    const vx = posAttr.getX(i);
+    const vz = posAttr.getZ(i);
+    const vy = getPlanetoidElevation(vx, vz);
+    posAttr.setY(i, vy);
+  }
+  planeGeo.computeVertexNormals();
+
+  const planetMesh = new THREE.Mesh(planeGeo, Mat.grass);
+  planetMesh.receiveShadow = true;
+  group.add(planetMesh);
+
+  // Stepped Earth Soil Crust underneath the central plateau
+  const dirtGeo = new THREE.CylinderGeometry(28.5, 30, 2.0, 32);
+  islandDirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
+  islandDirtMesh.position.set(0, -2.0, 2);
+  group.add(islandDirtMesh);
+
+  // Dark Brutalist Foundation Ring
+  const slabGeo = new THREE.CylinderGeometry(30, 31, 0.6, 32);
+  islandSlabMesh = new THREE.Mesh(slabGeo, Mat.darkInk);
+  islandSlabMesh.position.set(0, -3.2, 2);
+  group.add(islandSlabMesh);
+
+  return group;
+}
+
+function createCurvedHighway() {
+  const group = new THREE.Group();
+
+  // Procedural Curved Highway Ribbon from X = -85 to +85
+  const width = 7.5;
+  const xStart = -85;
+  const xEnd = 85;
+  const xSteps = 68;
+  const stepSize = (xEnd - xStart) / xSteps;
+
+  const roadGeo = new THREE.BufferGeometry();
+  const vertices = [];
+  const uvs = [];
+  const indices = [];
+
+  for (let i = 0; i <= xSteps; i++) {
+    const x = xStart + i * stepSize;
+    const y = getRoadElevation(x);
+    const zLeft = 11.5 - width / 2;
+    const zRight = 11.5 + width / 2;
+
+    vertices.push(x, y, zLeft);
+    vertices.push(x, y, zRight);
+
+    const u = i / xSteps;
+    uvs.push(u, 0);
+    uvs.push(u, 1);
+  }
+
+  for (let i = 0; i < xSteps; i++) {
+    const row1 = i * 2;
+    const row2 = (i + 1) * 2;
+    indices.push(row1, row1 + 1, row2);
+    indices.push(row1 + 1, row2 + 1, row2);
+  }
+
+  roadGeo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  roadGeo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+  roadGeo.setIndex(indices);
+  roadGeo.computeVertexNormals();
+
+  const roadMesh = new THREE.Mesh(roadGeo, Mat.asphalt);
+  roadMesh.receiveShadow = true;
+  group.add(roadMesh);
+
+  // Double Yellow Lines following highway curvature from X = -65 to +65
+  for (let x = -63; x <= 63; x += 3) {
+    const y = getRoadElevation(x) + 0.02;
+    const slope = getRoadSlope(x);
+    const rotZ = -Math.atan(slope);
+
+    const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
+    const l1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
+    l1.position.set(x, y, 11.35);
+    l1.rotation.z = rotZ;
+
+    const l2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
+    l2.position.set(x, y, 11.65);
+    l2.rotation.z = rotZ;
+
+    group.add(l1, l2);
+  }
+
+  // White Dashed Shoulder Lines
+  for (let x = -63; x <= 63; x += 4) {
+    const y = getRoadElevation(x) + 0.02;
+    const slope = getRoadSlope(x);
+    const rotZ = -Math.atan(slope);
+
+    const lineGeo = new THREE.BoxGeometry(1.6, 0.02, 0.12);
+    const w1 = new THREE.Mesh(lineGeo, Mat.roadWhite);
+    w1.position.set(x, y, 11.5 - 3.4);
+    w1.rotation.z = rotZ;
+
+    const w2 = new THREE.Mesh(lineGeo, Mat.roadWhite);
+    w2.position.set(x, y, 11.5 + 3.4);
+    w2.rotation.z = rotZ;
+
+    group.add(w1, w2);
+  }
+
+  return group;
+}
+
 function buildDiorama() {
   const diorama = new THREE.Group();
 
-  // 1. Extended Island Ground Base (80x80 Floating Neo-Brutalist Diorama)
-  const grassGeo = new THREE.BoxGeometry(80, 1.5, 80);
-  islandGrassMesh = new THREE.Mesh(grassGeo, Mat.grass);
-  islandGrassMesh.position.y = -0.75;
-  islandGrassMesh.receiveShadow = true;
-  diorama.add(islandGrassMesh);
+  // 1. Planetoid Spherical Curved Terrain (Animal Crossing / Curved Horizon World)
+  const planetoidTerrain = createPlanetoidTerrain();
+  diorama.add(planetoidTerrain);
 
-  // Stepped Earth Soil Layer
-  const dirtGeo = new THREE.BoxGeometry(80, 2.2, 80);
-  islandDirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
-  islandDirtMesh.position.y = -2.6;
-  diorama.add(islandDirtMesh);
+  // 2. Curved Asphalt Highway Ribbon & Dynamic Markings
+  const curvedHighway = createCurvedHighway();
+  diorama.add(curvedHighway);
 
-  // Dark Ink Floating Base Rim Slab
-  const baseSlabGeo = new THREE.BoxGeometry(82, 0.6, 82);
-  islandSlabMesh = new THREE.Mesh(baseSlabGeo, Mat.darkInk);
-  islandSlabMesh.position.y = -3.8;
-  diorama.add(islandSlabMesh);
+  // 2b. West Mountain Highway Tunnel Portal (anchored into planet curvature)
+  buildWestHighwayPortal(diorama);
 
-  // 2. Asphalt Highway Road (80 Units Full Width)
-  const roadGeo = new THREE.BoxGeometry(80, 0.06, 7.5);
-  const roadMesh = new THREE.Mesh(roadGeo, Mat.asphalt);
-  roadMesh.position.set(0, 0.03, 11.5);
-  roadMesh.receiveShadow = true;
-  diorama.add(roadMesh);
+  // 2c. East Mountain Highway Tunnel Portal (anchored into planet curvature)
+  buildEastHighwayPortal(diorama);
 
-  // Double Yellow Lines across full 80-unit highway
-  for (let i = -38; i <= 38; i += 3) {
-    const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
-    const line1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    line1.position.set(i, 0.07, 11.35);
-    const line2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    line2.position.set(i, 0.07, 11.65);
-    diorama.add(line1, line2);
-  }
-
-  // 2b. West Cloud Viaduct (Sol Sınır - Bulutlara Uzanan Asma Viyadük Köprüsü)
-  buildWestCloudViaduct(diorama);
-
-  // 2c. East Hyper-Ring Speedway Portal (Sağ Sınır - Fütüristik Aerodinamik Hızlandırma Kemeri)
-  buildEastHyperRingPortal(diorama);
-
-  // 3. Station Concrete Forecourt Apron (Procedural High-Precision Industrial Grid)
-  const apronGeo = new THREE.BoxGeometry(28, 0.08, 22);
+  // 3. Station Core Forecourt Apron (Pumps & Market Plaza)
+  // Setback standard: Front curb strictly at Z <= 6.0 (2.5m clear green buffer to highway Z = 8.5)
+  const apronGeo = new THREE.BoxGeometry(24.0, 0.08, 19.0);
   const apronMesh = new THREE.Mesh(apronGeo, Mat.apronGrid);
-  apronMesh.position.set(0, 0.04, 0.5);
+  apronMesh.position.set(0, 0.04, -3.5); // X: [-12.0, 12.0], Z: [-13.0, 6.0]
   apronMesh.receiveShadow = true;
   diorama.add(apronMesh);
+
+  // Concrete safety curbs framing the core apron flanks
+  const curbGeoZ = new THREE.BoxGeometry(0.35, 0.16, 19.0);
+  const westCurb = new THREE.Mesh(curbGeoZ, Mat.concrete);
+  westCurb.position.set(-12.0, 0.08, -3.5);
+  const eastCurb = new THREE.Mesh(curbGeoZ, Mat.concrete);
+  eastCurb.position.set(12.0, 0.08, -3.5);
+  diorama.add(westCurb, eastCurb);
 
   // Dynamic Seamless Apron Expansion (Encompassing all built facilities)
   stationApronExtensionsGroup = new THREE.Group();
@@ -1625,14 +1780,15 @@ function buildDiorama() {
     plotSignMeshes[plot.id] = plotSign;
     diorama.add(plotSign);
   });
+  updateAllPlotSigns();
 
   // 8. Fuel Tanker Unloading Area & Storage Manholes (Behind Shop)
   const tankerArea = createTankerUnloadingArea();
   diorama.add(tankerArea);
 
-  // 9. Highway LED Price Totem Sign
+  // 9. Highway LED Price Totem Sign (Safe setback on station apron edge)
   const totem = createTotemMesh();
-  totem.position.set(-16.5, 0, 6.8);
+  totem.position.set(-18.0, 0, 5.0);
   totem.rotation.y = 0.44;
   diorama.add(totem);
 
@@ -1735,48 +1891,47 @@ function createSafetyConeMesh() {
 
 function drawPlotBadgeCanvas(canvas, plot) {
   const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 256, 100);
+  ctx.clearRect(0, 0, 256, 90);
 
   // Rounded pill background
-  const r = 22;
+  const r = 18;
   ctx.beginPath();
-  ctx.moveTo(r + 6, 6);
-  ctx.lineTo(256 - r - 6, 6);
-  ctx.arcTo(256 - 6, 6, 256 - 6, 100 - 6, r);
-  ctx.arcTo(256 - 6, 100 - 6, 6, 100 - 6, r);
-  ctx.arcTo(6, 100 - 6, 6, 6, r);
-  ctx.arcTo(6, 6, 256 - 6, 6, r);
+  ctx.moveTo(r + 4, 4);
+  ctx.lineTo(256 - r - 4, 4);
+  ctx.arcTo(256 - 4, 4, 256 - 4, 90 - 4, r);
+  ctx.arcTo(256 - 4, 90 - 4, 4, 90 - 4, r);
+  ctx.arcTo(4, 90 - 4, 4, 4, r);
+  ctx.arcTo(4, 4, 256 - 4, 4, r);
   ctx.closePath();
 
-  ctx.fillStyle = 'rgba(28, 36, 43, 0.95)';
+  ctx.fillStyle = 'rgba(24, 30, 37, 0.94)';
   ctx.fill();
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 3;
   ctx.strokeStyle = '#E5A93C';
   ctx.stroke();
 
-  // Dynamic localized plot name
   const localizedName = t('plot_' + plot.id, plot.name);
 
-  // Plus icon & plot name
+  // Name
   ctx.fillStyle = '#E5A93C';
-  ctx.font = 'bold 22px Plus Jakarta Sans, sans-serif';
+  ctx.font = 'bold 20px Plus Jakarta Sans, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(`+ ${localizedName}`, 128, 38);
+  ctx.fillText(`+ ${localizedName}`, 128, 34);
 
   // Price & Duration
   ctx.fillStyle = '#FAF7EE';
-  ctx.font = 'bold 20px JetBrains Mono, monospace';
-  ctx.fillText(`₺${plot.cost.toLocaleString()}`, 96, 76);
+  ctx.font = 'bold 18px JetBrains Mono, monospace';
+  ctx.fillText(`₺${plot.cost.toLocaleString()}`, 96, 68);
 
   ctx.fillStyle = '#78CADC';
-  ctx.font = 'bold 15px Plus Jakarta Sans, sans-serif';
-  ctx.fillText(`${plot.duration}s`, 198, 76);
+  ctx.font = 'bold 14px Plus Jakarta Sans, sans-serif';
+  ctx.fillText(`${plot.duration}s`, 195, 68);
 }
 
-function createPlotBadgeMesh(plot, floatY = 1.0) {
+function createPlotBadgeMesh(plot, floatY = 0.65) {
   const canvas = document.createElement('canvas');
   canvas.width = 256;
-  canvas.height = 100;
+  canvas.height = 90;
   drawPlotBadgeCanvas(canvas, plot);
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -1788,12 +1943,31 @@ function createPlotBadgeMesh(plot, floatY = 1.0) {
     depthWrite: false,
     side: THREE.DoubleSide
   });
-  const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.62), mat);
+  const badge = new THREE.Mesh(new THREE.PlaneGeometry(1.0, 0.4), mat);
   badge.renderOrder = 99;
   badge.position.set(0, floatY, 0);
-  badge.rotation.x = -Math.PI / 6;
+  badge.rotation.x = -Math.PI / 7;
   badge.userData = { isPlotSign: true, isBadge: true, plotId: plot.id, plot: plot, baseY: floatY };
   return { badge, canvas, texture };
+}
+
+// Blueprint Corner Floor L-Brackets for Clean Site Demarcation
+function addPlotCornerBrackets(group, w, d) {
+  const hw = w / 2;
+  const hd = d / 2;
+  const bracketCorners = [
+    [-hw, -hd, 1, 1],
+    [hw, -hd, -1, 1],
+    [-hw, hd, 1, -1],
+    [hw, hd, -1, -1]
+  ];
+  bracketCorners.forEach(([cx, cz, sx, sz]) => {
+    const b1 = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.02, 0.08), Mat.roadYellow);
+    b1.position.set(cx + sx * 0.25, 0.05, cz);
+    const b2 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.02, 0.5), Mat.roadYellow);
+    b2.position.set(cx, 0.05, cz + sz * 0.25);
+    group.add(b1, b2);
+  });
 }
 
 function createPumpPlotMesh(plot) {
@@ -1801,36 +1975,20 @@ function createPumpPlotMesh(plot) {
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
   // Concrete Fuel Island Base Curb
-  const curb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1.2), Mat.concrete);
-  curb.position.y = 0.06;
+  const curb = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.14, 1.2), Mat.concrete);
+  curb.position.y = 0.07;
   curb.receiveShadow = true;
   curb.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
   group.add(curb);
 
-  // Steel Mounting Baseplate
+  // Steel Mounting Baseplate & Conduit Stub
   const basePlate = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.04, 0.6), Mat.darkInk);
-  basePlate.position.y = 0.13;
-  basePlate.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-  group.add(basePlate);
+  basePlate.position.y = 0.15;
+  const stub = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.16, 8), Mat.chrome);
+  stub.position.set(0, 0.23, 0);
+  group.add(basePlate, stub);
 
-  // Steel Conduit Stub Pipes
-  const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.22, 8), Mat.chrome);
-  p1.position.set(-0.22, 0.22, 0);
-  const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.22, 8), Mat.chrome);
-  p2.position.set(0.22, 0.22, 0);
-  group.add(p1, p2);
-
-  // 4 Traffic Safety Cones at corners
-  const coneOffsets = [[-0.95, -0.42], [0.95, -0.42], [-0.95, 0.42], [0.95, 0.42]];
-  coneOffsets.forEach(([cx, cz]) => {
-    const cGroup = createSafetyConeMesh();
-    cGroup.position.set(cx, 0.12, cz);
-    cGroup.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-    group.add(cGroup);
-  });
-
-  // Floating Pill Badge
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.95);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.75);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
@@ -1843,17 +2001,23 @@ function createWashPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  [[-2.4, -3.8], [2.4, -3.8], [-2.4, 3.8], [2.4, 3.8]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
+  // Drainage Grate Foundation Slab
+  const grate = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.04, 3.6), Mat.darkInk);
+  grate.position.y = 0.03;
+  group.add(grate);
 
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
+  const washPad = new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.02, 3.4), Mat.concrete);
+  washPad.position.y = 0.045;
+  group.add(washPad);
+
+  addPlotCornerBrackets(group, 4.0, 4.0);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.75);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
+
   return group;
 }
 
@@ -1861,17 +2025,17 @@ function createMarketPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  [[-3.0, -2.2], [3.0, -2.2], [-3.0, 2.2], [3.0, 2.2]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
+  // Store Activation Pedestal on Entrance Porch
+  const pedestal = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.35, 0.6), Mat.concrete);
+  pedestal.position.y = 0.175;
+  group.add(pedestal);
 
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.75);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
+
   return group;
 }
 
@@ -1879,18 +2043,19 @@ function createSolarPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Subtle solar frame mounting rail on canopy roof
-  for (let z = -1.6; z <= 1.6; z += 1.6) {
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.04, 0.06), Mat.solarFrame);
+  // Aluminum Mounting Rail Pair on Roof
+  [-0.8, 0.8].forEach(z => {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.04, 0.06), Mat.solarFrame);
     rail.position.set(0, 0.02, z);
     group.add(rail);
-  }
+  });
 
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.85);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.65);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
+
   return group;
 }
 
@@ -1898,23 +2063,19 @@ function createTurbinePlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // Low-profile steel anchor flange on grass
-  const centerFlange = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 0.04, 16), Mat.darkInk);
-  centerFlange.position.y = 0.04;
-  group.add(centerFlange);
+  // Circular Concrete Foundation with Steel Anchor Flange
+  const basePedestal = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.5, 0.10, 16), Mat.concrete);
+  basePedestal.position.y = 0.05;
+  const centerFlange = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.04, 16), Mat.darkInk);
+  centerFlange.position.y = 0.12;
+  group.add(basePedestal, centerFlange);
 
-  // 3 Safety Cones around boundary
-  [[-1.8, -1.2], [1.8, -1.2], [0, 2.2]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.8);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
+
   return group;
 }
 
@@ -1922,288 +2083,124 @@ function createEvPlotMesh(plot) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  // 2 Safety Cones
-  [[-1.4, 0.8], [1.4, 0.8]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
+  // Green Energy Charging Bay Demarcation
+  const bay = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.02, 3.2), Mat.greenAccent);
+  bay.position.y = 0.045;
+  const curbStop = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, 0.2), Mat.roadWhite);
+  curbStop.position.set(0, 0.08, -1.3);
+  group.add(bay, curbStop);
 
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.05);
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.75);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
+
   return group;
 }
 
-function createTireShopPlotMesh(plot) {
+function createGenericPlotMesh(plot, w = 3.2, d = 3.2) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
-  [[-2.2, -2.0], [2.2, -2.0], [-2.2, 2.0], [2.2, 2.0]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
+  // Thin concrete blueprint boundary
+  const foundationDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.04, 16), Mat.darkInk);
+  foundationDisc.position.y = 0.04;
+  const goldRing = new THREE.Mesh(new THREE.RingGeometry(0.42, 0.48, 16), Mat.lampGlow);
+  goldRing.rotation.x = -Math.PI / 2;
+  goldRing.position.y = 0.065;
+  group.add(foundationDisc, goldRing);
 
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
+  addPlotCornerBrackets(group, w, d);
+
+  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.75);
   group.userData.signCanvas = canvas;
   group.userData.signTexture = texture;
   group.userData.badgeMesh = badge;
   group.add(badge);
-  return group;
-}
 
-function createLubeBayPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-2.0, -2.2], [2.0, -2.2], [-2.0, 2.2], [2.0, 2.2]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createVacuumHubPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-2.0, -1.8], [2.0, -1.8], [-2.0, 1.8], [2.0, 1.8]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createMotoDockPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-1.5, -1.2], [1.5, -1.2], [-1.5, 1.2], [1.5, 1.2]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.95);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createTruckStopPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-3.2, -2.2], [3.2, -2.2], [-3.2, 2.2], [3.2, 2.2]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.45);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createBakeryDrivePlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-2.2, -1.8], [2.2, -1.8], [-2.2, 1.8], [2.2, 1.8]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createFoodTruckPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-2.2, -1.6], [2.2, -1.6], [-2.2, 1.6], [2.2, 1.6]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createRestLoungePlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-2.2, -2.0], [2.2, -2.0], [-2.2, 2.0], [2.2, 2.0]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.25);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createPetParkPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-2.2, -2.2], [2.2, -2.2], [-2.2, 2.2], [2.2, 2.2]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createParcelHubPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-1.4, -0.6], [1.4, -0.6], [-1.4, 0.6], [1.4, 0.6]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.05);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createAtmHubPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  [[-1.0, -0.6], [1.0, -0.6], [-1.0, 0.6], [1.0, 0.6]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.15);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
-  return group;
-}
-
-function createHydrogenBayPlotMesh(plot) {
-  const group = new THREE.Group();
-  group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
-
-  const centerFlange = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 0.04, 16), Mat.darkInk);
-  centerFlange.position.y = 0.04;
-  group.add(centerFlange);
-
-  [[-1.8, -1.2], [1.8, -1.2], [0, 2.0]].forEach(([cx, cz]) => {
-    const c = createSafetyConeMesh();
-    c.position.set(cx, 0.04, cz);
-    group.add(c);
-  });
-
-  const { badge, canvas, texture } = createPlotBadgeMesh(plot, 1.35);
-  group.userData.signCanvas = canvas;
-  group.userData.signTexture = texture;
-  group.userData.badgeMesh = badge;
-  group.add(badge);
   return group;
 }
 
 function createPlotSignMesh(plot) {
   switch (plot.type) {
-    case 'pump':
-      return createPumpPlotMesh(plot);
-    case 'wash':
-      return createWashPlotMesh(plot);
-    case 'market':
-      return createMarketPlotMesh(plot);
-    case 'solar':
-      return createSolarPlotMesh(plot);
-    case 'turbine':
-      return createTurbinePlotMesh(plot);
-    case 'ev':
-      return createEvPlotMesh(plot);
-    case 'tire_shop':
-      return createTireShopPlotMesh(plot);
-    case 'lube_bay':
-      return createLubeBayPlotMesh(plot);
-    case 'vacuum_hub':
-      return createVacuumHubPlotMesh(plot);
-    case 'moto_dock':
-      return createMotoDockPlotMesh(plot);
-    case 'truck_stop':
-      return createTruckStopPlotMesh(plot);
-    case 'bakery_drive':
-      return createBakeryDrivePlotMesh(plot);
-    case 'food_truck':
-      return createFoodTruckPlotMesh(plot);
-    case 'rest_lounge':
-      return createRestLoungePlotMesh(plot);
-    case 'pet_park':
-      return createPetParkPlotMesh(plot);
-    case 'parcel_hub':
-      return createParcelHubPlotMesh(plot);
-    case 'atm_hub':
-      return createAtmHubPlotMesh(plot);
-    case 'hydrogen_bay':
-      return createHydrogenBayPlotMesh(plot);
-    default:
-      return createPumpPlotMesh(plot);
+    case 'pump': return createPumpPlotMesh(plot);
+    case 'wash': return createWashPlotMesh(plot);
+    case 'market': return createMarketPlotMesh(plot);
+    case 'solar': return createSolarPlotMesh(plot);
+    case 'turbine': return createTurbinePlotMesh(plot);
+    case 'ev': return createEvPlotMesh(plot);
+    case 'tire_shop': return createGenericPlotMesh(plot, 3.6, 3.2);
+    case 'lube_bay': return createGenericPlotMesh(plot, 3.6, 3.2);
+    case 'vacuum_hub': return createGenericPlotMesh(plot, 3.0, 2.6);
+    case 'moto_dock': return createGenericPlotMesh(plot, 2.4, 2.2);
+    case 'truck_stop': return createGenericPlotMesh(plot, 4.4, 3.8);
+    case 'bakery_drive': return createGenericPlotMesh(plot, 3.6, 3.2);
+    case 'food_truck': return createGenericPlotMesh(plot, 2.8, 2.4);
+    case 'rest_lounge': return createGenericPlotMesh(plot, 3.4, 3.0);
+    case 'pet_park': return createGenericPlotMesh(plot, 3.0, 3.0);
+    case 'parcel_hub': return createGenericPlotMesh(plot, 2.0, 1.8);
+    case 'atm_hub': return createGenericPlotMesh(plot, 2.0, 1.8);
+    case 'hydrogen_bay': return createGenericPlotMesh(plot, 3.6, 3.2);
+    default: return createGenericPlotMesh(plot, 3.0, 3.0);
   }
+}
+
+function isPlotBuilt(plot) {
+  if (!plot) return true;
+  switch (plot.id) {
+    case 'pump2': return State.upgrades.pumps >= 2;
+    case 'pump3': return State.upgrades.pumps >= 3;
+    case 'pump4': return State.upgrades.pumps >= 4;
+    case 'solar': return !!State.upgrades.hasSolar;
+    case 'wash': return !!State.upgrades.hasCarWash;
+    case 'market': return !!State.upgrades.hasMarket;
+    case 'ev': return !!State.upgrades.hasEvCharger;
+    case 'turbine': return !!State.upgrades.hasTurbine;
+    case 'tire_shop': return !!State.upgrades.hasTireShop;
+    case 'lube_bay': return !!State.upgrades.hasLubeBay;
+    case 'vacuum_hub': return !!State.upgrades.hasVacuumHub;
+    case 'moto_dock': return !!State.upgrades.hasMotoDock;
+    case 'truck_stop': return !!State.upgrades.hasTruckStop;
+    case 'bakery_drive': return !!State.upgrades.hasBakeryDrive;
+    case 'food_truck': return !!State.upgrades.hasFoodTruck;
+    case 'rest_lounge': return !!State.upgrades.hasRestLounge;
+    case 'pet_park': return !!State.upgrades.hasPetPark;
+    case 'parcel_hub': return !!State.upgrades.hasParcelHub;
+    case 'atm_hub': return !!State.upgrades.hasAtmHub;
+    case 'hydrogen_bay': return !!State.upgrades.hasHydrogenBay;
+    default: return false;
+  }
+}
+
+function isPlotUnlocked(plot) {
+  if (!plot) return false;
+  if (isPlotBuilt(plot)) return false;
+  const tier = plot.tier || 1;
+  if (tier === 1) return true; // Starter plots (Pump 2, Solar, Wash, Market, ATM, Parcel)
+
+  const rev = State.totalRev || 0;
+  let builtCount = 0;
+  if (State.upgrades.pumps > 1) builtCount += (State.upgrades.pumps - 1);
+  if (State.upgrades.hasCarWash) builtCount++;
+  if (State.upgrades.hasSolar) builtCount++;
+  if (State.upgrades.hasMarket) builtCount++;
+  if (State.upgrades.hasEvCharger) builtCount++;
+  if (State.upgrades.hasTireShop) builtCount++;
+
+  if (tier === 2) return rev >= 6000 || builtCount >= 2;
+  if (tier === 3) return rev >= 18000 || builtCount >= 4;
+  if (tier === 4) return rev >= 45000 || builtCount >= 7;
+  return false;
 }
 
 function updateAllPlotSigns() {
   Object.values(PLOTS).forEach(plot => {
     const mesh = plotSignMeshes[plot.id];
-    if (mesh && mesh.userData && mesh.userData.signCanvas) {
+    if (!mesh) return;
+    const shouldShow = !isPlotBuilt(plot) && isPlotUnlocked(plot);
+    mesh.visible = shouldShow;
+    if (shouldShow && mesh.userData && mesh.userData.signCanvas) {
       drawPlotBadgeCanvas(mesh.userData.signCanvas, plot);
       if (mesh.userData.signTexture) {
         mesh.userData.signTexture.needsUpdate = true;
@@ -2214,10 +2211,10 @@ function updateAllPlotSigns() {
 
 function updatePlotBadges(totalSeconds) {
   Object.values(plotSignMeshes).forEach(mesh => {
-    if (mesh && mesh.userData && mesh.userData.badgeMesh) {
+    if (mesh && mesh.visible && mesh.userData && mesh.userData.badgeMesh) {
       const badge = mesh.userData.badgeMesh;
-      const baseY = badge.userData.baseY || 1.0;
-      badge.position.y = baseY + Math.sin(totalSeconds * 2.5 + (badge.id || 0)) * 0.035;
+      const baseY = badge.userData.baseY || 0.7;
+      badge.position.y = baseY + Math.sin(totalSeconds * 2.5 + (badge.id || 0)) * 0.025;
     }
   });
 }
@@ -2226,35 +2223,73 @@ function createScaffoldingMesh(plot) {
   const group = new THREE.Group();
   group.position.copy(plot.pos);
 
-  // Scaffolding lattice posts
-  const postGeo = new THREE.BoxGeometry(0.12, 3.2, 0.12);
-  const corners = [[-1.2, -1.2], [1.2, -1.2], [-1.2, 1.2], [1.2, 1.2]];
-  corners.forEach(([cx, cz]) => {
-    const p = new THREE.Mesh(postGeo, Mat.scaffoldWood);
-    p.position.set(cx, 1.6, cz);
-    group.add(p);
+  // 1. Reinforced Concrete Foundation Slab with Yellow Hazard Border
+  const padGeo = new THREE.BoxGeometry(3.2, 0.12, 3.2);
+  const pad = new THREE.Mesh(padGeo, Mat.concrete);
+  pad.position.set(0, 0.06, 0);
+  pad.receiveShadow = true;
+  group.add(pad);
+
+  // Hazard striped perimeter safety borders
+  const hazardNorth = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.14, 0.2), Mat.hazardStripe);
+  hazardNorth.position.set(0, 0.07, -1.5);
+  const hazardSouth = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.14, 0.2), Mat.hazardStripe);
+  hazardSouth.position.set(0, 0.07, 1.5);
+  const hazardWest = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.14, 2.8), Mat.hazardStripe);
+  hazardWest.position.set(-1.5, 0.07, 0);
+  const hazardEast = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.14, 2.8), Mat.hazardStripe);
+  hazardEast.position.set(1.5, 0.07, 0);
+  group.add(hazardNorth, hazardSouth, hazardWest, hazardEast);
+
+  // 2. High-Visibility Safety Traffic Cones at Corners
+  const coneCorners = [[-1.35, -1.35], [1.35, -1.35], [-1.35, 1.35], [1.35, 1.35]];
+  coneCorners.forEach(([cx, cz]) => {
+    const coneBase = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.03, 0.32), Mat.darkInk);
+    coneBase.position.set(cx, 0.13, cz);
+    const coneBody = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.55, 6), Mat.hazardCone);
+    coneBody.position.set(cx, 0.40, cz);
+    coneBody.castShadow = true;
+    const coneCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.12, 0.12, 6), Mat.roadWhite);
+    coneCollar.position.set(cx, 0.38, cz);
+    group.add(coneBase, coneBody, coneCollar);
   });
 
-  // Crossbeams
-  for (let y = 0.8; y <= 3.0; y += 1.1) {
-    const beam1 = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.08, 0.08), Mat.scaffoldWood);
-    beam1.position.set(0, y, 1.2);
-    const beam2 = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.08, 0.08), Mat.scaffoldWood);
-    beam2.position.set(0, y, -1.2);
-    const beam3 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 2.5), Mat.scaffoldWood);
-    beam3.position.set(1.2, y, 0);
-    const beam4 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 2.5), Mat.scaffoldWood);
-    beam4.position.set(-1.2, y, 0);
-    group.add(beam1, beam2, beam3, beam4);
-  }
+  // 3. Modular Low-Poly Steel & Hazard Barrier Panels (North & West flanks)
+  const barrierFlanks = [
+    { x: 0, z: -1.4, rot: 0 },
+    { x: -1.4, z: 0, rot: Math.PI / 2 }
+  ];
+  barrierFlanks.forEach(b => {
+    const postL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.9, 0.08), Mat.darkInk);
+    postL.position.set(b.rot === 0 ? b.x - 0.9 : b.x, 0.45, b.rot === 0 ? b.z : b.z - 0.9);
+    const postR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.9, 0.08), Mat.darkInk);
+    postR.position.set(b.rot === 0 ? b.x + 0.9 : b.x, 0.45, b.rot === 0 ? b.z : b.z + 0.9);
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.35, 0.06), Mat.hazardStripe);
+    bar.position.set(b.x, 0.55, b.z);
+    bar.rotation.y = b.rot;
+    group.add(postL, postR, bar);
+  });
 
-  // Floating Progress Bar Canvas Billboard
+  // 4. Construction Pallet & Supply Crate
+  const pallet = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.08, 0.8), Mat.palletWood);
+  pallet.position.set(0.6, 0.16, -0.5);
+  const supplyBox = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.45, 0.6), Mat.darkInk);
+  supplyBox.position.set(0.6, 0.42, -0.5);
+  supplyBox.castShadow = true;
+  group.add(pallet, supplyBox);
+
+  // 5. Sleek Digital Site Status Kiosk & Progress Billboard
+  const kioskMast = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.8, 0.12), Mat.darkInk);
+  kioskMast.position.set(0, 0.9, 0);
+  kioskMast.castShadow = true;
+  group.add(kioskMast);
+
   const canvas = document.createElement('canvas');
   canvas.width = 256;
   canvas.height = 96;
   const tex = new THREE.CanvasTexture(canvas);
-  const barMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 0.8), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
-  barMesh.position.set(0, 3.8, 0);
+  const barMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 0.75), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  barMesh.position.set(0, 2.1, 0);
   group.add(barMesh);
 
   group.userData = {
@@ -2273,101 +2308,104 @@ function createScaffoldingMesh(plot) {
 
 function createCanopyMesh() {
   const canopy = new THREE.Group();
-  canopy.position.set(0, 0, 1.0); // Covers the 4 pump bays perfectly
+  canopy.position.set(0, 0, 0); // Anchored at station center
 
-  // 4 Heavy Industrial Steel Tubular Pillars with Reinforced Concrete Pedestals (In-line with pump island rows)
+  // 4 Heavy Industrial Steel Tubular Pillars with Reinforced Concrete Pedestals (Flanking pump islands)
+  // Row 1 Island (Z: -1.2) and Row 2 Island (Z: 2.4)
   const pillarCoords = [
-    [-7.8, -2.8],
-    [7.8, -2.8],
-    [-7.8, 2.4],
-    [7.8, 2.4]
+    [-7.5, -1.2],
+    [7.5, -1.2],
+    [-7.5, 2.4],
+    [7.5, 2.4]
   ];
 
-  // Retractable Folding Overhead Roof Assembly (Folds and retracts towards the market building)
-  canopyRoofMesh = new THREE.Group();
-
   pillarCoords.forEach(([px, pz]) => {
-    // Concrete Footing Plinth (always on island)
-    const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.2, 0.8), Mat.concrete);
-    plinth.position.set(px, 0.1, pz);
+    // Concrete Footing Plinth
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.25, 0.8), Mat.concrete);
+    plinth.position.set(px, 0.125, pz);
     plinth.castShadow = true;
-    const basePlate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.5), Mat.darkInk);
-    basePlate.position.set(px, 0.22, pz);
+    const basePlate = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.05, 0.5), Mat.darkInk);
+    basePlate.position.set(px, 0.26, pz);
     canopy.add(plinth, basePlate);
 
-    // Main Column Steel Tube & Brackets (Rise with canopyRoofMesh)
-    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 4.4, 8), Mat.darkInk);
+    // Main Column Steel Tube & Brackets (Permanently attached to canopy group)
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 4.3, 8), Mat.darkInk);
     col.position.set(px, 2.4, pz);
     col.castShadow = true;
 
-    const br = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.8, 0.14), Mat.chrome);
-    br.position.set(px > 0 ? px - 0.35 : px + 0.35, 4.1, pz);
+    const br = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.75, 0.14), Mat.chrome);
+    br.position.set(px > 0 ? px - 0.35 : px + 0.35, 4.15, pz);
     br.rotation.z = px > 0 ? Math.PI / 4 : -Math.PI / 4;
-    canopyRoofMesh.add(col, br);
+    canopy.add(col, br);
   });
 
-  // 1. Perimeter Frame Beams (Open Interior for Transparency)
-  const beamFront = new THREE.Mesh(new THREE.BoxGeometry(19.6, 0.45, 0.5), Mat.buildingRoof);
-  beamFront.position.set(0, 4.65, 5.8);
-  const beamBack = new THREE.Mesh(new THREE.BoxGeometry(19.6, 0.45, 0.5), Mat.buildingRoof);
-  beamBack.position.set(0, 4.65, -6.8);
-  const beamLeft = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 13.1), Mat.buildingRoof);
-  beamLeft.position.set(-9.8, 4.65, -0.5);
-  const beamRight = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 13.1), Mat.buildingRoof);
-  beamRight.position.set(9.8, 4.65, -0.5);
+  // Overhead Roof Assembly
+  canopyRoofMesh = new THREE.Group();
+  canopyRoofMesh.position.set(0, 0, 0);
+  canopyRoofMesh.visible = true;
+
+  // 1. Perimeter Frame Beams (X: [-8.8, 8.8], Z: [-2.6, 4.6], Height: 4.65m)
+  const beamFront = new THREE.Mesh(new THREE.BoxGeometry(17.6, 0.42, 0.45), Mat.buildingRoof);
+  beamFront.position.set(0, 4.65, 4.6);
+  const beamBack = new THREE.Mesh(new THREE.BoxGeometry(17.6, 0.42, 0.45), Mat.buildingRoof);
+  beamBack.position.set(0, 4.65, -2.6);
+  const beamLeft = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.42, 7.2), Mat.buildingRoof);
+  beamLeft.position.set(-8.8, 4.65, 1.0);
+  const beamRight = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.42, 7.2), Mat.buildingRoof);
+  beamRight.position.set(8.8, 4.65, 1.0);
   canopyRoofMesh.add(beamFront, beamBack, beamLeft, beamRight);
 
   // 2. Red Brand Perimeter Trim Ribbon
-  const fasciaFront = new THREE.Mesh(new THREE.BoxGeometry(19.7, 0.28, 0.54), Mat.redTrim);
-  fasciaFront.position.set(0, 4.65, 5.8);
-  const fasciaBack = new THREE.Mesh(new THREE.BoxGeometry(19.7, 0.28, 0.54), Mat.redTrim);
-  fasciaBack.position.set(0, 4.65, -6.8);
-  const fasciaLeft = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 13.2), Mat.redTrim);
-  fasciaLeft.position.set(-9.8, 4.65, -0.5);
-  const fasciaRight = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.28, 13.2), Mat.redTrim);
-  fasciaRight.position.set(9.8, 4.65, -0.5);
+  const fasciaFront = new THREE.Mesh(new THREE.BoxGeometry(17.7, 0.30, 0.49), Mat.redTrim);
+  fasciaFront.position.set(0, 4.65, 4.6);
+  const fasciaBack = new THREE.Mesh(new THREE.BoxGeometry(17.7, 0.30, 0.49), Mat.redTrim);
+  fasciaBack.position.set(0, 4.65, -2.6);
+  const fasciaLeft = new THREE.Mesh(new THREE.BoxGeometry(0.49, 0.30, 7.3), Mat.redTrim);
+  fasciaLeft.position.set(-8.8, 4.65, 1.0);
+  const fasciaRight = new THREE.Mesh(new THREE.BoxGeometry(0.49, 0.30, 7.3), Mat.redTrim);
+  fasciaRight.position.set(8.8, 4.65, 1.0);
   canopyRoofMesh.add(fasciaFront, fasciaBack, fasciaLeft, fasciaRight);
 
-  // Front Fascia "PIXELOIL" Stencil Plaque
-  const frontPlate = new THREE.Mesh(new THREE.BoxGeometry(7.2, 0.42, 0.1), Mat.roadWhite);
-  frontPlate.position.set(0, 4.65, 6.09);
+  // Front Fascia "PIXEL OIL" Illuminated Plaque
+  const frontPlate = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.45, 0.1), Mat.roadWhite);
+  frontPlate.position.set(0, 4.65, 4.88);
   canopyRoofMesh.add(frontPlate);
 
-  const frontText = new THREE.Mesh(new THREE.BoxGeometry(6.0, 0.26, 0.12), Mat.redTrim);
-  frontText.position.set(0, 4.65, 6.10);
+  const frontText = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.28, 0.12), Mat.redTrim);
+  frontText.position.set(0, 4.65, 4.90);
   canopyRoofMesh.add(frontText);
 
-  // 3. Translucent Polycarbonate Glass Roof Pane (Crystal Visibility of All Pumps & Cars Below)
-  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(18.6, 0.04, 12.1), Mat.canopyGlass);
-  glassRoof.position.set(0, 4.70, -0.5);
+  // 3. Translucent Polycarbonate Glass Skylight Roof Pane
+  const glassRoof = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.04, 6.6), Mat.canopyGlass);
+  glassRoof.position.set(0, 4.70, 1.0);
   canopyRoofMesh.add(glassRoof);
 
-  // 4. Architectural Structural Steel Truss Grid (Sleek Skylight I-Beams)
-  [-5.0, -2.8, -0.5, 2.4, 4.8].forEach(z => {
-    const trussX = new THREE.Mesh(new THREE.BoxGeometry(18.5, 0.12, 0.08), Mat.solarFrame);
+  // 4. Architectural Structural Steel Truss Grid
+  [-1.8, -0.4, 1.0, 2.4, 3.8].forEach(z => {
+    const trussX = new THREE.Mesh(new THREE.BoxGeometry(16.8, 0.12, 0.08), Mat.solarFrame);
     trussX.position.set(0, 4.62, z);
     canopyRoofMesh.add(trussX);
   });
 
-  [-6.5, -3.25, 0, 3.25, 6.5].forEach(x => {
-    const trussZ = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 12.1), Mat.solarFrame);
-    trussZ.position.set(x, 4.62, -0.5);
+  [-5.8, -2.9, 0, 2.9, 5.8].forEach(x => {
+    const trussZ = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.12, 6.6), Mat.solarFrame);
+    trussZ.position.set(x, 4.62, 1.0);
     canopyRoofMesh.add(trussZ);
   });
 
-  // 5. 4 High-Lumen Down-Facing LED Spotlights for Pump Islands
+  // 5. 4 High-Lumen Down-Facing LED Spotlights for Fueling Bays
   const spotCoords = [
-    [-4.5, 4.28, -2.8],
-    [4.5, 4.28, -2.8],
-    [-4.5, 4.28, 2.4],
-    [4.5, 4.28, 2.4]
+    [-4.5, 4.35, 0.5],
+    [4.5, 4.35, 0.5],
+    [-4.5, 4.35, 4.2],
+    [4.5, 4.35, 4.2]
   ];
 
   spotCoords.forEach(([sx, sy, sz]) => {
     const fix = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.12, 10), Mat.darkInk);
-    fix.position.set(sx, 4.32, sz);
+    fix.position.set(sx, 4.40, sz);
     const bulb = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.04, 10), Mat.lampGlow);
-    bulb.position.set(sx, 4.25, sz);
+    bulb.position.set(sx, 4.33, sz);
     canopyRoofMesh.add(fix, bulb);
 
     const light = new THREE.PointLight(0xFFE8A0, 0.95, 8.5);
@@ -2375,7 +2413,7 @@ function createCanopyMesh() {
     nightLights.push({ light, targetIntensity: 0.95 });
     canopyRoofMesh.add(light);
 
-    // Soft Cinematic Downlight Light Cone (Volumetric Down-Glow)
+    // Soft Cinematic Downlight Light Cone
     const cone = new THREE.Mesh(
       new THREE.ConeGeometry(1.6, 3.8, 12, 1, true),
       new THREE.MeshBasicMaterial({
@@ -2389,15 +2427,6 @@ function createCanopyMesh() {
     cone.position.set(sx, sy - 1.9, sz);
     canopyRoofMesh.add(cone);
   });
-
-  // Apply initial anim progress
-  if (canopyAnimProgress < 0.01) {
-    canopyRoofMesh.scale.set(1.0, 1.0, 0.04);
-    canopyRoofMesh.position.set(0, 0, -6.2);
-    canopyRoofMesh.rotation.x = -0.35;
-    canopyRoofMesh.visible = false;
-    if (Mat.canopyGlass) Mat.canopyGlass.opacity = 0.0;
-  }
 
   canopy.add(canopyRoofMesh);
   return canopy;
@@ -3442,26 +3471,37 @@ function createTotemMesh() {
 
 function buildPerimeterFloraAndTerrain(diorama) {
   const hillPositions = [
-    [-34, 0, -26, 12, 3.0, 12],
-    [34, 0, -26, 14, 3.5, 12],
-    [-36, 0, 10, 10, 2.5, 10],
-    [36, 0, 10, 10, 2.5, 10],
-    [-26, 0, 32, 12, 2.8, 8],
-    [26, 0, 32, 12, 2.8, 8]
+    [-34, -26, 14, 3.5, 14],
+    [34, -26, 16, 4.0, 14],
+    [-38, 10, 12, 3.0, 12],
+    [38, 10, 12, 3.0, 12],
+    [-28, 34, 14, 3.2, 10],
+    [28, 34, 14, 3.2, 10],
+    // Distant curved horizon hills
+    [-52, -45, 22, 5.5, 20],
+    [0, -58, 26, 6.2, 24],
+    [52, -45, 24, 5.8, 22],
+    [-65, 0, 18, 4.5, 18],
+    [65, 0, 18, 4.5, 18],
+    [-45, 45, 20, 4.8, 18],
+    [45, 45, 20, 4.8, 18]
   ];
-  hillPositions.forEach(([x, y, z, sx, sy, sz]) => {
+  hillPositions.forEach(([x, z, sx, sy, sz]) => {
     const hill = createGrassMound(sx, sy, sz);
-    hill.position.set(x, y, z);
+    const elev = getPlanetoidElevation(x, z);
+    hill.position.set(x, elev, z);
     diorama.add(hill);
   });
 
   const rockPositions = [
-    [-36, 0.3, -26], [-34, 0.3, 24], [34, 0.3, 24],
-    [36, 0.3, -26], [-38, 0.4, 0], [38, 0.4, 0]
+    [-36, -26], [-34, 24], [34, 24],
+    [36, -26], [-38, 0], [38, 0],
+    [-50, -32], [50, -32], [-48, 28], [48, 28]
   ];
-  rockPositions.forEach(p => {
+  rockPositions.forEach(([rx, rz]) => {
     const rocks = createRockCluster();
-    rocks.position.set(...p);
+    const elev = getPlanetoidElevation(rx, rz);
+    rocks.position.set(rx, elev + 0.25, rz);
     diorama.add(rocks);
   });
 
@@ -3499,29 +3539,46 @@ function buildPerimeterFloraAndTerrain(diorama) {
     { pos: [-34.0, -16.0], type: 'palm', scale: 1.05 },
     { pos: [34.0, -16.0],  type: 'palm', scale: 1.05 },
 
-    // Roadway Refüj Young Saplings (with Support Stakes)
-    { pos: [-24, 15.5], type: 'sapling', scale: 0.95 },
-    { pos: [-14, 15.5], type: 'sapling', scale: 1.00 },
-    { pos: [14, 15.5],  type: 'sapling', scale: 1.00 },
-    { pos: [24, 15.5],  type: 'sapling', scale: 0.95 }
+    // Natural North Forest Ridge & Mountain Pines (Safe clearance away from highway)
+    { pos: [-26, -26], type: 'pine', scale: 1.20 },
+    { pos: [26, -26],  type: 'pine', scale: 1.20 },
+
+    // Distant Horizon Pine Ridges (creating rich depth against atmospheric fog)
+    { pos: [-48, -42], type: 'pine', scale: 1.45 },
+    { pos: [-38, -48], type: 'pine', scale: 1.35 },
+    { pos: [-22, -52], type: 'oak',  scale: 1.50 },
+    { pos: [-8, -55],  type: 'pine', scale: 1.40 },
+    { pos: [8, -55],   type: 'pine', scale: 1.45 },
+    { pos: [24, -52],  type: 'oak',  scale: 1.40 },
+    { pos: [40, -46],  type: 'pine', scale: 1.50 },
+    { pos: [52, -38],  type: 'pine', scale: 1.35 },
+    { pos: [-55, -12], type: 'pine', scale: 1.30 },
+    { pos: [55, -12],  type: 'pine', scale: 1.30 },
+    { pos: [-46, 36],  type: 'oak',  scale: 1.25 },
+    { pos: [46, 36],   type: 'oak',  scale: 1.25 }
   ];
 
   diverseTreeList.forEach((tData, idx) => {
+    // Strict Tree-Free Highway Corridor Enforcement (Z: 4.5 to 18.5)
+    if (Math.abs(tData.pos[0]) <= 75 && tData.pos[1] >= 4.5 && tData.pos[1] <= 18.5) return;
     const tree = createDiverseLowPolyTree(idx, tData.type);
-    tree.position.set(tData.pos[0], 0.04, tData.pos[1]);
+    const elev = getPlanetoidElevation(tData.pos[0], tData.pos[1]);
+    tree.position.set(tData.pos[0], elev + 0.04, tData.pos[1]);
     const s = tData.scale || 1.0;
     tree.scale.set(s, s, s);
     diorama.add(tree);
   });
 
-  // Wild Grass Clump Clusters along outer perimeter fence lines
+  // Wild Grass Clump Clusters safely positioned along outer perimeter ridges
   const bushCoords = [
-    [-34, -14], [34, -14], [-32, 16], [32, 16],
-    [-16, 16.5], [16, 16.5]
+    [-34, -14], [34, -14], [-38, -22], [38, -22],
+    [-28, -28], [28, -28], [-42, 0], [42, 0]
   ];
   bushCoords.forEach(([bx, bz], bIdx) => {
+    if (Math.abs(bx) <= 75 && bz >= 4.5 && bz <= 18.5) return;
     const bush = createWildBush(bIdx);
-    bush.position.set(bx, 0.04, bz);
+    const elev = getPlanetoidElevation(bx, bz);
+    bush.position.set(bx, elev + 0.04, bz);
     diorama.add(bush);
   });
 
@@ -3773,254 +3830,312 @@ class Sheep {
   }
 }
 
-// 2b. West Cloud Viaduct (Sol Sınır - Bulutlara Uzanan Asma Viyadük Köprüsü)
-function buildWestCloudViaduct(diorama) {
-  const viaductGroup = new THREE.Group();
-
-  // Highway Bridge Deck Extension (X: -40 to -58, Width: 7.5, Height: 0.8)
-  const deckGeo = new THREE.BoxGeometry(18, 0.8, 7.5);
-  const deckMesh = new THREE.Mesh(deckGeo, Mat.asphalt);
-  deckMesh.position.set(-49, -0.37, 11.5);
-  deckMesh.receiveShadow = true;
-  viaductGroup.add(deckMesh);
-
-  // Concrete Bridge Base Slab
-  const slabGeo = new THREE.BoxGeometry(18.2, 0.6, 7.9);
-  const slabMesh = new THREE.Mesh(slabGeo, Mat.concrete);
-  slabMesh.position.set(-49, -0.75, 11.5);
-  viaductGroup.add(slabMesh);
-
-  // Double Yellow Lines along the viaduct
-  for (let i = -56; i <= -40; i += 3) {
-    const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
-    const l1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    l1.position.set(i, 0.05, 11.35);
-    const l2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    l2.position.set(i, 0.05, 11.65);
-    viaductGroup.add(l1, l2);
-  }
-
-  // Safety Guardrails on North & South edges of viaduct
-  [-1, 1].forEach(side => {
-    const railZ = 11.5 + side * 3.75;
-    // Concrete base curb
-    const curb = new THREE.Mesh(new THREE.BoxGeometry(18, 0.35, 0.25), Mat.darkInk);
-    curb.position.set(-49, 0.18, railZ);
-    viaductGroup.add(curb);
-    // Chrome tubular handrail
-    const rail = new THREE.Mesh(new THREE.BoxGeometry(18, 0.08, 0.08), Mat.chrome);
-    rail.position.set(-49, 0.52, railZ);
-    viaductGroup.add(rail);
-
-    // Stanchion posts every 3 meters
-    for (let x = -56; x <= -40; x += 3.2) {
-      const post = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.4, 0.08), Mat.chrome);
-      post.position.set(x, 0.35, railZ);
-      viaductGroup.add(post);
-    }
-  });
-
-  // Massive Architectural Concrete Pylon under viaduct
-  const pylonGeo = new THREE.BoxGeometry(2.4, 12.0, 5.5);
-  const pylon = new THREE.Mesh(pylonGeo, Mat.concrete);
-  pylon.position.set(-49, -6.5, 11.5);
-  pylon.castShadow = true;
-  viaductGroup.add(pylon);
-
-  // Support corbel brackets
-  const bracketGeo = new THREE.BoxGeometry(3.6, 1.2, 5.8);
-  const bracket = new THREE.Mesh(bracketGeo, Mat.darkInk);
-  bracket.position.set(-49, -1.2, 11.5);
-  viaductGroup.add(bracket);
-
-  // 3D Soft Pastel Cloud Bank at Viaduct Mouth (X: -54 to -58)
-  const cloudGroup = new THREE.Group();
-  const cloudMat = Mat.cloud;
-  const cloudSteamMat = Mat.steam;
-  const cloudPositions = [
-    [-54, 0.6, 9.0, 1.8],
-    [-56, 1.2, 11.5, 2.4],
-    [-55, 0.4, 14.2, 2.0],
-    [-57, 1.8, 9.8, 2.2],
-    [-58, 0.8, 12.8, 2.6],
-    [-53.5, -0.4, 11.5, 1.6],
-    [-56.5, 2.2, 12.0, 1.9],
-    [-55, -0.8, 7.5, 2.1]
-  ];
-
-  cloudPositions.forEach(([cx, cy, cz, rad], idx) => {
-    const geo = new THREE.DodecahedronGeometry(rad, 1);
-    const m = (idx % 3 === 0) ? cloudSteamMat : cloudMat;
-    const mesh = new THREE.Mesh(geo, m);
-    mesh.position.set(cx, cy, cz);
-    mesh.scale.set(1.3, 0.85, 1.1);
-    cloudGroup.add(mesh);
-  });
-  viaductGroup.add(cloudGroup);
-
-  diorama.add(viaductGroup);
-}
-
-// 2c. East Hyper-Ring Speedway Portal (Sağ Sınır - Fütüristik Aerodinamik Hızlandırma Kemeri)
-function buildEastHyperRingPortal(diorama) {
+// 2b. West Mountain Highway Tunnel Portal (anchored into planet curvature)
+function buildWestHighwayPortal(diorama) {
   const portalGroup = new THREE.Group();
+  const px = -58;
+  const pz = 11.5;
+  const py = getRoadElevation(px);
 
-  // Highway Bridge Deck Extension (X: +40 to +58, Width: 7.5, Height: 0.8)
-  const deckGeo = new THREE.BoxGeometry(18, 0.8, 7.5);
-  const deckMesh = new THREE.Mesh(deckGeo, Mat.asphalt);
-  deckMesh.position.set(49, -0.37, 11.5);
-  deckMesh.receiveShadow = true;
-  portalGroup.add(deckMesh);
+  portalGroup.position.set(px, py, pz);
 
-  // Dark High-Tech Base Slab
-  const slabGeo = new THREE.BoxGeometry(18.2, 0.6, 7.9);
-  const slabMesh = new THREE.Mesh(slabGeo, Mat.darkInk);
-  slabMesh.position.set(49, -0.75, 11.5);
-  portalGroup.add(slabMesh);
+  // 1. Surrounding Mountain Slope & Rocky Berms (anchoring to planet terrain)
+  const mountainGeo = new THREE.DodecahedronGeometry(6.5, 1);
+  const mountain1 = new THREE.Mesh(mountainGeo, Mat.grass);
+  mountain1.position.set(-2.5, 2.2, -6.2);
+  mountain1.scale.set(1.4, 1.2, 1.2);
+  mountain1.castShadow = true;
+  portalGroup.add(mountain1);
 
-  // Double Yellow Lines
-  for (let i = 40; i <= 56; i += 3) {
-    const lineGeo = new THREE.BoxGeometry(1.8, 0.02, 0.15);
-    const l1 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    l1.position.set(i, 0.05, 11.35);
-    const l2 = new THREE.Mesh(lineGeo, Mat.roadYellow);
-    l2.position.set(i, 0.05, 11.65);
-    portalGroup.add(l1, l2);
-  }
+  const mountain2 = new THREE.Mesh(mountainGeo, Mat.grass);
+  mountain2.position.set(-2.5, 2.0, 6.5);
+  mountain2.scale.set(1.4, 1.2, 1.2);
+  mountain2.castShadow = true;
+  portalGroup.add(mountain2);
 
-  // Under-deck structural diagonal space trusses
-  [44, 48, 52, 56].forEach(tx => {
-    const truss = new THREE.Mesh(new THREE.BoxGeometry(0.35, 4.2, 6.5), Mat.solarFrame);
-    truss.position.set(tx, -2.6, 11.5);
-    truss.rotation.z = 0.25;
-    portalGroup.add(truss);
+  const cragGeo = new THREE.DodecahedronGeometry(3.8, 0);
+  const crag1 = new THREE.Mesh(cragGeo, Mat.rockDark);
+  crag1.position.set(1.5, 2.5, -5.2);
+  crag1.rotation.set(0.4, 0.6, 0.2);
+  crag1.castShadow = true;
+  const crag2 = new THREE.Mesh(cragGeo, Mat.rockGrey);
+  crag2.position.set(1.5, 2.3, 5.2);
+  crag2.rotation.set(-0.3, 0.8, -0.2);
+  crag2.castShadow = true;
+  portalGroup.add(crag1, crag2);
+
+  // 2. Brutalist Reinforced Concrete Arch Frame
+  const portalArch = new THREE.Group();
+
+  // Left & Right Thick Concrete Abutment Walls
+  [-1, 1].forEach(side => {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(3.6, 4.4, 1.4), Mat.concrete);
+    wall.position.set(0, 2.2, side * 4.4);
+    wall.castShadow = true;
+    wall.receiveShadow = true;
+    portalArch.add(wall);
+
+    // Hazard striped bumper base
+    const curb = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.4, 1.5), Mat.hazardStripe);
+    curb.position.set(0, 0.2, side * 4.4);
+    portalArch.add(curb);
   });
 
-  // 4 Aerodynamic Hexagonal Speed-Ring Arches
-  const ringX = [42, 46, 50, 54];
-  ringX.forEach((rx, idx) => {
-    const archGroup = new THREE.Group();
-    archGroup.position.set(rx, 0, 11.5);
+  // Heavy Concrete Parapet Lintel Beam
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.4, 10.2), Mat.concrete);
+  lintel.position.set(0, 4.3, 0);
+  lintel.castShadow = true;
+  lintel.receiveShadow = true;
+  portalArch.add(lintel);
 
-    // Left & Right Steel Pillars
-    [-1, 1].forEach(side => {
-      const pz = side * 3.85;
-      const col = new THREE.Mesh(new THREE.BoxGeometry(0.55, 3.8, 0.45), Mat.darkInk);
-      col.position.set(0, 1.9, pz);
-      col.castShadow = true;
-      archGroup.add(col);
+  // Dark Tunnel Interior Chamber Slab (creates realistic tunnel mouth shadow)
+  const tunnelHole = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.6, 7.4), Mat.darkInk);
+  tunnelHole.position.set(-1.6, 1.8, 0);
+  portalArch.add(tunnelHole);
 
-      // Cyan Accent Strip on each pillar
-      const glow = new THREE.Mesh(new THREE.BoxGeometry(0.58, 2.8, 0.1), Mat.evGlow);
-      glow.position.set(0, 1.8, pz - side * 0.18);
-      archGroup.add(glow);
+  // Twin Amber Hazard Warning Beacons
+  [-4.8, 4.8].forEach(bz => {
+    const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.35, 8), Mat.neonAmber);
+    beacon.position.set(0.5, 5.15, bz);
+    portalArch.add(beacon);
+  });
 
-      // Translucent Aerodynamic Glass Wing Deflector
-      const wingGeo = new THREE.BoxGeometry(1.4, 3.0, 0.08);
-      const wing = new THREE.Mesh(wingGeo, Mat.canopyGlass);
-      wing.position.set(0.4, 2.2, pz + side * 0.45);
-      wing.rotation.y = side * 0.35;
-      archGroup.add(wing);
-    });
+  // Highway Route Signboard ("D-300 // BATI TÜNELİ")
+  const signCanvas = document.createElement('canvas');
+  signCanvas.width = 512;
+  signCanvas.height = 128;
+  const sctx = signCanvas.getContext('2d');
+  sctx.fillStyle = '#1D5A38'; // Highway Green
+  sctx.fillRect(0, 0, 512, 128);
+  sctx.lineWidth = 8;
+  sctx.strokeStyle = '#FFFFFF';
+  sctx.strokeRect(4, 4, 504, 120);
+  sctx.fillStyle = '#FFFFFF';
+  sctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+  sctx.textAlign = 'center';
+  sctx.textBaseline = 'middle';
+  sctx.fillText('D-300 · BATI TÜNELİ', 256, 46);
+  sctx.font = 'bold 24px "JetBrains Mono", monospace';
+  sctx.fillStyle = '#F2C94C';
+  sctx.fillText('◄ 80 KM/S · İKİ ŞERİT', 256, 92);
 
-    // Top Overhead Arch Crossbeam
-    const topBeam = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.45, 8.2), Mat.darkInk);
-    topBeam.position.set(0, 3.9, 0);
-    archGroup.add(topBeam);
+  const signTex = new THREE.CanvasTexture(signCanvas);
+  const signMat = new THREE.MeshBasicMaterial({ map: signTex });
+  const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05), signMat);
+  signMesh.position.set(1.92, 4.3, 0);
+  signMesh.rotation.y = Math.PI / 2;
+  portalArch.add(signMesh);
 
-    // Overhead Speed Sensor Strip
-    const sensorStrip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.15, 6.5), Mat.evGlow);
-    sensorStrip.position.set(0, 3.65, 0);
-    archGroup.add(sensorStrip);
+  portalGroup.add(portalArch);
 
-    portalGroup.add(archGroup);
+  // 3. Safety Guardrails along approach road
+  [-1, 1].forEach(side => {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(12, 0.4, 0.18), Mat.concrete);
+    rail.position.set(6.0, 0.25, side * 3.85);
+    portalGroup.add(rail);
+
+    const postGeo = new THREE.BoxGeometry(0.12, 0.55, 0.12);
+    for (let rx = 1.0; rx <= 11.0; rx += 2.5) {
+      const p = new THREE.Mesh(postGeo, Mat.darkInk);
+      p.position.set(rx, 0.28, side * 3.85);
+      portalGroup.add(p);
+    }
   });
 
   diorama.add(portalGroup);
 }
 
-// 3b. Dedicated Station Driveway Inbound/Outbound Ramps & Architectural Divider
+// 2c. East Mountain Highway Tunnel Portal (anchored into planet curvature)
+function buildEastHighwayPortal(diorama) {
+  const portalGroup = new THREE.Group();
+  const px = 58;
+  const pz = 11.5;
+  const py = getRoadElevation(px);
+
+  portalGroup.position.set(px, py, pz);
+
+  // 1. Surrounding Mountain Slope & Rocky Berms
+  const mountainGeo = new THREE.DodecahedronGeometry(6.5, 1);
+  const mountain1 = new THREE.Mesh(mountainGeo, Mat.grass);
+  mountain1.position.set(2.5, 2.2, -6.2);
+  mountain1.scale.set(1.4, 1.2, 1.2);
+  mountain1.castShadow = true;
+  portalGroup.add(mountain1);
+
+  const mountain2 = new THREE.Mesh(mountainGeo, Mat.grass);
+  mountain2.position.set(2.5, 2.0, 6.5);
+  mountain2.scale.set(1.4, 1.2, 1.2);
+  mountain2.castShadow = true;
+  portalGroup.add(mountain2);
+
+  const cragGeo = new THREE.DodecahedronGeometry(3.8, 0);
+  const crag1 = new THREE.Mesh(cragGeo, Mat.rockDark);
+  crag1.position.set(-1.5, 2.5, -5.2);
+  crag1.rotation.set(-0.4, 0.5, 0.2);
+  crag1.castShadow = true;
+  const crag2 = new THREE.Mesh(cragGeo, Mat.rockGrey);
+  crag2.position.set(-1.5, 2.3, 5.2);
+  crag2.rotation.set(0.3, -0.6, -0.2);
+  crag2.castShadow = true;
+  portalGroup.add(crag1, crag2);
+
+  // 2. Brutalist Reinforced Concrete Arch Frame
+  const portalArch = new THREE.Group();
+
+  [-1, 1].forEach(side => {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(3.6, 4.4, 1.4), Mat.concrete);
+    wall.position.set(0, 2.2, side * 4.4);
+    wall.castShadow = true;
+    wall.receiveShadow = true;
+    portalArch.add(wall);
+
+    const curb = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.4, 1.5), Mat.hazardStripe);
+    curb.position.set(0, 0.2, side * 4.4);
+    portalArch.add(curb);
+  });
+
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(3.8, 1.4, 10.2), Mat.concrete);
+  lintel.position.set(0, 4.3, 0);
+  lintel.castShadow = true;
+  lintel.receiveShadow = true;
+  portalArch.add(lintel);
+
+  const tunnelHole = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3.6, 7.4), Mat.darkInk);
+  tunnelHole.position.set(1.6, 1.8, 0);
+  portalArch.add(tunnelHole);
+
+  [-4.8, 4.8].forEach(bz => {
+    const beacon = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.35, 8), Mat.neonAmber);
+    beacon.position.set(-0.5, 5.15, bz);
+    portalArch.add(beacon);
+  });
+
+  // Highway Route Signboard ("O-4 // DOĞU OTOYOLU")
+  const signCanvas = document.createElement('canvas');
+  signCanvas.width = 512;
+  signCanvas.height = 128;
+  const sctx = signCanvas.getContext('2d');
+  sctx.fillStyle = '#1D5A38';
+  sctx.fillRect(0, 0, 512, 128);
+  sctx.lineWidth = 8;
+  sctx.strokeStyle = '#FFFFFF';
+  sctx.strokeRect(4, 4, 504, 120);
+  sctx.fillStyle = '#FFFFFF';
+  sctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+  sctx.textAlign = 'center';
+  sctx.textBaseline = 'middle';
+  sctx.fillText('O-4 · DOĞU OTOYOLU', 256, 46);
+  sctx.font = 'bold 24px "JetBrains Mono", monospace';
+  sctx.fillStyle = '#F2C94C';
+  sctx.fillText('80 KM/S · İKİ ŞERİT ►', 256, 92);
+
+  const signTex = new THREE.CanvasTexture(signCanvas);
+  const signMat = new THREE.MeshBasicMaterial({ map: signTex });
+  const signMesh = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05), signMat);
+  signMesh.position.set(-1.92, 4.3, 0);
+  signMesh.rotation.y = -Math.PI / 2;
+  portalArch.add(signMesh);
+
+  portalGroup.add(portalArch);
+
+  // 3. Safety Guardrails along approach road
+  [-1, 1].forEach(side => {
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(12, 0.4, 0.18), Mat.concrete);
+    rail.position.set(-6.0, 0.25, side * 3.85);
+    portalGroup.add(rail);
+
+    const postGeo = new THREE.BoxGeometry(0.12, 0.55, 0.12);
+    for (let rx = -11.0; rx <= -1.0; rx += 2.5) {
+      const p = new THREE.Mesh(postGeo, Mat.darkInk);
+      p.position.set(rx, 0.28, side * 3.85);
+      portalGroup.add(p);
+    }
+  });
+
+  diorama.add(portalGroup);
+}
+
+// 3b. Dedicated Station Driveway Inbound/Outbound Ramps & Architectural Safety Divider
 function buildStationDrivewayRamps(diorama) {
   const rampGroup = new THREE.Group();
 
-  // 1. Inbound Deceleration Slip Ramp (Giriş Rampası: X: -14.0 to -9.0, Z: 7.6 to 10.2)
-  const inRampGeo = new THREE.BoxGeometry(5.4, 0.08, 2.6);
+  // 1. Inbound Deceleration Slip Ramp (Connects highway Z: 9.8 to apron Z: 6.0 at X: -10.5)
+  const inRampGeo = new THREE.BoxGeometry(3.2, 0.08, 3.8);
   const inRamp = new THREE.Mesh(inRampGeo, Mat.asphalt);
-  inRamp.position.set(-11.5, 0.045, 8.9);
+  inRamp.position.set(-10.6, 0.045, 7.9);
   inRamp.receiveShadow = true;
   rampGroup.add(inRamp);
 
-  // Inbound White Directional Turn-In Arrow on Asphalt
-  const inArrowStem = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 1.3), Mat.roadWhite);
-  inArrowStem.position.set(-11.5, 0.09, 8.8);
-  inArrowStem.rotation.y = -0.45;
+  // Inbound Directional White Lane Marking
+  const inArrowStem = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.02, 1.4), Mat.roadWhite);
+  inArrowStem.position.set(-10.6, 0.09, 7.9);
   rampGroup.add(inArrowStem);
 
-  const inArrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.5, 3), Mat.roadWhite);
-  inArrowHead.position.set(-11.8, 0.09, 8.1);
+  const inArrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 3), Mat.roadWhite);
+  inArrowHead.position.set(-10.6, 0.09, 6.9);
   inArrowHead.rotation.x = Math.PI / 2;
-  inArrowHead.rotation.z = 2.0;
+  inArrowHead.rotation.z = Math.PI;
   rampGroup.add(inArrowHead);
 
-  // Inbound Corner Safety Hazard Islands (Left curb divider)
-  const inCurb = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.18, 0.5), Mat.hazardStripe);
-  inCurb.position.set(-14.8, 0.09, 7.8);
-  rampGroup.add(inCurb);
-
-  // 2. Outbound Acceleration Merge Ramp (Çıkış Rampası: X: +9.0 to +14.0, Z: 7.6 to 10.2)
-  const outRampGeo = new THREE.BoxGeometry(5.4, 0.08, 2.6);
+  // 2. Outbound Acceleration Merge Ramp (Connects apron Z: 6.0 to highway Z: 9.8 at X: 10.5)
+  const outRampGeo = new THREE.BoxGeometry(3.2, 0.08, 3.8);
   const outRamp = new THREE.Mesh(outRampGeo, Mat.asphalt);
-  outRamp.position.set(11.5, 0.045, 8.9);
+  outRamp.position.set(10.6, 0.045, 7.9);
   outRamp.receiveShadow = true;
   rampGroup.add(outRamp);
 
-  // Outbound White Directional Merge Arrow on Asphalt
-  const outArrowStem = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.02, 1.3), Mat.roadWhite);
-  outArrowStem.position.set(11.5, 0.09, 8.8);
-  outArrowStem.rotation.y = 0.45;
+  // Outbound Directional White Merge Arrow
+  const outArrowStem = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.02, 1.4), Mat.roadWhite);
+  outArrowStem.position.set(10.6, 0.09, 7.9);
   rampGroup.add(outArrowStem);
 
-  const outArrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.5, 3), Mat.roadWhite);
-  outArrowHead.position.set(11.8, 0.09, 9.5);
-  outArrowHead.rotation.x = Math.PI / 2;
-  outArrowHead.rotation.z = -1.1;
+  const outArrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.45, 3), Mat.roadWhite);
+  outArrowHead.position.set(10.6, 0.09, 8.9);
+  outArrowHead.rotation.x = -Math.PI / 2;
   rampGroup.add(outArrowHead);
 
-  // Outbound Give-Way / Yield White Dash Line across exit
-  for (let x = 9.6; x <= 13.4; x += 0.75) {
-    const dash = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.02, 0.12), Mat.roadWhite);
-    dash.position.set(x, 0.09, 7.9);
+  // Outbound Give-Way / Yield White Dash Line across apron exit
+  for (let x = 9.2; x <= 12.0; x += 0.7) {
+    const dash = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.02, 0.12), Mat.roadWhite);
+    dash.position.set(x, 0.09, 6.1);
     rampGroup.add(dash);
   }
 
-  // Outbound Corner Safety Hazard Islands (Right curb divider)
-  const outCurb = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.18, 0.5), Mat.hazardStripe);
-  outCurb.position.set(14.8, 0.09, 7.8);
-  rampGroup.add(outCurb);
-
-  // 3. Central Safety Median Divider (Orta Refüj / Ada Sınır Ayracı: X: -7.6 to +7.6)
-  const medianGeo = new THREE.BoxGeometry(15.4, 0.22, 0.65);
+  // 3. Central Safety Median Divider (Clean island separating station from highway between ramps)
+  const medianGeo = new THREE.BoxGeometry(17.6, 0.18, 1.2);
   const median = new THREE.Mesh(medianGeo, Mat.darkInk);
-  median.position.set(0, 0.11, 7.8);
+  median.position.set(0, 0.09, 6.75);
   rampGroup.add(median);
 
-  const medianTop = new THREE.Mesh(new THREE.BoxGeometry(15.0, 0.04, 0.5), Mat.concrete);
-  medianTop.position.set(0, 0.23, 7.8);
+  const medianTop = new THREE.Mesh(new THREE.BoxGeometry(17.2, 0.04, 1.1), Mat.concrete);
+  medianTop.position.set(0, 0.19, 6.75);
   rampGroup.add(medianTop);
 
-  // Planter Shrub Clusters & Solar Reflectors along Central Median
-  [-5.2, -2.6, 0, 2.6, 5.2].forEach(mx => {
-    const bush = new THREE.Mesh(new THREE.DodecahedronGeometry(0.28, 0), Mat.foliage);
-    bush.position.set(mx, 0.36, 7.8);
-    bush.scale.set(1.4, 0.8, 1.0);
+  // Manicured Planter Shrub Clusters & Solar Road Studs along Central Median
+  [-6.5, -3.2, 0, 3.2, 6.5].forEach(mx => {
+    const bush = new THREE.Mesh(new THREE.DodecahedronGeometry(0.26, 0), Mat.foliage);
+    bush.position.set(mx, 0.32, 6.75);
+    bush.scale.set(1.3, 0.75, 0.9);
     rampGroup.add(bush);
 
-    // Solar Safety Road Stud Reflector
-    const stud = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.12), Mat.lampGlow);
-    stud.position.set(mx + 1.2, 0.25, 7.8);
+    const stud = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.12), Mat.lampGlow);
+    stud.position.set(mx + 1.6, 0.21, 6.75);
     rampGroup.add(stud);
   });
 
+  // Concrete boundary curbs flanking outer entrance and exit edges
+  const curbWestFlank = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 2.5), Mat.concrete);
+  curbWestFlank.position.set(-12.3, 0.08, 7.3);
+  const curbEastFlank = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.16, 2.5), Mat.concrete);
+  curbEastFlank.position.set(12.3, 0.08, 7.3);
+
+  // Front buffer curbs on outer lawns (X < -12.3 and X > 12.3 along Z: 6.0)
+  const curbWestFront = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.16, 0.3), Mat.concrete);
+  curbWestFront.position.set(-17.2, 0.08, 6.0);
+  const curbEastFront = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.16, 0.3), Mat.concrete);
+  curbEastFront.position.set(17.2, 0.08, 6.0);
+
+  rampGroup.add(curbWestFlank, curbEastFlank, curbWestFront, curbEastFront);
   diorama.add(rampGroup);
 }
 
@@ -4605,27 +4720,6 @@ function spawnCarWashMesh() {
   updateStationApronExpansion();
 }
 
-function spawnMarketBayMesh() {
-  if (marketBayGroup) return;
-  marketBayGroup = new THREE.Group();
-  marketBayGroup.position.copy(PLOTS.market.pos);
-
-  const bay = new THREE.Mesh(new THREE.BoxGeometry(6.5, 3.6, 5.0), Mat.buildingWall);
-  bay.position.y = 1.8;
-  bay.castShadow = true;
-  marketBayGroup.add(bay);
-
-  const roof = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.35, 5.4), Mat.greenAccent);
-  roof.position.y = 3.75;
-  marketBayGroup.add(roof);
-
-  const glassFront = new THREE.Mesh(new THREE.BoxGeometry(5.8, 2.2, 0.1), Mat.glass);
-  glassFront.position.set(0, 1.6, 2.52);
-  marketBayGroup.add(glassFront);
-
-  scene.add(marketBayGroup);
-  updateStationApronExpansion();
-}
 
 function spawnSolarPanelsMesh() {
   if (solarPanelsGroup) return;
@@ -4878,39 +4972,44 @@ class Vehicle {
     sprite.position.set(0, 2.3, 0);
     car.add(sprite);
 
-    // Initial position inside West Cloud Viaduct on Inner Lane (Z: 9.8), facing +X
-    car.position.set(-52, 0, 9.8);
+    // Initial position inside West Highway Tunnel on Inner Lane (Z: 9.8), facing +X
+    car.position.set(-62, getRoadElevation(-62), 9.8);
     car.rotation.y = Math.PI / 2;
     return car;
   }
 
   initApproachPath() {
     if (!this.targetPumpSlot) return;
-    const slotPos = this.targetPumpSlot.pos;
-    const isFrontRow = slotPos.z >= 1.0;
-    const parkZ = isFrontRow ? 5.2 : 0.0;
+    const slot = this.targetPumpSlot;
+    const slotPos = slot.pos;
+    const parkZ = slot.dockZ || (slotPos.z >= 1.0 ? 4.2 : 0.5);
     const parkX = slotPos.x;
+    const isFrontRow = parkZ >= 2.0;
 
     if (isFrontRow) {
-      // Front Row Pumps (#3 and #4): Inbound Slip Ramp -> Wide entrance curve -> Straight into front pump bay (Z: 5.2)
+      // Front Row Pumps (#3 & #4): West Tunnel -> Highway -> Slip Ramp -> Forecourt -> Fueling Lane (Z: 4.2)
       this.waypoints = [
-        new THREE.Vector3(-16.0, 0, 9.8),                 // 1. Highway inner lane approach
-        new THREE.Vector3(-12.5, 0, 8.6),                 // 2. Turn into Inbound Slip Ramp
-        new THREE.Vector3(-9.5, 0, 6.8),                  // 3. Enter forecourt apron (safely clears west pillar at X: -9.2, Z: 6.8)
-        new THREE.Vector3(-7.2, 0, parkZ),                // 4. Align straight facing +X in front pump lane
-        new THREE.Vector3(parkX - 1.4, 0, parkZ),         // 5. Approach dispenser
-        new THREE.Vector3(parkX, 0, parkZ)                // 6. Dock PARALLEL alongside pump!
+        new THREE.Vector3(-62.0, getRoadElevation(-62.0), 9.8), // 1. Inside West Mountain Tunnel
+        new THREE.Vector3(-36.0, getRoadElevation(-36.0), 9.8), // 2. Ascending curved highway ribbon
+        new THREE.Vector3(-15.5, 0, 9.8),                       // 3. Highway deceleration lane
+        new THREE.Vector3(-12.5, 0, 7.8),                       // 4. Inbound Slip Ramp
+        new THREE.Vector3(-10.0, 0, 5.2),                       // 5. Enter Forecourt
+        new THREE.Vector3(-8.0, 0, 4.2),                        // 6. Align into Row 2 Fueling Lane
+        new THREE.Vector3(parkX - 1.2, 0, 4.2),                 // 7. Straight glide
+        new THREE.Vector3(parkX, 0, 4.2)                        // 8. Dock PARALLEL alongside pump island!
       ];
     } else {
-      // Back Row Pumps (#1 and #2): Inbound Slip Ramp -> Bypass around front island -> Straight into back pump bay (Z: 0.0)
+      // Back Row Pumps (#1 & #2): West Tunnel -> Highway -> Slip Ramp -> Forecourt -> Fueling Lane (Z: 0.5)
       this.waypoints = [
-        new THREE.Vector3(-16.0, 0, 9.8),                 // 1. Highway inner lane approach
-        new THREE.Vector3(-12.5, 0, 8.6),                 // 2. Turn into Inbound Slip Ramp
-        new THREE.Vector3(-8.8, 0, 6.2),                  // 3. Clear outer apron curve
-        new THREE.Vector3(-8.2, 0, 2.6),                  // 4. Wide bypass aisle (safely clears pump 3 island at X: -4.5)
-        new THREE.Vector3(-6.8, 0, parkZ),                // 5. Turn into back pump lane
-        new THREE.Vector3(parkX - 1.4, 0, parkZ),         // 6. Straight bay alignment
-        new THREE.Vector3(parkX, 0, parkZ)                // 7. Dock PARALLEL alongside pump!
+        new THREE.Vector3(-62.0, getRoadElevation(-62.0), 9.8), // 1. Inside West Mountain Tunnel
+        new THREE.Vector3(-36.0, getRoadElevation(-36.0), 9.8), // 2. Ascending curved highway ribbon
+        new THREE.Vector3(-15.5, 0, 9.8),                       // 3. Highway deceleration lane
+        new THREE.Vector3(-12.5, 0, 7.8),                       // 4. Inbound Slip Ramp
+        new THREE.Vector3(-10.0, 0, 5.2),                       // 5. Enter Forecourt
+        new THREE.Vector3(-8.5, 0, 2.8),                        // 6. Smooth inner lane transition
+        new THREE.Vector3(-7.0, 0, 0.5),                        // 7. Align into Row 1 Fueling Lane
+        new THREE.Vector3(parkX - 1.2, 0, 0.5),                 // 8. Straight glide
+        new THREE.Vector3(parkX, 0, 0.5)                        // 9. Dock PARALLEL alongside pump island!
       ];
     }
     this.wpIndex = 0;
@@ -4920,26 +5019,30 @@ class Vehicle {
   initDeparturePath() {
     const startX = this.mesh.position.x;
     const startZ = this.mesh.position.z;
-    const isFrontRow = startZ >= 2.5;
+    const isFrontRow = startZ >= 2.0;
 
     if (isFrontRow) {
-      // Front Row departure (Z: 5.2): Straight forward -> Outbound Apron -> Merge Ramp -> East Hyper-Ring
+      // Front Row departure (Z: 4.2): Straight forward -> Outbound Slip Ramp -> Highway Merge -> East Tunnel
       this.waypoints = [
-        new THREE.Vector3(startX + 2.5, 0, 5.2),          // 1. Drive forward straight alongside pump facing +X
-        new THREE.Vector3(8.5, 0, 5.2),                   // 2. Clear pump 4 bay
-        new THREE.Vector3(11.5, 0, 7.2),                  // 3. Turn toward Outbound Apron
-        new THREE.Vector3(14.5, 0, 9.2),                  // 4. Enter Outbound Merge Ramp
-        new THREE.Vector3(56.0, 0, 9.8)                   // 5. Accelerate through East Hyper-Ring Portal
+        new THREE.Vector3(startX + 2.0, 0, 4.2),          // 1. Straight forward in Row 2 lane facing +X
+        new THREE.Vector3(7.5, 0, 4.2),                   // 2. Clear pump 4 bay
+        new THREE.Vector3(10.5, 0, 5.2),                  // 3. Approach outbound ramp
+        new THREE.Vector3(12.5, 0, 7.8),                  // 4. Enter Outbound Merge Ramp
+        new THREE.Vector3(15.5, 0, 9.8),                  // 5. Merge smoothly onto Highway inner lane
+        new THREE.Vector3(36.0, getRoadElevation(36.0), 9.8),  // 6. Descending curved highway ribbon
+        new THREE.Vector3(64.0, getRoadElevation(64.0), 9.8)   // 7. Accelerate through East Mountain Tunnel
       ];
     } else {
-      // Back Row departure (Z: 0.0): Straight forward -> Smooth curve across forecourt -> Outbound Merge Ramp
+      // Back Row departure (Z: 0.5): Straight forward -> Smooth curve across forecourt -> Outbound Merge Ramp -> East Tunnel
       this.waypoints = [
-        new THREE.Vector3(startX + 2.5, 0, 0.0),          // 1. Drive forward straight alongside pump facing +X
-        new THREE.Vector3(7.8, 0, 0.0),                   // 2. Clear pump 2 bay
-        new THREE.Vector3(9.8, 0, 3.2),                   // 3. Smooth curve across forecourt
-        new THREE.Vector3(12.0, 0, 7.2),                  // 4. Turn toward Outbound Apron
-        new THREE.Vector3(14.8, 0, 9.2),                  // 5. Enter Outbound Merge Ramp
-        new THREE.Vector3(56.0, 0, 9.8)                   // 6. Accelerate through East Hyper-Ring Portal
+        new THREE.Vector3(startX + 2.0, 0, 0.5),          // 1. Straight forward in Row 1 lane facing +X
+        new THREE.Vector3(7.5, 0, 0.5),                   // 2. Clear pump 2 bay
+        new THREE.Vector3(9.2, 0, 2.5),                   // 3. Smooth diagonal curve across forecourt
+        new THREE.Vector3(10.5, 0, 5.2),                  // 4. Approach outbound ramp
+        new THREE.Vector3(12.5, 0, 7.8),                  // 5. Enter Outbound Merge Ramp
+        new THREE.Vector3(15.5, 0, 9.8),                  // 6. Merge smoothly onto Highway inner lane
+        new THREE.Vector3(36.0, getRoadElevation(36.0), 9.8),  // 7. Descending curved highway ribbon
+        new THREE.Vector3(64.0, getRoadElevation(64.0), 9.8)   // 8. Accelerate through East Mountain Tunnel
       ];
     }
     this.wpIndex = 0;
@@ -5001,6 +5104,15 @@ class Vehicle {
           const moveStep = Math.min(stepDist, dist);
           this.mesh.position.x += (dx / dist) * moveStep;
           this.mesh.position.z += (dz / dist) * moveStep;
+
+          // Zero-Overlap Mutex: Release target pump slot only when vehicle has pulled forward > 3.8m
+          if (this.state === 'DEPARTING' && this.targetPumpSlot && this.targetPumpSlot.occupiedBy === this) {
+            const distFromSlot = this.mesh.position.distanceTo(this.targetPumpSlot.pos);
+            if (distFromSlot > 3.8) {
+              this.targetPumpSlot.occupiedBy = null;
+              this.targetPumpSlot = null;
+            }
+          }
         }
 
         // Wheel spin animation around X
@@ -5008,8 +5120,17 @@ class Vehicle {
           w.rotation.x += stepDist * 3.6;
         });
 
-        // Subtle suspension chassis roll on curves
-        this.mesh.rotation.z = lerpAngle(this.mesh.rotation.z, -steerAngle * 0.12, 0.1);
+        // Elevation and pitch along highway ribbon
+        const curX = this.mesh.position.x;
+        if (curX < -15 || curX > 15) {
+          this.mesh.position.y = getRoadElevation(curX);
+          const roadSlope = getRoadSlope(curX);
+          const roadPitch = -Math.atan(roadSlope);
+          this.mesh.rotation.z = lerpAngle(this.mesh.rotation.z, roadPitch, 0.15 * State.timeSpeed);
+        } else {
+          this.mesh.position.y = 0;
+          this.mesh.rotation.z = lerpAngle(this.mesh.rotation.z, -steerAngle * 0.12, 0.1);
+        }
 
         // Waypoint arrival threshold
         const threshold = (this.wpIndex === this.waypoints.length - 1) ? 0.14 : 0.45;
@@ -5023,7 +5144,7 @@ class Vehicle {
             }
           }
         }
-      } else if (this.mesh.position.x > 56) {
+      } else if (this.mesh.position.x > 62) {
         this.destroy();
       }
     } else if (this.state === 'WAITING' || this.state === 'REFUELING') {
@@ -5077,7 +5198,7 @@ function spawnCar() {
   const randomColor = CAR_COLORS[Math.floor(Math.random() * CAR_COLORS.length)];
 
   const car = new Vehicle('sedan', randomFuel, randomColor);
-  car.mesh.position.set(-52, 0, 9.8); // Spawn inside West Cloud Viaduct on Inner Lane!
+  car.mesh.position.set(-62, getRoadElevation(-62), 9.8); // Spawn inside West Mountain Tunnel!
   car.targetPumpSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
   car.targetPumpSlot.occupiedBy = car;
   car.initApproachPath();
@@ -5202,10 +5323,9 @@ function updateKeyboardCamera(delta) {
     controls.target.add(moveDelta);
   }
 
-  // Smooth island bounding box limit with generous navigation freedom
-  const maxPan = Math.max(45, State.land.size * 0.7);
-  const clampedX = THREE.MathUtils.clamp(controls.target.x, -maxPan, maxPan);
-  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -maxPan, maxPan);
+  // Smooth station bounding box limit to prevent camera panning into the void
+  const clampedX = THREE.MathUtils.clamp(controls.target.x, -22, 22);
+  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -18, 18);
   const diffX = clampedX - controls.target.x;
   const diffZ = clampedZ - controls.target.z;
 
@@ -5406,7 +5526,7 @@ function finishAndDismissCar() {
   sfx.playCoin();
 
   car.initDeparturePath();
-  State.activePump.occupiedBy = null;
+  // Slot lock is released safely once vehicle has driven > 3.8m away in Vehicle.update()
   State.activeCar = null;
   closePumpModal();
   updateHUD();
@@ -5448,7 +5568,7 @@ function autoServiceCar(car) {
   showToast(t('toast_mgr', car.targetPumpSlot.id + 1, cost.toFixed(0)));
   sfx.playCoin();
   car.initDeparturePath();
-  car.targetPumpSlot.occupiedBy = null;
+  // Slot lock is released safely once vehicle has driven > 3.8m away in Vehicle.update()
   updateHUD();
   updateDailyLedger();
 }
@@ -5648,6 +5768,7 @@ function updateActiveTimers(delta) {
         delete plotSignMeshes[timer.plot.id];
       }
       timer.onComplete();
+      updateAllPlotSigns();
       State.activeTimers.splice(i, 1);
     }
   }
@@ -6403,8 +6524,10 @@ class BypassVehicle {
 
   reset() {
     this.speed = 9 + Math.random() * 6;
-    this.mesh.position.set(-54 - Math.random() * 8, 0, 13.4);
+    const startX = -68 - Math.random() * 10;
+    this.mesh.position.set(startX, getRoadElevation(startX), 13.4);
     this.mesh.rotation.y = Math.PI / 2;
+    this.mesh.rotation.z = -Math.atan(getRoadSlope(startX));
   }
 
   update(delta) {
@@ -6418,7 +6541,10 @@ class BypassVehicle {
       }
     }
     this.mesh.position.x += this.speed * speedMult * delta * State.timeSpeed;
-    if (this.mesh.position.x > 56) {
+    const curX = this.mesh.position.x;
+    this.mesh.position.y = getRoadElevation(curX);
+    this.mesh.rotation.z = -Math.atan(getRoadSlope(curX));
+    if (this.mesh.position.x > 68) {
       this.reset();
     }
   }
@@ -6427,7 +6553,10 @@ class BypassVehicle {
 function initBypassTraffic() {
   for (let i = 0; i < 4; i++) {
     const bgCar = new BypassVehicle();
-    bgCar.mesh.position.x = -40 + i * 22;
+    const curX = -45 + i * 26;
+    bgCar.mesh.position.x = curX;
+    bgCar.mesh.position.y = getRoadElevation(curX);
+    bgCar.mesh.rotation.z = -Math.atan(getRoadSlope(curX));
     bgVehicles.push(bgCar);
   }
 }
@@ -6667,8 +6796,11 @@ function animate() {
   lastTime = now;
   const totalSeconds = now * 0.001;
 
-  // Camera Navigation & Smooth Pan Clamping
+  // Camera Navigation & Smooth Pan Clamping within station bounds
   updateKeyboardCamera(delta);
+  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -22, 22);
+  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -18, 18);
+  controls.target.y = 0;
   controls.update();
 
   updateDayNightCycle(delta);
