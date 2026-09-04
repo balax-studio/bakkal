@@ -506,6 +506,7 @@ body, html {
 }
 .preset-btn {
   padding: 8px 0;
+  min-height: var(--touch-min);
   font-size: 12px;
   font-family: 'JetBrains Mono', monospace;
 }
@@ -550,6 +551,7 @@ body, html {
 }
 .buy-btn, .order-submit-btn {
   padding: 8px 14px;
+  min-height: var(--touch-min);
   font-size: 12px;
   font-family: 'JetBrains Mono', monospace;
   flex-shrink: 0;
@@ -662,6 +664,7 @@ body, html {
 }
 .tab-btn {
   padding: 6px 12px;
+  min-height: var(--touch-min);
   font-size: 11px;
   font-weight: 800;
   background: var(--bg-inner);
@@ -820,7 +823,7 @@ body, html {
   color: var(--accent-red);
   padding: 6px 10px;
   font-size: 11px;
-  min-height: 38px;
+  min-height: var(--touch-min);
   gap: 4px;
 }
 .debug-chip-btn:hover {
@@ -831,8 +834,8 @@ body, html {
 .settings-chip-btn {
   background: var(--bg-paper);
   padding: 6px 10px;
-  min-height: 38px;
-  min-width: 48px;
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
 }
 .settings-chip-btn:hover {
   background: var(--accent-gold);
