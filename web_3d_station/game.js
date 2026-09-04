@@ -4714,31 +4714,27 @@ function updateLivingWorldFX(delta, totalSeconds) {
     u.rollTimer -= delta;
     if (u.rollTimer <= 0) {
       u.rollTimer = 12.0 + Math.random() * 10.0;
-  turbineGroup.add(turbineRotor);
+      rollingCanVelocity = 2.4;
+    }
+    if (rollingCanVelocity > 0.01) {
+      rollingCanMesh.position.x += rollingCanVelocity * delta;
+      rollingCanMesh.rotation.y += rollingCanVelocity * 6.0 * delta;
+      rollingCanVelocity *= 0.96;
+      if (rollingCanMesh.position.x > 12) {
+        rollingCanMesh.position.x = u.baseX;
+        rollingCanVelocity = 0;
+      }
+    }
+  }
 
-  scene.add(turbineGroup);
-  updateStationApronExpansion();
-}
-
-function spawnEvChargerMesh() {
-  if (evChargerGroup) return;
-  evChargerGroup = new THREE.Group();
-  evChargerGroup.position.copy(PLOTS.ev.pos);
-
-  const pad = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.2, 2.0), Mat.concrete);
-  pad.position.y = 0.1;
-  evChargerGroup.add(pad);
-
-  [-0.8, 0.8].forEach(x => {
-    const totem = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.4), Mat.darkInk);
-    totem.position.set(x, 1.0, 0);
-    const led = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.05), Mat.evGlow);
-    led.position.set(x, 1.1, 0.22);
-    evChargerGroup.add(totem, led);
+  // 9. Cafe Patrons sipping coffee
+  cafePatrons.forEach(patron => {
+    patron.userData.sipTimer -= delta;
+    if (patron.userData.sipTimer <= 0) {
+      patron.userData.sipTimer = 3.5 + Math.random() * 4.0;
+      patron.userData.head.rotation.x = Math.sin(totalSeconds * 3.0) * 0.15;
+    }
   });
-
-  scene.add(evChargerGroup);
-  updateStationApronExpansion();
 }
 
 // =========================================================
@@ -6633,12 +6629,6 @@ const INGAME_MINUTES_PER_REAL_SECOND = 1440.0 / 420.0;
 
 function updateDayNightCycle(delta) {
   // Advance in-game minutes continuously
-  const sunAngle = ((h - 6) / 12) * Math.PI;
-  const sunDist = 34;
-  const sunHeight = Math.max(6, Math.sin(sunAngle) * 36);
-  sunLight.position.x = Math.cos(sunAngle) * sunDist;
-  sunLight.position.y = sunHeight;
-  // sunLight.position.z = 18 stays fixed
   const gameMinutesAdvance = delta * INGAME_MINUTES_PER_REAL_SECOND * State.timeSpeed;
   State.minute += gameMinutesAdvance;
 
@@ -6676,6 +6666,12 @@ function updateDayNightCycle(delta) {
 
 function updateSkyLighting() {
   const h = State.hour + (State.minute / 60.0);
+  const sunAngle = ((h - 6) / 12) * Math.PI;
+  const sunDist = 34;
+  const sunHeight = Math.max(6, Math.sin(sunAngle) * 36);
+  sunLight.position.x = Math.cos(sunAngle) * sunDist;
+  sunLight.position.y = sunHeight;
+  // sunLight.position.z = 18 stays fixed
   let skyColor, sunColor, sunEnergy;
   let nightAlpha = 0.0;
 
@@ -7448,14 +7444,16 @@ function claimDailyStreakReward() {
 
 // Start Game on Page Load
 window.addEventListener('DOMContentLoaded', async () => {
-  await initThree();
-  updateI18nDOM();
-  updateHUD();
-  updateOrderModalStatus();
-  updateDailyLedger();
-  checkOfflineEarnings();
-  setTimeout(checkDailyStreak, 1200);
-  showToast(t('toast_welcome'));
+  try {
+    await initThree();
+    updateI18nDOM();
+    updateHUD();
+    updateOrderModalStatus();
+    updateDailyLedger();
+    checkOfflineEarnings();
+    setTimeout(checkDailyStreak, 1200);
+    showToast(t('toast_welcome'));
+  } catch (err) {
+    console.error('Fatal initialization error:', err);
+  }
 });
-}
-}
