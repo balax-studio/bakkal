@@ -265,6 +265,70 @@ function checkContrast(css) {
 }
 
 // ---------------------------------------------------------
+// 4) KURAL BAZLI KONTRAST - sabit kodlu metin rengi aksan zemin uzerinde
+//    (token ciftleri dogru olsa bile tek tek kurallar #fff birakmis olabilir)
+// ---------------------------------------------------------
+
+function checkRuleContrast(css) {
+  console.log("\n=== 4) Kural Bazli Kontrast (sabit metin rengi x aksan zemin) ===");
+  const vars = {};
+  [...css.matchAll(/--([a-z-]+):\s*(#[0-9A-Fa-f]{6})/g)].forEach(m => { vars[m[1]] = m[2]; });
+
+  const norm = h => {
+    h = h.replace("#", "");
+    if (h.length === 3) h = h.split("").map(x => x + x).join("");
+    return "#" + h;
+  };
+
+  let fails = 0;
+  [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].forEach(r => {
+    const sel = r[1].trim().split("\n").pop().trim();
+    const body = r[2];
+    const bgM = body.match(/background(?:-color)?:\s*(?:var\(--([a-z-]+)\)|(#[0-9A-Fa-f]{3,6}))/);
+    const fgM = body.match(/(?:^|;)\s*color:\s*(#[0-9A-Fa-f]{3,6})/);
+    if (!bgM || !fgM) return;
+    const bg = bgM[1] ? vars[bgM[1]] : norm(bgM[2]);
+    if (!bg) return;
+    const ratio = contrastRatio(bg, norm(fgM[1]));
+    if (ratio < 4.5) {
+      fails++;
+      console.log("  FAIL " + ratio.toFixed(2) + ":1  " + sel + "   bg=" + bg + " color=" + norm(fgM[1]));
+    }
+  });
+  console.log("Sonuc: " + fails + " kural bazli kontrast ihlali");
+  return fails;
+}
+
+// ---------------------------------------------------------
+// 5) KONTUR / BOYUT - kalin kontur kucuk elemani yiyor mu
+// ---------------------------------------------------------
+
+function checkBorderFit(css) {
+  console.log("\n=== 5) Kontur/Boyut Denetimi (kontur ic dolgunun >%50'sini yememeli) ===");
+  let fails = 0;
+  [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].forEach(r => {
+    const sel = r[1].trim().split("\n").pop().trim();
+    const body = r[2];
+    const bM = body.match(/(?:^|;)\s*border:\s*([\d.]+)px solid/);
+    if (!bM) return;
+    const bw = parseFloat(bM[1]);
+    ["width", "height"].forEach(dim => {
+      const m = body.match(new RegExp("(?:^|;)\\s*" + dim + ":\\s*([\\d.]+)px"));
+      if (!m) return;
+      const size = parseFloat(m[1]);
+      const inner = size - 2 * bw;
+      if (inner < size * 0.5) {
+        fails++;
+        console.log("  FAIL " + sel + "  " + dim + "=" + size + "px, kontur " + bw +
+                    "px -> ic dolgu " + inner.toFixed(1) + "px (%" + Math.round(inner / size * 100) + ")");
+      }
+    });
+  });
+  console.log("Sonuc: " + fails + " kontur/boyut ihlali");
+  return fails;
+}
+
+// ---------------------------------------------------------
 // Calistir
 // ---------------------------------------------------------
 
@@ -274,11 +338,15 @@ const cssSrc = readSrc(STYLE_CSS);
 const collisions = checkCollisions(gameSrc);
 const plateauOverflow = checkPlateau(gameSrc);
 const contrastFails = checkContrast(cssSrc);
+const ruleContrastFails = checkRuleContrast(cssSrc);
+const borderFails = checkBorderFit(cssSrc);
 
 console.log("\n=== OZET ===");
-console.log("Cakisma: " + collisions + "  |  Plato tasmasi: " + plateauOverflow + "  |  Kontrast ihlali: " + contrastFails);
+console.log("Cakisma: " + collisions + "  |  Plato tasmasi: " + plateauOverflow +
+            "  |  Token kontrasti: " + contrastFails + "  |  Kural kontrasti: " + ruleContrastFails +
+            "  |  Kontur/boyut: " + borderFails);
 
-if (collisions > 0 || plateauOverflow > 0 || contrastFails > 0) {
+if (collisions > 0 || plateauOverflow > 0 || contrastFails > 0 || ruleContrastFails > 0 || borderFails > 0) {
   exitCode = 1;
   console.log("\nSonuc: BASARISIZ");
 } else {

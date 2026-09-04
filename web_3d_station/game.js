@@ -186,6 +186,8 @@ const I18N = {
     toast_debug_tanks: 'Debug: Tüm depolar dolduruldu (%100).',
     toast_debug_timers: 'Debug: Tüm aktif süreler tamamlandı.',
     toast_debug_unlock: 'Debug: Tüm tesisler ve arsalar açıldı!',
+    toast_debug_facilities: 'Debug: 17 tesisin tamamı inşa edildi.',
+    toast_level_up: '{0} Seviye {1} yapıldı!',
     cam_center: 'Odak',
     cam_hint: 'Sol Tık: Kaydır · Sağ Tık: Döndür · WASD',
     toast_cam_reset: 'Kamera istasyon merkezine odaklandı.'
@@ -368,6 +370,8 @@ const I18N = {
     toast_debug_tanks: 'Debug: All fuel tanks filled (100%).',
     toast_debug_timers: 'Debug: Completed all active timers.',
     toast_debug_unlock: 'Debug: All facilities and land unlocked!',
+    toast_debug_facilities: 'Debug: All 17 facilities built.',
+    toast_level_up: '{0} upgraded to Level {1}!',
     cam_center: 'Focus',
     cam_hint: 'Left Click: Pan · Right Click: Rotate · WASD',
     toast_cam_reset: 'Camera centered on station.'
@@ -2051,8 +2055,9 @@ function propHoseReel() {
 
 // Zemin boya seridi (guvenlik / yonlendirme)
 function propFloorStripe(w, d, mat) {
+  // Tabani yerel y=0'da: cagiran taraf position.y'yi zemin ust yuzeyine esitler.
   const s = new THREE.Mesh(new THREE.BoxGeometry(w, 0.014, d), mat || Mat.roadYellow);
-  s.position.y = 0.075;
+  s.position.y = 0.007;
   return s;
 }
 
@@ -2346,44 +2351,48 @@ function createGenericPlotMesh(plot, w = 3.2, d = 3.2, family) {
   // kenarlarin disina tasmasin.
   const hw = w / 2, hd = d / 2;
   const fam = family || 'service';
+  // Parsel grubu plot.pos.y = 0.04'te duruyor, asfalt onlugun ust yuzeyi ise
+  // y = 0.08. Aradaki 0.04 m'yi telafi etmezsek aile prop'lari asfaltin
+  // icinde kalir (kablo kanali tamamen gorunmez olur).
+  const groundY = 0.045;
   if (fam === 'service') {
     const pad = new THREE.Mesh(new THREE.BoxGeometry(w * 0.7, 0.06, d * 0.7), Mat.concrete);
-    pad.position.y = 0.03;
+    pad.position.y = groundY + 0.03;
     group.add(pad);
     const liftL = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 12), Mat.darkInk);
-    liftL.position.set(-hw * 0.35, 0.06, -hd * 0.3);
+    liftL.position.set(-hw * 0.35, groundY + 0.075, -hd * 0.3);
     const liftR = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 12), Mat.darkInk);
-    liftR.position.set(hw * 0.35, 0.06, -hd * 0.3);
+    liftR.position.set(hw * 0.35, groundY + 0.075, -hd * 0.3);
     group.add(liftL, liftR);
     const stain = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.01, 10), Mat.oilStain);
-    stain.position.set(0, 0.065, hd * 0.25);
+    stain.position.set(0, groundY + 0.065, hd * 0.25);
     group.add(stain);
     const bollardL = propBollard();
-    bollardL.position.set(-hw * 0.75, 0, hd * 0.7);
+    bollardL.position.set(-hw * 0.75, groundY, hd * 0.7);
     const bollardR = propBollard();
-    bollardR.position.set(hw * 0.75, 0, hd * 0.7);
+    bollardR.position.set(hw * 0.75, groundY, hd * 0.7);
     group.add(bollardL, bollardR);
   } else if (fam === 'lifestyle') {
     const deck = new THREE.Mesh(new THREE.BoxGeometry(w * 0.75, 0.05, d * 0.75), Mat.benchWood);
-    deck.position.y = 0.025;
+    deck.position.y = groundY + 0.025;
     group.add(deck);
     const canopyStub = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.4, 6), Mat.darkInk);
-    canopyStub.position.set(0, 0.7, -hd * 0.6);
+    canopyStub.position.set(0, groundY + 0.75, -hd * 0.6);
     group.add(canopyStub);
     const pallet = propPalletStack(1);
-    pallet.position.set(-hw * 0.7, 0, hd * 0.6);
+    pallet.position.set(-hw * 0.7, groundY + 0.05, hd * 0.6);
     const trash = propTrashBin();
-    trash.position.set(hw * 0.7, 0, hd * 0.6);
+    trash.position.set(hw * 0.7, groundY + 0.05, hd * 0.6);
     group.add(pallet, trash);
   } else if (fam === 'energy') {
     const conduit = new THREE.Mesh(new THREE.BoxGeometry(w * 0.8, 0.03, 0.25), Mat.darkInk);
-    conduit.position.set(0, 0.02, 0);
+    conduit.position.set(0, groundY + 0.015, 0);
     group.add(conduit);
     const cabinet = propInverterCabinet();
-    cabinet.position.set(-hw * 0.55, 0, -hd * 0.5);
+    cabinet.position.set(-hw * 0.55, groundY, -hd * 0.5);
     group.add(cabinet);
     const paint = propFloorStripe(w * 0.7, 0.2, Mat.greenAccent);
-    paint.position.set(0, 0, hd * 0.55);
+    paint.position.set(0, groundY, hd * 0.55);
     group.add(paint);
   }
 
@@ -3142,12 +3151,14 @@ function spawnSolarPanelsMesh(level = 1) {
     solarPanelsGroup.add(inv, led);
   }
 
+  // Cati guvertesi: paneller yerel y=0.06'da, prop'lar da o kotta.
+  const deckTop = 0.06;
   const spInverter = propInverterCabinet();
-  spInverter.position.set(3.2, 0, 1.4);
+  spInverter.position.set(3.2, deckTop, 1.4);
   const spCableReel = propCableReel();
-  spCableReel.position.set(-3.0, 0, 1.6);
+  spCableReel.position.set(-3.0, deckTop, 1.6);
   const spStripe = propFloorStripe(5.0, 0.2, Mat.greenAccent);
-  spStripe.position.set(0, 0, 2.4);
+  spStripe.position.set(0, deckTop, 2.4);
   solarPanelsGroup.add(spInverter, spCableReel, spStripe);
 
   scene.add(solarPanelsGroup);
@@ -3442,18 +3453,20 @@ function spawnVacuumHubMesh(level = 1) {
     vacuumHubGroup.add(canopy);
   }
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.08;
   const vhBollardL = propBollard();
-  vhBollardL.position.set(-1.6, 0, 1.4);
+  vhBollardL.position.set(-1.6, padTop, 1.4);
   const vhBollardR = propBollard();
-  vhBollardR.position.set(1.6, 0, 1.4);
+  vhBollardR.position.set(1.6, padTop, 1.4);
   const vhDrain = propDrainGrate(1.2, 0.5);
-  vhDrain.position.set(0, 0, -1.2);
+  vhDrain.position.set(0, padTop, -1.2);
   const vhHose = propHoseReel();
-  vhHose.position.set(1.1, 1.2, 0);
+  vhHose.position.set(1.1, 1.2 + padTop, 0);
   const vhStripe = propFloorStripe(3.2, 0.2);
-  vhStripe.position.set(0, 0, 1.9);
+  vhStripe.position.set(0, padTop, 1.9);
   const vhPips = propLevelPips(level);
-  vhPips.position.set(-1.9, 0, 1.6);
+  vhPips.position.set(-1.9, padTop, 1.6);
   vacuumHubGroup.add(vhBollardL, vhBollardR, vhDrain, vhHose, vhStripe, vhPips);
 
   scene.add(vacuumHubGroup);
@@ -3495,16 +3508,18 @@ function spawnMotoDockMesh(level = 1) {
     motoDockGroup.add(roof);
   }
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.06;
   const mdPallet = propPalletStack(2);
-  mdPallet.position.set(-1.5, 0, -1.0);
+  mdPallet.position.set(-1.5, padTop, -1.0);
   const mdChockL = propWheelChock();
-  mdChockL.position.set(-0.5, 0, 0.9);
+  mdChockL.position.set(-0.5, padTop, 0.9);
   const mdChockR = propWheelChock();
-  mdChockR.position.set(0.5, 0, 0.9);
+  mdChockR.position.set(0.5, padTop, 0.9);
   const mdBollard = propBollard();
-  mdBollard.position.set(1.7, 0, 1.2);
+  mdBollard.position.set(1.7, padTop, 1.2);
   const mdPips = propLevelPips(level);
-  mdPips.position.set(-1.7, 0, 1.2);
+  mdPips.position.set(-1.7, padTop, 1.2);
   motoDockGroup.add(mdPallet, mdChockL, mdChockR, mdBollard, mdPips);
 
   scene.add(motoDockGroup);
@@ -3545,24 +3560,27 @@ function spawnTruckStopMesh(level = 1) {
     truckStopGroup.add(cRoof, col1, col2);
   }
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.14;
   const tsBollardNE = propBollard();
-  tsBollardNE.position.set(3.6, 0, 4.2);
+  tsBollardNE.position.set(3.6, padTop, 4.2);
   const tsBollardNW = propBollard();
-  tsBollardNW.position.set(-3.6, 0, 4.2);
+  tsBollardNW.position.set(-3.6, padTop, 4.2);
   const tsBollardSE = propBollard();
-  tsBollardSE.position.set(3.6, 0, -4.2);
+  tsBollardSE.position.set(3.6, padTop, -4.2);
   const tsBollardSW = propBollard();
-  tsBollardSW.position.set(-3.6, 0, -4.2);
+  tsBollardSW.position.set(-3.6, padTop, -4.2);
   const tsChockL = propWheelChock();
-  tsChockL.position.set(-1.2, 0, -3.0);
+  tsChockL.position.set(-1.2, padTop, -3.0);
   const tsChockR = propWheelChock();
-  tsChockR.position.set(1.2, 0, -3.0);
+  tsChockR.position.set(1.2, padTop, -3.0);
   const tsStripe = propFloorStripe(7.0, 0.25, Mat.roadWhite);
-  tsStripe.position.set(0, 0, 2.6);
+  tsStripe.position.set(0, padTop, 2.6);
   const tsCableReel = propCableReel();
-  tsCableReel.position.set(3.0, 0, -1.4);
+  // (3.0, -1.4) L2 DEF tankinin (r=0.7 @ 3.0,-1.6) icindeydi; bos alana alindi.
+  tsCableReel.position.set(-3.0, padTop, -1.9);
   const tsPips = propLevelPips(level);
-  tsPips.position.set(-4.0, 0, 3.8);
+  tsPips.position.set(-4.0, padTop, 3.8);
   truckStopGroup.add(tsBollardNE, tsBollardNW, tsBollardSE, tsBollardSW, tsChockL, tsChockR, tsStripe, tsCableReel, tsPips);
 
   scene.add(truckStopGroup);
@@ -3640,14 +3658,16 @@ function spawnFoodTruckMesh(level = 1) {
     foodTruckGroup.add(table);
   }
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.06;
   const ftTrash = propTrashBin();
-  ftTrash.position.set(2.0, 0, 0.8);
+  ftTrash.position.set(2.0, padTop, 0.8);
   const ftBench = propBench();
-  ftBench.position.set(-1.9, 0, 1.2);
+  ftBench.position.set(-1.9, padTop, 1.2);
   const ftTotem = propNeonTotem(Mat.neonAmber);
-  ftTotem.position.set(2.4, 0, -1.2);
+  ftTotem.position.set(2.4, padTop, -1.2);
   const ftStripe = propFloorStripe(3.0, 0.18);
-  ftStripe.position.set(0, 0, 1.9);
+  ftStripe.position.set(0, padTop, 1.9);
   foodTruckGroup.add(ftTrash, ftBench, ftTotem, ftStripe);
 
   scene.add(foodTruckGroup);
@@ -3679,33 +3699,37 @@ function spawnRestLoungeMesh(level = 1) {
   doorR.position.set(1.2, 1.05, 2.02);
   restLoungeGroup.add(doorL, doorR);
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.1;
   const rlBenchL = propBench();
-  rlBenchL.position.set(-1.7, 0, 1.6);
+  // Banklar bina govdesinin (5.0 x 4.0, Z[-2.0, 2.0]) ONUNE, kapilarin
+  // disina alindi; 1.6'da duvarin icinde kaliyorlardi.
+  rlBenchL.position.set(-1.7, padTop, 2.9);
   const rlBenchR = propBench();
-  rlBenchR.position.set(1.7, 0, 1.6);
+  rlBenchR.position.set(1.7, padTop, 2.9);
   const rlTrash = propTrashBin();
-  rlTrash.position.set(2.6, 0, 1.4);
+  rlTrash.position.set(2.6, padTop, 1.4);
   const rlTotem = propNeonTotem(Mat.windowWarm);
-  rlTotem.position.set(-2.8, 0, -1.0);
+  rlTotem.position.set(-2.8, padTop, -1.0);
   const rlPallet = propPalletStack(2);
-  rlPallet.position.set(2.7, 0, -1.6);
+  rlPallet.position.set(2.7, padTop, -1.6);
   restLoungeGroup.add(rlBenchL, rlBenchR, rlTrash, rlTotem, rlPallet);
 
   // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
   if (level >= 2) {
     const rlL2 = propInverterCabinet();
-    rlL2.position.set(-2.8, 0, 1.6);
+    rlL2.position.set(-2.8, padTop, 1.6);
     restLoungeGroup.add(rlL2);
   }
   if (level >= 3) {
     const rlMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
-    rlMast.position.set(2.8, 1.5, 1.8);
+    rlMast.position.set(2.8, 1.5 + padTop, 1.8);
     const rlLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
-    rlLamp.position.set(2.8, 3.0, 1.8);
+    rlLamp.position.set(2.8, 3.0 + padTop, 1.8);
     restLoungeGroup.add(rlMast, rlLamp);
   }
   const rlPips = propLevelPips(level);
-  rlPips.position.set(0, 0, 2.2);
+  rlPips.position.set(0, padTop, 2.2);
   restLoungeGroup.add(rlPips);
 
   scene.add(restLoungeGroup);
@@ -3740,33 +3764,35 @@ function spawnPetParkMesh(level = 1) {
   ramp.position.set(-1.0, 0.4, 0);
   petParkGroup.add(hydrant, ramp);
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.06;
   const ppBenchL = propBench();
-  ppBenchL.position.set(-1.8, 0, 2.4);
+  ppBenchL.position.set(-1.8, padTop, 2.4);
   const ppBenchR = propBench();
-  ppBenchR.position.set(1.8, 0, 2.4);
+  ppBenchR.position.set(1.8, padTop, 2.4);
   const ppTrash = propTrashBin();
-  ppTrash.position.set(2.4, 0, 3.0);
+  ppTrash.position.set(2.4, padTop, 3.0);
   const ppBollardL = propBollard();
-  ppBollardL.position.set(-2.4, 0, -3.4);
+  ppBollardL.position.set(-2.4, padTop, -3.4);
   const ppBollardR = propBollard();
-  ppBollardR.position.set(2.4, 0, -3.4);
+  ppBollardR.position.set(2.4, padTop, -3.4);
   petParkGroup.add(ppBenchL, ppBenchR, ppTrash, ppBollardL, ppBollardR);
 
   // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
   if (level >= 2) {
     const ppL2 = propInverterCabinet();
-    ppL2.position.set(0, 0, -3.2);
+    ppL2.position.set(0, padTop, -3.2);
     petParkGroup.add(ppL2);
   }
   if (level >= 3) {
     const ppMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
-    ppMast.position.set(0, 1.5, 3.8);
+    ppMast.position.set(0, 1.5 + padTop, 3.8);
     const ppLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
-    ppLamp.position.set(0, 3.0, 3.8);
+    ppLamp.position.set(0, 3.0 + padTop, 3.8);
     petParkGroup.add(ppMast, ppLamp);
   }
   const ppPips = propLevelPips(level);
-  ppPips.position.set(0, 0, 3.6);
+  ppPips.position.set(0, padTop, 3.6);
   petParkGroup.add(ppPips);
 
   scene.add(petParkGroup);
@@ -3795,31 +3821,33 @@ function spawnParcelHubMesh(level = 1) {
   roof.position.set(0, 2.3, 0.2);
   parcelHubGroup.add(roof);
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.08;
   const phBollardL = propBollard();
-  phBollardL.position.set(-1.4, 0, 1.0);
+  phBollardL.position.set(-1.4, padTop, 1.0);
   const phBollardR = propBollard();
-  phBollardR.position.set(1.4, 0, 1.0);
+  phBollardR.position.set(1.4, padTop, 1.0);
   const phPallet = propPalletStack(3);
-  phPallet.position.set(-1.8, 0, -0.6);
+  phPallet.position.set(-1.8, padTop, -0.6);
   const phTotem = propNeonTotem(Mat.evGlow);
-  phTotem.position.set(1.9, 0, -0.8);
+  phTotem.position.set(1.9, padTop, -0.8);
   parcelHubGroup.add(phBollardL, phBollardR, phPallet, phTotem);
 
   // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
   if (level >= 2) {
     const phL2 = propInverterCabinet();
-    phL2.position.set(0, 0, 1.05);
+    phL2.position.set(0, padTop, 1.05);
     parcelHubGroup.add(phL2);
   }
   if (level >= 3) {
     const phMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
-    phMast.position.set(0, 1.5, -1.05);
+    phMast.position.set(0, 1.5 + padTop, -1.05);
     const phLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
-    phLamp.position.set(0, 3.0, -1.05);
+    phLamp.position.set(0, 3.0 + padTop, -1.05);
     parcelHubGroup.add(phMast, phLamp);
   }
   const phPips = propLevelPips(level);
-  phPips.position.set(-1.6, 0, 1.1);
+  phPips.position.set(-1.6, padTop, 1.1);
   parcelHubGroup.add(phPips);
 
   scene.add(parcelHubGroup);
@@ -3845,31 +3873,33 @@ function spawnAtmHubMesh(level = 1) {
   hood.position.set(0, 2.1, 0.2);
   atmHubGroup.add(atm1, atm2, hood);
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.08;
   const ahBollardL = propBollard();
-  ahBollardL.position.set(-1.2, 0, 0.9);
+  ahBollardL.position.set(-1.2, padTop, 0.9);
   const ahBollardR = propBollard();
-  ahBollardR.position.set(1.2, 0, 0.9);
+  ahBollardR.position.set(1.2, padTop, 0.9);
   const ahTrash = propTrashBin();
-  ahTrash.position.set(1.6, 0, -0.7);
+  ahTrash.position.set(1.6, padTop, -0.7);
   const ahStripe = propFloorStripe(2.4, 0.16);
-  ahStripe.position.set(0, 0, 1.2);
+  ahStripe.position.set(0, padTop, 1.2);
   atmHubGroup.add(ahBollardL, ahBollardR, ahTrash, ahStripe);
 
   // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
   if (level >= 2) {
     const ahL2 = propInverterCabinet();
-    ahL2.position.set(0, 0, -0.9);
+    ahL2.position.set(0, padTop, -0.9);
     atmHubGroup.add(ahL2);
   }
   if (level >= 3) {
     const ahMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
-    ahMast.position.set(-1.6, 1.5, 0.8);
+    ahMast.position.set(-1.6, 1.5 + padTop, 0.8);
     const ahLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
-    ahLamp.position.set(-1.6, 3.0, 0.8);
+    ahLamp.position.set(-1.6, 3.0 + padTop, 0.8);
     atmHubGroup.add(ahMast, ahLamp);
   }
   const ahPips = propLevelPips(level);
-  ahPips.position.set(-1.4, 0, 1.0);
+  ahPips.position.set(-1.4, padTop, 1.0);
   atmHubGroup.add(ahPips);
 
   scene.add(atmHubGroup);
@@ -3900,39 +3930,41 @@ function spawnHydrogenBayMesh(level = 1) {
   pGlow.position.set(1.8, 1.2, 1.76);
   hydrogenBayGroup.add(pylon, pGlow);
 
+  // Prop'lar tesisin kendi beton zemininin ust yuzeyine oturur.
+  const padTop = 0.14;
   const hbBollardNE = propBollard();
-  hbBollardNE.position.set(2.4, 0, 2.4);
+  hbBollardNE.position.set(2.4, padTop, 2.4);
   const hbBollardNW = propBollard();
-  hbBollardNW.position.set(-2.4, 0, 2.4);
+  hbBollardNW.position.set(-2.4, padTop, 2.4);
   const hbBollardSE = propBollard();
-  hbBollardSE.position.set(2.4, 0, -2.4);
+  hbBollardSE.position.set(2.4, padTop, -2.4);
   const hbBollardSW = propBollard();
-  hbBollardSW.position.set(-2.4, 0, -2.4);
+  hbBollardSW.position.set(-2.4, padTop, -2.4);
   const hbInverter = propInverterCabinet();
-  hbInverter.position.set(-2.6, 0, 0.6);
+  hbInverter.position.set(-2.6, padTop, 0.6);
   const hbChockL = propWheelChock();
-  hbChockL.position.set(-0.8, 0, 2.6);
+  hbChockL.position.set(-0.8, padTop, 2.6);
   const hbChockR = propWheelChock();
-  hbChockR.position.set(0.8, 0, 2.6);
+  hbChockR.position.set(0.8, padTop, 2.6);
   const hbStripe = propFloorStripe(4.4, 0.22, Mat.greenAccent);
-  hbStripe.position.set(0, 0, 3.0);
+  hbStripe.position.set(0, padTop, 3.0);
   hydrogenBayGroup.add(hbBollardNE, hbBollardNW, hbBollardSE, hbBollardSW, hbInverter, hbChockL, hbChockR, hbStripe);
 
   // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
   if (level >= 2) {
     const hbL2 = propInverterCabinet();
-    hbL2.position.set(2.6, 0, 0.6);
+    hbL2.position.set(2.6, padTop, 0.6);
     hydrogenBayGroup.add(hbL2);
   }
   if (level >= 3) {
     const hbMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
-    hbMast.position.set(0, 1.5, -2.6);
+    hbMast.position.set(0, 1.5 + padTop, -2.6);
     const hbLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
-    hbLamp.position.set(0, 3.0, -2.6);
+    hbLamp.position.set(0, 3.0 + padTop, -2.6);
     hydrogenBayGroup.add(hbMast, hbLamp);
   }
   const hbPips = propLevelPips(level);
-  hbPips.position.set(2.6, 0, 2.6);
+  hbPips.position.set(2.6, padTop, 2.6);
   hydrogenBayGroup.add(hbPips);
 
   scene.add(hydrogenBayGroup);
@@ -6480,7 +6512,7 @@ function buyWashUpgrade() {
     spawnCarWashMesh(nextLvl);
     updateStationApronExpansion();
     updateBuildModalButtons();
-    showToast(`Oto Yıkama Seviye ${nextLvl} yapıldı!`);
+    showToast(t('toast_level_up', t('plot_wash'), nextLvl));
     sfx.playFanfare();
     updateHUD();
   }
@@ -6527,7 +6559,7 @@ function buyMarketUpgrade() {
     updateCafePatrons(diorama);
     updateStationApronExpansion();
     updateBuildModalButtons();
-    showToast(`Mini Market & Cafe Seviye ${nextLvl} yapıldı!`);
+    showToast(t('toast_level_up', t('plot_market'), nextLvl));
     sfx.playFanfare();
     updateHUD();
   }
@@ -6572,7 +6604,7 @@ function buySolarUpgrade() {
     spawnSolarPanelsMesh(nextLvl);
     updateStationApronExpansion();
     updateBuildModalButtons();
-    showToast(`Çatı GES Seviye ${nextLvl} yapıldı!`);
+    showToast(t('toast_level_up', t('plot_solar'), nextLvl));
     sfx.playFanfare();
     updateHUD();
   }
@@ -6617,7 +6649,7 @@ function buyTurbineUpgrade() {
     spawnTurbineMesh(nextLvl);
     updateStationApronExpansion();
     updateBuildModalButtons();
-    showToast(`Rüzgar Türbini Seviye ${nextLvl} yapıldı!`);
+    showToast(t('toast_level_up', t('plot_turbine'), nextLvl));
     sfx.playFanfare();
     updateHUD();
   }
@@ -6662,7 +6694,7 @@ function buyEvChargerUpgrade() {
     spawnEvChargerMesh(nextLvl);
     updateStationApronExpansion();
     updateBuildModalButtons();
-    showToast(`EV Ultra Şarj Seviye ${nextLvl} yapıldı!`);
+    showToast(t('toast_level_up', t('plot_ev'), nextLvl));
     sfx.playFanfare();
     updateHUD();
   }
@@ -6709,7 +6741,7 @@ function buyFacilityUpgrade(plotKey, propName, levelProp, spawnFn, btnId, costL2
     spawnFn(nextLvl);
     updateStationApronExpansion();
     updateBuildModalButtons();
-    showToast(`${plot.name} Seviye ${nextLvl} yapıldı!`);
+    showToast(t('toast_level_up', t('plot_' + plot.id, plot.name), nextLvl));
     sfx.playFanfare();
     updateHUD();
   }
@@ -7706,26 +7738,53 @@ function debugFinishTimers() {
 }
 
 function debugUnlockAllFacilities() {
+  // Pompalar
   State.upgrades.pumps = 4;
   for (let i = 0; i < 4; i++) {
     pumpSlots[i].isBuilt = true;
-    if (!pumpSlots[i].mesh) buildSinglePump(pumpSlots[i]);
+    if (!pumpSlots[i].mesh) {
+      const lvl = State.upgrades.pumpLevels[i] || 1;
+      const pumpMesh = createPumpMesh(i, lvl);
+      pumpMesh.position.copy(pumpSlots[i].pos);
+      pumpSlots[i].mesh = pumpMesh;
+      scene.add(pumpMesh);
+    }
   }
-  State.upgrades.hasCarWash = true;
-  if (!carWashGroup) buildCarWash();
-  State.upgrades.hasMarket = true;
-  if (!marketBayGroup) buildMarketBay();
-  State.upgrades.hasSolar = true;
-  if (!solarPanelsGroup) buildSolarPanels();
-  State.upgrades.hasTurbine = true;
-  if (!turbineGroup) buildTurbine();
-  State.upgrades.hasEvCharger = true;
-  if (!evChargerGroup) buildEvCharger();
 
+  // 17 tesisin tamami: [State bayragi, seviye anahtari, mesh uretici]
+  const ALL_FACILITIES = [
+    ['hasCarWash',     'washLevel',        spawnCarWashMesh],
+    ['hasMarket',      'marketLevel',      spawnMarketBayMesh],
+    ['hasSolar',       'solarLevel',       spawnSolarPanelsMesh],
+    ['hasTurbine',     'turbineLevel',     spawnTurbineMesh],
+    ['hasEvCharger',   'evLevel',          spawnEvChargerMesh],
+    ['hasTireShop',    'tireShopLevel',    spawnTireShopMesh],
+    ['hasLubeBay',     'lubeBayLevel',     spawnLubeBayMesh],
+    ['hasVacuumHub',   'vacuumHubLevel',   spawnVacuumHubMesh],
+    ['hasMotoDock',    'motoDockLevel',    spawnMotoDockMesh],
+    ['hasTruckStop',   'truckStopLevel',   spawnTruckStopMesh],
+    ['hasBakeryDrive', 'bakeryDriveLevel', spawnBakeryDriveMesh],
+    ['hasFoodTruck',   'foodTruckLevel',   spawnFoodTruckMesh],
+    ['hasRestLounge',  'restLoungeLevel',  spawnRestLoungeMesh],
+    ['hasPetPark',     'petParkLevel',     spawnPetParkMesh],
+    ['hasParcelHub',   'parcelHubLevel',   spawnParcelHubMesh],
+    ['hasAtmHub',      'atmHubLevel',      spawnAtmHubMesh],
+    ['hasHydrogenBay', 'hydrogenBayLevel', spawnHydrogenBayMesh]
+  ];
+
+  ALL_FACILITIES.forEach(([flag, levelKey, spawnFn]) => {
+    State.upgrades[flag] = true;
+    const lvl = State.upgrades[levelKey] || 1;
+    State.upgrades[levelKey] = lvl;
+    spawnFn(lvl);
+  });
+
+  updateStationApronExpansion();
   sfx.playFanfare();
   updateAllPlotSigns();
+  updateBuildModalButtons();
   updateHUD();
-  showToast('Debug: Tüm tesisler inşa edildi!');
+  showToast(t('toast_debug_facilities'));
 }
 
 function debugMaxStaff() {
@@ -7749,8 +7808,26 @@ function debugUnlockAllLand() {
   State.land.parcelA = true;
   State.land.parcelB = true;
   State.land.parcelC = true;
-  applyLandExpansion();
+  State.land.size = 130;
+
+  // buyLandParcel() ile ayni olcekleme; ayri bir applyLandExpansion() yok.
+  const s = State.land.size / 80;
+  if (islandGrassMesh) islandGrassMesh.scale.set(s, 1, s);
+  if (islandDirtMesh) islandDirtMesh.scale.set(s, 1, s);
+  if (islandSlabMesh) islandSlabMesh.scale.set(s, 1, s);
+
+  ['a', 'b', 'c'].forEach(letter => {
+    const badge = document.getElementById(`badge-parcel-${letter}`);
+    if (badge) {
+      badge.textContent = t('btn_bought');
+      badge.className = 'badge-chip green';
+    }
+    const btn = document.getElementById(`btn-buy-parcel-${letter}`);
+    if (btn) btn.disabled = true;
+  });
+
   sfx.playFanfare();
+  updateHUD();
   showToast(t('toast_debug_unlock'));
 }
 
