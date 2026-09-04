@@ -28,6 +28,19 @@
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
+
+  /* G-15: eksik token aliasları */
+  --dark-ink: #242D35;
+  --gold-accent: #E5A93C;
+
+  /* G-16: akışkan tipografi ölçeği */
+  --fs-2xs: clamp(9px, 2.2vw, 10px);
+  --fs-xs: clamp(10px, 2.5vw, 11.5px);
+  --fs-sm: clamp(11px, 2.9vw, 13px);
+  --fs-base: clamp(12px, 3.3vw, 15px);
+
+  /* Minimum dokunma hedefi */
+  --touch-min: 48px;
 }
 
 * {
@@ -47,6 +60,7 @@ body, html {
   color: var(--ink-text);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 /* 3D Canvas */
@@ -90,6 +104,7 @@ body, html {
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
   display: inline-flex;
   align-items: center;
@@ -175,6 +190,7 @@ body, html {
   border-radius: var(--radius-sm);
   padding: 4px 8px;
   font-weight: 800;
+  min-height: var(--touch-min);
   font-size: 12px;
   cursor: pointer;
   min-height: 48px;
@@ -197,7 +213,7 @@ body, html {
   padding: 3px 8px;
 }
 .stat-chip .chip-label {
-  font-size: 8.5px;
+  font-size: var(--fs-2xs);
   font-weight: 800;
   color: var(--ink-muted);
   letter-spacing: 0.5px;
@@ -205,7 +221,7 @@ body, html {
 }
 .stat-chip .chip-val {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
+  font-size: var(--fs-xs);
   font-weight: 800;
   color: var(--ink-text);
   line-height: 1.2;
@@ -236,7 +252,7 @@ body, html {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 8.5px;
+  font-size: var(--fs-2xs);
   font-weight: 800;
 }
 .dot {
@@ -254,7 +270,7 @@ body, html {
 .gauge-pct {
   margin-left: auto;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
+  font-size: var(--fs-2xs);
 }
 .gauge-bar {
   width: 100%;
@@ -278,6 +294,7 @@ body, html {
 .debug-chip-btn {
   padding: 5px 9px;
   min-height: 48px;
+  min-height: var(--touch-min);
   font-size: 11px;
   font-weight: 800;
   gap: 4px;
@@ -367,8 +384,8 @@ body, html {
   .cam-btn {
     width: 38px;
     height: 38px;
-    min-height: 38px;
-    min-width: 48px;
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
     padding: 0;
   }
   .cam-btn-text, .cam-hint-chip {
@@ -388,13 +405,17 @@ body, html {
   bottom: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: rgba(28, 36, 43, 0.45);
   backdrop-filter: blur(2px);
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: max(16px, env(safe-area-inset-top, 0px))
+           max(16px, env(safe-area-inset-right, 0px))
+           max(16px, env(safe-area-inset-bottom, 0px))
+           max(16px, env(safe-area-inset-left, 0px));
 }
 .modal-overlay.hidden {
   display: none !important;
@@ -404,6 +425,7 @@ body, html {
   width: 100%;
   max-width: 460px;
   max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--bg-paper);
@@ -500,6 +522,7 @@ body, html {
 }
 .tip-btn {
   padding: 8px;
+  min-height: var(--touch-min);
   font-size: 11px;
 }
 
@@ -558,6 +581,8 @@ body, html {
 .qty-btn {
   width: 26px;
   height: 26px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
   border: 1.5px solid var(--ink-border);
   background: var(--bg-paper);
   border-radius: 4px;
@@ -611,6 +636,8 @@ body, html {
 .tariff-btn {
   width: 24px;
   height: 24px;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
   border: 1.5px solid var(--ink-border);
   background: var(--bg-paper);
   border-radius: 4px;
@@ -872,6 +899,8 @@ body, html {
   background: transparent;
   border: none;
   padding: 5px 10px;
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
   font-size: 11px;
   font-weight: 700;
   border-radius: 4px;
@@ -995,6 +1024,19 @@ body, html {
   }
   .top-bar-right {
     gap: 6px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  .top-bar-left {
+    min-width: 0;
+    overflow: hidden;
+  }
+  /* G-12: 680px altında yakıt göstergeleri üst bara sığmıyor */
+  .fuel-gauges {
+    display: none;
+  }
+  .top-bar-right-controls {
+    flex-shrink: 0;
   }
   .stat-chip {
     padding: 2px 6px;

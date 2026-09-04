@@ -820,6 +820,9 @@ const PLOTS = {
   hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay',            tier: 4, pos: new THREE.Vector3(-22.0, 0.04, -4.0), cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
 };
 
+// G-09: kamera pan siniri tek kaynak.
+const CAM_BOUND_X = 26;
+const CAM_BOUND_Z = 20;
 const plotSignMeshes = {};
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -1082,7 +1085,7 @@ async function initThree() {
 
   // Orthographic Camera (Isometric 2:1) with negative near plane to completely eliminate foreground clipping arc
   const aspect = width / height;
-  const d = 18;
+  const d = computeFrustumHalfHeight(aspect);
   camera = new THREE.OrthographicCamera(-d * aspect, d * aspect, d, -d, -300, 1000);
   camera.position.set(26, 24, 26);
   camera.lookAt(0, 0, 0);
@@ -1139,13 +1142,14 @@ async function initThree() {
   sunLight.shadow.mapSize.height = 2048;
   sunLight.shadow.camera.near = 0.5;
   sunLight.shadow.camera.far = 120;
-  const shadowDist = 30;
+  const shadowDist = 34;
   sunLight.shadow.camera.left = -shadowDist;
   sunLight.shadow.camera.right = shadowDist;
   sunLight.shadow.camera.top = shadowDist;
   sunLight.shadow.camera.bottom = -shadowDist;
   sunLight.shadow.bias = -0.0003;
   sunLight.shadow.normalBias = 0.02;
+  sunLight.shadow.camera.updateProjectionMatrix();
   scene.add(sunLight);
 
   // Build Living Environment
@@ -1159,11 +1163,24 @@ async function initThree() {
   animate();
 }
 
+// G-01: Ortografik frustum'ü hem dikey hem yatay minimuma göre türetir.
+// FRUSTUM_V: masaüstünde kullanılan dikey yarı-yükseklik.
+// FRUSTUM_H: her en-boy oranında garanti edilen yatay yarı-genişlik
+//            (istasyon çekirdeği ekran uzayında ~16.3 m yarı-genişlik kaplar).
+// Üst sınır 40, dikey modda sahnenin aşırı küçülmesini engeller.
+const FRUSTUM_V = 18;
+const FRUSTUM_H = 17;
+const FRUSTUM_MAX = 40;
+
+function computeFrustumHalfHeight(aspect) {
+  const safeAspect = aspect > 0.01 ? aspect : 0.01;
+  return Math.min(FRUSTUM_MAX, Math.max(FRUSTUM_V, FRUSTUM_H / safeAspect));
+}
 function onWindowResize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
   const aspect = width / height;
-  const d = 18;
+  const d = computeFrustumHalfHeight(aspect);
   camera.left = -d * aspect;
   camera.right = d * aspect;
   camera.top = d;
@@ -1495,6 +1512,8 @@ function updateStationApronExpansion() {
   while (stationApronExtensionsGroup.children.length > 0) {
     const obj = stationApronExtensionsGroup.children[0];
     stationApronExtensionsGroup.remove(obj);
+    // G-10: materyaller paylasimli, SADECE geometriyi dispose et.
+    if (obj.geometry) obj.geometry.dispose();
   }
 
   // Facility apron connection definitions (Calibrated seamless wing extensions)
@@ -1504,13 +1523,13 @@ function updateStationApronExpansion() {
     { key: 'tire_shop',    prop: 'hasTireShop',    dim: [8.5, 0.08, 5.5],   center: [16.25, 0.04, -4.5],  curbSide: 'east' },
     { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [8.5, 0.08, 4.5],   center: [16.25, 0.04, -9.5],  curbSide: 'east' },
     { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [8.0, 0.08, 4.0],   center: [16.0, 0.04, -13.5],  curbSide: 'east' },
-    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [10.0, 0.08, 12.0], center: [24.0, 0.04, -6.0],  curbSide: 'east' },
+    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [8.0, 0.08, 12.0], center: [25.0, 0.04, -6.0],  curbSide: 'east' },
     { key: 'ev',           prop: 'hasEvCharger',   dim: [8.5, 0.08, 5.5],   center: [-16.25, 0.04, 3.5],  curbSide: 'west' },
     { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [8.5, 0.08, 6.0],   center: [-16.25, 0.04, -2.5], curbSide: 'west' },
     { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -8.0], curbSide: 'west' },
     { key: 'pet_park',     prop: 'hasPetPark',     dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -13.5],curbSide: 'west' },
-    { key: 'turbine',      prop: 'hasTurbine',     dim: [7.0, 0.08, 7.0],   center: [-22.0, 0.04, -13.0], curbSide: 'west' },
-    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [7.0, 0.08, 6.0],   center: [-22.0, 0.04, -4.0],  curbSide: 'west' },
+    { key: 'turbine',      prop: 'hasTurbine',     dim: [6.0, 0.08, 7.0],   center: [-22.5, 0.04, -13.0], curbSide: 'west' },
+    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [6.0, 0.08, 6.0],   center: [-22.5, 0.04, -4.0],  curbSide: 'west' },
     { key: 'food_truck',   prop: 'hasFoodTruck',   dim: [5.0, 0.08, 4.0],   center: [8.0, 0.04, -3.5],    curbSide: 'north' },
     { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 4.0],   center: [0, 0.04, -15.0],     curbSide: 'north' },
     { key: 'parcel_hub',   prop: 'hasParcelHub',   dim: [3.5, 0.08, 3.0],   center: [-6.8, 0.04, -7.0],   curbSide: 'north' },
@@ -1526,7 +1545,9 @@ function updateStationApronExpansion() {
       new THREE.BoxGeometry(fa.dim[0], fa.dim[1], fa.dim[2]),
       Mat.asphalt
     );
-    slab.position.set(fa.center[0], fa.center[1], fa.center[2]);
+        // G-03: cekirdek apronun ust yuzeyi y=0.08. Tesis slabini 0.012 m yukari
+    // kaydirarak es duzlemsel z-fighting'i tamamen ortadan kaldiriyoruz.
+    slab.position.set(fa.center[0], fa.center[1] + 0.012, fa.center[2]);
     slab.receiveShadow = true;
     stationApronExtensionsGroup.add(slab);
 
@@ -1548,7 +1569,7 @@ function updateStationApronExpansion() {
     }
 
     const line = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.015, fa.dim[2] * 0.6), Mat.roadWhite);
-    line.position.set(fa.center[0], fa.center[1] + 0.045, fa.center[2]);
+    line.position.set(fa.center[0], fa.center[1] + 0.057, fa.center[2]);
     stationApronExtensionsGroup.add(line);
   });
 }
@@ -2239,6 +2260,8 @@ function updatePlotBadges(totalSeconds) {
       const badge = mesh.userData.badgeMesh;
       const baseY = badge.userData.baseY || 0.7;
       badge.position.y = baseY + Math.sin(totalSeconds * 2.5 + (badge.id || 0)) * 0.025;
+      // G-07: ortografik kamerada tam billboard - kamera donunce rozet okunur kalir.
+      if (camera) badge.quaternion.copy(camera.quaternion);
     }
   });
 }
@@ -5273,8 +5296,8 @@ function updateKeyboardCamera(delta) {
   }
 
   // Smooth station bounding box limit to prevent camera panning into the void
-  const clampedX = THREE.MathUtils.clamp(controls.target.x, -22, 22);
-  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -18, 18);
+    const clampedX = THREE.MathUtils.clamp(controls.target.x, -CAM_BOUND_X, CAM_BOUND_X);
+    const clampedZ = THREE.MathUtils.clamp(controls.target.z, -CAM_BOUND_Z, CAM_BOUND_Z);
   const diffX = clampedX - controls.target.x;
   const diffZ = clampedZ - controls.target.z;
 
@@ -6776,8 +6799,8 @@ function animate() {
 
   // Camera Navigation & Smooth Pan Clamping within station bounds
   updateKeyboardCamera(delta);
-  const clampedX = THREE.MathUtils.clamp(controls.target.x, -26, 26);
-  const clampedZ = THREE.MathUtils.clamp(controls.target.z, -20, 20);
+    const clampedX = THREE.MathUtils.clamp(controls.target.x, -CAM_BOUND_X, CAM_BOUND_X);
+    const clampedZ = THREE.MathUtils.clamp(controls.target.z, -CAM_BOUND_Z, CAM_BOUND_Z);
   const diffX = clampedX - controls.target.x;
   const diffZ = clampedZ - controls.target.z;
   if (Math.abs(diffX) > 0.0001 || Math.abs(diffZ) > 0.0001) {
@@ -6935,10 +6958,16 @@ function toggleShadowsSetting() {
     renderer.shadowMap.enabled = State.settings.shadows;
     scene.traverse(obj => {
       if (obj.isMesh) {
-        if (!obj.userData._castShadow) obj.userData._castShadow = obj.castShadow;
-        if (!obj.userData._receiveShadow) obj.userData._receiveShadow = obj.receiveShadow;
-        obj.castShadow = State.settings.shadows;
-        obj.receiveShadow = State.settings.shadows;
+        // G-05:  de gecerli bir kayitli degerdir; undefined ile kontrol et.
+        if (obj.userData._castShadow === undefined) obj.userData._castShadow = obj.castShadow;
+        if (obj.userData._receiveShadow === undefined) obj.userData._receiveShadow = obj.receiveShadow;
+        if (State.settings.shadows) {
+          obj.castShadow = obj.userData._castShadow;
+          obj.receiveShadow = obj.userData._receiveShadow;
+        } else {
+          obj.castShadow = false;
+          obj.receiveShadow = false;
+        }
       }
     });
   }
@@ -6949,21 +6978,32 @@ function setGraphicsQuality(q) {
   State.settings.quality = q;
   localStorage.setItem('pixeloil_quality', q);
   if (renderer) {
+    // G-02: mapSize `light.shadow` uzerindedir; `renderer.shadowMap` uzerinde
+    // boyle bir alan yoktur ve eski kod her cagrida TypeError firlatiyordu.
+    let shadowRes = 2048;
     if (q === 'low') {
-      renderer.shadowMap.mapSize.width = 1024;
-      renderer.shadowMap.mapSize.height = 1024;
+      shadowRes = 1024;
       particleLimit = 15;
       renderer.setPixelRatio(1);
     } else if (q === 'med') {
-      renderer.shadowMap.mapSize.width = 1536;
-      renderer.shadowMap.mapSize.height = 1536;
+      shadowRes = 1536;
       particleLimit = 25;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     } else {
-      renderer.shadowMap.mapSize.width = 2048;
-      renderer.shadowMap.mapSize.height = 2048;
+      shadowRes = 2048;
       particleLimit = 40;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }
+    if (sunLight && sunLight.shadow) {
+      sunLight.shadow.mapSize.width = shadowRes;
+      sunLight.shadow.mapSize.height = shadowRes;
+      // G-06: normalBias'i teksel boyutuyla olcekle, dusuk cozunurlukte akne olmasin.
+      sunLight.shadow.normalBias = 0.02 * (2048 / shadowRes);
+      if (sunLight.shadow.map) {
+        sunLight.shadow.map.dispose();
+        sunLight.shadow.map = null;
+      }
+      sunLight.shadow.needsUpdate = true;
     }
   }
   document.querySelectorAll('#settings-tab-graphics .segmented-control:nth-of-type(1) .segment-btn').forEach((btn, idx) => {
@@ -7348,8 +7388,8 @@ function showOfflineVaultModal(elapsedSec, earned) {
   if (capNoticeEl) {
     if (elapsedSec >= State.retention.offlineVaultMaxSeconds) {
       capNoticeEl.textContent = currentLang === 'tr' 
-        ? '⚠️ Kasa kapasitesi (2 Saat) doldu! Daha fazla gelir kaybetmemek için düzenli giriş yapın.' 
-        : '⚠️ Vault cap (2 Hours) reached! Log in regularly to avoid losing profits.';
+        ? 'Kasa kapasitesi (2 Saat) doldu! Daha fazla gelir kaybetmemek için düzenli giriş yapın.'
+        : 'Vault cap (2 Hours) reached! Log in regularly to avoid losing profits.';
       capNoticeEl.classList.remove('hidden');
     } else {
       capNoticeEl.classList.add('hidden');
