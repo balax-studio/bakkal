@@ -802,22 +802,22 @@ const PLOTS = {
   pump3:        { id: 'pump3',        type: 'pump',         slotId: 2, tier: 2, pos: new THREE.Vector3(-4.5, 0.2, 2.4),    cost: 8000,  duration: 45, name: 'Pompa #3',       tab: 'fac' },
   pump4:        { id: 'pump4',        type: 'pump',         slotId: 3, tier: 3, pos: new THREE.Vector3(4.5, 0.2, 2.4),     cost: 10000, duration: 45, name: 'Pompa #4',       tab: 'fac' },
   solar:        { id: 'solar',        type: 'solar',                   tier: 1, pos: new THREE.Vector3(0, 4.55, -10.0),    cost: 8500,  duration: 60, name: 'Çatı GES',       tab: 'energy' },
-  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',                 tier: 1, pos: new THREE.Vector3(6.8, 0.04, -7.0),   cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
+  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',                 tier: 1, pos: new THREE.Vector3(2.0, 0.04, -4.2),   cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
   parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',              tier: 1, pos: new THREE.Vector3(-6.8, 0.04, -7.0),  cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
   wash:         { id: 'wash',         type: 'wash',                    tier: 1, pos: new THREE.Vector3(16.25, 0.04, 2.0),  cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
   market:       { id: 'market',       type: 'market',                  tier: 1, pos: new THREE.Vector3(0, 0.04, -6.2),    cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
-  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',               tier: 2, pos: new THREE.Vector3(16.25, 0.04, -4.5), cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
+  tire_shop:    { id: 'tire_shop',    type: 'tire_shop',               tier: 2, pos: new THREE.Vector3(16.25, 0.04, -6.7), cost: 7500,  duration: 40, name: 'Lastik Servisi',  tab: 'service' },
   food_truck:   { id: 'food_truck',   type: 'food_truck',              tier: 2, pos: new THREE.Vector3(8.0, 0.04, -3.5),   cost: 8000,  duration: 40, name: 'Burger Van',      tab: 'lifestyle' },
   ev:           { id: 'ev',           type: 'ev',                      tier: 2, pos: new THREE.Vector3(-16.25, 0.04, 3.5), cost: 18000, duration: 60, name: 'EV Şarj',        tab: 'energy' },
   bakery_drive: { id: 'bakery_drive', type: 'bakery_drive',            tier: 2, pos: new THREE.Vector3(-16.25, 0.04, -2.5),cost: 16000, duration: 60, name: 'Drive-Thru Cafe',tab: 'lifestyle' },
-  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',                tier: 3, pos: new THREE.Vector3(16.25, 0.04, -9.5), cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
-  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',              tier: 3, pos: new THREE.Vector3(16.0, 0.04, -13.5), cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
+  lube_bay:     { id: 'lube_bay',     type: 'lube_bay',                tier: 3, pos: new THREE.Vector3(16.25, 0.04, -13.3), cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
+  vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',              tier: 3, pos: new THREE.Vector3(16.0, 0.04, -19.5), cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
   moto_dock:    { id: 'moto_dock',    type: 'moto_dock',               tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -8.0),cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
   pet_park:     { id: 'pet_park',     type: 'pet_park',                tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -13.5),cost: 7000, duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
-  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',             tier: 3, pos: new THREE.Vector3(0, 0.04, -15.0),    cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
-  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',              tier: 4, pos: new THREE.Vector3(24.0, 0.04, -6.0),  cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
+  rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',             tier: 3, pos: new THREE.Vector3(0, 0.04, -17.4),    cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
+  truck_stop:   { id: 'truck_stop',   type: 'truck_stop',              tier: 4, pos: new THREE.Vector3(25.4, 0.04, -8.0),  cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
   turbine:      { id: 'turbine',      type: 'turbine',                 tier: 4, pos: new THREE.Vector3(-22.0, 0.04, -13.0),cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
-  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay',            tier: 4, pos: new THREE.Vector3(-22.0, 0.04, -4.0), cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
+  hydrogen_bay: { id: 'hydrogen_bay', type: 'hydrogen_bay',            tier: 4, pos: new THREE.Vector3(-23.2, 0.04, -4.0), cost: 25000, duration: 90, name: 'H2 Hidrojen',    tab: 'energy' }
 };
 
 // G-09: kamera pan siniri tek kaynak.
@@ -1520,23 +1520,23 @@ function updateStationApronExpansion() {
   const FACILITY_APRONS = [
     { key: 'wash',         prop: 'hasCarWash',     dim: [8.5, 0.08, 9.0],   center: [16.25, 0.04, 2.0],   curbSide: 'east' },
     { key: 'market',       prop: 'hasMarket',      dim: [8.0, 0.08, 6.0],   center: [6.0, 0.04, -10.0],   curbSide: 'east' },
-    { key: 'tire_shop',    prop: 'hasTireShop',    dim: [8.5, 0.08, 5.5],   center: [16.25, 0.04, -4.5],  curbSide: 'east' },
-    { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [8.5, 0.08, 4.5],   center: [16.25, 0.04, -9.5],  curbSide: 'east' },
-    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [8.0, 0.08, 4.0],   center: [16.0, 0.04, -13.5],  curbSide: 'east' },
-    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [8.0, 0.08, 12.0], center: [25.0, 0.04, -6.0],  curbSide: 'east' },
+    { key: 'tire_shop',    prop: 'hasTireShop',    dim: [8.5, 0.08, 6.5],   center: [16.25, 0.04, -6.7],  curbSide: 'east' },
+    { key: 'lube_bay',     prop: 'hasLubeBay',     dim: [8.5, 0.08, 6.5],   center: [16.25, 0.04, -13.3], curbSide: 'east' },
+    { key: 'vacuum_hub',   prop: 'hasVacuumHub',   dim: [8.0, 0.08, 5.5],   center: [16.0, 0.04, -19.5],  curbSide: 'east' },
+    { key: 'truck_stop',   prop: 'hasTruckStop',   dim: [10.5, 0.08, 12.0], center: [25.65, 0.04, -8.0], curbSide: 'east' },
     { key: 'ev',           prop: 'hasEvCharger',   dim: [8.5, 0.08, 5.5],   center: [-16.25, 0.04, 3.5],  curbSide: 'west' },
     { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [8.5, 0.08, 6.0],   center: [-16.25, 0.04, -2.5], curbSide: 'west' },
     { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -8.0], curbSide: 'west' },
     { key: 'pet_park',     prop: 'hasPetPark',     dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -13.5],curbSide: 'west' },
     { key: 'turbine',      prop: 'hasTurbine',     dim: [6.0, 0.08, 7.0],   center: [-22.5, 0.04, -13.0], curbSide: 'west' },
-    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [6.0, 0.08, 6.0],   center: [-22.5, 0.04, -4.0],  curbSide: 'west' },
+    { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [6.0, 0.08, 6.0],   center: [-23.7, 0.04, -4.0],  curbSide: 'west' },
     { key: 'food_truck',   prop: 'hasFoodTruck',   dim: [5.0, 0.08, 4.0],   center: [8.0, 0.04, -3.5],    curbSide: 'north' },
-    { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 4.0],   center: [0, 0.04, -15.0],     curbSide: 'north' },
+    { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 5.5],   center: [0, 0.04, -17.4],     curbSide: 'north' },
     { key: 'parcel_hub',   prop: 'hasParcelHub',   dim: [3.5, 0.08, 3.0],   center: [-6.8, 0.04, -7.0],   curbSide: 'north' },
-    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [3.5, 0.08, 3.0],   center: [6.8, 0.04, -7.0],    curbSide: 'north' }
+    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [3.5, 0.08, 3.0],   center: [2.0, 0.04, -4.2],    curbSide: 'north' }
   ];
 
-  FACILITY_APRONS.forEach(fa => {
+  FACILITY_APRONS.forEach((fa, faIndex) => {
     const isBuilt = State.upgrades && State.upgrades[fa.prop];
     // ONLY expand ground when facility is BUILT! Otherwise stay natural clean grass!
     if (!isBuilt) return;
@@ -1545,9 +1545,13 @@ function updateStationApronExpansion() {
       new THREE.BoxGeometry(fa.dim[0], fa.dim[1], fa.dim[2]),
       Mat.asphalt
     );
-        // G-03: cekirdek apronun ust yuzeyi y=0.08. Tesis slabini 0.012 m yukari
-    // kaydirarak es duzlemsel z-fighting'i tamamen ortadan kaldiriyoruz.
-    slab.position.set(fa.center[0], fa.center[1] + 0.012, fa.center[2]);
+        // Cekirdek apronun ust yuzeyi y=0.08. Her tesis onlugune 0.012 m taban
+    // + indeks basina 0.002 m kademe veriyoruz: hem cekirdek apronla hem de
+    // komsu tesis onlukleriyle es duzlemsellik tamamen ortadan kalkiyor.
+    // Boylece onlukler serbestce ortusebilir (dikissiz genisleme) ve yine de
+    // z-fighting olusmaz.
+    const apronLift = 0.012 + faIndex * 0.002;
+    slab.position.set(fa.center[0], fa.center[1] + apronLift, fa.center[2]);
     slab.receiveShadow = true;
     stationApronExtensionsGroup.add(slab);
 
@@ -1556,20 +1560,20 @@ function updateStationApronExpansion() {
     const curbWidth = 0.35;
     if (fa.curbSide === 'east') {
       const curb = new THREE.Mesh(new THREE.BoxGeometry(curbWidth, curbHeight, fa.dim[2]), Mat.hazardStripe);
-      curb.position.set(fa.center[0] + fa.dim[0] / 2 - curbWidth / 2, fa.center[1] + curbHeight / 2, fa.center[2]);
+      curb.position.set(fa.center[0] + fa.dim[0] / 2 - curbWidth / 2, fa.center[1] + apronLift + curbHeight / 2, fa.center[2]);
       stationApronExtensionsGroup.add(curb);
     } else if (fa.curbSide === 'west') {
       const curb = new THREE.Mesh(new THREE.BoxGeometry(curbWidth, curbHeight, fa.dim[2]), Mat.hazardStripe);
-      curb.position.set(fa.center[0] - fa.dim[0] / 2 + curbWidth / 2, fa.center[1] + curbHeight / 2, fa.center[2]);
+      curb.position.set(fa.center[0] - fa.dim[0] / 2 + curbWidth / 2, fa.center[1] + apronLift + curbHeight / 2, fa.center[2]);
       stationApronExtensionsGroup.add(curb);
     } else if (fa.curbSide === 'north') {
       const curb = new THREE.Mesh(new THREE.BoxGeometry(fa.dim[0], curbHeight, curbWidth), Mat.hazardStripe);
-      curb.position.set(fa.center[0], fa.center[1] + curbHeight / 2, fa.center[2] - fa.dim[2] / 2 + curbWidth / 2);
+      curb.position.set(fa.center[0], fa.center[1] + apronLift + curbHeight / 2, fa.center[2] - fa.dim[2] / 2 + curbWidth / 2);
       stationApronExtensionsGroup.add(curb);
     }
 
     const line = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.015, fa.dim[2] * 0.6), Mat.roadWhite);
-    line.position.set(fa.center[0], fa.center[1] + 0.057, fa.center[2]);
+    line.position.set(fa.center[0], fa.center[1] + apronLift + 0.045, fa.center[2]);
     stationApronExtensionsGroup.add(line);
   });
 }
@@ -1582,7 +1586,7 @@ function getPlanetoidElevation(x, z) {
   const dx = x;
   const dz = z - 2;
   const r = Math.hypot(dx, dz);
-  const plateauR = 27.5;
+  const plateauR = 36.0;
   let elev = 0.0;
 
   if (r > plateauR) {
@@ -1633,7 +1637,7 @@ function createPlanetoidTerrain() {
   const group = new THREE.Group();
 
   // Central Core Plateau Slab (ensuring foundation under forecourt and station)
-  const coreGeo = new THREE.CylinderGeometry(28, 29, 1.2, 32);
+  const coreGeo = new THREE.CylinderGeometry(36.5, 37.5, 1.2, 32);
   const coreMesh = new THREE.Mesh(coreGeo, Mat.grass);
   coreMesh.position.set(0, -0.6, 2);
   coreMesh.receiveShadow = true;
@@ -1660,13 +1664,13 @@ function createPlanetoidTerrain() {
   group.add(planetMesh);
 
   // Stepped Earth Soil Crust underneath the central plateau
-  const dirtGeo = new THREE.CylinderGeometry(28.5, 30, 2.0, 32);
+  const dirtGeo = new THREE.CylinderGeometry(37.0, 38.5, 2.0, 32);
   islandDirtMesh = new THREE.Mesh(dirtGeo, Mat.dirt);
   islandDirtMesh.position.set(0, -2.0, 2);
   group.add(islandDirtMesh);
 
   // Dark Brutalist Foundation Ring
-  const slabGeo = new THREE.CylinderGeometry(30, 31, 0.6, 32);
+  const slabGeo = new THREE.CylinderGeometry(38.5, 39.5, 0.6, 32);
   islandSlabMesh = new THREE.Mesh(slabGeo, Mat.darkInk);
   islandSlabMesh.position.set(0, -3.2, 2);
   group.add(islandSlabMesh);
@@ -4999,7 +5003,7 @@ class Vehicle {
         new THREE.Vector3(startX + 2.0, 0, 4.2),          // 1. Straight forward in Row 2 lane facing +X
         new THREE.Vector3(7.5, 0, 4.2),                   // 2. Clear pump 4 bay
         new THREE.Vector3(10.5, 0, 5.2),                  // 3. Approach outbound ramp
-        new THREE.Vector3(12.5, 0, 7.8),                  // 4. Enter Outbound Merge Ramp
+        new THREE.Vector3(11.4, 0, 7.8),                  // 4. Enter Outbound Merge Ramp (oto yikama govdesine 2.0 m net)
         new THREE.Vector3(15.5, 0, 9.8),                  // 5. Merge smoothly onto Highway inner lane
         new THREE.Vector3(36.0, getRoadElevation(36.0), 9.8),  // 6. Descending curved highway ribbon
         new THREE.Vector3(64.0, getRoadElevation(64.0), 9.8)   // 7. Accelerate through East Mountain Tunnel
@@ -5011,7 +5015,7 @@ class Vehicle {
         new THREE.Vector3(7.5, 0, 0.5),                   // 2. Clear pump 2 bay
         new THREE.Vector3(9.2, 0, 2.5),                   // 3. Smooth diagonal curve across forecourt
         new THREE.Vector3(10.5, 0, 5.2),                  // 4. Approach outbound ramp
-        new THREE.Vector3(12.5, 0, 7.8),                  // 5. Enter Outbound Merge Ramp
+        new THREE.Vector3(11.4, 0, 7.8),                  // 5. Enter Outbound Merge Ramp (oto yikama govdesine 2.0 m net)
         new THREE.Vector3(15.5, 0, 9.8),                  // 6. Merge smoothly onto Highway inner lane
         new THREE.Vector3(36.0, getRoadElevation(36.0), 9.8),  // 7. Descending curved highway ribbon
         new THREE.Vector3(64.0, getRoadElevation(64.0), 9.8)   // 8. Accelerate through East Mountain Tunnel
