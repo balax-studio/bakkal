@@ -802,7 +802,7 @@ const PLOTS = {
   pump3:        { id: 'pump3',        type: 'pump',         slotId: 2, tier: 2, pos: new THREE.Vector3(-4.5, 0.2, 2.4),    cost: 8000,  duration: 45, name: 'Pompa #3',       tab: 'fac' },
   pump4:        { id: 'pump4',        type: 'pump',         slotId: 3, tier: 3, pos: new THREE.Vector3(4.5, 0.2, 2.4),     cost: 10000, duration: 45, name: 'Pompa #4',       tab: 'fac' },
   solar:        { id: 'solar',        type: 'solar',                   tier: 1, pos: new THREE.Vector3(0, 4.55, -10.0),    cost: 8500,  duration: 60, name: 'Çatı GES',       tab: 'energy' },
-  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',                 tier: 1, pos: new THREE.Vector3(2.0, 0.04, -4.2),   cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
+  atm_hub:      { id: 'atm_hub',      type: 'atm_hub',                 tier: 1, pos: new THREE.Vector3(0, 0.04, -1.5),   cost: 3500,  duration: 20, name: 'ATM Kiosk',       tab: 'lifestyle' },
   parcel_hub:   { id: 'parcel_hub',   type: 'parcel_hub',              tier: 1, pos: new THREE.Vector3(-6.8, 0.04, -7.0),  cost: 4500,  duration: 25, name: 'Kargo Dolabı',    tab: 'lifestyle' },
   wash:         { id: 'wash',         type: 'wash',                    tier: 1, pos: new THREE.Vector3(16.25, 0.04, 2.0),  cost: 12000, duration: 90, name: 'Oto Yıkama',     tab: 'fac' },
   market:       { id: 'market',       type: 'market',                  tier: 1, pos: new THREE.Vector3(0, 0.04, -6.2),    cost: 14000, duration: 90, name: 'Mini Market',    tab: 'fac' },
@@ -813,7 +813,7 @@ const PLOTS = {
   lube_bay:     { id: 'lube_bay',     type: 'lube_bay',                tier: 3, pos: new THREE.Vector3(16.25, 0.04, -13.3), cost: 9500,  duration: 45, name: 'Hızlı Yağ Değişim', tab: 'service' },
   vacuum_hub:   { id: 'vacuum_hub',   type: 'vacuum_hub',              tier: 3, pos: new THREE.Vector3(16.0, 0.04, -19.5), cost: 6500,  duration: 35, name: 'Oto Vakum Hub',   tab: 'service' },
   moto_dock:    { id: 'moto_dock',    type: 'moto_dock',               tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -8.0),cost: 5000,  duration: 30, name: 'Moto Swap',       tab: 'service' },
-  pet_park:     { id: 'pet_park',     type: 'pet_park',                tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -13.5),cost: 7000, duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
+  pet_park:     { id: 'pet_park',     type: 'pet_park',                tier: 3, pos: new THREE.Vector3(-15.75, 0.04, -14.2),cost: 7000, duration: 35, name: 'Pet Parkı',       tab: 'lifestyle' },
   rest_lounge:  { id: 'rest_lounge',  type: 'rest_lounge',             tier: 3, pos: new THREE.Vector3(0, 0.04, -17.4),    cost: 11000, duration: 50, name: 'Mola & WC',       tab: 'lifestyle' },
   truck_stop:   { id: 'truck_stop',   type: 'truck_stop',              tier: 4, pos: new THREE.Vector3(25.4, 0.04, -8.0),  cost: 22000, duration: 75, name: 'Tır Peronu',      tab: 'service' },
   turbine:      { id: 'turbine',      type: 'turbine',                 tier: 4, pos: new THREE.Vector3(-22.0, 0.04, -13.0),cost: 11000, duration: 60, name: 'Rüzgar Türbini', tab: 'energy' },
@@ -1527,13 +1527,13 @@ function updateStationApronExpansion() {
     { key: 'ev',           prop: 'hasEvCharger',   dim: [8.5, 0.08, 5.5],   center: [-16.25, 0.04, 3.5],  curbSide: 'west' },
     { key: 'bakery_drive', prop: 'hasBakeryDrive', dim: [8.5, 0.08, 6.0],   center: [-16.25, 0.04, -2.5], curbSide: 'west' },
     { key: 'moto_dock',    prop: 'hasMotoDock',    dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -8.0], curbSide: 'west' },
-    { key: 'pet_park',     prop: 'hasPetPark',     dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -13.5],curbSide: 'west' },
+    { key: 'pet_park',     prop: 'hasPetPark',     dim: [7.5, 0.08, 4.5],   center: [-15.75, 0.04, -14.2],curbSide: 'west' },
     { key: 'turbine',      prop: 'hasTurbine',     dim: [6.0, 0.08, 7.0],   center: [-22.5, 0.04, -13.0], curbSide: 'west' },
     { key: 'hydrogen_bay', prop: 'hasHydrogenBay', dim: [6.0, 0.08, 6.0],   center: [-23.7, 0.04, -4.0],  curbSide: 'west' },
     { key: 'food_truck',   prop: 'hasFoodTruck',   dim: [5.0, 0.08, 4.0],   center: [8.0, 0.04, -3.5],    curbSide: 'north' },
     { key: 'rest_lounge',  prop: 'hasRestLounge',  dim: [8.0, 0.08, 5.5],   center: [0, 0.04, -17.4],     curbSide: 'north' },
     { key: 'parcel_hub',   prop: 'hasParcelHub',   dim: [3.5, 0.08, 3.0],   center: [-6.8, 0.04, -7.0],   curbSide: 'north' },
-    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [3.5, 0.08, 3.0],   center: [2.0, 0.04, -4.2],    curbSide: 'north' }
+    { key: 'atm_hub',      prop: 'hasAtmHub',      dim: [3.5, 0.08, 3.0],   center: [0, 0.04, -1.5],    curbSide: 'north' }
   ];
 
   FACILITY_APRONS.forEach((fa, faIndex) => {
@@ -1853,6 +1853,9 @@ function buildDiorama() {
   createAirConditionerUnit(diorama);
   createUrbanWearDetails(diorama);
   createHighAltitudeJet(diorama);
+  createFireflies(diorama);
+  createWindFlag(diorama, -18.0, 6.6, Mat.redTrim);
+  createWindFlag(diorama, 21.5, -1.2, Mat.blueAccent);
   updateCafePatrons(diorama);
 
   // 12. Foreground Living Props & Animals
@@ -1924,6 +1927,182 @@ function buildDiorama() {
 // ---------------------------------------------------------
 // 3D Construction Plots, Signboards & Scaffolding
 // ---------------------------------------------------------
+
+// =========================================================
+// 16-BIT NEO-BRUTALIST PAYLASILAN PROP KUTUPHANESI
+// Tum props mevcut `Mat` paletini kullanir; yeni malzeme YOK.
+// Her fonksiyon bir THREE.Group dondurur ve cagiran tarafta
+// position.set(...) ile yerlestirilir.
+// =========================================================
+
+// Sari-siyah seritli guvenlik dubasi (bollard)
+function propBollard() {
+  const g = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.06, 0.26), Mat.darkInk);
+  base.position.y = 0.03;
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.85, 8), Mat.hazardCone);
+  post.position.y = 0.46;
+  post.castShadow = true;
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.12, 8), Mat.darkInk);
+  band.position.y = 0.62;
+  g.add(base, post, band);
+  return g;
+}
+
+// Zemin drenaj izgarasi
+function propDrainGrate(w = 0.9, d = 0.4) {
+  const g = new THREE.Group();
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(w, 0.05, d), Mat.darkInk);
+  frame.position.y = 0.025;
+  g.add(frame);
+  const bars = Math.max(3, Math.round(w / 0.16));
+  for (let i = 0; i < bars; i++) {
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.02, d * 0.82), Mat.chrome);
+    bar.position.set(-w / 2 + (i + 0.5) * (w / bars), 0.055, 0);
+    g.add(bar);
+  }
+  return g;
+}
+
+// Ahsap palet istifi (16-bit depo dokusu)
+function propPalletStack(layers = 3) {
+  const g = new THREE.Group();
+  for (let i = 0; i < layers; i++) {
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.11, 0.75), Mat.palletWood);
+    slab.position.set((i % 2) * 0.05 - 0.025, 0.06 + i * 0.14, (i % 2) * 0.04 - 0.02);
+    slab.rotation.y = (i % 2) * 0.06;
+    slab.castShadow = true;
+    g.add(slab);
+  }
+  return g;
+}
+
+// Endustriyel kablo makarasi
+function propCableReel() {
+  const g = new THREE.Group();
+  const axle = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.5, 6), Mat.chrome);
+  axle.rotation.z = Math.PI / 2;
+  axle.position.y = 0.42;
+  const mk = (x) => {
+    const d = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.05, 12), Mat.palletWood);
+    d.rotation.z = Math.PI / 2;
+    d.position.set(x, 0.42, 0);
+    d.castShadow = true;
+    return d;
+  };
+  const coil = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.4, 12), Mat.darkInk);
+  coil.rotation.z = Math.PI / 2;
+  coil.position.y = 0.42;
+  g.add(axle, mk(-0.24), mk(0.24), coil);
+  return g;
+}
+
+// Metal oturma banki
+function propBench() {
+  const g = new THREE.Group();
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.08, 0.42), Mat.benchWood);
+  seat.position.y = 0.44;
+  seat.castShadow = true;
+  const back = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.34, 0.07), Mat.benchWood);
+  back.position.set(0, 0.66, -0.18);
+  const leg = (x) => {
+    const l = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.44, 0.38), Mat.benchIron);
+    l.position.set(x, 0.22, 0);
+    return l;
+  };
+  g.add(seat, back, leg(-0.62), leg(0.62));
+  return g;
+}
+
+// Retro cop kutusu
+function propTrashBin() {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.72, 8), Mat.trashGreen);
+  body.position.y = 0.36;
+  body.castShadow = true;
+  const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.07, 8), Mat.darkInk);
+  rim.position.y = 0.74;
+  g.add(body, rim);
+  return g;
+}
+
+// Tekerlek takozu (wheel chock)
+function propWheelChock() {
+  const g = new THREE.Group();
+  const w = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, 0.22), Mat.hazardCone);
+  w.position.y = 0.08;
+  w.rotation.z = -0.22;
+  g.add(w);
+  return g;
+}
+
+// Basincli hortum makarasi (duvara monte)
+function propHoseReel() {
+  const g = new THREE.Group();
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.5, 0.5), Mat.darkInk);
+  const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.2, 10), Mat.redTrim);
+  drum.rotation.z = Math.PI / 2;
+  drum.position.x = 0.16;
+  const nozzle = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.2, 0.06), Mat.chrome);
+  nozzle.position.set(0.16, -0.32, 0);
+  g.add(plate, drum, nozzle);
+  return g;
+}
+
+// Zemin boya seridi (guvenlik / yonlendirme)
+function propFloorStripe(w, d, mat) {
+  const s = new THREE.Mesh(new THREE.BoxGeometry(w, 0.014, d), mat || Mat.roadYellow);
+  s.position.y = 0.075;
+  return s;
+}
+
+// Neon totem tabela direigi (perakende tesisleri icin)
+function propNeonTotem(glowMat) {
+  const g = new THREE.Group();
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.16, 2.6, 0.16), Mat.darkInk);
+  post.position.y = 1.3;
+  post.castShadow = true;
+  const panel = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.7, 0.1), Mat.darkInk);
+  panel.position.y = 2.75;
+  const glow = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.52, 0.04), glowMat || Mat.neonAmber);
+  glow.position.set(0, 2.75, 0.08);
+  g.add(post, panel, glow);
+  return g;
+}
+
+// Trafo / inverter kabini (enerji tesisleri icin)
+function propInverterCabinet() {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.3, 0.5), Mat.shelfGrey);
+  body.position.y = 0.65;
+  body.castShadow = true;
+  const vent = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.3, 0.03), Mat.darkInk);
+  vent.position.set(0, 1.0, 0.26);
+  const led = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.05, 0.03), Mat.evGlow);
+  led.position.set(0.26, 0.5, 0.26);
+  const pad = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.09, 0.7), Mat.concrete);
+  pad.position.y = 0.045;
+  g.add(pad, body, vent, led);
+  return g;
+}
+
+// Kademe rozeti: tesis seviyesini gosteren kucuk LED cubuk dizisi
+function propLevelPips(level) {
+  const g = new THREE.Group();
+  const post = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.5, 0.09), Mat.darkInk);
+  post.position.y = 0.25;
+  g.add(post);
+  for (let i = 0; i < 3; i++) {
+    const on = i < level;
+    const pip = new THREE.Mesh(
+      new THREE.BoxGeometry(0.14, 0.08, 0.05),
+      on ? Mat.evGlow : Mat.shelfGrey
+    );
+    pip.position.set(0, 0.16 + i * 0.13, 0.06);
+    g.add(pip);
+  }
+  return g;
+}
 
 function createSafetyConeMesh() {
   const coneGroup = new THREE.Group();
@@ -2148,7 +2327,7 @@ function createEvPlotMesh(plot) {
   return group;
 }
 
-function createGenericPlotMesh(plot, w = 3.2, d = 3.2) {
+function createGenericPlotMesh(plot, w = 3.2, d = 3.2, family) {
   const group = new THREE.Group();
   group.userData = { isPlotSign: true, plotId: plot.id, plot: plot };
 
@@ -2161,6 +2340,52 @@ function createGenericPlotMesh(plot, w = 3.2, d = 3.2) {
   group.add(foundationDisc, goldRing);
 
   addPlotCornerBrackets(group, w, d);
+
+  // Aile karakteri: parselin tab'ine gore mimari ipucu.
+  // Konumlar w/d'nin oranindan turetiliyor ki her tesis boyutunda
+  // kenarlarin disina tasmasin.
+  const hw = w / 2, hd = d / 2;
+  const fam = family || 'service';
+  if (fam === 'service') {
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(w * 0.7, 0.06, d * 0.7), Mat.concrete);
+    pad.position.y = 0.03;
+    group.add(pad);
+    const liftL = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 12), Mat.darkInk);
+    liftL.position.set(-hw * 0.35, 0.06, -hd * 0.3);
+    const liftR = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.05, 12), Mat.darkInk);
+    liftR.position.set(hw * 0.35, 0.06, -hd * 0.3);
+    group.add(liftL, liftR);
+    const stain = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.01, 10), Mat.oilStain);
+    stain.position.set(0, 0.065, hd * 0.25);
+    group.add(stain);
+    const bollardL = propBollard();
+    bollardL.position.set(-hw * 0.75, 0, hd * 0.7);
+    const bollardR = propBollard();
+    bollardR.position.set(hw * 0.75, 0, hd * 0.7);
+    group.add(bollardL, bollardR);
+  } else if (fam === 'lifestyle') {
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(w * 0.75, 0.05, d * 0.75), Mat.benchWood);
+    deck.position.y = 0.025;
+    group.add(deck);
+    const canopyStub = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 1.4, 6), Mat.darkInk);
+    canopyStub.position.set(0, 0.7, -hd * 0.6);
+    group.add(canopyStub);
+    const pallet = propPalletStack(1);
+    pallet.position.set(-hw * 0.7, 0, hd * 0.6);
+    const trash = propTrashBin();
+    trash.position.set(hw * 0.7, 0, hd * 0.6);
+    group.add(pallet, trash);
+  } else if (fam === 'energy') {
+    const conduit = new THREE.Mesh(new THREE.BoxGeometry(w * 0.8, 0.03, 0.25), Mat.darkInk);
+    conduit.position.set(0, 0.02, 0);
+    group.add(conduit);
+    const cabinet = propInverterCabinet();
+    cabinet.position.set(-hw * 0.55, 0, -hd * 0.5);
+    group.add(cabinet);
+    const paint = propFloorStripe(w * 0.7, 0.2, Mat.greenAccent);
+    paint.position.set(0, 0, hd * 0.55);
+    group.add(paint);
+  }
 
   const { badge, canvas, texture } = createPlotBadgeMesh(plot, 0.75);
   group.userData.signCanvas = canvas;
@@ -2179,19 +2404,19 @@ function createPlotSignMesh(plot) {
     case 'solar': return createSolarPlotMesh(plot);
     case 'turbine': return createTurbinePlotMesh(plot);
     case 'ev': return createEvPlotMesh(plot);
-    case 'tire_shop': return createGenericPlotMesh(plot, 3.6, 3.2);
-    case 'lube_bay': return createGenericPlotMesh(plot, 3.6, 3.2);
-    case 'vacuum_hub': return createGenericPlotMesh(plot, 3.0, 2.6);
-    case 'moto_dock': return createGenericPlotMesh(plot, 2.4, 2.2);
-    case 'truck_stop': return createGenericPlotMesh(plot, 4.4, 3.8);
-    case 'bakery_drive': return createGenericPlotMesh(plot, 3.6, 3.2);
-    case 'food_truck': return createGenericPlotMesh(plot, 2.8, 2.4);
-    case 'rest_lounge': return createGenericPlotMesh(plot, 3.4, 3.0);
-    case 'pet_park': return createGenericPlotMesh(plot, 3.0, 3.0);
-    case 'parcel_hub': return createGenericPlotMesh(plot, 2.0, 1.8);
-    case 'atm_hub': return createGenericPlotMesh(plot, 2.0, 1.8);
-    case 'hydrogen_bay': return createGenericPlotMesh(plot, 3.6, 3.2);
-    default: return createGenericPlotMesh(plot, 3.0, 3.0);
+    case 'tire_shop': return createGenericPlotMesh(plot, 3.6, 3.2, 'service');
+    case 'lube_bay': return createGenericPlotMesh(plot, 3.6, 3.2, 'service');
+    case 'vacuum_hub': return createGenericPlotMesh(plot, 3.0, 2.6, 'service');
+    case 'moto_dock': return createGenericPlotMesh(plot, 2.4, 2.2, 'service');
+    case 'truck_stop': return createGenericPlotMesh(plot, 4.4, 3.8, 'service');
+    case 'bakery_drive': return createGenericPlotMesh(plot, 3.6, 3.2, 'lifestyle');
+    case 'food_truck': return createGenericPlotMesh(plot, 2.8, 2.4, 'lifestyle');
+    case 'rest_lounge': return createGenericPlotMesh(plot, 3.4, 3.0, 'lifestyle');
+    case 'pet_park': return createGenericPlotMesh(plot, 3.0, 3.0, 'lifestyle');
+    case 'parcel_hub': return createGenericPlotMesh(plot, 2.0, 1.8, 'lifestyle');
+    case 'atm_hub': return createGenericPlotMesh(plot, 2.0, 1.8, 'lifestyle');
+    case 'hydrogen_bay': return createGenericPlotMesh(plot, 3.6, 3.2, 'energy');
+    default: return createGenericPlotMesh(plot, 3.0, 3.0, 'service');
   }
 }
 
@@ -2917,6 +3142,14 @@ function spawnSolarPanelsMesh(level = 1) {
     solarPanelsGroup.add(inv, led);
   }
 
+  const spInverter = propInverterCabinet();
+  spInverter.position.set(3.2, 0, 1.4);
+  const spCableReel = propCableReel();
+  spCableReel.position.set(-3.0, 0, 1.6);
+  const spStripe = propFloorStripe(5.0, 0.2, Mat.greenAccent);
+  spStripe.position.set(0, 0, 2.4);
+  solarPanelsGroup.add(spInverter, spCableReel, spStripe);
+
   scene.add(solarPanelsGroup);
   triggerUpgradeFX(solarPanelsGroup);
 }
@@ -3209,6 +3442,20 @@ function spawnVacuumHubMesh(level = 1) {
     vacuumHubGroup.add(canopy);
   }
 
+  const vhBollardL = propBollard();
+  vhBollardL.position.set(-1.6, 0, 1.4);
+  const vhBollardR = propBollard();
+  vhBollardR.position.set(1.6, 0, 1.4);
+  const vhDrain = propDrainGrate(1.2, 0.5);
+  vhDrain.position.set(0, 0, -1.2);
+  const vhHose = propHoseReel();
+  vhHose.position.set(1.1, 1.2, 0);
+  const vhStripe = propFloorStripe(3.2, 0.2);
+  vhStripe.position.set(0, 0, 1.9);
+  const vhPips = propLevelPips(level);
+  vhPips.position.set(-1.9, 0, 1.6);
+  vacuumHubGroup.add(vhBollardL, vhBollardR, vhDrain, vhHose, vhStripe, vhPips);
+
   scene.add(vacuumHubGroup);
   triggerUpgradeFX(vacuumHubGroup);
   updateStationApronExpansion();
@@ -3248,6 +3495,18 @@ function spawnMotoDockMesh(level = 1) {
     motoDockGroup.add(roof);
   }
 
+  const mdPallet = propPalletStack(2);
+  mdPallet.position.set(-1.5, 0, -1.0);
+  const mdChockL = propWheelChock();
+  mdChockL.position.set(-0.5, 0, 0.9);
+  const mdChockR = propWheelChock();
+  mdChockR.position.set(0.5, 0, 0.9);
+  const mdBollard = propBollard();
+  mdBollard.position.set(1.7, 0, 1.2);
+  const mdPips = propLevelPips(level);
+  mdPips.position.set(-1.7, 0, 1.2);
+  motoDockGroup.add(mdPallet, mdChockL, mdChockR, mdBollard, mdPips);
+
   scene.add(motoDockGroup);
   triggerUpgradeFX(motoDockGroup);
   updateStationApronExpansion();
@@ -3285,6 +3544,26 @@ function spawnTruckStopMesh(level = 1) {
     col2.position.set(3.8, 2.6, 0);
     truckStopGroup.add(cRoof, col1, col2);
   }
+
+  const tsBollardNE = propBollard();
+  tsBollardNE.position.set(3.6, 0, 4.2);
+  const tsBollardNW = propBollard();
+  tsBollardNW.position.set(-3.6, 0, 4.2);
+  const tsBollardSE = propBollard();
+  tsBollardSE.position.set(3.6, 0, -4.2);
+  const tsBollardSW = propBollard();
+  tsBollardSW.position.set(-3.6, 0, -4.2);
+  const tsChockL = propWheelChock();
+  tsChockL.position.set(-1.2, 0, -3.0);
+  const tsChockR = propWheelChock();
+  tsChockR.position.set(1.2, 0, -3.0);
+  const tsStripe = propFloorStripe(7.0, 0.25, Mat.roadWhite);
+  tsStripe.position.set(0, 0, 2.6);
+  const tsCableReel = propCableReel();
+  tsCableReel.position.set(3.0, 0, -1.4);
+  const tsPips = propLevelPips(level);
+  tsPips.position.set(-4.0, 0, 3.8);
+  truckStopGroup.add(tsBollardNE, tsBollardNW, tsBollardSE, tsBollardSW, tsChockL, tsChockR, tsStripe, tsCableReel, tsPips);
 
   scene.add(truckStopGroup);
   triggerUpgradeFX(truckStopGroup);
@@ -3361,6 +3640,16 @@ function spawnFoodTruckMesh(level = 1) {
     foodTruckGroup.add(table);
   }
 
+  const ftTrash = propTrashBin();
+  ftTrash.position.set(2.0, 0, 0.8);
+  const ftBench = propBench();
+  ftBench.position.set(-1.9, 0, 1.2);
+  const ftTotem = propNeonTotem(Mat.neonAmber);
+  ftTotem.position.set(2.4, 0, -1.2);
+  const ftStripe = propFloorStripe(3.0, 0.18);
+  ftStripe.position.set(0, 0, 1.9);
+  foodTruckGroup.add(ftTrash, ftBench, ftTotem, ftStripe);
+
   scene.add(foodTruckGroup);
   triggerUpgradeFX(foodTruckGroup);
   updateStationApronExpansion();
@@ -3389,6 +3678,35 @@ function spawnRestLoungeMesh(level = 1) {
   const doorR = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.0, 0.08), Mat.redTrim);
   doorR.position.set(1.2, 1.05, 2.02);
   restLoungeGroup.add(doorL, doorR);
+
+  const rlBenchL = propBench();
+  rlBenchL.position.set(-1.7, 0, 1.6);
+  const rlBenchR = propBench();
+  rlBenchR.position.set(1.7, 0, 1.6);
+  const rlTrash = propTrashBin();
+  rlTrash.position.set(2.6, 0, 1.4);
+  const rlTotem = propNeonTotem(Mat.windowWarm);
+  rlTotem.position.set(-2.8, 0, -1.0);
+  const rlPallet = propPalletStack(2);
+  rlPallet.position.set(2.7, 0, -1.6);
+  restLoungeGroup.add(rlBenchL, rlBenchR, rlTrash, rlTotem, rlPallet);
+
+  // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
+  if (level >= 2) {
+    const rlL2 = propInverterCabinet();
+    rlL2.position.set(-2.8, 0, 1.6);
+    restLoungeGroup.add(rlL2);
+  }
+  if (level >= 3) {
+    const rlMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
+    rlMast.position.set(2.8, 1.5, 1.8);
+    const rlLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
+    rlLamp.position.set(2.8, 3.0, 1.8);
+    restLoungeGroup.add(rlMast, rlLamp);
+  }
+  const rlPips = propLevelPips(level);
+  rlPips.position.set(0, 0, 2.2);
+  restLoungeGroup.add(rlPips);
 
   scene.add(restLoungeGroup);
   triggerUpgradeFX(restLoungeGroup);
@@ -3422,6 +3740,35 @@ function spawnPetParkMesh(level = 1) {
   ramp.position.set(-1.0, 0.4, 0);
   petParkGroup.add(hydrant, ramp);
 
+  const ppBenchL = propBench();
+  ppBenchL.position.set(-1.8, 0, 2.4);
+  const ppBenchR = propBench();
+  ppBenchR.position.set(1.8, 0, 2.4);
+  const ppTrash = propTrashBin();
+  ppTrash.position.set(2.4, 0, 3.0);
+  const ppBollardL = propBollard();
+  ppBollardL.position.set(-2.4, 0, -3.4);
+  const ppBollardR = propBollard();
+  ppBollardR.position.set(2.4, 0, -3.4);
+  petParkGroup.add(ppBenchL, ppBenchR, ppTrash, ppBollardL, ppBollardR);
+
+  // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
+  if (level >= 2) {
+    const ppL2 = propInverterCabinet();
+    ppL2.position.set(0, 0, -3.2);
+    petParkGroup.add(ppL2);
+  }
+  if (level >= 3) {
+    const ppMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
+    ppMast.position.set(0, 1.5, 3.8);
+    const ppLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
+    ppLamp.position.set(0, 3.0, 3.8);
+    petParkGroup.add(ppMast, ppLamp);
+  }
+  const ppPips = propLevelPips(level);
+  ppPips.position.set(0, 0, 3.6);
+  petParkGroup.add(ppPips);
+
   scene.add(petParkGroup);
   triggerUpgradeFX(petParkGroup);
   updateStationApronExpansion();
@@ -3448,6 +3795,33 @@ function spawnParcelHubMesh(level = 1) {
   roof.position.set(0, 2.3, 0.2);
   parcelHubGroup.add(roof);
 
+  const phBollardL = propBollard();
+  phBollardL.position.set(-1.4, 0, 1.0);
+  const phBollardR = propBollard();
+  phBollardR.position.set(1.4, 0, 1.0);
+  const phPallet = propPalletStack(3);
+  phPallet.position.set(-1.8, 0, -0.6);
+  const phTotem = propNeonTotem(Mat.evGlow);
+  phTotem.position.set(1.9, 0, -0.8);
+  parcelHubGroup.add(phBollardL, phBollardR, phPallet, phTotem);
+
+  // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
+  if (level >= 2) {
+    const phL2 = propInverterCabinet();
+    phL2.position.set(0, 0, 1.05);
+    parcelHubGroup.add(phL2);
+  }
+  if (level >= 3) {
+    const phMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
+    phMast.position.set(0, 1.5, -1.05);
+    const phLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
+    phLamp.position.set(0, 3.0, -1.05);
+    parcelHubGroup.add(phMast, phLamp);
+  }
+  const phPips = propLevelPips(level);
+  phPips.position.set(-1.6, 0, 1.1);
+  parcelHubGroup.add(phPips);
+
   scene.add(parcelHubGroup);
   triggerUpgradeFX(parcelHubGroup);
   updateStationApronExpansion();
@@ -3470,6 +3844,33 @@ function spawnAtmHubMesh(level = 1) {
   const hood = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.12, 1.2), Mat.darkInk);
   hood.position.set(0, 2.1, 0.2);
   atmHubGroup.add(atm1, atm2, hood);
+
+  const ahBollardL = propBollard();
+  ahBollardL.position.set(-1.2, 0, 0.9);
+  const ahBollardR = propBollard();
+  ahBollardR.position.set(1.2, 0, 0.9);
+  const ahTrash = propTrashBin();
+  ahTrash.position.set(1.6, 0, -0.7);
+  const ahStripe = propFloorStripe(2.4, 0.16);
+  ahStripe.position.set(0, 0, 1.2);
+  atmHubGroup.add(ahBollardL, ahBollardR, ahTrash, ahStripe);
+
+  // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
+  if (level >= 2) {
+    const ahL2 = propInverterCabinet();
+    ahL2.position.set(0, 0, -0.9);
+    atmHubGroup.add(ahL2);
+  }
+  if (level >= 3) {
+    const ahMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
+    ahMast.position.set(-1.6, 1.5, 0.8);
+    const ahLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
+    ahLamp.position.set(-1.6, 3.0, 0.8);
+    atmHubGroup.add(ahMast, ahLamp);
+  }
+  const ahPips = propLevelPips(level);
+  ahPips.position.set(-1.4, 0, 1.0);
+  atmHubGroup.add(ahPips);
 
   scene.add(atmHubGroup);
   triggerUpgradeFX(atmHubGroup);
@@ -3498,6 +3899,41 @@ function spawnHydrogenBayMesh(level = 1) {
   const pGlow = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.05), Mat.evGlow);
   pGlow.position.set(1.8, 1.2, 1.76);
   hydrogenBayGroup.add(pylon, pGlow);
+
+  const hbBollardNE = propBollard();
+  hbBollardNE.position.set(2.4, 0, 2.4);
+  const hbBollardNW = propBollard();
+  hbBollardNW.position.set(-2.4, 0, 2.4);
+  const hbBollardSE = propBollard();
+  hbBollardSE.position.set(2.4, 0, -2.4);
+  const hbBollardSW = propBollard();
+  hbBollardSW.position.set(-2.4, 0, -2.4);
+  const hbInverter = propInverterCabinet();
+  hbInverter.position.set(-2.6, 0, 0.6);
+  const hbChockL = propWheelChock();
+  hbChockL.position.set(-0.8, 0, 2.6);
+  const hbChockR = propWheelChock();
+  hbChockR.position.set(0.8, 0, 2.6);
+  const hbStripe = propFloorStripe(4.4, 0.22, Mat.greenAccent);
+  hbStripe.position.set(0, 0, 3.0);
+  hydrogenBayGroup.add(hbBollardNE, hbBollardNW, hbBollardSE, hbBollardSW, hbInverter, hbChockL, hbChockR, hbStripe);
+
+  // Kademe farklilastirmasi: L2 ek modul, L3 aydinlatma + ikinci unite
+  if (level >= 2) {
+    const hbL2 = propInverterCabinet();
+    hbL2.position.set(2.6, 0, 0.6);
+    hydrogenBayGroup.add(hbL2);
+  }
+  if (level >= 3) {
+    const hbMast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.0, 6), Mat.lampPost);
+    hbMast.position.set(0, 1.5, -2.6);
+    const hbLamp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.12, 0.36), Mat.lampGlow);
+    hbLamp.position.set(0, 3.0, -2.6);
+    hydrogenBayGroup.add(hbMast, hbLamp);
+  }
+  const hbPips = propLevelPips(level);
+  hbPips.position.set(2.6, 0, 2.6);
+  hydrogenBayGroup.add(hbPips);
 
   scene.add(hydrogenBayGroup);
   triggerUpgradeFX(hydrogenBayGroup);
@@ -4559,6 +4995,72 @@ function createUrbanWearDetails(diorama) {
   diorama.add(rollingCanMesh);
 }
 
+// Gece sokak lambalari etrafinda yorungede donen atesbocekleri
+const fireflies = [];
+function createFireflies(diorama) {
+  const anchors = [
+    new THREE.Vector3(-9.5, 2.6, 3.2),
+    new THREE.Vector3(9.5, 2.6, 3.2),
+    new THREE.Vector3(-3.0, 2.4, -12.0),
+    new THREE.Vector3(4.2, 2.4, -12.0)
+  ];
+  anchors.forEach((a, ai) => {
+    for (let i = 0; i < 4; i++) {
+      const mat = Mat.lampGlow.clone();
+      mat.transparent = true;
+      mat.opacity = 0.0;
+      const m = new THREE.Mesh(new THREE.BoxGeometry(0.055, 0.055, 0.055), mat);
+      m.position.copy(a);
+      diorama.add(m);
+      fireflies.push({
+        mesh: m, mat, anchor: a.clone(),
+        radius: 0.7 + Math.random() * 0.9,
+        speed: 0.5 + Math.random() * 0.7,
+        phase: Math.random() * Math.PI * 2,
+        bobPhase: ai * 1.3 + i * 0.8
+      });
+    }
+  });
+}
+
+// Kalkis aninda araclarin arka tamponundan cikan egzoz dumani
+const exhaustPuffs = [];
+function spawnExhaustPuff(pos, headingY) {
+  if (exhaustPuffs.length > 24) return;
+  const mat = Mat.steam.clone();
+  mat.transparent = true;
+  mat.opacity = 0.34;
+  const m = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.16), mat);
+  m.position.set(
+    pos.x - Math.sin(headingY) * 1.9,
+    0.32,
+    pos.z - Math.cos(headingY) * 1.9
+  );
+  scene.add(m);
+  exhaustPuffs.push({ mesh: m, mat, life: 0, max: 1.1 });
+}
+
+// Ruzgarda dalgalanan bayrak (direge monte, segmentli)
+const windFlags = [];
+function createWindFlag(diorama, x, z, mat) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 4.4, 6), Mat.chrome);
+  pole.position.y = 2.2;
+  pole.castShadow = true;
+  g.add(pole);
+  const segs = [];
+  for (let i = 0; i < 5; i++) {
+    const s = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.62, 0.03), mat || Mat.redTrim);
+    s.position.set(0.19 + i * 0.28, 3.85, 0);
+    g.add(s);
+    segs.push(s);
+  }
+  g.userData.segs = segs;
+  diorama.add(g);
+  windFlags.push(g);
+}
+
 function createHighAltitudeJet(diorama) {
   skyJetMesh = new THREE.Group();
   const jetBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.2, 1.6), Mat.roadWhite);
@@ -5023,6 +5525,8 @@ class Vehicle {
     }
     this.wpIndex = 0;
     this.state = 'DEPARTING';
+    // Paket 3: kalkis aninda arka tampondan egzoz dumani
+    spawnExhaustPuff(this.mesh.position, this.mesh.rotation.y);
   }
 
   update(delta = 0.016) {
@@ -6691,6 +7195,49 @@ function updateDayNightCycle(delta) {
   updateSkyLighting();
 }
 
+function updateFirefliesFlagsAndExhaust(delta, time) {
+  // Atesbocekleri: sadece gece gorunur, lamba cevresinde yorunge + nabiz
+  const h = State.hour;
+  const nightAmt = (h >= 20 || h < 5) ? 1.0 : (h >= 19 ? (h - 19) : (h < 6 ? (6 - h) : 0));
+  fireflies.forEach(f => {
+    const a = time * f.speed + f.phase;
+    f.mesh.position.set(
+      f.anchor.x + Math.cos(a) * f.radius,
+      f.anchor.y + Math.sin(time * 1.6 + f.bobPhase) * 0.35,
+      f.anchor.z + Math.sin(a) * f.radius
+    );
+    const pulse = 0.35 + 0.65 * Math.max(0, Math.sin(time * 3.1 + f.bobPhase));
+    f.mat.opacity = Math.min(1, nightAmt) * pulse;
+  });
+
+  // Bayrak: direkten uzaklastikca artan genlikte dalga
+  windFlags.forEach((g, gi) => {
+    g.userData.segs.forEach((s, i) => {
+      const amp = 0.06 + i * 0.05;
+      s.position.z = Math.sin(time * 3.4 + i * 0.9 + gi * 2.0) * amp;
+      s.rotation.y = Math.sin(time * 3.4 + i * 0.9 + gi * 2.0) * (0.12 + i * 0.06);
+    });
+  });
+
+  // Egzoz dumani: buyuyup solarak yok olur
+  for (let i = exhaustPuffs.length - 1; i >= 0; i--) {
+    const p = exhaustPuffs[i];
+    p.life += delta;
+    const t = p.life / p.max;
+    if (t >= 1) {
+      scene.remove(p.mesh);
+      p.mesh.geometry.dispose();
+      p.mat.dispose();
+      exhaustPuffs.splice(i, 1);
+      continue;
+    }
+    p.mesh.position.y += delta * 0.55;
+    const s = 1 + t * 2.4;
+    p.mesh.scale.set(s, s, s);
+    p.mat.opacity = 0.34 * (1 - t);
+  }
+}
+
 function updateSkyLighting() {
   const h = State.hour + (State.minute / 60.0);
   const sunAngle = ((h - 6) / 12) * Math.PI;
@@ -6823,6 +7370,7 @@ function animate() {
   updateBypassTraffic(delta);
   updateParticles(delta);
   updateWindAndCreatures(delta, totalSeconds);
+  updateFirefliesFlagsAndExhaust(delta, totalSeconds);
   updateLivingWorldFX(delta, totalSeconds);
   updateCanopyAnimation(delta);
   updatePlotBadges(totalSeconds);
