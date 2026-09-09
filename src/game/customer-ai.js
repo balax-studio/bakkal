@@ -209,8 +209,10 @@ class Customer {
 
   attachCarriedItem() {
     if (this.itemMesh) return;
-    const geo = new THREE.BoxGeometry(0.35, 0.35, 0.35);
-    const mat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.3, flatShading: true });
+    const isEgg = this.chosenShelf && this.chosenShelf.type === 'egg';
+    const color = isEgg ? 0xffedd5 : 0xef4444;
+    const geo = isEgg ? new THREE.BoxGeometry(0.3, 0.4, 0.3) : new THREE.BoxGeometry(0.35, 0.35, 0.35);
+    const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.3, flatShading: true });
     this.itemMesh = new THREE.Mesh(geo, mat);
     this.itemMesh.position.set(0, 0.9, 0.45);
     this.mesh.add(this.itemMesh);

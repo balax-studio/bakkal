@@ -1,14 +1,17 @@
 /**
  * Mini Mart Neo - Game State Manager
- * Zero Emojis Used
+ * Fully customizable and reactive
+ * Strictly ZERO Emojis
  */
+
+import { GAME_CONFIG } from './mart-config.js';
 
 export class MartState {
   constructor() {
-    this.cash = 60; // Starting money
-    this.inventory = []; // Array of carried items { type: 'tomato', id: number }
-    this.maxCapacity = 6;
-    this.playerSpeed = 7.5;
+    this.cash = GAME_CONFIG.player.initialCash;
+    this.inventory = []; // Array of carried items { type: 'tomato' | 'egg', id: number }
+    this.maxCapacity = GAME_CONFIG.player.initialCapacity;
+    this.playerSpeed = GAME_CONFIG.player.baseSpeed;
     this.speedBoostActive = false;
     this.level = 1;
     this.xp = 100;
@@ -16,31 +19,30 @@ export class MartState {
     this.marketShare = 35;
     this.soundEnabled = true;
 
-    // Shelves state: Shelf 1 (default unlocked), Shelf 2 (unlockable), Shelf 3
+    // Shelves configuration
     this.shelves = [
-      { id: 1, type: 'tomato', unlocked: true, items: 0, maxItems: 12, price: 5 },
-      { id: 2, type: 'tomato', unlocked: false, cost: 50, items: 0, maxItems: 12, price: 6 },
-      { id: 3, type: 'special', unlocked: false, cost: 120, items: 0, maxItems: 12, price: 10 }
+      { id: 1, type: 'tomato', unlocked: true, items: 0, maxItems: 12, price: GAME_CONFIG.items.tomato.price },
+      { id: 2, type: 'tomato', unlocked: false, cost: GAME_CONFIG.unlocks.shelf2.cost, items: 0, maxItems: 12, price: GAME_CONFIG.items.tomato.price },
+      { id: 3, type: 'egg', unlocked: false, cost: GAME_CONFIG.unlocks.eggShelf.cost, items: 0, maxItems: 8, price: GAME_CONFIG.items.egg.price }
     ];
 
-    // Staff state
+    // Unlocks state
+    this.unlockedCoop = false;
     this.hasCashier = false;
-    this.cashierCost = 150;
+    this.hasHelper = false;
 
-    // Cash register accumulated earnings waiting for pickup
-    this.registerCash = 0;
-
-    // Current Active Objective
+    // Objectives progression
     this.currentObjectiveIndex = 0;
     this.objectives = [
       { id: 1, text: "Tarladan domates topla ve sirtina yukle", target: 4, current: 0, completed: false },
       { id: 2, text: "Topladigin domatesleri market raflarina yerlestir", target: 4, current: 0, completed: false },
-      { id: 3, text: "Musterilerin kasadan alisveris yapmasini bekle ve paralari al", target: 30, current: 0, completed: false },
+      { id: 3, text: "Musterilerin alisveris yapmasini bekle ve paralari topla", target: 30, current: 0, completed: false },
       { id: 4, text: "Yeni raf alanina basarak 2. Rafi satin al (50 TL)", target: 50, current: 0, completed: false },
-      { id: 5, text: "Otomatik Kasiyer personeli ise al (150 TL)", target: 150, current: 0, completed: false }
+      { id: 5, text: "Tavuk Kumesi alanina basarak kumesi ac (90 TL)", target: 90, current: 0, completed: false },
+      { id: 6, text: "Otomatik Kasiyer personeli ise al (180 TL)", target: 180, current: 0, completed: false },
+      { id: 7, text: "Market Ciragi personeli ise al (250 TL)", target: 250, current: 0, completed: false }
     ];
 
-    // Event listeners
     this.listeners = new Set();
   }
 
@@ -82,12 +84,15 @@ export class MartState {
     return false;
   }
 
-  popItem() {
-    if (this.inventory.length > 0) {
-      const item = this.inventory.pop();
-      this.checkObjectiveProgress('stock', 1);
-      this.notify();
-      return item;
+  popItemForShelf(shelfType) {
+    // Find the topmost matching item in inventory
+    for (let i = this.inventory.length - 1; i >= 0; i--) {
+      if (this.inventory[i].type === shelfType) {
+        const item = this.inventory.splice(i, 1)[0];
+        this.checkObjectiveProgress('stock', 1);
+        this.notify();
+        return item;
+      }
     }
     return null;
   }
@@ -113,6 +118,6 @@ export class MartState {
   }
 
   get currentObjective() {
-    return this.objectives[this.currentObjectiveIndex] || { text: "Harika! Marketi buyutmeyi surdur!", current: 1, target: 1 };
+    return this.objectives[this.currentObjectiveIndex] || { text: "Tebrikler! Marketi buyutmeye devam et!", current: 1, target: 1 };
   }
 }
