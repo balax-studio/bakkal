@@ -1,0 +1,637 @@
+/* ==========================================================================
+   MINI MART NEO - NEO-BRUTALIST STYLING SYSTEM
+   Pixel-perfect adherence to reference screenshot
+   Strict Rule: Absolutely ZERO emojis
+   ========================================================================== */
+
+:root {
+  --bg-main: #f8fafc;
+  --text-dark: #09090b;
+  --text-muted: #64748b;
+  --border-black: #09090b;
+  --shadow-black: #09090b;
+  
+  /* Accent Colors matching screenshot */
+  --c-slate: #475569;
+  --c-amber: #f59e0b;
+  --c-cyan: #06b6d4;
+  --c-cyan-light: #38bdf8;
+  --c-emerald: #10b981;
+  --c-blue: #2563eb;
+  --c-yellow: #eab308;
+  --c-red: #ef4444;
+  --c-purple: #8b5cf6;
+  
+  --font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+}
+
+/* Dot Grid Background Layer */
+body {
+  background-image: radial-gradient(#94a3b8 1.4px, transparent 1.4px);
+  background-size: 18px 18px;
+}
+
+/* 3D Canvas Layer */
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#mart-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   TOP NEO-BRUTALIST HUD
+   ========================================================================== */
+#top-hud {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  z-index: 30;
+  pointer-events: auto;
+}
+
+.hud-card {
+  pointer-events: auto;
+  background: #ffffff;
+  border: 2.5px solid var(--border-black);
+  border-radius: 14px;
+  box-shadow: 3.5px 3.5px 0px var(--shadow-black);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.hud-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1.5px 1.5px 0px var(--shadow-black);
+}
+
+.hud-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.hud-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.hud-label {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.hud-label-bold {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  color: var(--text-dark);
+}
+
+.hud-sub {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.hud-value {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-dark);
+}
+
+.hud-pill-badge {
+  border: 2px solid var(--border-black);
+  border-radius: 9999px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 800;
+  background: #f1f5f9;
+  color: var(--text-dark);
+  margin-left: 4px;
+}
+
+.hud-menu-btn {
+  cursor: pointer;
+  background: #ffffff;
+  border-color: var(--border-black);
+}
+
+/* ==========================================================================
+   OBJECTIVE BANNER
+   ========================================================================== */
+#objective-banner {
+  position: absolute;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fef08a;
+  border: 2.5px solid var(--border-black);
+  border-radius: 12px;
+  box-shadow: 3.5px 3.5px 0px var(--shadow-black);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 18;
+  max-width: 90%;
+  pointer-events: auto;
+}
+
+.banner-tag {
+  background: var(--border-black);
+  color: #fef08a;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.banner-text {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.banner-progress-bar {
+  width: 50px;
+  height: 8px;
+  background: #ffffff;
+  border: 1.5px solid var(--border-black);
+  border-radius: 999px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.banner-progress-fill {
+  height: 100%;
+  background: var(--c-emerald);
+  transition: width 0.3s ease;
+}
+
+/* ==========================================================================
+   MOBILE VIRTUAL JOYSTICK
+   ========================================================================== */
+#joystick-zone {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  width: 120px;
+  height: 120px;
+  z-index: 25;
+  touch-action: none;
+}
+
+#joystick-base {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  border: 3px solid var(--border-black);
+  box-shadow: 4px 4px 0px var(--shadow-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  touch-action: none;
+}
+
+#joystick-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--c-cyan);
+  border: 2.5px solid var(--border-black);
+  box-shadow: 2px 2px 0px var(--shadow-black);
+  position: absolute;
+  pointer-events: none;
+  transition: transform 0.04s linear;
+}
+
+/* ==========================================================================
+   BOTTOM QUICK CONTROLS
+   ========================================================================== */
+#quick-controls {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  gap: 10px;
+  z-index: 25;
+}
+
+.quick-neo-btn {
+  background: #ffffff;
+  border: 2.5px solid var(--border-black);
+  border-radius: 12px;
+  box-shadow: 3.5px 3.5px 0px var(--shadow-black);
+  padding: 8px 12px;
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--text-dark);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.quick-neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1.5px 1.5px 0px var(--shadow-black);
+}
+
+/* ==========================================================================
+   NEO-BRUTALIST SERVICES DRAWER (Matching Reference Screenshot 1:1)
+   ========================================================================== */
+.drawer-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 40;
+  transition: opacity 0.2s ease;
+}
+
+.drawer-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.neo-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 84vh;
+  background: var(--bg-main);
+  background-image: radial-gradient(#94a3b8 1.4px, transparent 1.4px);
+  background-size: 18px 18px;
+  border-top: 3.5px solid var(--border-black);
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.18);
+  border-radius: 24px 24px 0 0;
+  padding: 18px 16px 28px 16px;
+  z-index: 50;
+  overflow-y: auto;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.neo-drawer.hidden {
+  transform: translateY(105%);
+  pointer-events: none;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 2px dashed #cbd5e1;
+}
+
+.drawer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawer-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 2px solid var(--border-black);
+  box-shadow: 2.5px 2.5px 0px var(--shadow-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.drawer-title {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.2px;
+  color: var(--text-dark);
+}
+
+.drawer-subtitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.drawer-close-btn {
+  background: #ffffff;
+  border: 2px solid var(--border-black);
+  border-radius: 10px;
+  box-shadow: 2.5px 2.5px 0px var(--shadow-black);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.drawer-close-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0.5px 0.5px 0px var(--shadow-black);
+}
+
+/* Grid Layout matching screenshot (Top 3 items 3-col, middle 6 items 2-col, bottom full-width) */
+.neo-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+/* Default mobile: 1 column */
+.neo-card {
+  grid-column: span 6;
+}
+
+/* Desktop & tablet: exact reference screenshot layout */
+@media (min-width: 620px) {
+  /* Top 3 cards: 3 columns */
+  .neo-card:nth-child(1),
+  .neo-card:nth-child(2),
+  .neo-card:nth-child(3) {
+    grid-column: span 2;
+  }
+
+  /* Middle 6 cards: 2 columns */
+  .neo-card:nth-child(4),
+  .neo-card:nth-child(5),
+  .neo-card:nth-child(6),
+  .neo-card:nth-child(7),
+  .neo-card:nth-child(8),
+  .neo-card:nth-child(9) {
+    grid-column: span 3;
+  }
+
+  /* Bottom card (Casino): full width */
+  .neo-card.full-width {
+    grid-column: span 6;
+  }
+}
+
+/* Individual Neo-Card matching screenshot */
+.neo-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 3.5px 3.5px 0px var(--shadow-black);
+}
+
+.neo-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1.5px 1.5px 0px var(--shadow-black);
+}
+
+/* Colored Outer / Inner Borders matching screenshot */
+.neo-card.border-slate {
+  border: 2.8px solid var(--border-black);
+}
+
+.neo-card.border-amber {
+  border: 2.8px solid var(--c-amber);
+}
+
+.neo-card.border-cyan {
+  border: 2.8px solid var(--c-cyan);
+}
+
+.neo-card.border-emerald {
+  border: 2.8px solid var(--c-emerald);
+}
+
+.neo-card.border-red {
+  border: 2.8px solid var(--c-red);
+}
+
+.neo-card.full-width {
+  grid-column: 1 / -1;
+  border: 2.8px solid var(--c-amber);
+}
+
+.card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1.8px solid var(--border-black);
+  box-shadow: 1.5px 1.5px 0px var(--shadow-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-row, .title-with-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-dark);
+  letter-spacing: -0.2px;
+}
+
+.card-subtitle {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.pill-badge {
+  border: 2px solid var(--border-black);
+  border-radius: 9999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  background: #ffffff;
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+.pill-badge.bg-yellow-soft {
+  background: #fef08a;
+  border-color: var(--border-black);
+}
+
+/* ==========================================================================
+   NEO NOTIFICATION DOT (PULSING RED)
+   ========================================================================== */
+.neo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--c-red);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.neo-dot.pulse-red {
+  box-shadow: 0 0 6px var(--c-red);
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+/* ==========================================================================
+   ACCENT BACKGROUND UTILITIES
+   ========================================================================== */
+.bg-slate { background-color: #64748b; }
+.bg-amber { background-color: #f59e0b; }
+.bg-cyan { background-color: #06b6d4; }
+.bg-cyan-light { background-color: #0284c7; }
+.bg-emerald { background-color: #10b981; }
+.bg-red { background-color: #ef4444; }
+.bg-yellow { background-color: #eab308; }
+.bg-purple { background-color: #8b5cf6; }
+
+/* SVG Icon size */
+.svg-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* ==========================================================================
+   FLOATING TOASTS
+   ========================================================================== */
+#toast-container {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 35;
+  pointer-events: none;
+}
+
+.neo-toast {
+  background: #ffffff;
+  border: 2.5px solid var(--border-black);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0px var(--shadow-black);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-dark);
+  animation: toastFade 2.2s forwards cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+@keyframes toastFade {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.92);
+  }
+}
+
+.hidden {
+  display: none !important;
+}

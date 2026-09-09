@@ -1,0 +1,10 @@
+{
+  "appId": "com.balax.minimart",
+  "appName": "Mini Mart Neo",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "android": {
+    "backgroundColor": "#f8fafc",
+    "allowMixedContent": true
+  }
+}

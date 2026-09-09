@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8fafc" />
+  <title>Mini Mart Neo - Neo Brutalist 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- 3D Game Canvas Layer -->
+  <div id="canvas-container">
+    <canvas id="mart-canvas"></canvas>
+  </div>
+
+  <!-- Top Neo-Brutalist HUD -->
+  <header id="top-hud">
+    <div class="hud-card hud-cash">
+      <div class="hud-icon-box bg-emerald">
+        <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M6 12h.01M18 12h.01"></path>
+        </svg>
+      </div>
+      <div class="hud-info">
+        <span class="hud-label">KASA BAKİYESİ</span>
+        <span class="hud-value" id="hud-cash-val">0 ₺</span>
+      </div>
+    </div>
+
+    <div class="hud-card hud-inventory">
+      <div class="hud-icon-box bg-amber">
+        <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 01-8 0"></path>
+        </svg>
+      </div>
+      <div class="hud-info">
+        <span class="hud-label">ÇANTA YÜKÜ</span>
+        <span class="hud-value" id="hud-inv-val">0 / 6</span>
+      </div>
+      <div class="hud-pill-badge" id="hud-inv-badge">BOŞ</div>
+    </div>
+
+    <button id="btn-open-drawer" class="hud-card hud-menu-btn">
+      <div class="hud-icon-box bg-purple">
+        <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        </svg>
+      </div>
+      <div class="hud-info">
+        <div class="title-with-dot">
+          <span class="hud-label-bold">İŞLETME</span>
+          <span class="neo-dot pulse-red"></span>
+        </div>
+        <span class="hud-sub">YÖNETİM</span>
+      </div>
+      <div class="hud-pill-badge">MENÜ</div>
+    </button>
+  </header>
+
+  <!-- Objective Bar -->
+  <div id="objective-banner" class="neo-banner">
+    <div class="banner-tag">GÖREV</div>
+    <div class="banner-text" id="objective-text">Tarlaya git ve olgunlaşan domatesleri topla!</div>
+    <div class="banner-progress-bar">
+      <div class="banner-progress-fill" id="objective-progress" style="width: 25%;"></div>
+    </div>
+  </div>
+
+  <!-- In-Game Floating Notification Overlay -->
+  <div id="toast-container"></div>
+
+  <!-- Mobile Touch Virtual Joystick -->
+  <div id="joystick-zone">
+    <div id="joystick-base">
+      <div id="joystick-thumb"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Quick Controls / Sound Toggle -->
+  <div id="quick-controls">
+    <button id="btn-sound" class="quick-neo-btn" title="Ses Aç/Kapat">
+      <svg id="sound-icon-on" viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+      <svg id="sound-icon-off" viewBox="0 0 24 24" class="svg-icon hidden" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+    </button>
+
+    <button id="btn-speed-boost" class="quick-neo-btn bg-amber" title="Turbo Adım">
+      <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+      <span>TURBO</span>
+    </button>
+  </div>
+
+  <!-- Neo-Brutalist Services Drawer (Matching Reference Screenshot) -->
+  <div id="drawer-backdrop" class="drawer-backdrop hidden"></div>
+  <aside id="services-drawer" class="neo-drawer hidden">
+    <div class="drawer-header">
+      <div class="drawer-title-group">
+        <div class="drawer-icon-box bg-cyan">
+          <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="title-with-dot">
+            <h2 class="drawer-title">İŞLETME & HİZMETLER</h2>
+            <span class="neo-dot pulse-red"></span>
+          </div>
+          <p class="drawer-subtitle">Neo-Brutalist Yönetim ve Büyüme Portalı</p>
+        </div>
+      </div>
+      <button id="btn-close-drawer" class="drawer-close-btn" aria-label="Kapat">
+        <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.8">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Cards Grid (Strict 1:1 Re-creation of user reference screenshot) -->
+    <div class="neo-grid">
+      <!-- 1. Hurdalık & Parça -->
+      <div class="neo-card border-slate" data-action="scrap">
+        <div class="card-left">
+          <div class="card-icon-box bg-slate">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Hurdalık & Parça</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Depo temizliği & Geri dönüşüm</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge" id="badge-scrap">0 Parça</span>
+        </div>
+      </div>
+
+      <!-- 2. Müşteri Yorumları -->
+      <div class="neo-card border-amber" data-action="reviews">
+        <div class="card-left">
+          <div class="card-icon-box bg-amber">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <line x1="9" y1="10" x2="15" y2="10"></line>
+              <line x1="12" y1="7" x2="12" y2="13"></line>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Müşteri Yorumları</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Memnuniyet & İtibar puanı</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge" id="badge-xp">100 XP</span>
+        </div>
+      </div>
+
+      <!-- 3. Showroom Mimari -->
+      <div class="neo-card border-cyan" data-action="decor">
+        <div class="card-left">
+          <div class="card-icon-box bg-cyan">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+              <line x1="9" y1="9" x2="9.01" y2="9"></line>
+              <line x1="15" y1="9" x2="15.01" y2="9"></line>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Showroom Mimari</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Market zemin ve aydınlatma</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge" id="badge-decor">Dekor</span>
+        </div>
+      </div>
+
+      <!-- 4. Rent-a-Car -->
+      <div class="neo-card border-cyan" data-action="rent">
+        <div class="card-left">
+          <div class="card-icon-box bg-cyan-light">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="1" y="4" width="22" height="16" rx="2"></rect>
+              <circle cx="7" cy="12" r="2"></circle>
+              <path d="M15 9h4m-4 6h4"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Rent-a-Car</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Günlük Kiralama & Hızlı Dağıtım</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge">Filo 1</span>
+        </div>
+      </div>
+
+      <!-- 5. Yan İşletmeler -->
+      <div class="neo-card border-emerald" data-action="passive">
+        <div class="card-left">
+          <div class="card-icon-box bg-emerald">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Yan İşletmeler</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Pasif Gelirler & Otomatlar</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge" id="badge-passive">+10 ₺/dk</span>
+        </div>
+      </div>
+
+      <!-- 6. Semt Hakimiyeti -->
+      <div class="neo-card border-cyan" data-action="marketshare">
+        <div class="card-left">
+          <div class="card-icon-box bg-cyan">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Semt Hakimiyeti</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Pazar Payı & Rekabet Avantajı</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge" id="badge-share">%35</span>
+        </div>
+      </div>
+
+      <!-- 7. Dedikodu Hattı -->
+      <div class="neo-card border-amber" data-action="intel">
+        <div class="card-left">
+          <div class="card-icon-box bg-amber">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="22"></line>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Dedikodu Hattı</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Asimetrik İstihbarat & Tüyolar</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge">Canlı</span>
+        </div>
+      </div>
+
+      <!-- 8. Konsinye & Emanet -->
+      <div class="neo-card border-emerald" data-action="consignment">
+        <div class="card-left">
+          <div class="card-icon-box bg-emerald">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Konsinye & Emanet</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Sıfır Sermaye Satış & Depolama</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge">Aktif</span>
+        </div>
+      </div>
+
+      <!-- 9. Gece Sanayisi -->
+      <div class="neo-card border-red" data-action="modding">
+        <div class="card-left">
+          <div class="card-icon-box bg-red">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+              <line x1="4" y1="22" x2="4" y2="15"></line>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Gece Sanayisi</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">Modifiye, Hızlı Taşıma & Drag</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge" id="badge-speed">Hız +%50</span>
+        </div>
+      </div>
+
+      <!-- 10. Yeraltı Casino (Full width in screenshot) -->
+      <div class="neo-card border-amber full-width" data-action="casino">
+        <div class="card-left">
+          <div class="card-icon-box bg-yellow">
+            <svg viewBox="0 0 24 24" class="svg-icon" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <circle cx="15.5" cy="8.5" r="1.5"></circle>
+              <circle cx="8.5" cy="15.5" r="1.5"></circle>
+              <circle cx="15.5" cy="15.5" r="1.5"></circle>
+              <circle cx="12" cy="12" r="1.5"></circle>
+            </svg>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <span class="card-title">Yeraltı Casino</span>
+              <span class="neo-dot pulse-red"></span>
+            </div>
+            <span class="card-subtitle">VIP Masalar & Şans Oyunları (Şans Çarkı)</span>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="pill-badge bg-yellow-soft">VIP Çarkı Çevir</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Script Modules -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

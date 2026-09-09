@@ -1,0 +1,20 @@
+{
+  "name": "mini-mart-neo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 8090 --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.185.1",
+    "@capacitor/core": "^7.0.1",
+    "@capacitor/android": "^7.0.1"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0",
+    "@capacitor/cli": "^7.0.1"
+  }
+}
