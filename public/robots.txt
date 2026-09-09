@@ -1,3 +1,64 @@
+# As a condition of accessing this website, you agree to abide by the following
+# content signals:
+
+# (a)  If a Content-Signal = yes, you may collect content for the corresponding
+#      use.
+# (b)  If a Content-Signal = no, you may not collect content for the
+#      corresponding use.
+# (c)  If the website operator does not include a Content-Signal for a
+#      corresponding use, the website operator neither grants nor restricts
+#      permission via Content-Signal with respect to the corresponding use.
+
+# The content signals and their meanings are:
+
+# search:   building a search index and providing search results (e.g., returning
+#           hyperlinks and short excerpts from your website's contents). Search does not
+#           include providing AI-generated search summaries.
+# ai-input: inputting content into one or more AI models (e.g., retrieval
+#           augmented generation, grounding, or other real-time taking of content for
+#           generative AI search answers).
+# ai-train: training or fine-tuning AI models.
+# use:      how AI systems may consume the content (immediate, reference, or full).
+
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS RESERVATIONS OF
+# RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790 ON COPYRIGHT
+# AND RELATED RIGHTS IN THE DIGITAL SINGLE MARKET.
+
+# BEGIN Cloudflare Managed content
+
+User-agent: *
+Content-Signal: search=yes,ai-train=no,use=reference
+Allow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CloudflareBrowserRenderingCrawler
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# END Cloudflare Managed Content
+
 <!doctype html>
 <html lang="tr">
 <head>
@@ -10,14 +71,14 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <meta property="og:title" content="BenelOil — Kendi Petrol İstasyonunu İşlet">
   <meta property="og:description" content="Pompayı sen tut, FULLE de, marketten nükleer reaktöre imparatorluğunu kur. Tarayıcıda, ücretsiz.">
-  <meta property="og:image" content="/icon-512.png">
+  <meta property="og:image" content="https://petrol.benerits.com/icon-512.png">
   <meta property="og:url" content="https://petrol.benerits.com">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:image" content="/icon-512.png">
+  <meta name="twitter:image" content="https://petrol.benerits.com/icon-512.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     /* ═══ TEMA TOKENLARI ═══
        Arayüzün TAMAMI bu tokenlar üzerinden boyanır. Karanlık mod bu yüzden tek tek
@@ -63,16 +124,7 @@
       --boom-bg: #fff;           /* reaktör patlaması tam-ekran flaşı */
       --r-sm: 10px; --r-md: 13px; --r-lg: 17px;
       --shadow: 0 6px 18px rgba(34, 48, 60, .22);
-      
-      --font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
-      --r-sm: 5px; --r-md: 6px; --r-lg: 8px;
-      --neo-border: 2.5px solid #111418;
-      --neo-shadow: 3.5px 3.5px 0px #111418;
-      --neo-shadow-hover: 5px 5px 0px #111418;
-      --neo-shadow-active: 1px 1px 0px #111418;
-      --neo-radius: 6px;
-
+      --font: "Baloo 2", -apple-system, "SF Pro Rounded", "Segoe UI", Roboto, sans-serif;
     }
 
     /* ═══ KARANLIK MOD ═══
@@ -118,11 +170,6 @@
         --fab-ink: #c9b4b1;
         --boom-bg: #2a1416;
         --shadow: 0 8px 20px rgba(0, 0, 0, .55), 0 0 0 1.5px rgba(255, 226, 214, .10);
-        --neo-border: 2px solid #f6ece7;
-        --neo-shadow: 3px 3px 0px #f6ece7;
-        --neo-shadow-hover: 4.5px 4.5px 0px #f6ece7;
-        --neo-shadow-active: 1px 1px 0px #f6ece7;
-
       }
     }
     :root[data-theme="dark"] {
@@ -150,11 +197,6 @@
       --fab-ink: #c9b4b1;
       --boom-bg: #2a1416;
       --shadow: 0 8px 20px rgba(0, 0, 0, .55), 0 0 0 1.5px rgba(255, 226, 214, .10);
-        --neo-border: 2px solid #f6ece7;
-        --neo-shadow: 3px 3px 0px #f6ece7;
-        --neo-shadow-hover: 4.5px 4.5px 0px #f6ece7;
-        --neo-shadow-active: 1px 1px 0px #f6ece7;
-
     }
     /* Tema değişimi sert kesmesin — ama hareket hassasiyeti olan oyuncuda geçiş YOK.
        .btn burada YOK: kendi filter/transform geçişi var, ezmeyelim. */
@@ -873,200 +915,6 @@
     })()
   </script>
   <script type="module" crossorigin src="/assets/index-C7O-ej6u.js"></script>
-<style id="neo-brutalist-overrides">
-  /* ═══════════════════════════════════════════════════════════════
-     NEO-BRUTALIST BUTONLAR VE TİPOGRAFİ SİSTEMİ
-     ═══════════════════════════════════════════════════════════════ */
-
-  /* Tipografi — Space Grotesk & JetBrains Mono */
-  html, body, button, input, select, textarea {
-    font-family: var(--font) !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* Başlıklar: Ağır, keskin neo-brutalist karakter */
-  h1, h2, h3, h4, .mhead h3, .pf-name, .hd-t b, #boom > div:first-child {
-    font-family: var(--font) !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.02em !important;
-    line-height: 1.15 !important;
-  }
-
-  .mhead h3 {
-    letter-spacing: 0.03em !important;
-    text-transform: uppercase !important;
-    font-weight: 900 !important;
-  }
-
-  /* Bölüm ve Etiket Tipografisi */
-  .acc-sec, .acc-sub, .ofsec, .hcard h4, .rh-main, .pz-prog-head, .pd-lbl, .cl, .hud-label {
-    font-family: var(--font) !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.07em !important;
-    text-transform: uppercase !important;
-  }
-
-  /* Sayaçlar, Tutarlar, Metrikler: JetBrains Mono ile kesin hizalama */
-  .num, .pd-val, .stat .v, .volval, #liters, .pz-stars, .pz-prog-num, 
-  .acc-cost, .hnum, .ibtm, .qrow .qnum, .cv, #money, #day, #hud-clock, 
-  #quest, #rep, #streak-n, #hud-online, #lvl-benzin, #lvl-dizel, #lvl-lpg, #battkwh {
-    font-family: var(--font-mono, "JetBrains Mono", monospace) !important;
-    font-variant-numeric: tabular-nums !important;
-    font-weight: 700 !important;
-  }
-
-  /* Rozet ve sayaç çipleri: sert neo-brutalist bordürler */
-  .chip {
-    border: 2px solid var(--edge) !important;
-    box-shadow: 2px 2px 0px rgba(17, 20, 24, 0.3) !important;
-    border-radius: var(--neo-radius) !important;
-  }
-
-  /* ────────── BUTONLAR (NEO-BRUTALİST) ────────── */
-  .btn, button.btn, button:not([class]), .pbtn, .tab, .subtab, .mclose,
-  .quick, .nozzle, #chargebtn, .hact, .mvbtn, #hudacts > .btn {
-    font-family: var(--font) !important;
-    border: var(--neo-border) !important;
-    box-shadow: var(--neo-shadow) !important;
-    border-radius: var(--neo-radius) !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.08s cubic-bezier(0.2, 0, 0, 1), filter 0.08s ease !important;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .btn {
-    text-transform: uppercase;
-  }
-
-  /* Hover & Active mikro-etkileşimleri */
-  .btn:not(:disabled):hover, 
-  button:not([class]):not(:disabled):hover,
-  .pbtn:not(:disabled):hover, 
-  .tab:not(.on):hover, 
-  .mclose:hover, 
-  .quick:not(:disabled):hover, 
-  .nozzle:not(:disabled):hover, 
-  #chargebtn:not(:disabled):hover,
-  .mvbtn:hover {
-    transform: translate(-1.5px, -1.5px) !important;
-    box-shadow: var(--neo-shadow-hover) !important;
-    filter: brightness(1.04) !important;
-  }
-
-  .btn:not(:disabled):active, 
-  button:not([class]):not(:disabled):active,
-  .pbtn:not(:disabled):active, 
-  .tab:not(.on):active, 
-  .mclose:active, 
-  .quick:not(:disabled):active, 
-  .nozzle:not(:disabled):active, 
-  #chargebtn:not(:disabled):active,
-  .mvbtn:active {
-    transform: translate(2px, 2px) !important;
-    box-shadow: var(--neo-shadow-active) !important;
-  }
-
-  .btn:disabled, button:disabled, .pbtn:disabled, #chargebtn:disabled {
-    box-shadow: none !important;
-    transform: none !important;
-    opacity: 0.45 !important;
-    cursor: not-allowed !important;
-  }
-
-  /* Buton renk varyantları: canlı, sert zeminler */
-  .btn.primary {
-    background: var(--red) !important;
-    color: #fff !important;
-  }
-  .btn.good {
-    background: var(--green) !important;
-    color: #fff !important;
-  }
-  .btn.warn {
-    background: var(--orange) !important;
-    color: #fff !important;
-  }
-  .btn.danger {
-    background: var(--red) !important;
-    color: #fff !important;
-  }
-
-  /* Sekmeler (Tabs) */
-  .tab.on {
-    background: var(--ink) !important;
-    color: var(--on-ink) !important;
-    transform: translate(1.5px, 1.5px) !important;
-    box-shadow: 1px 1px 0px var(--edge) !important;
-  }
-
-  .subtab {
-    border-radius: 4px !important;
-    font-weight: 800 !important;
-  }
-  .subtab.on {
-    border: 2px solid var(--ink) !important;
-    box-shadow: 2px 2px 0px var(--ink) !important;
-  }
-
-  /* Kapatma Butonu (Modal close) */
-  .mclose {
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  /* Mobil FAB ve Nav Butonları */
-  .fab-main {
-    border: var(--neo-border) !important;
-    box-shadow: var(--neo-shadow) !important;
-    border-radius: 12px !important;
-    transition: transform 0.08s ease, box-shadow 0.08s ease !important;
-  }
-  .fab-main:active {
-    transform: translate(2px, 2px) !important;
-    box-shadow: var(--neo-shadow-active) !important;
-  }
-
-  .navbtn {
-    border: var(--neo-border) !important;
-    box-shadow: var(--neo-shadow) !important;
-    border-radius: 10px !important;
-    font-family: var(--font) !important;
-  }
-  .navbtn span {
-    font-family: var(--font) !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    text-transform: uppercase !important;
-  }
-  .navbtn:active {
-    transform: translate(2px, 2px) scale(0.96) !important;
-    box-shadow: var(--neo-shadow-active) !important;
-  }
-  .navbtn.on {
-    border: var(--neo-border) !important;
-  }
-
-  /* Nozzle & Pompa seçim butonları */
-  .nozzle.sel {
-    box-shadow: inset 0 0 0 2.5px var(--ink), var(--neo-shadow) !important;
-  }
-
-  /* Bildirim Rozetleri */
-  #shopdot, #inboxdot, .hud-pill-badge, .hd-pill {
-    font-family: var(--font) !important;
-    font-weight: 900 !important;
-    border: 1.5px solid #111418 !important;
-    box-shadow: 1.5px 1.5px 0px #111418 !important;
-  }
-
-  /* Görev / Sıralama aksiyon butonları */
-  .qrow .qrew, .hline {
-    font-family: var(--font) !important;
-    font-weight: 800 !important;
-  }
-</style>
 </head>
 <body>
   <!-- A5 (analiz): YÜKLEME MASKESİ — bundle+modeller inerken boş ekran ziyaretçi kaybıydı.
