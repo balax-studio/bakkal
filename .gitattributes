@@ -1,0 +1,4 @@
+# Minified bundle dosyalarının devasa git diff çıktıları üretmesini engelleyerek token tasarrufu sağlar
+public/assets/*.js -diff
+dist/assets/*.js -diff
+*.min.js -diff
