@@ -3,6 +3,10 @@
     "notebooklm": {
       "command": "npx",
       "args": ["-y", "notebooklm-mcp@latest"]
+    },
+    "deobfuscate": {
+      "command": "npx",
+      "args": ["-y", "deobfuscate-mcp-server"]
     }
   }
 }

@@ -6,15 +6,17 @@
   "scripts": {
     "dev": "vite --port 8090 --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "unbundle": "webcrack public/assets/index-C7O-ej6u.js -o src/unbundled"
   },
   "dependencies": {
-    "three": "^0.185.1",
+    "@capacitor/android": "^7.0.1",
     "@capacitor/core": "^7.0.1",
-    "@capacitor/android": "^7.0.1"
+    "three": "^0.185.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.0.1",
     "vite": "^6.2.0",
-    "@capacitor/cli": "^7.0.1"
+    "webcrack": "^2.16.0"
   }
 }

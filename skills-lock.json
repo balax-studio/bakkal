@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "vehicle-design": {
+      "source": "omer-metin/skills-for-antigravity",
+      "sourceType": "github",
+      "skillPath": "skills/vehicle-design/SKILL.md",
+      "computedHash": "83a6f74d393b65e13f6468ba1241c7efd7972fad6d5dfb4d0538524ffe6fdf5d"
+    }
+  }
+}
