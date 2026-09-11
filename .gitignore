@@ -5,3 +5,6 @@ Thumbs.db
 dist/
 *.png
 !public/**/*.png
+
+*.bak
+scratch/
