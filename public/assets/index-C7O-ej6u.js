@@ -5352,11 +5352,11 @@ function buildLivingWorld(scene) {
 // NEO-BRUTALIST & LOW-POLY CUBIC (CHUNKY VOXEL) VEHICLE FLEET ENGINE
 // ══════════════════════════════════════════════════════════════════════════
 const neoVehicleMatCache = new Map();
-function getNeoMat(color, emissive = 0, emissiveIntensity = 0, roughness = 0.5, metalness = 0.1) {
-  const key = color + '_' + emissive + '_' + emissiveIntensity + '_' + roughness + '_' + metalness;
+function getNeoMat(color, emissive = 0) {
+  const key = color + '_' + emissive;
   let mat = neoVehicleMatCache.get(key);
   if (!mat) {
-    mat = new Ze({ color, emissive, emissiveIntensity, roughness, metalness });
+    mat = new Ze(emissive ? { color, emissive } : { color });
     neoVehicleMatCache.set(key, mat);
   }
   return mat;

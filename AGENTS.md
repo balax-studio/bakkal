@@ -19,6 +19,9 @@
   - Dokunsal mekanik basma animasyonu (`:active { transform: translate(2px, 2px); box-shadow: 0.5px 0.5px 0px #111418; }`).
 - **3D Tasarım (Modeller ve Sahne):** Eklenen her 3D nesne, bina, istasyon alanı, araç ve dekorasyon KESİNLİKLE **Low-Poly Cube / Voxel** (adım adım kübik formlar, keskin fasetli yüzeyler, pürüzsüzleştirilmemiş mesh'ler) olacaktır. Pürüzsüz organik küre veya silindirik modeller YASAKTIR.
 
-## Geliştirme Notları
+## Geliştirme Notları & Hata Önleme Kuralları
 - Dev sunucusu yerel olarak `http://localhost:8090/` adresinde çalışmaktadır.
 - Yapılan değişiklikler hem `public/assets/index-C7O-ej6u.js` hem de gerekiyorsa `dist/assets/index-C7O-ej6u.js` içine senkron uygulanır.
+- **Tarayıcı Önbelleği (Cache / Hard Refresh):** Bundle güncellemelerinden sonra tarayıcı belleğindeki eski kodun kalmaması için sayfa sert yenilenmelidir (Ctrl+F5 / Cmd+Shift+R). Araçların veya sahne bileşenlerinin görünmemesi durumunda ilk kontrol sert yenilemedir.
+- **Three.js Materyal Sözleşmesi (`Ze` = MeshLambertMaterial):** Projedeki `Ze` sınıfı `THREE.MeshLambertMaterial`'dir; `roughness` veya `metalness` kabul etmez. Materyallerde yalnızca `color` ve gerekirse `emissive` tanımlanmalıdır.
+- **Satır Sonu Formatı (LF):** Bundle ve kaynak kodlarda LF (`\n`) satır sonları korunmalıdır, CRLF dönüşümlerinden kaçınılmalıdır.
