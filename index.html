@@ -2101,15 +2101,15 @@
         <span style="font-family:var(--font); font-weight:900; letter-spacing:0.06em; font-size:22px;">İSTASYON</span>
       </div>
       <div class="agbody" style="padding:22px 20px; text-align:center;">
-        <div style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:var(--paper-2); padding:5px 14px; border-radius:20px; font-weight:800; font-size:12px; color:var(--ink); margin:0 auto 10px auto; border:1.5px solid var(--line);">
+        <div style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:var(--paper-2); padding:5px 14px; border-radius:20px; font-weight:800; font-size:12px; color:var(--ink); margin:0 auto 10px auto; border:1.5px solid var(--line);" data-i18n="HOŞ GELDİNİZ">
           HOŞ GELDİNİZ
         </div>
 
-        <h2 style="font-size:21px; font-weight:900; text-align:center; margin:0 0 8px 0; color:var(--ink); line-height:1.25; letter-spacing:-0.01em;">
+        <h2 style="font-size:21px; font-weight:900; text-align:center; margin:0 0 8px 0; color:var(--ink); line-height:1.25; letter-spacing:-0.01em;" data-i18n="Petrol & Market İstasyonu">
           Petrol &amp; Market İstasyonu
         </h2>
         
-        <p style="font-size:13px; text-align:center; color:var(--muted); font-weight:600; line-height:1.5; margin:0 0 16px 0;">
+        <p style="font-size:13px; text-align:center; color:var(--muted); font-weight:600; line-height:1.5; margin:0 0 16px 0;" data-i18n="Kendi benzinlik ve market imparatorluğunu kurmaya hazır mısın? Pompaları işlet, reyonları doldur ve işini büyüt!">
           Kendi benzinlik ve market imparatorluğunu kurmaya hazır mısın? Pompaları işlet, reyonları doldur ve işini büyüt!
         </p>
 
@@ -2117,24 +2117,24 @@
         <div style="display:flex; flex-direction:column; gap:10px; background:var(--paper-2); padding:14px; border-radius:8px; border:1.5px solid var(--edge); margin-bottom:18px; text-align:left;">
           <div style="display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:700; color:var(--ink);">
             <span style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:#f59e0b; color:#111418; font-size:14px; font-weight:900; flex-shrink:0;">⛽</span>
-            <span>Araçlara akaryakıt doldur ve kazan</span>
+            <span data-i18n="Araçlara akaryakıt doldur ve kazan">Araçlara akaryakıt doldur ve kazan</span>
           </div>
           <div style="display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:700; color:var(--ink);">
             <span style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:#10b981; color:#ffffff; font-size:14px; font-weight:900; flex-shrink:0;">🛒</span>
-            <span>Marketi yönet, rafları sürekli dolu tut</span>
+            <span data-i18n="Marketi yönet, rafları sürekli dolu tut">Marketi yönet, rafları sürekli dolu tut</span>
           </div>
           <div style="display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:700; color:var(--ink);">
             <span style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; background:#3b82f6; color:#ffffff; font-size:14px; font-weight:900; flex-shrink:0;">⭐</span>
-            <span>Yıkama, şarj ve yeni şubelerle genişle</span>
+            <span data-i18n="Yıkama, şarj ve yeni şubelerle genişle">Yıkama, şarj ve yeni şubelerle genişle</span>
           </div>
         </div>
 
         <!-- Oyuna Başla Butonu -->
         <div id="gguest-wrap" style="margin:2px 0 6px">
           <button id="gguest" class="btn primary" onclick="window.benelStartGame && window.benelStartGame();" style="width:100%; justify-content:center; font-weight:900; font-size:16px; padding:15px 18px; border-radius:6px; border:2.5px solid #111418; box-shadow:3.5px 3.5px 0px #111418; cursor:pointer; background:#22c55e; color:#0f172a; text-transform:uppercase; letter-spacing:0.04em; transition:all 0.1s ease;">
-            <span style="font-weight:900;">OYUNA BAŞLA</span>
+            <span style="font-weight:900;" data-i18n="OYUNA BAŞLA">OYUNA BAŞLA</span>
           </button>
-          <div style="text-align:center; font-size:11.5px; font-weight:600; color:var(--muted); margin-top:10px;">
+          <div style="text-align:center; font-size:11.5px; font-weight:600; color:var(--muted); margin-top:10px;" data-i18n="Giriş veya kayıt gerekmez · İlerlemeniz otomatik saklanır">
             Giriş veya kayıt gerekmez · İlerlemeniz otomatik saklanır
           </div>
         </div>
@@ -2160,20 +2160,6 @@
             function bindGameStart() {
               var btn = document.getElementById('gguest');
               if (!btn) return;
-
-              var forceLabel = function() {
-                var sp = btn.querySelector('span') || btn;
-                if (sp.textContent.trim() !== 'OYUNA BAŞLA') {
-                  sp.textContent = 'OYUNA BAŞLA';
-                }
-              };
-              forceLabel();
-
-              try {
-                var observer = new MutationObserver(forceLabel);
-                observer.observe(btn, { childList: true, characterData: true, subtree: true });
-              } catch(e) {}
-
               btn.addEventListener('click', function(ev) {
                 window.benelStartGame();
               }, true);
