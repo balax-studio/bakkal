@@ -1,6 +1,6 @@
 {
-  "appId": "com.balax.minimart",
-  "appName": "Mini Mart Neo",
+  "appId": "com.balax.istasyon",
+  "appName": "İstasyon",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "android": {

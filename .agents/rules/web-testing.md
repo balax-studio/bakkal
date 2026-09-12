@@ -14,14 +14,9 @@ paths:
 
 # Web Testing Rules
 
-## Priority Order
+> **DİKKAT / KULLANICI KURALI**: Bu projede ajan otomatik tarayıcı testi, Playwright veya `browser_subagent` ÇALIŞTIRMAZ. Testleri ve görsel doğrulamayı kullanıcı doğrudan tarayıcısında (`http://localhost:8090/`) kendisi yapar. Ajan yalnızca statik sözdizimi doğrulaması yapar.
 
-### 1. Visual Regression
-
-- Screenshot key breakpoints: 320, 768, 1024, 1440
-- Test hero sections, scrollytelling sections, and meaningful states
-- Use Playwright screenshots for visual-heavy work
-- If both themes exist, test both
+## Priority Order (Yalnızca kullanıcı açıkça talep ederse geçerlidir)
 
 ### 2. Accessibility
 

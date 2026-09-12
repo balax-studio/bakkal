@@ -29226,7 +29226,7 @@ class kv {
     t.unpackColorSpace = Mt._getUnpackColorSpace();
   }
 }
-const xv = "beneloil-lang";
+const xv = "istasyon-lang";
 function v_() {
   const n = localStorage.getItem(xv);
   if (n === "tr" || n === "en" || n === "fr") {
@@ -29256,9 +29256,9 @@ const k_ = {
   "boş arsa · haritadan kur": "empty lot · build from the map",
   "Kademe {0} · {1} çalışıyor": "Tier {0} · {1} running",
   "{0} inşa ediliyor · {1} gün kaldı": "{0} under construction · {1} days left",
-  "BENELOIL RAFİNERİ": "BENELOIL REFINERY",
+  "İSTASYON RAFİNERİ": "İSTASYON REFINERY",
   "RAFİNERİ ARSASI": "REFINERY LOT",
-  "BenelOil · haritadan kur": "BenelOil · build from the map",
+  "İstasyon · haritadan kur": "İstasyon · build from the map",
   "İNŞAAT SAHASI": "CONSTRUCTION SITE",
   "{0} gün kaldı": "{0} days left",
   "Kademe {0} · FİLO": "Tier {0} · FLEET",
@@ -29598,7 +29598,7 @@ const k_ = {
   "Yüksek kapasite: çok sayıda şarj ünitesini aynı anda besler": "High capacity: powers many charge points at once",
   "{0} L yakıt satıldı — tank seviyelerine göz at.": "{0} L of fuel sold — check your tank levels.",
   "{0} sahnesi indiriliyor ({1} model)…": "Downloading the {0} scene ({1} models)…",
-  "BenelOil — Petrol İstasyonu Oyunu": "BenelOil — Gas Station Tycoon",
+  "İstasyon — Petrol İstasyonu Oyunu": "İstasyon — Gas Station Tycoon",
   "Google eklentisi bulunamadı.": "Google plugin not found.",
   "Apple eklentisi bulunamadı.": "Apple plugin not found.",
   "Pompa #{0} kuruldu!": "Pump #{0} is up!",
@@ -29615,7 +29615,7 @@ const k_ = {
   pasif: "passive",
   "Litreyi elle yazabilir, −/+ ile 200L adımlayabilir ya da MAX ile depoyu fulleyebilirsin. Her yakıtın tankeri ayrı gelir ve boşaltır.": "Type liters directly, step by 200L with −/+, or hit MAX to fill the tank. Each fuel gets its own tanker.",
   "Tek soru patron!": "One quick question, boss!",
-  "Steam kullanıyor musun? (BenelOil için yol haritamıza yön verecek — bir daha sormayacağız)": "Do you use Steam? (This shapes our roadmap for BenelOil — we will never ask again)",
+  "Steam kullanıyor musun? (İstasyon için yol haritamıza yön verecek — bir daha sormayacağız)": "Do you use Steam? (This shapes our roadmap for İstasyon — we will never ask again)",
   "Evet, Steam kullanıyorum": "Yes, I use Steam",
   "Hayır, kullanmıyorum": "No, I don't",
   "Cevaplamak istemiyorum": "Prefer not to answer",
@@ -29635,7 +29635,7 @@ const k_ = {
   "Şarjcı molacıyı uğurladı — ünite boşaldı.": "Charger attendant sent the squatter away — unit is free.",
   "Müdür molacıyı uğurladı — ünite boşaldı.": "Manager sent the squatter away — unit is free.",
   "Tank kapasitesi: {0}L": "Tank capacity: {0}L",
-  BENELOIL: "BENELOIL",
+  İSTASYON: "İSTASYON",
   "İstasyonunu kur, imparatorluğunu büyüt. İlerlemen hesabında güvende.": "Build your station, grow your empire. Your progress is saved to your account.",
   "oyuncu istasyonunu kurdu": "players built their station",
   "şu an oyunda": "playing now",
@@ -30072,7 +30072,7 @@ const k_ = {
   "Arsa seçimi: bitişik parsele tıkla (₺6-14 bin) · ESC iptal": "Land: click an adjacent plot (₺6-14k) · ESC to cancel",
   "Zemin seçimi: betonlanacak arsana tıkla · ESC iptal": "Paving: click a plot to pave · ESC to cancel",
   "İstasyon KAPALI — yeni müşteri girmez, itibar etkilenmez. Bakım için rahatsız olmadan çalış.": "Station CLOSED — no new customers, rating unaffected. Do maintenance in peace.",
-  BENZİNLİK: "BENELOIL",
+  BENZİNLİK: "İSTASYON",
   "Benzin ve dizel dolumu. Müşterinin istediği yakıtı ve tutarı sen girersin — yanlış tabanca ceza, doğrusu bahşiş.": "Petrol & diesel refills. You pick the fuel and amount — wrong nozzle penalized, right one tipped.",
   "Dolum hızı": "Fill rate",
   "Elektrikli araçlar batarya deposundan anında şarj olur. Depoda yeterli kWh yoksa müşteri bekler.": "EVs charge instantly from the battery depot. If it lacks kWh, the customer waits.",
@@ -30899,9 +30899,9 @@ const x_ = {
   "boş arsa · haritadan kur": "terrain vide · à construire depuis la carte",
   "Kademe {0} · {1} çalışıyor": "Palier {0} · {1} en marche",
   "{0} inşa ediliyor · {1} gün kaldı": "{0} en chantier · {1} jours restants",
-  "BENELOIL RAFİNERİ": "RAFFINERIE BENELOIL",
+  "İSTASYON RAFİNERİ": "RAFFINERIE İSTASYON",
   "RAFİNERİ ARSASI": "TERRAIN DE LA RAFFINERIE",
-  "BenelOil · haritadan kur": "BenelOil · à construire depuis la carte",
+  "İstasyon · haritadan kur": "İstasyon · à construire depuis la carte",
   "İNŞAAT SAHASI": "CHANTIER",
   "şu an buradasın": "tu es ici",
   Rafineri: "Raffinerie",
@@ -31237,7 +31237,7 @@ const x_ = {
   "Yüksek kapasite: çok sayıda şarj ünitesini aynı anda besler": "Grande capacité : alimente plusieurs bornes à la fois",
   "{0} L yakıt satıldı — tank seviyelerine göz at.": "{0} L de carburant vendus — vérifiez vos niveaux de cuve.",
   "{0} sahnesi indiriliyor ({1} model)…": "Téléchargement de la scène {0} ({1} modèles)…",
-  "BenelOil — Petrol İstasyonu Oyunu": "BenelOil — Tycoon de station-service",
+  "İstasyon — Petrol İstasyonu Oyunu": "İstasyon — Tycoon de station-service",
   "Google eklentisi bulunamadı.": "Extension Google introuvable.",
   "Apple eklentisi bulunamadı.": "Extension Apple introuvable.",
   "Pompa #{0} kuruldu!": "Pompe n°{0} installée !",
@@ -31256,7 +31256,7 @@ const x_ = {
   "45 sn’de bir tur: kumbaraları toplar + azalan tanklara yakıt siparişi verir; Sv.2 panel temizler; Sv.3 arıza tamir eder ve YAKIT İNDİRİMİ fırsatında tankları fulller. Sen başka şubedeyken şubeyi işletir — günlük net kazancı kasana otomatik yazılır.": "Ronde toutes les 45 s : collecte les caisses + commande du carburant ; Nv.2 nettoie les panneaux ; Nv.3 répare et remplit pendant les REMISES. Gère la succursale en votre absence — le net quotidien va directement dans votre caisse.",
   "{0} sn’de bir tur (Sv.1 45 · Sv.2 32 · Sv.3 22): önce bakım/tamir, sonra kumbara + azalan tanklara yakıt siparişi; Sv.2 panel temizler + türbin bakımı; Sv.3 arıza tamir eder, reaktör bakımı + uranyum siparişi yapar, YAKIT İNDİRİMİ fırsatında tankları fulller. Sen başka şubedeyken şubeyi işletir — günlük net kazancı kasana otomatik yazılır.": "Ronde toutes les {0} s (Nv.1 45 · Nv.2 32 · Nv.3 22) : entretien/réparations d’abord, puis caisses + commandes de carburant ; Nv.2 nettoie les panneaux + entretient l’éolienne ; Nv.3 répare, entretient le réacteur + commande l’uranium, et remplit les cuves pendant les REMISES. Gère la succursale en votre absence — le net quotidien va directement dans votre caisse.",
   "Tek soru patron!": "Une question, patron !",
-  "Steam kullanıyor musun? (BenelOil için yol haritamıza yön verecek — bir daha sormayacağız)": "Utilisez-vous Steam ? (Cela guide notre feuille de route — on ne redemandera jamais)",
+  "Steam kullanıyor musun? (İstasyon için yol haritamıza yön verecek — bir daha sormayacağız)": "Utilisez-vous Steam ? (Cela guide notre feuille de route — on ne redemandera jamais)",
   "Evet, Steam kullanıyorum": "Oui, j'utilise Steam",
   "Hayır, kullanmıyorum": "Non",
   "Cevaplamak istemiyorum": "Je préfère ne pas répondre",
@@ -31274,7 +31274,7 @@ const x_ = {
   "Şarjcı molacıyı uğurladı — ünite boşaldı.": "L'agent de recharge a fait partir le squatteur — borne libre.",
   "Müdür molacıyı uğurladı — ünite boşaldı.": "Le gérant a fait partir le squatteur — borne libre.",
   "Tank kapasitesi: {0}L": "Capacité du réservoir : {0} L",
-  BENELOIL: "BENELOIL",
+  İSTASYON: "İSTASYON",
   "İstasyonunu kur, imparatorluğunu büyüt. İlerlemen hesabında güvende.": "Monte ta station, bâtis ton empire. Ta progression est liée à ton compte.",
   "oyuncu istasyonunu kurdu": "joueurs ont monté leur station",
   "şu an oyunda": "en jeu maintenant",
@@ -31711,7 +31711,7 @@ const x_ = {
   "Arsa seçimi: bitişik parsele tıkla (₺6-14 bin) · ESC iptal": "Terrain : clique sur une parcelle voisine (₺6-14 k) · ÉCHAP pour annuler",
   "Zemin seçimi: betonlanacak arsana tıkla · ESC iptal": "Béton : clique sur la parcelle à bétonner · ÉCHAP pour annuler",
   "İstasyon KAPALI — yeni müşteri girmez, itibar etkilenmez. Bakım için rahatsız olmadan çalış.": "Station FERMÉE — aucun nouveau client, la note n’est pas touchée. Fais l’entretien en toute tranquillité.",
-  BENZİNLİK: "BENELOIL",
+  BENZİNLİK: "İSTASYON",
   "Benzin ve dizel dolumu. Müşterinin istediği yakıtı ve tutarı sen girersin — yanlış tabanca ceza, doğrusu bahşiş.": "Pleins d’essence et de diesel. C’est toi qui choisis le carburant et le montant — mauvais pistolet : sanction, bon pistolet : pourboire.",
   "Dolum hızı": "Débit de remplissage",
   "Elektrikli araçlar batarya deposundan anında şarj olur. Depoda yeterli kWh yoksa müşteri bekler.": "Les véhicules électriques se rechargent instantanément depuis le dépôt de batteries. S’il manque des kWh, le client attend.",
@@ -36486,7 +36486,7 @@ function iR(n) {
 class kt {
   money = Fg;
   reputation = 3;
-  stationName = u("BENELOIL");
+  stationName = u("İSTASYON");
   prices = {
     ...Su
   };
@@ -42713,7 +42713,7 @@ function createDetailedTanker(tankColor) {
 // İNŞAAT SÜRESİ YÖNETİCİSİ (BUILD TIMER)
 // ══════════════════════════════════════════════════════════════════════════
 const BuildTimer = {
-  KEY: "beneloil_constructions",
+  KEY: "istasyon_constructions",
   items: {},
   init() {
     this.load();
@@ -50787,7 +50787,7 @@ const Sk = [{
   items: ["Kayıp save sorunu kapatıldı — oyundan çıkarken ilerleme garanti kaydediliyor.", "Satın alınan ürünün kaybolması sorunu giderildi.", "Şube sistemi: çevre yolu ve otoyol istasyonları açıldı.", "Kurumsal sözleşmeler, marka devri ve müdür otomasyonu eklendi."]
 }];
 const Mk = Sk[0].v;
-const Tk = "beneloil-news-seen";
+const Tk = "istasyon-news-seen";
 function wk() {
   try {
     return localStorage.getItem(Tk) !== Mk;
@@ -52138,7 +52138,7 @@ class FC {
     o.position.set(0, -1, 0.01);
     o.receiveShadow = true;
     s.add(o);
-    this.tabela(s, u("BENELOIL RAFİNERİ"), i > 0 ? xa[i - 1] : u("İNŞAAT SAHASI"));
+    this.tabela(s, u("İSTASYON RAFİNERİ"), i > 0 ? xa[i - 1] : u("İNŞAAT SAHASI"));
     const l = [this.damitma, this.depolama, this.filo];
     for (let c = 0; c < i; c++) {
       l[c].call(this, s, 1);
@@ -52239,7 +52239,7 @@ class FC {
       s.scale.z = 0.7;
       e.add(s);
     }
-    this.tabela(e, u("RAFİNERİ ARSASI"), u("BenelOil · haritadan kur"));
+    this.tabela(e, u("RAFİNERİ ARSASI"), u("İstasyon · haritadan kur"));
   }
   tabela(e, t, i) {
     const a = new de();
@@ -52434,7 +52434,7 @@ class FC {
       p.font = "bold 62px \"Baloo 2\", \"Arial Black\", sans-serif";
       p.textAlign = "center";
       p.textBaseline = "middle";
-      p.fillText("BENELOIL", m / 2, g / 2);
+      p.fillText("İSTASYON", m / 2, g / 2);
     });
     s.position.set(0, 3.25, 4.95);
     r.add(s);
@@ -54354,7 +54354,7 @@ if (!localStorage.getItem("benzinlik-token")) {
             iOSClientId: "80997572914-8ihbi46csk9ngog7ec1oe2ssb3c08t5e.apps.googleusercontent.com"
           },
           apple: {
-            clientId: "com.beneloil"
+            clientId: "com.istasyon"
           }
         });
         k = true;
@@ -54720,7 +54720,7 @@ function rl(n, e = n.slice(0, 24)) {
   if (document.hidden) {
     document.title = `(!) ${n.slice(0, 40)}`;
   }
-  const i = z?.stationName ?? "BenelOil";
+  const i = z?.stationName ?? "İstasyon";
   if ("Notification" in window && Notification.permission === "granted") {
     try {
       new Notification(i, {
@@ -54753,7 +54753,7 @@ function yP() {
     if (a > 3) {
       e.push({
         id: 1700000000 + i.slot,
-        title: z?.stationName ?? "BenelOil",
+        title: z?.stationName ?? "İstasyon",
         body: u("{0} tankeri istasyona ulaştı!", Kt[i.fuel]),
         schedule: {
           at: new Date(Date.now() + a * 1000)
@@ -54772,7 +54772,7 @@ function yP() {
       if (o < 7200) {
         e.push({
           id: 1800000001,
-          title: z?.stationName ?? "BenelOil",
+          title: z?.stationName ?? "İstasyon",
           body: u("Tankların bitmek üzere — sipariş verme vakti!"),
           schedule: {
             at: new Date(Date.now() + Math.max(60, o) * 1000)
@@ -54782,7 +54782,7 @@ function yP() {
     } else if (i <= s) {
       e.push({
         id: 1800000001,
-        title: z?.stationName ?? "BenelOil",
+        title: z?.stationName ?? "İstasyon",
         body: u("Tankların bitmek üzere — sipariş verme vakti!"),
         schedule: {
           at: new Date(Date.now() + 60000)
@@ -54825,7 +54825,7 @@ document.addEventListener("visibilitychange", () => {
     }).catch(() => {});
   }
 });
-const fd = "beneloil-loc";
+const fd = "istasyon-loc";
 const Em = localStorage.getItem(fd) ?? "kasaba";
 const $k = Ln(Em);
 const _h = (n, e = 20000) => Promise.race([n.catch(() => null), new Promise(t => setTimeout(() => t(null), e))]);
@@ -55834,7 +55834,7 @@ function pd(n, e) {
     setTimeout(r, 1600);
   }
 }
-const Hu = "beneloil-devir-rapor";
+const Hu = "istasyon-devir-rapor";
 let ap = 0;
 const Zk = () => Date.now() - ap < 6000;
 document.getElementById("of-prestige")?.addEventListener("click", n => {
@@ -56542,7 +56542,7 @@ const Oe = new br(z.scene, _m, {
     f.stats.turnedAway++;
   }
 }, z.theme.lane.kind === "water" ? 7.4 : 4.2);
-const e1 = "beneloil-autopanel";
+const e1 = "istasyon-autopanel";
 let ol = localStorage.getItem(e1) !== "0";
 function UP(n) {
   ol = n;
@@ -57878,7 +57878,7 @@ function Xu(n) {
   e.style.cssText = "position:fixed;inset:0;z-index:100000;background:rgba(34,48,60,.58);display:flex;align-items:center;justify-content:center;padding:24px;backdrop-filter:blur(5px);overflow:auto;font-family:var(--font,\"Baloo 2\",sans-serif)";
   e.innerHTML = `<div style="max-width:420px;width:100%;background:var(--paper,#faf6ec);border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(15,22,30,.4);border-bottom:4px solid rgba(34,48,60,.2)">
     <div style="background:var(--red,#d64545);padding:18px 20px 16px;text-align:center;border-bottom:4px solid var(--red-dark,#b23434)">
-      <div style="display:inline-block;background:var(--paper,#faf6ec);color:var(--red,#d64545);font-weight:800;letter-spacing:1.5px;padding:3px 16px;border-radius:999px;font-size:13px">BENELOIL</div>
+      <div style="display:inline-block;background:var(--paper,#faf6ec);color:var(--red,#d64545);font-weight:800;letter-spacing:1.5px;padding:3px 16px;border-radius:999px;font-size:13px">İSTASYON</div>
       <div style="color:#fff;font-weight:800;font-size:19px;margin-top:10px">${u("Hesabın incelemede")}</div>
     </div>
     <div id="appeal-body" style="padding:18px 20px 20px">
@@ -58064,7 +58064,7 @@ function aI() {
   }
   const n = document.createElement("div");
   n.style.cssText = "position:fixed;inset:0;z-index:99996;background:#0d1420cc;display:flex;align-items:center;justify-content:center;padding:22px;font-family:var(--font,system-ui)";
-  n.innerHTML = `<div style="background:linear-gradient(180deg,#fdfaf2,#f1ebdb);border:2px solid #e0d4bd;border-bottom-width:7px;border-radius:22px;padding:24px 26px;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(10,14,20,.5)"><div style=\'display:flex;justify-content:center;margin:4px 0;\'><svg viewBox=\'0 0 24 24\' width=\'48\' height=\'48\' fill=\'none\' stroke=\'#111418\' stroke-width=\'2.5\'><rect x=\'2\' y=\'6\' width=\'20\' height=\'12\' rx=\'4\'/><path d=\'M6 12h4M8 10v4M15 13h.01M18 11h.01\'/></svg></div><div style="font-size:21px;font-weight:800;color:#1e2a36;margin:10px 0 4px">${u("Tek soru patron!")}</div><div style="font-size:14px;font-weight:700;color:#7a6152;line-height:1.5;margin-bottom:16px">${u("Steam kullanıyor musun? (BenelOil için yol haritamıza yön verecek — bir daha sormayacağız)")}</div><button id="sp-yes" style="width:100%;padding:13px;border-radius:14px;border:2px solid #1e5c2f;border-bottom-width:4px;background:linear-gradient(180deg,#35b563,#27a05a);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:9px">${u("Evet, Steam kullanıyorum")}</button><button id="sp-no" style="width:100%;padding:13px;border-radius:14px;border:2px solid #b03535;border-bottom-width:4px;background:linear-gradient(180deg,#e05656,#d64545);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:10px">${u("Hayır, kullanmıyorum")}</button><button id="sp-skip" style="background:none;border:none;font-size:12.5px;font-weight:700;color:#9aa4b0;cursor:pointer;text-decoration:underline">${u("Cevaplamak istemiyorum")}</button></div>`;
+  n.innerHTML = `<div style="background:linear-gradient(180deg,#fdfaf2,#f1ebdb);border:2px solid #e0d4bd;border-bottom-width:7px;border-radius:22px;padding:24px 26px;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(10,14,20,.5)"><div style=\'display:flex;justify-content:center;margin:4px 0;\'><svg viewBox=\'0 0 24 24\' width=\'48\' height=\'48\' fill=\'none\' stroke=\'#111418\' stroke-width=\'2.5\'><rect x=\'2\' y=\'6\' width=\'20\' height=\'12\' rx=\'4\'/><path d=\'M6 12h4M8 10v4M15 13h.01M18 11h.01\'/></svg></div><div style="font-size:21px;font-weight:800;color:#1e2a36;margin:10px 0 4px">${u("Tek soru patron!")}</div><div style="font-size:14px;font-weight:700;color:#7a6152;line-height:1.5;margin-bottom:16px">${u("Steam kullanıyor musun? (İstasyon için yol haritamıza yön verecek — bir daha sormayacağız)")}</div><button id="sp-yes" style="width:100%;padding:13px;border-radius:14px;border:2px solid #1e5c2f;border-bottom-width:4px;background:linear-gradient(180deg,#35b563,#27a05a);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:9px">${u("Evet, Steam kullanıyorum")}</button><button id="sp-no" style="width:100%;padding:13px;border-radius:14px;border:2px solid #b03535;border-bottom-width:4px;background:linear-gradient(180deg,#e05656,#d64545);color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-bottom:10px">${u("Hayır, kullanmıyorum")}</button><button id="sp-skip" style="background:none;border:none;font-size:12.5px;font-weight:700;color:#9aa4b0;cursor:pointer;text-decoration:underline">${u("Cevaplamak istemiyorum")}</button></div>`;
   document.body.appendChild(n);
   const e = t => {
     f.steamPoll = t;
@@ -60456,13 +60456,13 @@ if (!Qt && !qt && EL()) {
   iI();
   await new Promise(() => {});
 }
-if (Dr && f.activeLoc !== Em && !sessionStorage.getItem("beneloil-loc-fixed")) {
-  sessionStorage.setItem("beneloil-loc-fixed", "1");
+if (Dr && f.activeLoc !== Em && !sessionStorage.getItem("istasyon-loc-fixed")) {
+  sessionStorage.setItem("istasyon-loc-fixed", "1");
   localStorage.setItem(fd, f.activeLoc);
   location.reload();
 }
 if (Dr && f.activeLoc === Em) {
-  sessionStorage.removeItem("beneloil-loc-fixed");
+  sessionStorage.removeItem("istasyon-loc-fixed");
 }
 if (Dr) {
   dl();
@@ -60627,7 +60627,7 @@ function k1() {
       f.money = Number(a.money) || f.money;
       P.toast(String(a.toast || u("Bakiye güncellendi")), "good", true);
     } else if (a.type === "notify") {
-      const r = String(a.title || "BenelOil");
+      const r = String(a.title || "İstasyon");
       const s = String(a.body || "");
       P.toast(s ? `${r} — ${s}` : r, "good");
       try {
@@ -60693,7 +60693,7 @@ k1();
   }
 }
 const gd = "benzinlik-ogretici";
-const Gm = "beneloil-onboarded";
+const Gm = "istasyon-onboarded";
 const yd = 5;
 let Vn = 0;
 const ro = document.getElementById("tuthint");
@@ -60878,8 +60878,8 @@ if (Ft()) {
 {
   if (!Qt && !qt && !f.opexStart) {
     f.opexStart = f.day;
-    if (f.equipmentValue() > 50000 && !localStorage.getItem("beneloil-opex-note")) {
-      localStorage.setItem("beneloil-opex-note", "1");
+    if (f.equipmentValue() > 50000 && !localStorage.getItem("istasyon-opex-note")) {
+      localStorage.setItem("istasyon-opex-note", "1");
       P.toast(u("YENİ: İşletme giderleri geldi (bakım+vergi, varlıkla ölçekli) — 10 günde kademeli devreye girer. Ofis panelinden takip et."), "", true);
     }
   }
@@ -61126,7 +61126,7 @@ function YI() {
   });
 }
 const Bh = localStorage.getItem("benzinlik-station-name");
-_1(f.stationName && f.stationName !== u("BENZİNLİK") ? f.stationName : Bh && Bh !== "OPET" ? Bh : u("BENELOIL"), true);
+_1(f.stationName && f.stationName !== u("BENZİNLİK") ? f.stationName : Bh && Bh !== "OPET" ? Bh : u("İSTASYON"), true);
 function ed() {
   z.setPrices(f.prices.benzin, f.prices.dizel, f.prices.lpg, f.evChargers > 0 ? f.elecPrice : 0);
 }
