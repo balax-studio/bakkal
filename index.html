@@ -503,20 +503,20 @@
 
     /* ---------- Bina bilgi kartı ---------- */
     #infocard { position: fixed; left: calc(14px + env(safe-area-inset-left)); bottom: calc(14px + env(safe-area-inset-bottom)); width: min(300px, 88vw);
-                background: var(--paper); border: 1.5px solid var(--edge); border-bottom-width: 3px;
-                border-radius: var(--r-lg); z-index: 10; display: none; box-shadow: var(--shadow);
+                background: var(--paper, #faf6ec); border: 2.5px solid #111418; border-bottom: 5px solid #111418;
+                border-radius: 10px; z-index: 10; display: none; box-shadow: 5px 5px 0px #111418;
                 overflow: hidden; }
     #infocard.show { display: block; }
-    #infocard .head { display: flex; align-items: center; gap: 10px; background: var(--red);
-                      color: #fff; padding: 9px 12px; }
-    #infocard .bicon { width: 34px; height: 34px; background: rgba(255, 255, 255, .18);
-                       border-radius: var(--r-sm); display: flex; align-items: center; justify-content: center; }
-    #infocard .bicon .ic { width: 19px; height: 19px; color: #fff; }
-    #infocard .bname { font-size: 15px; font-weight: 800; flex: 1; }
-    #infocard .bclose { background: none; border: 0; color: rgba(255,255,255,.85); cursor: pointer; padding: 4px; }
+    #infocard .head { display: flex; align-items: center; gap: 10px; background: #fde047;
+                      color: #111418; padding: 10px 12px; border-bottom: 2.5px solid #111418; }
+    #infocard .bicon { width: 34px; height: 34px; background: #111418;
+                       border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    #infocard .bicon .ic { width: 19px; height: 19px; color: #fde047; }
+    #infocard .bname { font-size: 15px; font-weight: 900; color: #111418; flex: 1; }
+    #infocard .bclose { background: #111418; border: 0; color: #fff; cursor: pointer; padding: 5px; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
     #infocard .bclose .ic { width: 14px; height: 14px; }
-    #infocard .body { padding: 10px 14px 14px; }
-    #infocard .bdesc { font-size: 12px; color: var(--muted); line-height: 1.45; margin-bottom: 8px; font-weight: 600; }
+    #infocard .body { padding: 12px 14px 14px; }
+    #infocard .bdesc { font-size: 12px; color: #111418; line-height: 1.45; margin-bottom: 8px; font-weight: 700; }
     .stat { display: flex; justify-content: space-between; font-size: 12.5px; padding: 4.5px 0;
                       border-top: 1px solid var(--line); font-weight: 700; }
     .stat .k { color: var(--muted); }
@@ -799,7 +799,11 @@
     }
     .card:hover {
       transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0px #111418;
+      box-shadow: 4.5px 4.5px 0px #111418;
+    }
+    .card:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px #111418;
     }
     .card.maxed {
       background: var(--paper-2, #f1ebdb);
@@ -817,10 +821,13 @@
     }
     .cthumb {
       height: 104px;
-      background: #ffffff;
+      background: var(--paper-2, #f1ebdb);
+      background-image: radial-gradient(#111418 0.75px, transparent 0.75px);
+      background-size: 8px 8px;
       border: 2px solid #111418;
+      border-bottom: 3px solid #111418;
       border-radius: 8px;
-      box-shadow: inset 1px 1px 0px rgba(0,0,0,0.06);
+      box-shadow: inset 1px 1px 0px rgba(0,0,0,0.08);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -832,7 +839,7 @@
       height: 100%;
       object-fit: contain;
     }
-    .ic.cbig { width: 36px; height: 36px; }
+    .ic.cbig { width: 44px; height: 44px; filter: drop-shadow(2px 2px 0px #111418); }
     .cname {
       font-size: 12px;
       font-weight: 900;
