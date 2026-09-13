@@ -1313,7 +1313,352 @@
       }
     }
 
-  </style>
+  
+  /* ════════════════════════════════════════════════════════════════════════
+     MEKANİK İSTASYON ANA KONSOLU (MASTER DASHBOARD CLUSTER)
+     ════════════════════════════════════════════════════════════════════════ */
+  .station-cluster {
+    display: inline-flex;
+    align-items: stretch;
+    background: var(--paper, #faf6ec);
+    border: 2.5px solid #111418;
+    border-bottom: 3.5px solid #111418;
+    border-radius: 9px;
+    box-shadow: 3.5px 3.5px 0px #111418;
+    box-sizing: border-box;
+    user-select: none;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+    z-index: 20;
+    overflow: hidden;
+  }
+  .station-cluster:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0px #111418;
+  }
+
+  /* KONSOL BÖLMELERİ */
+  .cluster-sec {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* 1. ZAMAN BÖLMESİ (Retro Takvim & Saat Damgası) */
+  .cluster-time {
+    padding: 4px 8px;
+    background: rgba(17, 20, 24, 0.02);
+    border-right: 2px solid #111418;
+    gap: 2px;
+    min-width: 68px;
+    flex-shrink: 0;
+  }
+  .cluster-sub {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+  }
+  .cluster-divider-h {
+    height: 1.5px;
+    background: rgba(17, 20, 24, 0.12);
+    margin: 1px 0;
+    border-radius: 1px;
+  }
+  .cluster-ic {
+    width: 12px;
+    height: 12px;
+    color: var(--ink, #111418);
+    flex-shrink: 0;
+  }
+  .cluster-lbl {
+    font-size: 8px;
+    font-weight: 850;
+    color: var(--muted, #64748b);
+    letter-spacing: 0.05em;
+  }
+  .cluster-val {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--ink, #111418);
+    font-variant-numeric: tabular-nums;
+    margin-left: auto;
+  }
+  #hud-clock {
+    color: #b91c1c;
+    font-size: 12.5px;
+    letter-spacing: -0.2px;
+  }
+
+  /* 2. KASA SAYAÇ PENCERESİ (Gömülü Benzin Pompası Sayacı) */
+  .cluster-vault {
+    padding: 3px 5px;
+    background: #f8fafc;
+    flex: 1 1 auto;
+    min-width: 114px;
+  }
+  .vault-bezel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3px 8px;
+    background: #ffffff;
+    border: 1.5px solid #111418;
+    border-radius: 5px;
+    box-shadow: inset 1px 1.5px 0px rgba(0, 0, 0, 0.10);
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .vault-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1px;
+  }
+  .vault-tag {
+    font-size: 7.5px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: var(--muted, #64748b);
+    text-transform: uppercase;
+  }
+  .vault-led {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 1px solid #111418;
+    box-shadow: 0 0 3px rgba(34, 197, 94, 0.4);
+  }
+  .vault-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .vault-ic {
+    width: 14px;
+    height: 14px;
+    color: #d97706;
+    flex-shrink: 0;
+  }
+  .vault-num {
+    font-size: 15px;
+    font-weight: 950;
+    color: #111418;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.3px;
+  }
+  .vault-curr {
+    font-size: 12px;
+    font-weight: 850;
+    color: #b45309;
+  }
+
+  /* 3. OPERASYON & BİLET BÖLMESİ (Görev Bileti & Seri Rozeti) */
+  .cluster-ops {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    border-left: 2px dashed #111418;
+    background: rgba(17, 20, 24, 0.02);
+    flex-shrink: 0;
+  }
+  .cluster-ticket {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: transform 0.06s ease, background-color 0.1s;
+    user-select: none;
+  }
+  .cluster-ticket:active {
+    transform: scale(0.95);
+    background: rgba(253, 224, 71, 0.25);
+  }
+  .ticket-tag {
+    font-size: 7.5px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: var(--muted, #64748b);
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .ticket-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    line-height: 1;
+  }
+  .ticket-ic {
+    width: 12px;
+    height: 12px;
+    color: #dc2626;
+    flex-shrink: 0;
+  }
+  .ticket-val {
+    font-size: 12px;
+    font-weight: 900;
+    color: #111418;
+    font-variant-numeric: tabular-nums;
+  }
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 0 7px;
+    background: #ffedd5;
+    border-left: 1.5px solid #111418;
+    color: #ea580c;
+  }
+  .streak-ic {
+    width: 12px;
+    height: 12px;
+  }
+  .streak-val {
+    font-size: 11.5px;
+    font-weight: 900;
+  }
+
+  /* ═══ DAR EKRAN / MOBİL AKSLAMA VE ÇAKIŞMA ÖNLEME SİSTEMİ ═══ */
+  @media (max-width: 680px) {
+    /* 1. ÜST BAR: MEKANİK İSTASYON KONSOLU */
+    .hud {
+      justify-content: space-between !important;
+      padding: calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 6px calc(8px + env(safe-area-inset-left)) !important;
+      gap: 0 !important;
+    }
+    .station-cluster {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-bottom: 6px !important;
+      order: 0 !important;
+    }
+    .cluster-vault {
+      flex: 1 1 0 !important;
+    }
+
+    /* Mobilde ikincil/boş çipler kesinlikle gizli */
+    #onlinechip,
+    #repchip,
+    #markachip,
+    #hud-light-chip {
+      display: none !important;
+    }
+    #streak-chip[style*="none"] {
+      display: none !important;
+    }
+
+    /* 2. SOL YAKIT RAYI: DAHA KOMPAKT & ORTA ALANI BOŞ BIRAKAN */
+    #fuelrail {
+      width: min(152px, 42vw) !important;
+      flex: 0 0 min(152px, 42vw) !important;
+      gap: 4px !important;
+      order: 2 !important;
+    }
+    #fuelrail .fuelchip {
+      padding: 3px 8px !important;
+      gap: 5px !important;
+      border-radius: 6px !important;
+    }
+    #fuelrail .fuelchip .cl {
+      min-width: 32px !important;
+      font-size: 8.5px !important;
+      letter-spacing: .02em !important;
+    }
+    #fuelrail .fuelchip .cv {
+      font-size: 11px !important;
+      gap: 4px !important;
+    }
+    #fuelrail .fuelchip .ic {
+      width: 12px !important;
+      height: 12px !important;
+    }
+    #fuelrail .fuelchip .bar {
+      height: 6px !important;
+      min-width: 18px !important;
+    }
+
+    /* 3. SAĞ AKTİF ROZET (SERİ x1.10) KONUMU */
+    #combobadge {
+      top: calc(112px + env(safe-area-inset-top)) !important;
+      right: calc(8px + env(safe-area-inset-right)) !important;
+      padding: 4px 10px !important;
+      font-size: 12px !important;
+      border-radius: 6px !important;
+      border: 2px solid #111418 !important;
+      box-shadow: 2.5px 2.5px 0px #111418 !important;
+    }
+
+    /* 4. TOAST BİLDİRİMLERİ: ALT NAVBAR ÜSTÜNE, ORTAYA ALINIR */
+    #toasts {
+      position: fixed !important;
+      left: 50% !important;
+      right: auto !important;
+      transform: translateX(-50%) !important;
+      top: auto !important;
+      bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+      width: min(340px, 92vw) !important;
+      max-width: min(340px, 92vw) !important;
+      max-height: 130px !important;
+      align-items: center !important;
+      flex-direction: column-reverse !important;
+      justify-content: flex-end !important;
+      gap: 5px !important;
+      pointer-events: none !important;
+      z-index: 25 !important;
+    }
+    #toasts > * {
+      pointer-events: auto !important;
+      width: auto !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      font-size: 11.5px !important;
+      padding: 6px 12px !important;
+      line-height: 1.3 !important;
+      text-align: center !important;
+      border-radius: 6px !important;
+      box-shadow: 3px 3px 0px #111418 !important;
+      border: 2px solid #111418 !important;
+      border-bottom-width: 3.5px !important;
+    }
+
+    /* 5. DEBUG BUTONUNUN MOBİLDE ELEMANLARI ÖRTMESİNİ ENGELLE */
+    #istasyon-debug-btn {
+      bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+      left: calc(10px + env(safe-area-inset-left)) !important;
+      padding: 5px 10px !important;
+      font-size: 11px !important;
+      border-radius: 6px !important;
+      box-shadow: 2px 2px 0px #111418 !important;
+      opacity: 0.8 !important;
+    }
+    #istasyon-debug-btn:hover, #istasyon-debug-btn:active {
+      opacity: 1 !important;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .cluster-time {
+      padding: 3px 5px !important;
+      min-width: 60px !important;
+    }
+    .vault-bezel {
+      padding: 2px 5px !important;
+    }
+    .vault-num {
+      font-size: 13.5px !important;
+    }
+    .cluster-ticket {
+      padding: 3px 5px !important;
+    }
+  }
+
+</style>
   <script>
     /* TEMA ÖN-YÜKLEME — bundle inmeden ÖNCE çalışmalı: koyu tema seçmiş oyuncu, yükleme
        maskesinin krem beyazıyla bir saniye kör olmasın (FOUC). Kayıt anahtarı diğer
@@ -1717,25 +2062,61 @@
   </svg>
 
   <div class="hud">
-    <div class="chip" data-bilgi="gun" style="min-width:62px"><span class="cl" data-i18n="GÜN">GÜN</span><span class="cv"><svg class="ic"><use href="#i-cal"/></svg> <span id="day">1</span></span></div>
-    <!-- C10 (analiz): giriş serisi rozeti — seri ≥2 olunca görünür, seriyi görünür kılmak dönüş kancası -->
-    <div class="chip" id="streak-chip" data-bilgi="seri" style="min-width:56px; display:none"><span class="cl" data-i18n="SERİ">SERİ</span><span class="cv" style="color:var(--orange)"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px"><path d="M12 2c1 3-1 4.5-2 6-1.2 1.8-1.5 3.4-.6 5.2C10.2 15 12 15.6 12 18c2.6-1 4.6-3.3 4.6-6.4 0-1.9-.8-3.3-1.8-4.6C13.6 5.5 12.7 4 12 2zM8.4 13.5c-.8 1.2-1.3 2.3-1.3 3.6C7.1 20 9.3 22 12 22s4.9-2 4.9-4.9c0-.4 0-.8-.1-1.1C15.6 18.6 13.9 20 12 20c-2 0-3.5-1.4-3.6-3.4 0-1.1.3-2.1 0-3.1z"/></svg> <span id="streak-n">2</span></span></div>
-    <div class="chip" id="hud-light-chip" data-bilgi="isik" style="min-width:78px; display:none"><span class="cl" data-i18n="IŞIK">IŞIK</span><span class="cv" id="hud-light" style="display:flex; align-items:center; gap:4px; font-weight:800"></span></div>
-    <div class="chip" data-bilgi="saat" style="min-width:66px"><span class="cl" data-i18n="SAAT">SAAT</span><span class="cv" style="display:inline-flex; align-items:center; gap:4px"><svg class="ic" style="width:13px;height:13px"><use href="#i-clock"/></svg><span id="hud-clock">06:00</span></span></div>
-    <div class="chip" data-bilgi="kasa" style="min-width:152px"><span class="cl" data-i18n="KASA">KASA</span><span class="cv"><svg class="ic"><use href="#i-coin"/></svg> <span id="money">0</span> ₺</span></div>
-    <div id="fuelrail">
-    <div class="chip fuelchip" data-bilgi="yakit"><span class="cl" data-i18n="BENZİN">BENZİN</span><span class="cv"><svg class="ic" style="color:var(--green)"><use href="#i-fuel"/></svg> <div class="bar"><div id="fill-benzin" style="background:var(--green)"></div></div> <span id="lvl-benzin">0</span></span></div>
-    <div class="chip fuelchip" data-bilgi="yakit"><span class="cl" data-i18n="DİZEL">DİZEL</span><span class="cv"><svg class="ic" style="color:var(--orange)"><use href="#i-fuel"/></svg> <div class="bar"><div id="fill-dizel" style="background:var(--orange)"></div></div> <span id="lvl-dizel">0</span></span></div>
-    <div class="chip fuelchip" data-bilgi="yakit"><span class="cl" data-i18n="LPG">LPG</span><span class="cv"><svg class="ic" style="color:var(--blue)"><use href="#i-fuel"/></svg> <div class="bar"><div id="fill-lpg" style="background:var(--blue)"></div></div> <span id="lvl-lpg">0</span></span></div>
-    <div class="chip fuelchip" id="battchip"><span class="cl" data-i18n="BATARYA">BATARYA</span><span class="cv"><svg class="ic"><use href="#i-batt"/></svg> <div class="bar"><div id="battfill"></div></div> <span id="battkwh">0</span></span></div>
+    <!-- ═══ MEKANİK İSTASYON ANA KONSOLU (MASTER DASHBOARD CLUSTER) ═══ -->
+    <div id="station-cluster" class="station-cluster">
+      
+      <!-- 1. ZAMAN BÖLMESİ (Retro Takvim & Saat Damgası) -->
+      <div class="cluster-sec cluster-time" data-bilgi="zaman" title="İstasyon Zamanı">
+        <div class="cluster-sub" data-bilgi="gun" title="Gün">
+          <svg class="cluster-ic"><use href="#i-cal"/></svg>
+          <span class="cluster-lbl">GÜN</span>
+          <span id="day" class="cluster-val">1</span>
+        </div>
+        <div class="cluster-divider-h"></div>
+        <div class="cluster-sub" data-bilgi="saat" title="Saat">
+          <svg class="cluster-ic"><use href="#i-clock"/></svg>
+          <span id="hud-clock" class="cluster-val">06:00</span>
+        </div>
+      </div>
+
+      <!-- 2. KASA SAYAÇ PENCERESİ (Gömülü Benzin Pompası Sayacı) -->
+      <div class="cluster-sec cluster-vault" data-bilgi="kasa" title="Kasa Bakiyesi">
+        <div class="vault-bezel">
+          <div class="vault-header">
+            <span class="vault-tag">KASA SAYACI</span>
+            <span class="vault-led"></span>
+          </div>
+          <div class="vault-counter">
+            <svg class="vault-ic"><use href="#i-coin"/></svg>
+            <span id="money" class="vault-num">0</span>
+            <span class="vault-curr">₺</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. OPERASYON & BİLET BÖLMESİ (Görev Bileti & Seri Rozeti) -->
+      <div class="cluster-sec cluster-ops">
+        <div id="questchip" class="cluster-ticket" title="Günlük Görevler">
+          <span class="ticket-tag">GÖREV</span>
+          <div class="ticket-row">
+            <svg class="ticket-ic"><use href="#i-cal"/></svg>
+            <span id="quest" class="ticket-val">0/15</span>
+          </div>
+        </div>
+        <div id="streak-chip" class="cluster-badge streak-badge" data-bilgi="seri" style="display:none" title="Giriş Serisi">
+          <span class="cl" data-i18n="SERİ" style="display:none">SERİ</span>
+          <svg class="streak-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4.5-2 6-1.2 1.8-1.5 3.4-.6 5.2C10.2 15 12 15.6 12 18c2.6-1 4.6-3.3 4.6-6.4 0-1.9-.8-3.3-1.8-4.6C13.6 5.5 12.7 4 12 2zM8.4 13.5c-.8 1.2-1.3 2.3-1.3 3.6C7.1 20 9.3 22 12 22s4.9-2 4.9-4.9c0-.4 0-.8-.1-1.1C15.6 18.6 13.9 20 12 20c-2 0-3.5-1.4-3.6-3.4 0-1.1.3-2.1 0-3.1z"/></svg>
+          <span id="streak-n" class="streak-val">2</span>
+        </div>
+      </div>
+
     </div>
-    <div class="chip" id="onlinechip" style="min-width:72px; display:none"><span class="cl" data-i18n="OYUNDA">OYUNDA</span><span class="cv"><svg class="ic"><use href="#i-user"/></svg> <span id="hud-online">0</span></span></div>
-    <div class="chip" id="repchip" data-bilgi="itibar" style="min-width:74px"><span class="cl" data-i18n="İTİBAR">İTİBAR</span><span class="cv"><svg class="ic"><use href="#i-star"/></svg> <span id="rep">3.0</span></span></div>
-    <!-- ORTA OYUN REHBERİ: marka yıldızı ve sıradaki yıldıza kalan yol HUD'da DURUR.
-         Bilgi Ofis › Şubeler panelinin içinde gömülüydü; oyuncunun onu bulmak için
-         ARAMASI gerekiyordu ("yeni şube nasıl açılır", "yapacak bir şey kalmadı"). -->
-    <div class="chip" id="markachip" data-bilgi="marka" style="min-width:118px; display:none"><span class="cl" data-i18n="MARKA">MARKA</span><span class="cv"><span id="hud-marka-st" style="color:var(--gold-ink); font-weight:850">0★</span> <div class="bar"><div id="hud-marka-fill" style="background:var(--gold-ink)"></div></div> <span id="hud-marka-pct">0%</span></span></div>
-    <div class="chip" id="questchip" style="min-width:104px; cursor:pointer" title="Günlük görevler"><span class="cl" data-i18n="GÜNLÜK GÖREV">GÜNLÜK GÖREV</span><span class="cv"><svg class="ic"><use href="#i-cal"/></svg> <span id="quest">0/15</span></span></div>
+
+    <!-- Sistem Entegrasyon Çipleri (İkincil / Modal verileri) -->
+    <div class="chip" id="hud-light-chip" data-bilgi="isik" style="display:none"><span id="hud-light"></span></div>
+    <div class="chip" id="onlinechip" style="display:none"><span id="hud-online">0</span></div>
+    <div class="chip" id="repchip" data-bilgi="itibar" style="display:none"><span class="cl" data-i18n="İTİBAR">İTİBAR</span><span class="cv"><svg class="ic"><use href="#i-star"/></svg> <span id="rep">3.0</span></span></div>
+    <div class="chip" id="markachip" data-bilgi="marka" style="display:none"><span id="hud-marka-st">0★</span><div id="hud-marka-fill"></div><span id="hud-marka-pct">0%</span></div>
     <div class="spacer"></div>
     <!-- EYLEM BUTONLARI TEK KAPSAYICIDA: masaüstünde `display:contents` (kutu ağacında yok,
          yerleşim birebir aynı). Mobilde yakıt rayının SAĞINDAKİ boşlukta saran ızgara olur —
