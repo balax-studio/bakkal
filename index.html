@@ -1329,7 +1329,7 @@
   <script type="module" crossorigin src="/assets/index-C7O-ej6u.js"></script>
 <style id="neo-brutalist-overrides">
   /* ═══════════════════════════════════════════════════════════════
-     NEO-BRUTALIST BUTONLAR VE TİPOGRAFİ SİSTEMİ
+     RETRO NEO-BRUTALIST KARE / DİKDÖRTGEN & DAR EKRAN SİSTEMİ
      ═══════════════════════════════════════════════════════════════ */
 
   #guestcta {
@@ -1338,193 +1338,300 @@
     pointer-events: none !important;
   }
 
-  /* Tipografi — Space Grotesk & JetBrains Mono */
+  /* 1. KESİN KARE / DİKDÖRTGEN SÖZLEŞMESİ (Tüm pürüzsüz yuvarlaklıklar yasak) */
+  *, *::before, *::after {
+    border-radius: 0px;
+  }
+
+  button, input, select, textarea, .btn, .tab, .subtab, .chip, .card, 
+  .modal, #infocard, .toast, .badge, .stat-badge, .mhead, .mbody, .mfoot,
+  .fab-main, .navbtn, .pbtn, .cbuy, .cthumb, #panel, .qrow, .hcard, .pz-prog,
+  .gslider, .gslider::-webkit-slider-thumb, .bar, .bar > div, .pz-bar, .pz-fill {
+    border-radius: 2px !important;
+  }
+
+  /* 2. TIPOGRAFİ KİMLİĞİ — Space Grotesk & JetBrains Mono */
   html, body, button, input, select, textarea {
-    font-family: var(--font) !important;
+    font-family: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Başlıklar: Ağır, keskin neo-brutalist karakter */
-  h1, h2, h3, h4, .mhead h3, .pf-name, .hd-t b, #boom > div:first-child {
-    font-family: var(--font) !important;
-    font-weight: 800 !important;
+  h1, h2, h3, h4, .mhead h3, .pf-name, .hd-t b, #boom > div:first-child, .cname {
+    font-family: "Space Grotesk", sans-serif !important;
+    font-weight: 900 !important;
     letter-spacing: -0.02em !important;
     line-height: 1.15 !important;
   }
 
   .mhead h3 {
-    letter-spacing: 0.03em !important;
+    letter-spacing: 0.04em !important;
     text-transform: uppercase !important;
-    font-weight: 900 !important;
   }
 
-  /* Bölüm ve Etiket Tipografisi */
   .acc-sec, .acc-sub, .ofsec, .hcard h4, .rh-main, .pz-prog-head, .pd-lbl, .cl, .hud-label {
-    font-family: var(--font) !important;
+    font-family: "Space Grotesk", sans-serif !important;
     font-weight: 800 !important;
     letter-spacing: 0.07em !important;
     text-transform: uppercase !important;
   }
 
-  /* Sayaçlar, Tutarlar, Metrikler: JetBrains Mono ile kesin hizalama */
+  /* Sayaçlar, Tutarlar ve Rakamlar */
   .num, .pd-val, .stat .v, .volval, #liters, .pz-stars, .pz-prog-num, 
   .acc-cost, .hnum, .ibtm, .qrow .qnum, .cv, #money, #day, #hud-clock, 
   #quest, #rep, #streak-n, #hud-online, #lvl-benzin, #lvl-dizel, #lvl-lpg, #battkwh {
-    font-family: var(--font-mono, "JetBrains Mono", monospace) !important;
+    font-family: "JetBrains Mono", monospace !important;
     font-variant-numeric: tabular-nums !important;
-    font-weight: 700 !important;
-  }
-
-  /* Rozet ve sayaç çipleri: sert neo-brutalist bordürler */
-  .chip {
-    border: 2px solid var(--edge) !important;
-    box-shadow: 2px 2px 0px rgba(17, 20, 24, 0.3) !important;
-    border-radius: var(--neo-radius) !important;
-  }
-
-  /* ────────── BUTONLAR (NEO-BRUTALİST) ────────── */
-  .btn, button.btn, button:not([class]), .pbtn, .tab, .subtab, .mclose,
-  .quick, .nozzle, #chargebtn, .hact, .mvbtn, #hudacts > .btn {
-    font-family: var(--font) !important;
-    border: var(--neo-border) !important;
-    box-shadow: var(--neo-shadow) !important;
-    border-radius: var(--neo-radius) !important;
     font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    transition: transform 0.08s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.08s cubic-bezier(0.2, 0, 0, 1), filter 0.08s ease !important;
+  }
+
+  /* 3. NEO-BRUTALIST BORDÜR VE SERT GÖLGE SİSTEMİ */
+  .btn, button.btn, button:not([class]), .pbtn, .tab, .mclose,
+  .quick, .nozzle, #chargebtn, .hact, .mvbtn, #hudacts > .btn, .cbuy {
+    font-family: "Space Grotesk", sans-serif !important;
+    border: 2.5px solid #111418 !important;
+    border-bottom: 3.5px solid #111418 !important;
+    box-shadow: 2.5px 2.5px 0px #111418 !important;
+    border-radius: 2px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.02em !important;
+    transition: transform 0.06s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.06s cubic-bezier(0.2, 0, 0, 1) !important;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .btn {
-    text-transform: uppercase;
-  }
-
-  /* Hover & Active mikro-etkileşimleri */
   .btn:not(:disabled):hover, 
   button:not([class]):not(:disabled):hover,
   .pbtn:not(:disabled):hover, 
-  .tab:not(.on):hover, 
+  .tab:not(.active):not(.on):hover, 
   .mclose:hover, 
   .quick:not(:disabled):hover, 
   .nozzle:not(:disabled):hover, 
   #chargebtn:not(:disabled):hover,
+  .cbuy:hover,
   .mvbtn:hover {
-    transform: translate(-1.5px, -1.5px) !important;
-    box-shadow: var(--neo-shadow-hover) !important;
-    filter: brightness(1.04) !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3.5px 3.5px 0px #111418 !important;
+    filter: brightness(1.03) !important;
   }
 
   .btn:not(:disabled):active, 
   button:not([class]):not(:disabled):active,
   .pbtn:not(:disabled):active, 
-  .tab:not(.on):active, 
+  .tab:active, 
   .mclose:active, 
   .quick:not(:disabled):active, 
   .nozzle:not(:disabled):active, 
   #chargebtn:not(:disabled):active,
+  .cbuy:active,
   .mvbtn:active {
     transform: translate(2px, 2px) !important;
-    box-shadow: var(--neo-shadow-active) !important;
+    box-shadow: 0.5px 0.5px 0px #111418 !important;
   }
 
-  .btn:disabled, button:disabled, .pbtn:disabled, #chargebtn:disabled {
+  .btn:disabled, button:disabled, .pbtn:disabled, #chargebtn:disabled, .cbuy:disabled {
     box-shadow: none !important;
     transform: none !important;
     opacity: 0.45 !important;
     cursor: not-allowed !important;
   }
 
-  /* Buton renk varyantları: canlı, sert zeminler */
-  .btn.primary {
-    background: var(--red) !important;
-    color: #fff !important;
+  /* Çipler ve Sayaç Göstergeleri */
+  .chip {
+    border: 2px solid #111418 !important;
+    border-bottom: 3.5px solid #111418 !important;
+    box-shadow: 2px 2px 0px #111418 !important;
+    background: var(--paper, #faf6ec) !important;
+    border-radius: 2px !important;
   }
-  .btn.good {
-    background: var(--green) !important;
-    color: #fff !important;
+
+  /* Modallar ve Kartlar (Sert Dikdörtgenler & Halftone Tram) */
+  .modal {
+    border: 3px solid #111418 !important;
+    border-bottom: 5px solid #111418 !important;
+    box-shadow: 6px 6px 0px #111418 !important;
+    border-radius: 2px !important;
+    background: var(--paper, #faf6ec) !important;
   }
-  .btn.warn {
-    background: var(--orange) !important;
-    color: #fff !important;
+
+  .mhead {
+    border-bottom: 2.5px solid #111418 !important;
+    background: #fde047 !important;
+    color: #111418 !important;
   }
-  .btn.danger {
-    background: var(--red) !important;
-    color: #fff !important;
+
+  .mbody {
+    background-image: radial-gradient(#111418 0.6px, transparent 0.6px) !important;
+    background-size: 10px 10px !important;
+  }
+
+  .card {
+    border: 2.5px solid #111418 !important;
+    border-bottom: 4px solid #111418 !important;
+    box-shadow: 3px 3px 0px #111418 !important;
+    border-radius: 2px !important;
+    background: #ffffff !important;
+  }
+  .card:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 1px 1px 0px #111418 !important;
+  }
+
+  .cthumb {
+    border: 2px solid #111418 !important;
+    border-bottom: 3px solid #111418 !important;
+    border-radius: 2px !important;
   }
 
   /* Sekmeler (Tabs) */
-  .tab.on {
-    background: var(--ink) !important;
-    color: var(--on-ink) !important;
-    transform: translate(1.5px, 1.5px) !important;
-    box-shadow: 1px 1px 0px var(--edge) !important;
+  .tabs {
+    border-bottom: 2.5px solid #111418 !important;
+    background: var(--paper, #faf6ec) !important;
   }
-
-  .subtab {
-    border-radius: 4px !important;
-    font-weight: 800 !important;
-  }
-  .subtab.on {
-    border: 2px solid var(--ink) !important;
-    box-shadow: 2px 2px 0px var(--ink) !important;
-  }
-
-  /* Kapatma Butonu (Modal close) */
-  .mclose {
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  /* Mobil FAB ve Nav Butonları */
-  .fab-main {
-    border: var(--neo-border) !important;
-    box-shadow: var(--neo-shadow) !important;
-    border-radius: 12px !important;
-    transition: transform 0.08s ease, box-shadow 0.08s ease !important;
-  }
-  .fab-main:active {
-    transform: translate(2px, 2px) !important;
-    box-shadow: var(--neo-shadow-active) !important;
-  }
-
-  .navbtn {
-    border: var(--neo-border) !important;
-    box-shadow: var(--neo-shadow) !important;
-    border-radius: 10px !important;
-    font-family: var(--font) !important;
-  }
-  .navbtn span {
-    font-family: var(--font) !important;
-    font-weight: 800 !important;
-    letter-spacing: 0.04em !important;
-    text-transform: uppercase !important;
-  }
-  .navbtn:active {
-    transform: translate(2px, 2px) scale(0.96) !important;
-    box-shadow: var(--neo-shadow-active) !important;
-  }
-  .navbtn.on {
-    border: var(--neo-border) !important;
-  }
-
-  /* Nozzle & Pompa seçim butonları */
-  .nozzle.sel {
-    box-shadow: inset 0 0 0 2.5px var(--ink), var(--neo-shadow) !important;
-  }
-
-  /* Bildirim Rozetleri */
-  #shopdot, #inboxdot, .hud-pill-badge, .hd-pill {
-    font-family: var(--font) !important;
-    font-weight: 900 !important;
-    border: 1.5px solid #111418 !important;
+  .tab.active, .tab.on {
+    background: #fde047 !important;
+    color: #111418 !important;
+    transform: translate(1px, 1px) !important;
     box-shadow: 1.5px 1.5px 0px #111418 !important;
   }
 
-  /* Görev / Sıralama aksiyon butonları */
-  .qrow .qrew, .hline {
-    font-family: var(--font) !important;
+  .subtab {
+    border-radius: 2px !important;
     font-weight: 800 !important;
+  }
+  .subtab.on {
+    border: 2px solid #111418 !important;
+    box-shadow: 2px 2px 0px #111418 !important;
+    background: #fde047 !important;
+    color: #111418 !important;
+  }
+
+  /* Mobil Alt Bar / FAB (Kare / Dikdörtgen Form) */
+  .fab-main {
+    border: 2.5px solid #111418 !important;
+    border-bottom: 4px solid #111418 !important;
+    box-shadow: 3px 3px 0px #111418 !important;
+    border-radius: 2px !important;
+    background: #d64545 !important;
+  }
+  .fab-main:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 1px 1px 0px #111418 !important;
+  }
+
+  .navbtn {
+    border: 2.5px solid #111418 !important;
+    border-bottom: 3.5px solid #111418 !important;
+    box-shadow: 2.5px 2.5px 0px #111418 !important;
+    border-radius: 2px !important;
+    background: #ffffff !important;
+  }
+  .navbtn:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 0.5px 0.5px 0px #111418 !important;
+  }
+
+  /* Rozetler */
+  .badge, .stat-badge, #shopdot, #inboxdot, .hud-pill-badge, .hd-pill {
+    font-family: "Space Grotesk", sans-serif !important;
+    font-weight: 900 !important;
+    border: 1.5px solid #111418 !important;
+    box-shadow: 1px 1px 0px #111418 !important;
+    border-radius: 2px !important;
+  }
+
+  /* Toast Mesajları */
+  .toast {
+    font-family: "Space Grotesk", sans-serif !important;
+    border: 2.5px solid #111418 !important;
+    border-bottom: 4px solid #111418 !important;
+    box-shadow: 4px 4px 0px #111418 !important;
+    border-radius: 2px !important;
+    background: var(--paper, #faf6ec) !important;
+    color: #111418 !important;
+    font-weight: 800 !important;
+  }
+
+  /* 4. DAR EKRAN & MOBİL UYUM (320px - 420px) */
+  @media (max-width: 440px) {
+    .hud {
+      gap: 4px !important;
+      padding: calc(6px + env(safe-area-inset-top)) 6px 4px 6px !important;
+      flex-wrap: wrap !important;
+    }
+    .chip {
+      padding: 3px 7px 4px !important;
+      font-size: 11px !important;
+      min-width: 0 !important;
+    }
+    .chip .cv {
+      font-size: 13px !important;
+      gap: 3px !important;
+    }
+    #money {
+      font-size: 13.5px !important;
+    }
+    .modal {
+      width: 100vw !important;
+      max-width: 100vw !important;
+      max-height: 70vh !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+      border-bottom: 0 !important;
+    }
+    .mhead h3 {
+      font-size: 14px !important;
+    }
+    .shopgrid {
+      grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)) !important;
+      gap: 8px !important;
+      padding: 8px !important;
+    }
+    .card {
+      padding: 7px !important;
+      min-width: 0 !important;
+    }
+    .cthumb {
+      height: 88px !important;
+    }
+    .cname {
+      font-size: 11px !important;
+      min-height: 24px !important;
+    }
+    .cbuy {
+      padding: 6px 4px !important;
+      font-size: 11px !important;
+    }
+    .tabs {
+      gap: 4px !important;
+      padding: 6px 8px !important;
+    }
+    .tab {
+      padding: 6px 9px !important;
+      font-size: 11.5px !important;
+    }
+    #infocard {
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: min(340px, 94vw) !important;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .shopgrid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6px !important;
+    }
+    .chip {
+      padding: 2px 5px !important;
+    }
+    .chip .ic {
+      width: 13px !important;
+      height: 13px !important;
+    }
+    .tab {
+      padding: 5px 7px !important;
+      font-size: 10.5px !important;
+    }
   }
 </style>
 </head>
