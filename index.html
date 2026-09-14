@@ -289,27 +289,27 @@
              tetikleyici (açılınca X'e cross-fade), geniş yay + etiketli TABELA PLAKALARI,
              açılınca scrim. Oyunun signage/krem-kırmızı dili. Jenerik tab bar değil. ---- */
       .navbar { display: block; position: fixed; z-index: 22; padding: 0; background: none; border: 0; box-shadow: none;
-        left: calc(18px + env(safe-area-inset-left)); bottom: calc(18px + env(safe-area-inset-bottom)); width: 62px; height: 62px; }
+        right: calc(18px + env(safe-area-inset-right)); left: auto; bottom: calc(18px + env(safe-area-inset-bottom)); width: 62px; height: 62px; }
       /* scrim: açıkken oyunu hafif karart → menü öne çıkar; dışarı dokununca kapatır */
       #fab-scrim { position: fixed; inset: 0; z-index: 21; pointer-events: none; opacity: 0;
-        background: radial-gradient(130% 100% at 14% 100%, rgba(15,22,30,.36), rgba(15,22,30,0) 58%); transition: opacity .3s; }
+        background: radial-gradient(130% 100% at 86% 100%, rgba(15,22,30,.36), rgba(15,22,30,0) 58%); transition: opacity .3s; }
       .navbar.fab-open + #fab-scrim { opacity: 1; pointer-events: auto; }
-      /* MENÜ AÇIKKEN ALT KÖŞE BUTONLARI GERİ ÇEKİLİR (Oğuz): "Şimdi Kayıt Ol" z-index 35
-         ile navbar'ın (22) ÜSTÜNDE kalıyordu — açılan menünün üstüne biniyordu.
-         Gizlemek yerine soluklaştırıp tıklanamaz yapıyoruz: menü kapanınca geri gelir. */
+      /* MENÜ AÇIKKEN ALT KÖŞE BUTONLARI GERİ ÇEKİLİR */
       body:has(.navbar.fab-open) #guestcta,
-      body:has(.navbar.fab-open) #fbbtn {
-        opacity: 0; pointer-events: none; transition: opacity .18s;
+      body:has(.navbar.fab-open) #fbbtn,
+      body:has(.navbar.fab-open) #istasyon-debug-btn {
+        opacity: 0 !important; pointer-events: none !important; transition: opacity .18s;
       }
       /* ana tetikleyici — yakıt ikonu, açılınca X'e cross-fade + hafif nabız halkası */
       .fab-main { position: absolute; left: 0; bottom: 0; width: 62px; height: 62px; z-index: 3; cursor: pointer;
-        display: flex; align-items: center; justify-content: center; border-radius: 50%;
-        background: radial-gradient(130% 130% at 50% 20%, #f07373, var(--red)); color: #fff4ec;
-        border: 1.5px solid var(--red-dark);
-        box-shadow: 0 0 0 3px rgba(214,69,69,.14), 0 10px 22px rgba(178,52,52,.42), inset 0 2px 0 rgba(255,255,255,.3);
-        transition: transform .12s; -webkit-tap-highlight-color: transparent; }
-      .fab-main:active { transform: translateY(2px); }
-      .fab-main::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2.5px solid var(--red);
+        display: flex; align-items: center; justify-content: center; border-radius: 6px;
+        background: #d64545; color: #fff4ec;
+        border: 2.5px solid #111418;
+        border-bottom: 4px solid #111418;
+        box-shadow: 3px 3px 0px #111418;
+        transition: transform .12s, box-shadow .12s; -webkit-tap-highlight-color: transparent; }
+      .fab-main:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #111418; }
+      .fab-main::after { content: ''; position: absolute; inset: -5px; border-radius: 8px; border: 2.5px solid var(--red);
         opacity: 0; animation: fabpulse 2.8s ease-out infinite; }
       .navbar.fab-open .fab-main::after { animation: none; opacity: 0; }
       @keyframes fabpulse { 0% { opacity: .45; transform: scale(1); } 70% { opacity: 0; transform: scale(1.45); } 100% { opacity: 0; } }
@@ -317,27 +317,26 @@
       .fab-main .ic-close { opacity: 0; transform: rotate(-90deg) scale(.5); }
       .navbar.fab-open .fab-main .ic-open { opacity: 0; transform: rotate(90deg) scale(.5); }
       .navbar.fab-open .fab-main .ic-close { opacity: 1; transform: none; }
-      /* öğeler — candy-emboss yuvarlaklar (ikon + minik etiket), yay şeklinde açılır */
-      .navbtn { position: absolute; left: 6px; bottom: 6px; width: 52px; height: 52px; z-index: 2; cursor: pointer;
+      /* öğeler — yay şeklinde SOLA açılır (baş parmak ergonomisi) */
+      .navbtn { position: absolute; right: 5px; bottom: 5px; width: 52px; height: 52px; z-index: 2; cursor: pointer;
         display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 0;
-        font-family: var(--font); border-radius: 50%; color: var(--fab-ink);
-        background: radial-gradient(130% 130% at 50% 22%, var(--surface), var(--paper-2)); border: 1.5px solid var(--rim);
-        box-shadow: inset 0 2px 3px rgba(255,255,255,.95), inset 0 -3px 5px rgba(198,182,150,.42), 0 5px 13px rgba(34,48,60,.2);
+        font-family: var(--font); border-radius: 6px; color: var(--fab-ink);
+        background: #ffffff; border: 2.5px solid #111418; border-bottom: 3.5px solid #111418;
+        box-shadow: 2.5px 2.5px 0px #111418;
         opacity: 0; pointer-events: none; transform: translate(0,0) scale(.4);
         transition: transform .42s cubic-bezier(.34,1.56,.64,1), opacity .2s, background .12s, color .12s;
         -webkit-tap-highlight-color: transparent; }
       .navbtn .ic { width: 22px; height: 22px; }
       .navbtn span { display: block; font-size: 7px; font-weight: 800; letter-spacing: .01em; color: var(--fab-ink); line-height: 1; white-space: nowrap; margin-top: 1px; }
-      .navbtn:active { transform: translateY(1.5px) scale(1); }
+      .navbtn:active { transform: translate(2px, 2px) scale(1) !important; box-shadow: 0.5px 0.5px 0px #111418 !important; }
       .navbar.fab-open .navbtn { opacity: 1; pointer-events: auto; }
       .navbar.fab-open .navbtn:nth-child(1) { transform: translate(0, -160px) scale(1); transition-delay: .05s; }
-      .navbar.fab-open .navbtn:nth-child(2) { transform: translate(61px, -148px) scale(1); transition-delay: .1s; }
-      .navbar.fab-open .navbtn:nth-child(3) { transform: translate(113px, -113px) scale(1); transition-delay: .15s; }
-      .navbar.fab-open .navbtn:nth-child(4) { transform: translate(148px, -61px) scale(1); transition-delay: .2s; }
-      .navbar.fab-open .navbtn:nth-child(5) { transform: translate(160px, 0) scale(1); transition-delay: .25s; }
-      /* aktif bölüm: kırmızı candy + yumuşak glow */
-      .navbtn.on { color: #fff; background: radial-gradient(130% 130% at 50% 20%, #f07373, var(--red)); border-color: var(--red-dark);
-        box-shadow: 0 0 0 3px rgba(214,69,69,.16), 0 6px 16px rgba(214,69,69,.42); }
+      .navbar.fab-open .navbtn:nth-child(2) { transform: translate(-61px, -148px) scale(1); transition-delay: .1s; }
+      .navbar.fab-open .navbtn:nth-child(3) { transform: translate(-113px, -113px) scale(1); transition-delay: .15s; }
+      .navbar.fab-open .navbtn:nth-child(4) { transform: translate(-148px, -61px) scale(1); transition-delay: .2s; }
+      .navbar.fab-open .navbtn:nth-child(5) { transform: translate(-160px, 0) scale(1); transition-delay: .25s; }
+      /* aktif bölüm */
+      .navbtn.on { color: #fff; background: #d64545 !important; border-color: #111418 !important; }
       .navbtn.on span { color: #ffeaea; }
 
       /* ---- Uygulama-sheet: bir bölüm açıkken alt navbar gizlenir; sekmeler ÜSTTE, içerik altta (mobil-app hissi) ---- */
@@ -1627,18 +1626,27 @@
       border-bottom-width: 3.5px !important;
     }
 
-    /* 5. DEBUG BUTONUNUN MOBİLDE ELEMANLARI ÖRTMESİNİ ENGELLE */
+    /* 5. DEBUG BUTONUNUN MOBİLDE SAĞ TARAFA (FAB ÜSTÜNE) ALINMASI */
     #istasyon-debug-btn {
-      bottom: calc(76px + env(safe-area-inset-bottom)) !important;
-      left: calc(10px + env(safe-area-inset-left)) !important;
+      bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+      right: calc(18px + env(safe-area-inset-right)) !important;
+      left: auto !important;
       padding: 5px 10px !important;
       font-size: 11px !important;
       border-radius: 6px !important;
-      box-shadow: 2px 2px 0px #111418 !important;
-      opacity: 0.8 !important;
+      border: 2px solid #111418 !important;
+      border-bottom-width: 3.5px !important;
+      box-shadow: 2.5px 2.5px 0px #111418 !important;
+      opacity: 0.85 !important;
+      transition: opacity .18s, transform .18s !important;
     }
     #istasyon-debug-btn:hover, #istasyon-debug-btn:active {
       opacity: 1 !important;
+    }
+    body:has(.navbar.fab-open) #istasyon-debug-btn {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(6px) !important;
     }
   }
 
@@ -2546,9 +2554,10 @@
         <div class="row">
           <button id="set-tutorial" class="btn" style="flex:1; justify-content:center" data-i18n="Öğreticiyi Yeniden Başlat">Öğreticiyi Yeniden Başlat</button>
         </div>
-        <label style="margin-top:12px" data-i18n="Geri bildirim">Geri bildirim</label>
-        <div class="row">
-          <button id="set-feedback" class="btn warn" style="flex:1; justify-content:center" data-i18n="Sorun / Öneri Bildir">Sorun / Öneri Bildir</button>
+        <!-- Geri bildirim / Sorun Bildir tamamen kaldırıldı -->
+        <label id="lbl-feedback" style="display:none !important;" data-i18n="Geri bildirim">Geri bildirim</label>
+        <div class="row" id="row-feedback" style="display:none !important;">
+          <button id="set-feedback" class="btn warn" style="display:none !important;" aria-hidden="true" tabindex="-1" data-i18n="Sorun / Öneri Bildir">Sorun / Öneri Bildir</button>
         </div>
         <!-- Hesap giriş kutusu gizlendi (mail ile giriş kaldırıldı) -->
         <div id="accbox" style="display:none !important;" aria-hidden="true">
@@ -2692,30 +2701,15 @@
     </div>
   </div>
 
-  <div class="backdrop" id="fbwrap">
-    <div class="modal" style="max-width:440px">
-      <div class="mhead">
-        <h3 data-i18n="Sorun / Öneri Bildir">Sorun / Öneri Bildir</h3>
-        <button class="mclose" data-close="fbwrap"><svg class="ic"><use href="#i-x"/></svg></button>
-      </div>
-      <div class="mbody" style="padding:16px">
-        <div class="sd" style="margin:0 0 10px" data-i18n="Bug mu buldun, önerin mi var? Yaz gönder — hepsini okuyoruz.">Bug mu buldun, önerin mi var? Yaz gönder — hepsini okuyoruz.</div>
-        <textarea id="fbtext" placeholder="Örn: girişte araçlar sıkışıyor / şu özellik olsa süper olur..." maxlength="1000"
-          style="width:100%; box-sizing:border-box; min-height:120px; resize:vertical; font-family:inherit; font-size:14px;
-                 padding:12px 14px; border:1.5px solid var(--edge); border-radius:var(--r-md); background:var(--surface); color:var(--ink)"></textarea>
-        <div class="row" style="margin-top:10px">
-          <button id="fbsend" class="btn primary" style="flex:1; justify-content:center" data-i18n="Gönder">Gönder</button>
-        </div>
-      </div>
+  <!-- Sorun / Öneri sayfası ve butonu tamamen kaldırıldı -->
+  <div class="backdrop" id="fbwrap" style="display:none !important; visibility:hidden !important; pointer-events:none !important;" aria-hidden="true">
+    <div class="modal" style="display:none !important;">
+      <textarea id="fbtext" style="display:none !important;"></textarea>
+      <button id="fbsend" style="display:none !important;"></button>
     </div>
   </div>
 
-  <button id="fbbtn" data-i18n="Sorun / Öneri Bildir" title="Sorun / Öneri Bildir" style="position:fixed; right:calc(14px + env(safe-area-inset-right)); bottom:calc(14px + env(safe-area-inset-bottom)); z-index:35;
-    display:inline-flex; align-items:center; gap:7px; padding:9px 14px; font-family:'Baloo 2',sans-serif;
-    font-weight:800; font-size:13px; color:#fff; background:var(--red); border:0; border-bottom:3px solid var(--red-dark);
-    border-radius:var(--r-md); box-shadow:var(--shadow); cursor:pointer">
-Sorun / Öneri Bildir
-  </button>
+  <button id="fbbtn" style="display:none !important; visibility:hidden !important; pointer-events:none !important;" aria-hidden="true" tabindex="-1"></button>
 
   <!-- 'Şimdi Kayıt Ol' butonu tamamen kaldırıldı / gizlendi -->
   <button id="guestcta" style="display:none !important; visibility:hidden !important; pointer-events:none !important;" aria-hidden="true" tabindex="-1"></button>
@@ -3111,6 +3105,39 @@ Sorun / Öneri Bildir
                   font-variant-numeric:tabular-nums }
     .qrow .qrew { font-size:12px; font-weight:900; white-space:nowrap }
     .qrow.is-done .qrew { color:var(--green-ink) }
+
+    /* ═══════════════════════════════════════════════════════════════
+       BAŞ PARMAK ERGONOMİSİ (SAĞ-ALT FAB & DEBUG) & GERİ BİLDİRİM KALDIRILDI
+       ═══════════════════════════════════════════════════════════════ */
+    #fbbtn, #fbwrap, #set-feedback, #lbl-feedback, #row-feedback {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    @media (max-width: 680px) {
+      .navbar {
+        right: calc(18px + env(safe-area-inset-right)) !important;
+        left: auto !important;
+        bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+      }
+      .navbar.fab-open .navbtn:nth-child(1) { transform: translate(0, -160px) scale(1) !important; }
+      .navbar.fab-open .navbtn:nth-child(2) { transform: translate(-61px, -148px) scale(1) !important; }
+      .navbar.fab-open .navbtn:nth-child(3) { transform: translate(-113px, -113px) scale(1) !important; }
+      .navbar.fab-open .navbtn:nth-child(4) { transform: translate(-148px, -61px) scale(1) !important; }
+      .navbar.fab-open .navbtn:nth-child(5) { transform: translate(-160px, 0) scale(1) !important; }
+
+      #istasyon-debug-btn {
+        right: calc(18px + env(safe-area-inset-right)) !important;
+        left: auto !important;
+        bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+      }
+      body:has(.navbar.fab-open) #istasyon-debug-btn {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translateY(6px) !important;
+      }
+    }
 </style>
 </body>
 </html>
