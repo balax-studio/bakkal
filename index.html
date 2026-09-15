@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="tr">
 <head>
-    <meta name="surum" content="202609081124">
+    <meta name="surum" content="202609142222">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title data-i18n="İstasyon — Petrol İstasyonu Oyunu">İstasyon — Petrol İstasyonu Oyunu</title>
@@ -62,7 +62,9 @@
       --fab-ink: #8a7c62;        /* mobil FAB plakalarının mürekkebi */
       --boom-bg: #fff;           /* reaktör patlaması tam-ekran flaşı */
       --r-sm: 10px; --r-md: 13px; --r-lg: 17px;
-      --shadow: 0 6px 18px rgba(34, 48, 60, .22);
+      --shadow: 2.5px 2.5px 0px #111418;
+      --shadow-lg: 4px 4px 0px #111418;
+      --shadow-sm: 1.5px 1.5px 0px #111418;
       
       --font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: "JetBrains Mono", "SF Mono", Menlo, monospace;
@@ -117,7 +119,9 @@
         --bad-soft: #3a2225;
         --fab-ink: #c9b4b1;
         --boom-bg: #2a1416;
-        --shadow: 0 8px 20px rgba(0, 0, 0, .55), 0 0 0 1.5px rgba(255, 226, 214, .10);
+        --shadow: 2.5px 2.5px 0px #f6ece7;
+        --shadow-lg: 4px 4px 0px #f6ece7;
+        --shadow-sm: 1.5px 1.5px 0px #f6ece7;
         --neo-border: 2px solid #f6ece7;
         --neo-shadow: 3px 3px 0px #f6ece7;
         --neo-shadow-hover: 4.5px 4.5px 0px #f6ece7;
@@ -149,7 +153,9 @@
       --bad-soft: #3a2225;
       --fab-ink: #c9b4b1;
       --boom-bg: #2a1416;
-      --shadow: 0 8px 20px rgba(0, 0, 0, .55), 0 0 0 1.5px rgba(255, 226, 214, .10);
+      --shadow: 2.5px 2.5px 0px #f6ece7;
+        --shadow-lg: 4px 4px 0px #f6ece7;
+        --shadow-sm: 1.5px 1.5px 0px #f6ece7;
         --neo-border: 2px solid #f6ece7;
         --neo-shadow: 3px 3px 0px #f6ece7;
         --neo-shadow-hover: 4.5px 4.5px 0px #f6ece7;
@@ -370,7 +376,7 @@
         flex-direction: row !important; flex-wrap: wrap !important; justify-content: center !important;
         gap: 5px !important; z-index: 12 !important; max-width: 94vw !important; }
       #tankerpanel .trow { min-width: 0 !important; padding: 4px 10px !important; font-size: 10.5px !important;
-        border-bottom-width: 2px !important; white-space: nowrap; box-shadow: 0 4px 12px rgba(15,22,30,.28) !important; }
+        border-bottom-width: 2px !important; white-space: nowrap; box-shadow: 2px 2px 0px #111418 !important; }
       #movectl { bottom: calc(74px + env(safe-area-inset-bottom)) !important; }
       /* ---- Toast bildirimleri: sağ-üstte SABİT dar kolon; kısa toast küçük, uzun toast 2 satıra sarar.
              Genişlik kolonla sınırlı → uzun yazı sola taşmaz. Butonlar 2. satırda (rayın sağı, 2 sıra) ve ray 3 rozetle ≈145px'te biter — kolon onların ALTINDA başlar. ---- */
@@ -531,7 +537,7 @@
     .acc-row:first-of-type { border-top: 0; }
     .acc-day { color: var(--muted); min-width: 52px; }
     .acc-fuel { flex: 1; display: flex; align-items: center; gap: 5px; color: var(--ink); }
-    .acc-fuel i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+    .acc-fuel i { width: 9px; height: 9px; border-radius: 3px; border: 1px solid #111418; display: inline-block; flex: none; }
     .acc-cost { color: var(--red-ink); font-weight: 800; font-variant-numeric: tabular-nums; }
     /* ofis: dönemsel satış & faaliyet kârı tablosu (dönem | satış | kâr) */
     .acc-cols { display: grid; grid-template-columns: 1fr 1.15fr 1.15fr; gap: 8px; align-items: center;
@@ -582,8 +588,8 @@
                     font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
                     color: var(--muted); margin-top: 6px; }
     .pz-prog-num { font-variant-numeric: tabular-nums; text-transform: none; letter-spacing: 0; }
-    .pz-bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; margin: 5px 0 4px; }
-    .pz-fill { height: 100%; border-radius: 99px; background: var(--gold-ink); transition: width .35s ease; }
+    .pz-bar { height: 8px; border-radius: 4px; border: 1.5px solid #111418; background: var(--line); overflow: hidden; margin: 5px 0 4px; }
+    .pz-fill { height: 100%; border-radius: 2px; background: var(--gold-ink); transition: width .35s ease; }
     /* ofis: alt başlık + açıklama satırı (7 günlük grafik, yaka dağılımı) */
     .acc-sub { font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
                color: var(--muted); margin: 12px 0 5px; }
@@ -608,9 +614,9 @@
     .pf-hero { display: flex; align-items: center; gap: 13px; padding: 14px; border-radius: 16px; margin-bottom: 2px;
       background: linear-gradient(180deg, var(--surface), var(--paper-2)); border: 1.5px solid var(--rim); border-bottom-width: 3px;
       box-shadow: inset 0 1.5px 0 rgba(255,255,255,.8), 0 4px 10px rgba(34,48,60,.09); }
-    .pf-avatar { width: 52px; height: 52px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    .pf-avatar { width: 52px; height: 52px; flex: none; border-radius: 8px; border: 2px solid #111418; display: flex; align-items: center; justify-content: center;
       background: radial-gradient(130% 130% at 50% 20%, #f07373, var(--red)); color: #fff; border: 1.5px solid var(--red-dark);
-      box-shadow: 0 5px 12px rgba(214,69,69,.35), inset 0 2px 0 rgba(255,255,255,.28); }
+      box-shadow: 2px 2px 0px #111418; }
     .pf-avatar .ic { width: 28px; height: 28px; }
     .pf-hero-info { min-width: 0; flex: 1; }
     .pf-name { font-size: 19px; font-weight: 800; color: var(--ink); letter-spacing: .02em; line-height: 1.1; }
@@ -1145,7 +1151,7 @@
                border-radius: var(--r-lg); width: min(360px, 92vw); overflow: hidden;
                /* yer varken dikeyde ortalar, yokken üstten başlar ve #authgate kaydırılır */
                margin: auto; flex: 0 0 auto;
-               box-shadow: 0 20px 50px rgba(15, 22, 30, .5); }
+               box-shadow: 4px 4px 0px #111418; }
     .aghead { background: var(--red); color: #fff; padding: 16px 18px; display: flex; align-items: center;
               gap: 10px; font-size: 22px; font-weight: 800; letter-spacing: .04em; }
     .agbody { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 9px; }
@@ -1186,7 +1192,7 @@
     /* ÖNEM AYRIMI ("önemli olan spam içinde gözden kaçıyor"): uyarı/önemli toast kalın
        çerçeve + belirgin gölge ile öne çıkar, sıradan bilgi geride kalır (hafif soluk,
        daha ince yazı) — göz önce önemliyi görsün. */
-    .toast.imp { border-width: 2px; border-bottom-width: 4px; box-shadow: 0 8px 22px rgba(15, 22, 30, .30); }
+    .toast.imp { border-width: 2px; border-bottom-width: 4px; box-shadow: 3px 3px 0px #111418; }
     .toast:not(.good):not(.bad):not(.imp) { opacity: .9; font-weight: 700; }
     /* aynı mesaj tekrarlayıp "×N" sayacı arttığında kısa vurgu — yeni satır dizmeden
        "yine oldu" bilgisini verir */
@@ -1316,73 +1322,22 @@
   /* ════════════════════════════════════════════════════════════════════════
      MEKANİK İSTASYON ANA KONSOLU (MASTER DASHBOARD CLUSTER)
      ════════════════════════════════════════════════════════════════════════ */
-  .station-cluster {
-    display: inline-flex;
-    align-items: stretch;
-    background: var(--paper, #faf6ec);
-    border: 2.5px solid #111418;
-    border-bottom: 3.5px solid #111418;
-    border-radius: 9px;
-    box-shadow: 3.5px 3.5px 0px #111418;
-    box-sizing: border-box;
-    user-select: none;
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-    z-index: 20;
-    overflow: hidden;
-  }
+  
   .station-cluster:active {
     transform: translate(1px, 1px);
     box-shadow: 2px 2px 0px #111418;
   }
 
   /* KONSOL BÖLMELERİ */
-  .cluster-sec {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    box-sizing: border-box;
-  }
+  
 
   /* 1. ZAMAN BÖLMESİ (Retro Takvim & Saat Damgası) */
-  .cluster-time {
-    padding: 4px 8px;
-    background: rgba(17, 20, 24, 0.02);
-    border-right: 2px solid #111418;
-    gap: 2px;
-    min-width: 68px;
-    flex-shrink: 0;
-  }
-  .cluster-sub {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    line-height: 1;
-  }
-  .cluster-divider-h {
-    height: 1.5px;
-    background: rgba(17, 20, 24, 0.12);
-    margin: 1px 0;
-    border-radius: 1px;
-  }
-  .cluster-ic {
-    width: 12px;
-    height: 12px;
-    color: var(--ink, #111418);
-    flex-shrink: 0;
-  }
-  .cluster-lbl {
-    font-size: 8px;
-    font-weight: 850;
-    color: var(--muted, #64748b);
-    letter-spacing: 0.05em;
-  }
-  .cluster-val {
-    font-size: 12px;
-    font-weight: 900;
-    color: var(--ink, #111418);
-    font-variant-numeric: tabular-nums;
-    margin-left: auto;
-  }
+  
+  
+  
+  
+  
+  
   #hud-clock {
     color: #b91c1c;
     font-size: 12.5px;
@@ -1390,138 +1345,30 @@
   }
 
   /* 2. KASA SAYAÇ PENCERESİ (Gömülü Benzin Pompası Sayacı) */
-  .cluster-vault {
-    padding: 3px 5px;
-    background: #f8fafc;
-    flex: 1 1 auto;
-    min-width: 114px;
-  }
-  .vault-bezel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 3px 8px;
-    background: #ffffff;
-    border: 1.5px solid #111418;
-    border-radius: 5px;
-    box-shadow: inset 1px 1.5px 0px rgba(0, 0, 0, 0.10);
-    height: 100%;
-    box-sizing: border-box;
-  }
-  .vault-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1px;
-  }
-  .vault-tag {
-    font-size: 7.5px;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    color: var(--muted, #64748b);
-    text-transform: uppercase;
-  }
-  .vault-led {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #22c55e;
-    border: 1px solid #111418;
-    box-shadow: 0 0 3px rgba(34, 197, 94, 0.4);
-  }
-  .vault-counter {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    white-space: nowrap;
-  }
-  .vault-ic {
-    width: 14px;
-    height: 14px;
-    color: #d97706;
-    flex-shrink: 0;
-  }
-  .vault-num {
-    font-size: 15px;
-    font-weight: 950;
-    color: #111418;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.3px;
-  }
-  .vault-curr {
-    font-size: 12px;
-    font-weight: 850;
-    color: #b45309;
-  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   /* 3. OPERASYON & BİLET BÖLMESİ (Görev Bileti & Seri Rozeti) */
-  .cluster-ops {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    border-left: 2px dashed #111418;
-    background: rgba(17, 20, 24, 0.02);
-    flex-shrink: 0;
-  }
-  .cluster-ticket {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 3px 8px;
-    cursor: pointer;
-    transition: transform 0.06s ease, background-color 0.1s;
-    user-select: none;
-  }
+  
+  
   .cluster-ticket:active {
     transform: scale(0.95);
     background: rgba(253, 224, 71, 0.25);
   }
-  .ticket-tag {
-    font-size: 7.5px;
-    font-weight: 900;
-    letter-spacing: 0.06em;
-    color: var(--muted, #64748b);
-    text-transform: uppercase;
-    line-height: 1;
-    margin-bottom: 2px;
-  }
-  .ticket-row {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    line-height: 1;
-  }
-  .ticket-ic {
-    width: 12px;
-    height: 12px;
-    color: #dc2626;
-    flex-shrink: 0;
-  }
-  .ticket-val {
-    font-size: 12px;
-    font-weight: 900;
-    color: #111418;
-    font-variant-numeric: tabular-nums;
-  }
-  .streak-badge {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    padding: 0 7px;
-    background: #ffedd5;
-    border-left: 1.5px solid #111418;
-    color: #ea580c;
-  }
-  .streak-ic {
-    width: 12px;
-    height: 12px;
-  }
-  .streak-val {
-    font-size: 11.5px;
-    font-weight: 900;
-  }
+  
+  
+  
+  
+  
+  
+  
 
   /* ═══ DAR EKRAN / MOBİL AKSLAMA VE ÇAKIŞMA ÖNLEME SİSTEMİ ═══ */
   @media (max-width: 680px) {
@@ -1531,15 +1378,8 @@
       padding: calc(6px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) 6px calc(8px + env(safe-area-inset-left)) !important;
       gap: 0 !important;
     }
-    .station-cluster {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin-bottom: 6px !important;
-      order: 0 !important;
-    }
-    .cluster-vault {
-      flex: 1 1 0 !important;
-    }
+    
+    
 
     /* Mobilde ikincil/boş çipler kesinlikle gizli */
     #onlinechip,
@@ -1651,20 +1491,325 @@
   }
 
   @media (max-width: 380px) {
-    .cluster-time {
-      padding: 3px 5px !important;
-      min-width: 60px !important;
-    }
-    .vault-bezel {
-      padding: 2px 5px !important;
-    }
-    .vault-num {
-      font-size: 13.5px !important;
-    }
-    .cluster-ticket {
-      padding: 3px 5px !important;
-    }
+    
+    
+    
+    
   }
+
+
+    /* ═══════════════════════════════════════════════════════════════
+       NEO-BRUTALIST & MOBILE RESPONSIVE POLISH SUITE
+       ═══════════════════════════════════════════════════════════════ */
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      font-family: var(--font, "Space Grotesk", sans-serif);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Tabular numbers for all stats, currencies, prices, and meters */
+    .hnum, .hp-l b, .qnum, .ibtm, .nav-badge, .db-val, .hud-val, .card-price, .speed-val, .price-row, .meter-val {
+      font-family: var(--font-mono, "JetBrains Mono", monospace) !important;
+      font-variant-numeric: tabular-nums !important;
+      font-feature-settings: "tnum" 1 !important;
+    }
+
+    /* Unified Neo-Brutalist Tactile Buttons & Chips */
+    .btn, .navbtn, .chip, .tab, .subtab, .hline, .db-btn {
+      font-family: var(--font, "Space Grotesk", sans-serif);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active, .navbtn:active, .chip:active, .tab:active, .subtab:active, .hline:active, .db-btn:active {
+      transform: translate(1.5px, 1.5px) !important;
+      box-shadow: 0.5px 0.5px 0px #111418 !important;
+    }
+
+    /* Modal & Sheet Neo-Brutalist Boundaries */
+    .modal {
+      border: 2.5px solid #111418 !important;
+      border-bottom: 4.5px solid #111418 !important;
+      border-radius: 10px !important;
+      box-shadow: 4px 4px 0px #111418 !important;
+      background: var(--paper, #faf6ec) !important;
+      max-width: calc(100vw - 20px) !important;
+      max-height: calc(88vh - env(safe-area-inset-bottom)) !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Mobile Ergonomics (360px - 768px) */
+    @media (max-width: 680px) {
+      .btn, .navbtn, .tab {
+        min-height: 44px !important;
+        min-width: 44px !important;
+      }
+      .mhead {
+        padding-top: max(10px, env(safe-area-inset-top)) !important;
+      }
+      .modal {
+        width: 100% !important;
+        border-radius: 12px 12px 0 0 !important;
+        max-height: calc(90vh - env(safe-area-inset-bottom)) !important;
+      }
+      .mbody {
+        padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+      .navbar {
+        right: calc(14px + env(safe-area-inset-right)) !important;
+        left: auto !important;
+        bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+      }
+      #istasyon-debug-btn {
+        right: calc(14px + env(safe-area-inset-right)) !important;
+        left: auto !important;
+        bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+      }
+    }
+  
+
+    /* ═══════════════════════════════════════════════════════════════
+       MODAL Z-INDEX, FLOATING CONTROLS & TYPOGRAPHY POLISH
+       ═══════════════════════════════════════════════════════════════ */
+    .backdrop {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(15, 23, 42, 0.72) !important;
+      z-index: 90000 !important;
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(4px) !important;
+    }
+
+    .modal {
+      z-index: 90001 !important;
+      position: relative !important;
+      border: 2.5px solid #111418 !important;
+      border-bottom: 4.5px solid #111418 !important;
+      border-radius: 10px !important;
+      box-shadow: 4px 4px 0px #111418 !important;
+      background: var(--paper, #faf6ec) !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Hide background floating controls when any modal/backdrop is open */
+    body:has(.backdrop.show) #mobile-cam-dock,
+    body:has(.backdrop.show) #istasyon-debug-btn,
+    body:has(#accwrap.show) #mobile-cam-dock,
+    body:has(#accwrap.show) #istasyon-debug-btn,
+    body:has(#setwrap.show) #mobile-cam-dock,
+    body:has(#setwrap.show) #istasyon-debug-btn,
+    body:has(#officewrap.show) #mobile-cam-dock,
+    body:has(#officewrap.show) #istasyon-debug-btn,
+    body:has(#shopwrap.show) #mobile-cam-dock,
+    body:has(#shopwrap.show) #istasyon-debug-btn,
+    body:has(#mapwrap.show) #mobile-cam-dock,
+    body:has(#mapwrap.show) #istasyon-debug-btn,
+    body:has(#fuelwrap.show) #mobile-cam-dock,
+    body:has(#fuelwrap.show) #istasyon-debug-btn,
+    body:has(#storewrap.show) #mobile-cam-dock,
+    body:has(#storewrap.show) #istasyon-debug-btn,
+    body:has(#inboxwrap.show) #mobile-cam-dock,
+    body:has(#inboxwrap.show) #istasyon-debug-btn,
+    body:has(#bankwrap.show) #mobile-cam-dock,
+    body:has(#bankwrap.show) #istasyon-debug-btn {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translateY(16px) scale(0.9) !important;
+      visibility: hidden !important;
+      transition: opacity 0.15s ease, transform 0.15s ease !important;
+    }
+
+    /* Modal Headers with High Contrast Yellow Neo-Brutalist Banner */
+    .mhead {
+      background: #fde047 !important;
+      color: #111418 !important;
+      border-bottom: 2.5px solid #111418 !important;
+      padding: 10px 14px !important;
+      border-radius: 8px 8px 0 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      margin-bottom: 10px !important;
+      box-sizing: border-box !important;
+    }
+
+    .mhead h3 {
+      font-family: var(--font, "Space Grotesk", sans-serif) !important;
+      font-size: 15.5px !important;
+      font-weight: 900 !important;
+      letter-spacing: -0.01em !important;
+      color: #111418 !important;
+      margin: 0 !important;
+      text-transform: uppercase !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+    .mclose {
+      background: #ffffff !important;
+      border: 2px solid #111418 !important;
+      border-bottom: 3.5px solid #111418 !important;
+      border-radius: 6px !important;
+      width: 34px !important;
+      height: 34px !important;
+      box-shadow: 1.5px 1.5px 0px #111418 !important;
+      cursor: pointer !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #111418 !important;
+      transition: transform 0.08s ease, box-shadow 0.08s ease !important;
+    }
+
+    .mclose:active {
+      transform: translate(1px, 1px) !important;
+      box-shadow: 0.5px 0.5px 0px #111418 !important;
+    }
+
+    /* Profile Hero Card */
+    .pf-hero {
+      background: #fde047 !important;
+      border: 2px solid #111418 !important;
+      border-bottom: 3.5px solid #111418 !important;
+      border-radius: 8px !important;
+      box-shadow: 2.5px 2.5px 0px #111418 !important;
+      padding: 12px 14px !important;
+      margin-bottom: 14px !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      box-sizing: border-box !important;
+    }
+
+    .pf-avatar {
+      width: 44px !important;
+      height: 44px !important;
+      border-radius: 8px !important;
+      border: 2px solid #111418 !important;
+      background: #ffffff !important;
+      box-shadow: 1.5px 1.5px 0px #111418 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-shrink: 0 !important;
+      color: #111418 !important;
+    }
+
+    .pf-name {
+      font-family: var(--font, "Space Grotesk", sans-serif) !important;
+      font-size: 15px !important;
+      font-weight: 900 !important;
+      color: #111418 !important;
+      letter-spacing: -0.01em !important;
+    }
+
+    .pf-sub {
+      font-family: var(--font-mono, "JetBrains Mono", monospace) !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #57606a !important;
+      font-variant-numeric: tabular-nums !important;
+    }
+
+    /* Clean, Standardized Typography in Modals */
+    .mbody label, #settings label, #accwrap label {
+      display: block !important;
+      font-family: var(--font, "Space Grotesk", sans-serif) !important;
+      font-size: 13.5px !important;
+      font-weight: 900 !important;
+      color: var(--ink, #111418) !important;
+      margin-top: 14px !important;
+      margin-bottom: 4px !important;
+      letter-spacing: -0.01em !important;
+      text-transform: none !important;
+      line-height: 1.3 !important;
+    }
+
+    .mbody .sd, #settings .sd, #accwrap .sd {
+      display: block !important;
+      font-family: var(--font, "Space Grotesk", sans-serif) !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: var(--muted, #57606a) !important;
+      line-height: 1.45 !important;
+      margin-top: 2px !important;
+      margin-bottom: 8px !important;
+    }
+
+    /* Modal Action Rows & Buttons */
+    .mbody .row, #settings .row, #accwrap .row {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) !important;
+      gap: 8px !important;
+      margin-top: 4px !important;
+      margin-bottom: 12px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .mbody .row .btn, #settings .row .btn, #accwrap .row .btn {
+      min-height: 42px !important;
+      width: 100% !important;
+      font-family: var(--font, "Space Grotesk", sans-serif) !important;
+      font-size: 12.5px !important;
+      font-weight: 800 !important;
+      padding: 8px 12px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      border: 2px solid #111418 !important;
+      border-bottom: 3.5px solid #111418 !important;
+      box-shadow: 2px 2px 0px #111418 !important;
+      border-radius: 8px !important;
+      box-sizing: border-box !important;
+      background: #ffffff !important;
+      color: #111418 !important;
+      cursor: pointer !important;
+    }
+
+    .mbody .row .btn.good {
+      background: #86efac !important;
+    }
+
+    .mbody .row .btn.primary {
+      background: #fde047 !important;
+    }
+
+    .mbody .row .btn.danger {
+      background: #fca5a5 !important;
+      color: #7f1d1d !important;
+    }
+
+    .mbody .row .btn:active, #settings .row .btn:active, #accwrap .row .btn:active {
+      transform: translate(1.5px, 1.5px) !important;
+      box-shadow: 0.5px 0.5px 0px #111418 !important;
+    }
+
+    /* Section Separators in Office / Profile */
+    .ofsec {
+      font-family: var(--font, "Space Grotesk", sans-serif) !important;
+      font-size: 12px !important;
+      font-weight: 900 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      color: var(--ink, #111418) !important;
+      background: var(--paper-2, #f1ebdb) !important;
+      border: 1.5px solid #111418 !important;
+      border-radius: 6px !important;
+      padding: 4px 10px !important;
+      margin-top: 14px !important;
+      margin-bottom: 8px !important;
+    }
 
 </style>
   <script>
@@ -1679,7 +1824,7 @@
       } catch (e) { /* gizli sekme: localStorage kapalı → sistem tercihiyle devam */ }
     })()
   </script>
-  <script type="module" crossorigin src="/assets/index-C7O-ej6u.js"></script>
+  <script type="module" crossorigin src="/assets/index-C7O-ej6u.js?v=1789418460576"></script>
 <style id="neo-brutalist-overrides">
   /* ═══════════════════════════════════════════════════════════════
      RETRO NEO-BRUTALIST KARE / DİKDÖRTGEN & DAR EKRAN SİSTEMİ
@@ -2069,62 +2214,23 @@
     <symbol id="i-loc-rafineri" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V9h4v12M9 13h3M14 21v-7a3 3 0 0 1 6 0v7M17 11V6M17 6c-1.3-1.4-1.1-2.7 0-4 1.1 1.3 1.3 2.6 0 4zM6 9V4h2v5"/></symbol>
   </svg>
 
-  <div class="hud">
-    <!-- ═══ MEKANİK İSTASYON ANA KONSOLU (MASTER DASHBOARD CLUSTER) ═══ -->
-    <div id="station-cluster" class="station-cluster">
-      
-      <!-- 1. ZAMAN BÖLMESİ (Retro Takvim & Saat Damgası) -->
-      <div class="cluster-sec cluster-time" data-bilgi="zaman" title="İstasyon Zamanı">
-        <div class="cluster-sub" data-bilgi="gun" title="Gün">
-          <svg class="cluster-ic"><use href="#i-cal"/></svg>
-          <span class="cluster-lbl">GÜN</span>
-          <span id="day" class="cluster-val">1</span>
-        </div>
-        <div class="cluster-divider-h"></div>
-        <div class="cluster-sub" data-bilgi="saat" title="Saat">
-          <svg class="cluster-ic"><use href="#i-clock"/></svg>
-          <span id="hud-clock" class="cluster-val">06:00</span>
-        </div>
-      </div>
-
-      <!-- 2. KASA SAYAÇ PENCERESİ (Gömülü Benzin Pompası Sayacı) -->
-      <div class="cluster-sec cluster-vault" data-bilgi="kasa" title="Kasa Bakiyesi">
-        <div class="vault-bezel">
-          <div class="vault-header">
-            <span class="vault-tag">KASA SAYACI</span>
-            <span class="vault-led"></span>
-          </div>
-          <div class="vault-counter">
-            <svg class="vault-ic"><use href="#i-coin"/></svg>
-            <span id="money" class="vault-num">0</span>
-            <span class="vault-curr">₺</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. OPERASYON & BİLET BÖLMESİ (Görev Bileti & Seri Rozeti) -->
-      <div class="cluster-sec cluster-ops">
-        <div id="questchip" class="cluster-ticket" title="Günlük Görevler">
-          <span class="ticket-tag">GÖREV</span>
-          <div class="ticket-row">
-            <svg class="ticket-ic"><use href="#i-cal"/></svg>
-            <span id="quest" class="ticket-val">0/15</span>
-          </div>
-        </div>
-        <div id="streak-chip" class="cluster-badge streak-badge" data-bilgi="seri" style="display:none" title="Giriş Serisi">
-          <span class="cl" data-i18n="SERİ" style="display:none">SERİ</span>
-          <svg class="streak-ic" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3-1 4.5-2 6-1.2 1.8-1.5 3.4-.6 5.2C10.2 15 12 15.6 12 18c2.6-1 4.6-3.3 4.6-6.4 0-1.9-.8-3.3-1.8-4.6C13.6 5.5 12.7 4 12 2zM8.4 13.5c-.8 1.2-1.3 2.3-1.3 3.6C7.1 20 9.3 22 12 22s4.9-2 4.9-4.9c0-.4 0-.8-.1-1.1C15.6 18.6 13.9 20 12 20c-2 0-3.5-1.4-3.6-3.4 0-1.1.3-2.1 0-3.1z"/></svg>
-          <span id="streak-n" class="streak-val">2</span>
-        </div>
-      </div>
-
+    <div class="hud">
+    <div class="chip" data-bilgi="gun" style="min-width:62px"><span class="cl" data-i18n="GÜN">GÜN</span><span class="cv"><svg class="ic"><use href="#i-cal"/></svg> <span id="day">1</span></span></div>
+    <!-- C10 (analiz): giriş serisi rozeti — seri ≥2 olunca görünür, seriyi görünür kılmak dönüş kancası -->
+    <div class="chip" id="streak-chip" data-bilgi="seri" style="min-width:56px; display:none"><span class="cl" data-i18n="SERİ">SERİ</span><span class="cv" style="color:var(--orange)"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px"><path d="M12 2c1 3-1 4.5-2 6-1.2 1.8-1.5 3.4-.6 5.2C10.2 15 12 15.6 12 18c2.6-1 4.6-3.3 4.6-6.4 0-1.9-.8-3.3-1.8-4.6C13.6 5.5 12.7 4 12 2zM8.4 13.5c-.8 1.2-1.3 2.3-1.3 3.6C7.1 20 9.3 22 12 22s4.9-2 4.9-4.9c0-.4 0-.8-.1-1.1C15.6 18.6 13.9 20 12 20c-2 0-3.5-1.4-3.6-3.4 0-1.1.3-2.1 0-3.1z"/></svg> <span id="streak-n">2</span></span></div>
+    <div class="chip" id="hud-light-chip" data-bilgi="isik" style="min-width:78px; display:none"><span class="cl" data-i18n="IŞIK">IŞIK</span><span class="cv" id="hud-light" style="display:flex; align-items:center; gap:4px; font-weight:800"></span></div>
+    <div class="chip" data-bilgi="saat" style="min-width:66px"><span class="cl" data-i18n="SAAT">SAAT</span><span class="cv" style="display:inline-flex; align-items:center; gap:4px"><svg class="ic" style="width:13px;height:13px"><use href="#i-clock"/></svg><span id="hud-clock">06:00</span></span></div>
+    <div class="chip" data-bilgi="kasa" style="min-width:152px"><span class="cl" data-i18n="KASA">KASA</span><span class="cv"><svg class="ic"><use href="#i-coin"/></svg> <span id="money">0</span> ₺</span></div>
+    <div id="fuelrail">
+    <div class="chip fuelchip" data-bilgi="yakit"><span class="cl" data-i18n="BENZİN">BENZİN</span><span class="cv"><svg class="ic" style="color:var(--green)"><use href="#i-fuel"/></svg> <div class="bar"><div id="fill-benzin" style="background:var(--green)"></div></div> <span id="lvl-benzin">0</span></span></div>
+    <div class="chip fuelchip" data-bilgi="yakit"><span class="cl" data-i18n="DİZEL">DİZEL</span><span class="cv"><svg class="ic" style="color:var(--orange)"><use href="#i-fuel"/></svg> <div class="bar"><div id="fill-dizel" style="background:var(--orange)"></div></div> <span id="lvl-dizel">0</span></span></div>
+    <div class="chip fuelchip" data-bilgi="yakit"><span class="cl" data-i18n="LPG">LPG</span><span class="cv"><svg class="ic" style="color:var(--blue)"><use href="#i-fuel"/></svg> <div class="bar"><div id="fill-lpg" style="background:var(--blue)"></div></div> <span id="lvl-lpg">0</span></span></div>
+    <div class="chip fuelchip" id="battchip"><span class="cl" data-i18n="BATARYA">BATARYA</span><span class="cv"><svg class="ic"><use href="#i-batt"/></svg> <div class="bar"><div id="battfill"></div></div> <span id="battkwh">0</span></span></div>
     </div>
-
-    <!-- Sistem Entegrasyon Çipleri (İkincil / Modal verileri) -->
-    <div class="chip" id="hud-light-chip" data-bilgi="isik" style="display:none"><span id="hud-light"></span></div>
-    <div class="chip" id="onlinechip" style="display:none"><span id="hud-online">0</span></div>
-    <div class="chip" id="repchip" data-bilgi="itibar" style="display:none"><span class="cl" data-i18n="İTİBAR">İTİBAR</span><span class="cv"><svg class="ic"><use href="#i-star"/></svg> <span id="rep">3.0</span></span></div>
-    <div class="chip" id="markachip" data-bilgi="marka" style="display:none"><span id="hud-marka-st">0★</span><div id="hud-marka-fill"></div><span id="hud-marka-pct">0%</span></div>
+    <div class="chip" id="onlinechip" style="min-width:72px; display:none"><span class="cl" data-i18n="OYUNDA">OYUNDA</span><span class="cv"><svg class="ic"><use href="#i-user"/></svg> <span id="hud-online">0</span></span></div>
+    <div class="chip" id="repchip" data-bilgi="itibar" style="min-width:74px"><span class="cl" data-i18n="İTİBAR">İTİBAR</span><span class="cv"><svg class="ic"><use href="#i-star"/></svg> <span id="rep">3.0</span></span></div>
+    <div class="chip" id="markachip" data-bilgi="marka" style="min-width:118px; display:none"><span class="cl" data-i18n="MARKA">MARKA</span><span class="cv"><span id="hud-marka-st" style="color:var(--gold-ink); font-weight:850">0★</span> <div class="bar"><div id="hud-marka-fill" style="background:var(--gold-ink)"></div></div> <span id="hud-marka-pct">0%</span></span></div>
+    <div class="chip" id="questchip" style="min-width:104px; cursor:pointer" title="Günlük görevler"><span class="cl" data-i18n="GÜNLÜK GÖREV">GÜNLÜK GÖREV</span><span class="cv"><svg class="ic"><use href="#i-cal"/></svg> <span id="quest">0/15</span></span></div>
     <div class="spacer"></div>
     <!-- EYLEM BUTONLARI TEK KAPSAYICIDA: masaüstünde `display:contents` (kutu ağacında yok,
          yerleşim birebir aynı). Mobilde yakıt rayının SAĞINDAKİ boşlukta saran ızgara olur —
@@ -2646,6 +2752,10 @@
         <script>
           window.benelStartGame = function() {
             window.welcomeDismissed = true;
+            window.__gamePaused = false;
+            if (typeof window.__unpauseGame === 'function') {
+              window.__unpauseGame();
+            }
             try {
               sessionStorage.setItem('benzinlik-welcome-started', '1');
               localStorage.setItem('benzinlik-guest-joined', '1');
@@ -2666,7 +2776,7 @@
               if (!btn) return;
               btn.addEventListener('click', function(ev) {
                 window.benelStartGame();
-              }, true);
+              });
             }
 
             if (document.readyState === 'loading') {
@@ -3096,9 +3206,9 @@
     .qrow:last-child { border-bottom:0 }
     .qrow .qtxt { flex:1; min-width:0 }
     .qrow .qlbl { font-weight:800; font-size:13px; display:block }
-    .qrow .qbar { height:7px; border-radius:99px; background:var(--line); margin-top:5px;
+    .qrow .qbar { height:7px; border-radius: 4px; border: 1px solid #111418; background:var(--line); margin-top:5px;
                   overflow:hidden }
-    .qrow .qbar > i { display:block; height:100%; border-radius:99px; background:var(--red);
+    .qrow .qbar > i { display:block; height:100%; border-radius: 2px; background:var(--red);
                       transition:width .25s ease }
     .qrow.is-done .qbar > i { background:var(--green, #1c7a41) }
     .qrow .qnum { font-size:11px; font-weight:800; color:var(--muted);
@@ -3139,5 +3249,68 @@
       }
     }
 </style>
+
+    <!-- Top Construction Live HUD Widget (Zeigarnik Effect) -->
+  <div id="construction-hud-badge" style="display:none; position:fixed; left:50%; top:max(70px, calc(10px + env(safe-area-inset-top))); transform:translateX(-50%); background:var(--paper, #faf6ec); border:2.5px solid #111418; border-bottom:4px solid #111418; border-radius:8px; box-shadow:3px 3px 0px #111418; padding:6px 14px; z-index:9000; font-family:var(--font, 'Space Grotesk', sans-serif); font-size:12.5px; font-weight:800; cursor:pointer; align-items:center; gap:8px; -webkit-tap-highlight-color:transparent;">
+    <span id="chud-name">🏗️ İnşaat:</span>
+    <span id="chud-time" style="font-family:var(--font-mono, 'JetBrains Mono', monospace); color:#b23434; font-variant-numeric:tabular-nums;">00:00</span>
+    <span style="background:#22c55e; color:#111418; border:1.5px solid #111418; border-radius:4px; padding:2px 6px; font-size:11px; font-weight:900;">⚡ HIZLANDIR</span>
+  </div>
+
+  <!-- Rewarded Ad Simulator Modal -->
+  <div id="benel-ad-modal" style="display:none; position:fixed; inset:0; background:rgba(10, 14, 22, 0.88); z-index:999999; align-items:center; justify-content:center; padding:18px; box-sizing:border-box; font-family:'Space Grotesk', sans-serif; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);">
+    <div style="max-width:450px; width:100%; background:#faf6ec; border:3.5px solid #111418; border-bottom:6px solid #111418; border-radius:12px; box-shadow:6px 6px 0px #111418; padding:22px; text-align:center; position:relative; box-sizing:border-box;">
+      
+      <!-- Main Ad View -->
+      <div id="ad-main-view">
+        <div style="background:#fde047; border:2px solid #111418; border-bottom:3.5px solid #111418; border-radius:6px; padding:6px 12px; font-weight:900; font-size:12.5px; display:inline-flex; align-items:center; gap:6px; margin-bottom:12px; text-transform:uppercase; box-shadow:2px 2px 0px #111418;">
+          ⚡ TURBO İNŞAAT SPONSORU
+        </div>
+        <h2 id="ad-job-title" style="font-size:20px; font-weight:900; color:#111418; margin:0 0 8px 0; letter-spacing:-0.01em;">
+          İnşaatı Hızlandır
+        </h2>
+        <p id="ad-job-desc" style="font-size:13px; font-weight:600; color:#57606a; margin:0 0 16px 0; line-height:1.45;">
+          5 saniyelik sponsor spotunu izleyerek kalan uzun inşaat süresini anında sıfırla!
+        </p>
+
+        <!-- Retro TV Ad Screen with Scanlines -->
+        <div id="ad-video-screen" style="background:#111418; border:3px solid #111418; border-radius:10px; padding:20px 16px; margin-bottom:18px; color:#fff; position:relative; overflow:hidden; box-shadow:inset 0 0 30px rgba(0,0,0,0.8);">
+          <div style="font-size:32px; margin-bottom:6px; filter:drop-shadow(0 0 8px rgba(253,224,71,0.5));">⛽ ⚡ 🚀</div>
+          <div class="ad-slogan-title" style="font-size:15px; font-weight:900; color:#fde047; letter-spacing:0.04em; margin-bottom:4px; text-shadow:0 0 10px rgba(253,224,71,0.4);">BENELOIL RACING V-POWER</div>
+          <div class="ad-slogan-sub" style="font-size:12px; color:#cbd5e1; font-weight:600;">"İstasyonun Gücü, Geleceğin Enerjisi"</div>
+          <div id="ad-countdown" style="margin-top:12px; font-family:'JetBrains Mono', monospace; font-size:26px; font-weight:900; color:#86efac; font-variant-numeric:tabular-nums; text-shadow:0 0 12px rgba(134,239,172,0.6);">00:05</div>
+          <!-- CRT Scanlines overlay -->
+          <div style="position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px); opacity:0.7;"></div>
+        </div>
+
+        <button id="ad-watch-btn" class="btn" style="width:100%; min-height:48px; background:#22c55e; color:#111418; font-weight:900; font-size:15px; border:2.5px solid #111418; border-bottom:4.5px solid #111418; box-shadow:3px 3px 0px #111418; border-radius:8px; cursor:pointer; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:6px;">
+          ⚡ REKLAMI İZLE & HEMEN BİTİR
+        </button>
+
+        <button id="ad-cancel-btn" style="background:transparent; border:none; font-size:12px; font-weight:700; color:#7a8290; cursor:pointer; text-decoration:underline;">
+          Vazgeç (Beklemeye Devam Et)
+        </button>
+      </div>
+
+      <!-- Loss Aversion Confirmation View -->
+      <div id="ad-loss-aversion" style="display:none; padding:10px 0;">
+        <div style="font-size:40px; margin-bottom:8px;">⚠️ ⌛</div>
+        <h3 style="font-size:19px; font-weight:900; color:#111418; margin:0 0 8px 0;">
+          Beklemek İstediğine Emin misin?
+        </h3>
+        <p style="font-size:13.5px; font-weight:600; color:#475569; margin:0 0 18px 0; line-height:1.5;">
+          Kalan <b id="ad-loss-time" style="color:#b23434; font-family:'JetBrains Mono', monospace; font-size:15px;">08:45</b> süreyi beklemek yerine sadece <b>5 saniyelik sponsorla</b> hemen açabilirsin!
+        </p>
+        <button id="ad-loss-stay-btn" class="btn" style="width:100%; min-height:48px; background:#22c55e; color:#111418; font-weight:900; font-size:14px; border:2.5px solid #111418; border-bottom:4.5px solid #111418; box-shadow:3px 3px 0px #111418; border-radius:8px; cursor:pointer; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:6px;">
+          ⚡ VAZGEÇME & REKLAMI İZLE
+        </button>
+        <button id="ad-loss-leave-btn" class="btn" style="width:100%; min-height:40px; background:#e2e8f0; color:#475569; font-weight:800; font-size:13px; border:2px solid #111418; border-bottom:3.5px solid #111418; box-shadow:2px 2px 0px #111418; border-radius:8px; cursor:pointer;">
+          ⏳ Yine de Bekle
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>
